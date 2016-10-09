@@ -8,10 +8,10 @@ class AccountManager(BaseUserManager):
 		Creates and saves a User with the given email, username and password.
 		"""
 		if not email:
-			raise ValueError('Users must have a vaild email address')
+			raise ValueError('Users must have a valid email address')
 
 		if not kwargs.get('username'):
-			raise ValueError('Users must have a vaild username')
+			raise ValueError('Users must have a valid username')
 
 		account = self.model(
 				email=self.normalize_email(email), username=kwargs.get('username')
