@@ -2,6 +2,6 @@ import views
 from django.conf.urls import url
 
 urlpatterns = [
-	url(r'accounts/$', views.accounts_list),
-	url(r'accounts/(?P<pk>[0-9]+)/$', views.accounts_detail)
+	url(r'$', views.AccountList.as_view(), name='account-list'),
+	url(r'(?P<pk>[0-9]+)/$', views.AccountDetail.as_view())
 ]

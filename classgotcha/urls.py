@@ -14,13 +14,16 @@ Including another URLconf
     2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
 from classgotcha.apps.accounts import urls as accounts_urls
+from classgotcha.apps.moments import urls as moments_urls
 from django.conf.urls import include, url
 from django.contrib import admin
 
 admin.autodiscover()
 
 urlpatterns = [
-    url(r'^', include(accounts_urls)),
+    url(r'^accounts/', include(accounts_urls)),
+    url(r'^moments/', include(moments_urls)),
     url(r'^admin/', admin.site.urls),
-    url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework'))
+    url(r'^apidocs/', include('rest_framework_docs.urls'))
+    # url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework'))
 ]

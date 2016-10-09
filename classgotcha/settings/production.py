@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.sites',
     # installed
     'rest_framework',
+    'rest_framework_docs',
     # myapp
     'classgotcha.apps.accounts',
     'classgotcha.apps.moments'
