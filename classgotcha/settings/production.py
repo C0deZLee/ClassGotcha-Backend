@@ -44,7 +44,11 @@ INSTALLED_APPS = [
     'rest_framework_docs',
     # myapp
     'classgotcha.apps.accounts',
-    'classgotcha.apps.moments'
+    'classgotcha.apps.moments',
+    'classgotcha.apps.classrooms',
+    'classgotcha.apps.groups',
+    'classgotcha.apps.notes',
+    'classgotcha.apps.tasks'
 ]
 
 MIDDLEWARE = [

@@ -1,6 +1,7 @@
 from django.db import models
 
 from ..accounts.model import Account
+from ..notes.model import Note
 
 
 class Moment(models.Model):
@@ -16,9 +17,13 @@ class Moment(models.Model):
 class Comment(models.Model):
 	# Basic
 	content = models.CharField(max_length=200)
-	images = models.TextField(default='[]')
-	creator = models.ForeignKey(Account, on_delete=models.CASCADE)
-	belongs_to = models.ForeignKey(Moment, on_delete=models.CASCADE, related_name='comments')
+	image = models.URLField(blank=True, null=True)
+	# relations
+	creator = models.ForeignKey(Account, on_delete=models.CASCADE, related_name='comments', null=True, blank=True)
+	moment = models.ForeignKey(Moment, on_delete=models.CASCADE, related_name='comments', null=True, blank=True)
+	# how related_name work:
+	# http://stackoverflow.com/questions/2642613/what-is-related-name-used-for-in-django
+	note = models.ForeignKey(Note, on_delete=models.CASCADE, related_name='comments', null=True, blank=True)
 	# Timestamp
 	created = models.DateTimeField(auto_now_add=True)
 	updated = models.DateTimeField(auto_now=True)

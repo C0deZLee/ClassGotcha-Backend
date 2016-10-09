@@ -2,6 +2,12 @@ from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseU
 from django.db import models
 
 
+class Major(models.Model):
+	major = models.CharField(max_length=10)
+	major_name = models.CharField(max_length=100)
+	major_school = models.CharField(max_length=100)
+
+
 class AccountManager(BaseUserManager):
 	def create_user(self, email, password=None, **kwargs):
 		"""
@@ -44,15 +50,15 @@ class Account(AbstractBaseUser, PermissionsMixin):
 	created = models.DateTimeField(auto_now_add=True)
 	updated = models.DateTimeField(auto_now=True)
 	# Personal info
-	first_name = models.CharField(max_length=40)
-	mid_name = models.CharField(max_length=40)
-	last_name = models.CharField(max_length=40)
+	first_name = models.CharField(max_length=40, blank=True)
+	mid_name = models.CharField(max_length=40, blank=True)
+	last_name = models.CharField(max_length=40, blank=True)
 
-	gender = models.CharField(max_length=40)
-	birthday = models.DateField(null=True)
-	school_year = models.CharField(max_length=40)
-	major = models.CharField(max_length=40)
-	avatar = models.URLField()
+	gender = models.CharField(max_length=40, blank=True)
+	birthday = models.DateField(null=True, blank=True)
+	school_year = models.CharField(max_length=40, blank=True)
+	major = models.ForeignKey(Major, blank=True)
+	avatar = models.URLField(blank=True)
 	# models.ImageField(
 	#     upload_to="public/uploads/",
 	#     height_field="qr_image_height",
