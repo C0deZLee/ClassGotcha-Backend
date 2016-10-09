@@ -38,7 +38,12 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'account',
+    'django.contrib.sites',
+    # installed
+    'rest_framework',
+    # myapp
+    'classgotcha.apps.accounts',
+    'classgotcha.apps.moments'
 ]
 
 MIDDLEWARE = [
@@ -50,9 +55,8 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     # --- account support ---
-    'account.middleware.LocaleMiddleware',
-    'account.middleware.TimezoneMiddleware',
-    'account.middleware.ExpiredPasswordMiddleware',
+    # 'account.middleware.LocaleMiddleware',
+    # 'account.middleware.TimezoneMiddleware',
 ]
 
 # ------ Templates ------
@@ -73,8 +77,6 @@ TEMPLATES = [
                 'django.template.context_processors.static',
                 'django.template.context_processors.tz',
                 'django.contrib.messages.context_processors.messages',
-                # --- account support ---
-                'account.context_processors.account',
             ],
             'debug': False,
         },
@@ -105,8 +107,12 @@ AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
+
 ]
 
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+]
 
 # ------ Internationalization -------
 
@@ -119,10 +125,16 @@ USE_TZ = True
 
 # ------ Static files (CSS, JavaScript, Images) ------
 # https://docs.djangoproject.com/en/1.10/howto/static-files/
-
 STATIC_URL = '/static/'
 
-# ------ Account customization ------
+# ------ Custom User ------
+AUTH_USER_MODEL = 'accounts.Account'
 
-ACCOUNT_EMAIL_UNIQUE = True
-ACCOUNT_EMAIL_CONFIRMATION_REQUIRED = True
+# ------ Rest framework ------
+REST_FRAMEWORK = {
+    # Use Django's standard `django.contrib.auth` permissions,
+    # or allow read-only access for unauthenticated users.
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
+    ]
+}
