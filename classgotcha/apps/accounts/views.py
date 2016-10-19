@@ -1,18 +1,37 @@
 from model import Account
 from rest_framework import generics
-from serializers import AccountSerializer
+from serializers import FullAccountSerializer, BasicAccountSerializer, AccountMomentAccountSerializer
+
+from ..moments.model import Moment
 
 
 class AccountList(generics.ListCreateAPIView):
 	queryset = Account.objects.all()
-	serializer_class = AccountSerializer
+	serializer_class = BasicAccountSerializer
 
 
 class AccountDetail(generics.RetrieveUpdateDestroyAPIView):
 	queryset = Account.objects.all()
-	serializer_class = AccountSerializer
+	serializer_class = FullAccountSerializer
 
-#
+
+class AccountBasic(generics.RetrieveUpdateDestroyAPIView):
+	queryset = Account.objects.all()
+	serializer_class = BasicAccountSerializer
+
+
+class AccountMoments(generics.ListCreateAPIView):
+	queryset = Moment.objects.all()
+	serializer_class = AccountMomentAccountSerializer
+
+
+class AccountMe(generics.RetrieveUpdateDestroyAPIView):
+	serializer_class = BasicAccountSerializer
+
+	def get_queryset(self):
+		return Account.objects.get(pk=self.request.user.pk)
+
+
 
 # @csrf_exempt
 # @api_view(['GET', 'POST'])

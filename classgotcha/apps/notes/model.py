@@ -10,4 +10,10 @@ class Note(models.Model):
 	classroom = models.ForeignKey(Classroom)
 	# Basics
 	file = models.URLField()
-	rating = models.IntegerField(null=True, blank=True)
+
+
+class Rate(models.Model):
+	# Relations
+	creator = models.ForeignKey(Account)
+	num = models.IntegerField()
+	note = models.ForeignKey(Note, on_delete=models.CASCADE, related_name='rating')

@@ -57,7 +57,7 @@ class Account(AbstractBaseUser, PermissionsMixin):
 	gender = models.CharField(max_length=40, blank=True)
 	birthday = models.DateField(null=True, blank=True)
 	school_year = models.CharField(max_length=40, blank=True)
-	major = models.ForeignKey(Major, blank=True)
+	major = models.ForeignKey(Major, blank=True, null=True)
 	avatar = models.URLField(blank=True)
 	# models.ImageField(
 	#     upload_to="public/uploads/",
@@ -74,6 +74,9 @@ class Account(AbstractBaseUser, PermissionsMixin):
 	# Settings
 	USERNAME_FIELD = 'email'
 	REQUIRED_FIELDS = ['username']
+
+	class Meta:
+		ordering = ['created']
 
 	def __unicode__(self):
 		return self.username

@@ -42,10 +42,12 @@ INSTALLED_APPS = [
     # installed
     'rest_framework',
     'rest_framework_docs',
+    'rest_framework.authtoken',
     # myapp
     'classgotcha.apps.accounts',
     'classgotcha.apps.moments',
     'classgotcha.apps.classrooms',
+    'classgotcha.apps.comments',
     'classgotcha.apps.groups',
     'classgotcha.apps.notes',
     'classgotcha.apps.tasks'

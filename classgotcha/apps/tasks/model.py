@@ -11,7 +11,7 @@ class Task(models.Model):
 	start = models.DateTimeField(blank=True, null=True)
 	end = models.DateTimeField(blank=True, null=True)
 	due_date = models.DateTimeField(blank=True, null=True)
-	type = models.CharField()  # hw, group meeting, exam
+	type = models.CharField(max_length=50)  # hw, group meeting, exam
 	# Relationship
 	involved = models.ManyToManyField(Account)
 	classroom = models.ForeignKey(Classroom, blank=True, null=True)
