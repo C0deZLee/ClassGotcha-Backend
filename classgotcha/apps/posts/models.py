@@ -1,6 +1,6 @@
 from django.db import models
 
-from ..accounts.model import Account
+from ..accounts.models import Account
 
 
 class Moment(models.Model):
@@ -14,3 +14,11 @@ class Moment(models.Model):
 	updated = models.DateTimeField(auto_now=True)
 
 
+class Post(models.Model):
+	# Basic
+	content = models.TextField()
+	# Relations
+	creator = models.ForeignKey(Account, on_delete=models.CASCADE, related_name='posts', null=True, blank=True)
+	# Timestamp
+	created = models.DateTimeField(auto_now_add=True)
+	updated = models.DateTimeField(auto_now=True)

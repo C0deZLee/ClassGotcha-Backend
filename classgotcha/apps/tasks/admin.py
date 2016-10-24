@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from model import Task
+from models import Task
 
 
 class TaskAdmin(admin.ModelAdmin):

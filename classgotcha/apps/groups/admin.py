@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from model import Group
+from models import Group
 
 
 class GroupAdmin(admin.ModelAdmin):

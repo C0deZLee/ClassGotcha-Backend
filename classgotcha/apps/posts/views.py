@@ -1,4 +1,4 @@
-from model import Moment
+from models import Moment
 from permissions import IsOwnerOrReadOnly
 from rest_framework import generics
 from rest_framework import permissions

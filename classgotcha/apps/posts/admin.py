@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from model import Moment
+from models import Moment
 
 
 class MomentAdmin(admin.ModelAdmin):

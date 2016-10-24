@@ -1,6 +1,6 @@
-from model import Account
+from models import Account
 from rest_framework import serializers
-from ..moments.model import Moment
+from ..posts.models import Moment
 
 
 class FullAccountSerializer(serializers.ModelSerializer):

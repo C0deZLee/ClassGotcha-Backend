@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from model import Note, Rate
+from models import Note, Rate
 
 
 class NoteAdmin(admin.ModelAdmin):

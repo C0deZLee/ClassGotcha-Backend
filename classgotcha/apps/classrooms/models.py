@@ -1,6 +1,6 @@
 from django.db import models
 
-from ..accounts.model import Account, Major
+from ..accounts.models import Account, Major
 
 
 class Classroom(models.Model):

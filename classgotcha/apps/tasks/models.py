@@ -1,8 +1,8 @@
 from django.db import models
 
-from ..accounts.model import Account
-from ..classrooms.model import Classroom
-from ..groups.model import Group
+from ..accounts.models import Account
+from ..classrooms.models import Classroom
+from ..groups.models import Group
 
 
 class Task(models.Model):

@@ -43,9 +43,10 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework_docs',
     'rest_framework.authtoken',
+    'storages',
     # myapp
     'classgotcha.apps.accounts',
-    'classgotcha.apps.moments',
+    'classgotcha.apps.posts',
     'classgotcha.apps.classrooms',
     'classgotcha.apps.comments',
     'classgotcha.apps.groups',
@@ -145,3 +146,14 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
     ]
 }
+
+# ------ Amazon S3 ------
+DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
+# Amazon Web Services access key, as a string.
+AWS_ACCESS_KEY_ID = ''
+# Amazon Web Services secret access key, as a string.
+AWS_SECRET_ACCESS_KEY = ''
+# Amazon Web Services storage bucket name, as a string.
+AWS_STORAGE_BUCKET_NAME = ''
+# Allow django-admin.py collectstatic to automatically put your static files in your bucket set
+# STATICFILES_STORAGE = 'storages.backends.s3boto.S3BotoStorage'

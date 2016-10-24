@@ -1,7 +1,7 @@
-from model import Classroom
+from models import Classroom
 from rest_framework import serializers
-from ..groups.model import Group
-from ..tasks.model import Task
+from ..groups.models import Group
+from ..tasks.models import Task
 
 
 class ClassroomSerializer(serializers.ModelSerializer):

@@ -1,4 +1,4 @@
-from model import Task
+from models import Task
 from rest_framework import serializers
 
 

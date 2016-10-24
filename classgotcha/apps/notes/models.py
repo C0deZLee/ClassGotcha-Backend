@@ -1,7 +1,7 @@
 from django.db import models
 
-from ..accounts.model import Account
-from ..classrooms.model import Classroom
+from ..accounts.models import Account
+from ..classrooms.models import Classroom
 
 
 class Note(models.Model):

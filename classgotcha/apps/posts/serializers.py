@@ -1,7 +1,7 @@
-from model import Moment
+from models import Moment
 from rest_framework import serializers
 
-from ..comments.model import Comment
+from ..comments.models import Comment
 
 
 class MomentSerializer(serializers.ModelSerializer):

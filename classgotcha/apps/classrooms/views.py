@@ -1,5 +1,5 @@
-from model import Account
-from model import Classroom
+from models import Account
+from models import Classroom
 from rest_framework import generics
 from serializers import BasicClassroomSerializer
 

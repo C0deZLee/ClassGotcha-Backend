@@ -1,8 +1,8 @@
-from model import Account
+from models import Account
 from rest_framework import generics
 from serializers import FullAccountSerializer, BasicAccountSerializer, AccountMomentAccountSerializer
 
-from ..moments.model import Moment
+from ..posts.models import Moment
 
 
 class AccountList(generics.ListCreateAPIView):
@@ -30,8 +30,6 @@ class AccountMe(generics.RetrieveUpdateDestroyAPIView):
 
 	def get_queryset(self):
 		return Account.objects.get(pk=self.request.user.pk)
-
-
 
 # @csrf_exempt
 # @api_view(['GET', 'POST'])

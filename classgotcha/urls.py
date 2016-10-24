@@ -15,17 +15,19 @@ Including another URLconf
 """
 from classgotcha.apps.accounts import urls as accounts_urls
 from classgotcha.apps.classrooms import urls as classroom_urls
-from classgotcha.apps.moments import urls as moments_urls
+from classgotcha.apps.groups import urls as groups_urls
+from classgotcha.apps.posts import urls as moments_urls
 from django.conf.urls import include, url
 from django.contrib import admin
 
 admin.autodiscover()
 
 urlpatterns = [
-    url(r'^accounts/', include(accounts_urls)),
-    url(r'^moments/', include(moments_urls)),
-    url(r'^classrooms/', include(classroom_urls)),
+    url(r'^account/', include(accounts_urls)),
+    url(r'^moment/', include(moments_urls)),
+    url(r'^classroom/', include(classroom_urls)),
     url(r'^admin/', admin.site.urls),
+    url(r'^group/', include(groups_urls)),
     url(r'^apidocs/', include('rest_framework_docs.urls'))
     # url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework'))
 ]

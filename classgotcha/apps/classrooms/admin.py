@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from model import Classroom
+from models import Classroom
 
 
 class ClassroomAdmin(admin.ModelAdmin):

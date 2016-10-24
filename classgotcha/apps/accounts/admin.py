@@ -3,7 +3,7 @@ from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.models import Group
 
 from forms import UserChangeForm, UserCreationForm
-from model import Account, Major
+from models import Account, Major
 
 
 class AccountAdmin(UserAdmin):
