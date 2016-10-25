@@ -1,16 +1,14 @@
 from __future__ import unicode_literals
 
 from django.db import models
-
 from django.template.defaultfilters import slugify
+from ..accounts.models import Account
 
-from accounts.models import Account
 
 class ChatRoom(models.Model):
 
     name = models.CharField(max_length=20)
     slug = models.SlugField(blank=True)
-
 
     class Meta:
         ordering = ("name",)
@@ -36,7 +34,6 @@ class ChatUser(models.Model):
 
     class Meta:
         ordering = ("name",)
-
 
     def __unicode__(self):
         return self.name
