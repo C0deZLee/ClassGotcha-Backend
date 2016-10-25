@@ -12,6 +12,8 @@ class Moment(models.Model):
 	# Timestamp
 	created = models.DateTimeField(auto_now_add=True)
 	updated = models.DateTimeField(auto_now=True)
+# Relatives
+# 1) comments
 
 
 class Post(models.Model):
@@ -22,3 +24,5 @@ class Post(models.Model):
 	# Timestamp
 	created = models.DateTimeField(auto_now_add=True)
 	updated = models.DateTimeField(auto_now=True)
+# Relatives
+# 1) comments
