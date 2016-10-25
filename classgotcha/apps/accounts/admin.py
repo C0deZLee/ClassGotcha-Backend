@@ -36,8 +36,8 @@ class AccountAdmin(UserAdmin):
 
 
 class MajorAdmin(admin.ModelAdmin):
-    list_display = ('major', 'major_name', 'major_school')
-    list_filter = ['major_school']
+    list_display = ('major_short', 'major_full', 'major_college')
+    list_filter = ['major_college']
 
 
 # Now register the new UserAdmin...

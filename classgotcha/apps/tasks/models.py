@@ -13,6 +13,6 @@ class Task(models.Model):
 	due_date = models.DateTimeField(blank=True, null=True)
 	type = models.CharField(max_length=50)  # hw, group meeting, exam
 	# Relationship
-	involved = models.ManyToManyField(Account)
-	classroom = models.ForeignKey(Classroom, blank=True, null=True)
+	involved = models.ManyToManyField(Account, related_name='tasks')
+	classroom = models.ForeignKey(Classroom, blank=True, null=True, related_name='tasks')
 	group = models.ForeignKey(Group, blank=True, null=True)

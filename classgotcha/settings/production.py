@@ -150,10 +150,10 @@ REST_FRAMEWORK = {
 # ------ Amazon S3 ------
 DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
 # Amazon Web Services access key, as a string.
-AWS_ACCESS_KEY_ID = ''
+AWS_ACCESS_KEY_ID = 'AKIAIC72HESTHUCZQHLQ'
 # Amazon Web Services secret access key, as a string.
-AWS_SECRET_ACCESS_KEY = ''
+AWS_SECRET_ACCESS_KEY = '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'
 # Amazon Web Services storage bucket name, as a string.
-AWS_STORAGE_BUCKET_NAME = ''
+AWS_STORAGE_BUCKET_NAME = 'classgotcha-us-standard-20161024'
 # Allow django-admin.py collectstatic to automatically put your static files in your bucket set
-# STATICFILES_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
+STATICFILES_STORAGE = 'storages.backends.s3boto.S3BotoStorage'

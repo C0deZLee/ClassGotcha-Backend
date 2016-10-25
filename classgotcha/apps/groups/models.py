@@ -8,7 +8,7 @@ class Group(models.Model):
 	# class, subclass, individual, club
 	group_type = models.CharField(max_length=20)
 	# Relations
-	members = models.ManyToManyField(Account, blank=True)
-	classroom = models.ForeignKey(Classroom, blank=True, null=True)
+	members = models.ManyToManyField(Account, blank=True, related_name='joined_groups')
+	classroom = models.ForeignKey(Classroom, blank=True, null=True, related_name='groups')
 	creator = models.ForeignKey(Account, related_name='created_groups')
 	# events = models.ForeignKey(Tasks)

@@ -14,4 +14,7 @@ class Classroom(models.Model):
 	professor = models.ManyToManyField(Account, related_name='teaches', blank=True)
 	major = models.ForeignKey(Major)
 	students = models.ManyToManyField(Account, related_name='classrooms', blank=True)
-# Groups, Tasks
+	# Relatives
+	# 1) notes
+	# 2) tasks
+	# 3) groups

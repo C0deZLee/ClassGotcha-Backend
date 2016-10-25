@@ -3,9 +3,9 @@ from django.db import models
 
 
 class Major(models.Model):
-	major = models.CharField(max_length=10)
-	major_name = models.CharField(max_length=100)
-	major_school = models.CharField(max_length=100)
+	major_short = models.CharField(max_length=10)
+	major_full = models.CharField(max_length=100)
+	major_college = models.CharField(max_length=100)
 
 
 class AccountManager(BaseUserManager):
@@ -53,14 +53,12 @@ class Account(AbstractBaseUser, PermissionsMixin):
 	first_name = models.CharField(max_length=40, blank=True)
 	mid_name = models.CharField(max_length=40, blank=True)
 	last_name = models.CharField(max_length=40, blank=True)
-
 	gender = models.CharField(max_length=40, blank=True)
 	birthday = models.DateField(null=True, blank=True)
 	school_year = models.CharField(max_length=40, blank=True)
-	major = models.ForeignKey(Major, blank=True, null=True)
 	avatar = models.URLField(blank=True)
 	# models.ImageField(
-	#     upload_to="public/uploads/",
+	#     upload_to="public/uploads/avatars/",
 	#     height_field="qr_image_height",
 	#     width_field="qr_image_width",
 	#     null=True,
@@ -69,6 +67,17 @@ class Account(AbstractBaseUser, PermissionsMixin):
 	# )
 	# Relations
 	friends = models.ManyToManyField("self")
+	major = models.ForeignKey(Major, blank=True, null=True)
+	# Relatives
+	# 1) teaches
+	# 2) classrooms
+	# 3) comments
+	# 4) joined_groups
+	# 5) created_groups
+	# 6) notes
+	# 7) posts
+	# 8) moments
+	# 9) tasks
 	# Manager
 	objects = AccountManager()
 	# Settings
@@ -83,7 +92,7 @@ class Account(AbstractBaseUser, PermissionsMixin):
 
 	@property
 	def get_full_name(self):
-		"Returns the person's full name."
+		"""Returns the person's full name."""
 		return '%s %s' % (self.first_name, self.last_name)
 
 	def get_short_name(self):
