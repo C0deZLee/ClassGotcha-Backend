@@ -6,6 +6,11 @@ from ..posts.models import Moment
 
 
 class AccountList(generics.ListCreateAPIView):
+	"""
+**GET** Get all accounts
+
+**POST** Create new account
+	"""
 	queryset = Account.objects.all()
 	serializer_class = BasicAccountSerializer
 
