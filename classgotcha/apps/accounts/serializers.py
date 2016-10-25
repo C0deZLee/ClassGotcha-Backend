@@ -1,30 +1,46 @@
 from models import Account
 from rest_framework import serializers
-from ..posts.models import Moment
+from ..classrooms.models import Classroom
+from ..comments.models import Comment
+from ..groups.models import Group
+from ..notes.models import Note
+from ..posts.models import Moment, Post
+from ..tasks.models import Task
 
 
 class FullAccountSerializer(serializers.ModelSerializer):
-	moments = serializers.PrimaryKeyRelatedField(many=True, queryset=Moment.objects.all())
 	friends = serializers.PrimaryKeyRelatedField(many=True, queryset=Account.objects.all())
-
-	class Meta:
-		model = Account
-		fields = (
-			'id', 'email', 'username', 'first_name', 'last_name', 'gender', 'birthday', 'school_year', 'major',
-			'avatar', 'moments', 'friends')
-
-
-class BasicAccountSerializer(serializers.ModelSerializer):
-	class Meta:
-		model = Account
-		fields = (
-			'id', 'email', 'username', 'first_name', 'last_name', 'gender', 'birthday', 'school_year', 'major',
-			'avatar')
-
-
-class AccountMomentAccountSerializer(serializers.ModelSerializer):
+	teaches = serializers.PrimaryKeyRelatedField(many=True, queryset=Classroom.objects.all())
+	classrooms = serializers.PrimaryKeyRelatedField(many=True, queryset=Classroom.objects.all())
+	comments = serializers.PrimaryKeyRelatedField(many=True, queryset=Comment.objects.all())
+	joined_groups = serializers.PrimaryKeyRelatedField(many=True, queryset=Group.objects.all())
+	created_groups = serializers.PrimaryKeyRelatedField(many=True, queryset=Group.objects.all())
+	notes = serializers.PrimaryKeyRelatedField(many=True, queryset=Note.objects.all())
+	posts = serializers.PrimaryKeyRelatedField(many=True, queryset=Post.objects.all())
 	moments = serializers.PrimaryKeyRelatedField(many=True, queryset=Moment.objects.all())
+	tasks = serializers.PrimaryKeyRelatedField(many=True, queryset=Task.objects.all())
 
 	class Meta:
 		model = Account
-		fields = ['moments']
+		fields = ('id', 'email', 'username',
+		          'first_name', 'mid_name', 'last_name',
+		          'gender', 'birthday', 'school_year',
+		          'avatar', 'friends', 'major',
+		          'teaches', 'classrooms', 'comments',
+		          'joined_groups', 'created_groups',
+		          'notes', 'posts', 'moments', 'tasks',)
+		write_only_fields = ('password',)
+		read_only_fields = ('is_admin', 'is_student', 'is_professor',
+		                    'created', 'updated',)
+
+
+class BaseAccountSerializer(serializers.ModelSerializer):
+	class Meta:
+		model = Account
+		fields = ('id', 'email', 'username',
+		          'first_name', 'mid_name', 'last_name',
+		          'gender', 'birthday', 'school_year',
+		          'major', 'avatar')
+		write_only_fields = ('password',)
+		read_only_fields = ('is_admin', 'is_student', 'is_professor',
+		                    'created', 'updated',)

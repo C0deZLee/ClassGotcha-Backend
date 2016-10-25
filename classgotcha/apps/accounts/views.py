@@ -1,18 +1,33 @@
 from models import Account
 from rest_framework import generics
-from serializers import FullAccountSerializer, BasicAccountSerializer, AccountMomentAccountSerializer
+from rest_framework import status
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from serializers import FullAccountSerializer, BaseAccountSerializer
 
-from ..posts.models import Moment
+
+@api_view(['POST'])
+def register(request):
+	serialized = BaseAccountSerializer(data=request.data)
+	if serialized.is_valid():
+		Account.objects.create_user(
+				serialized.init_data['email'],
+				serialized.init_data['username'],
+				serialized.init_data['password']
+		)
+		return Response(serialized.data, status=status.HTTP_201_CREATED)
+	else:
+		return Response(serialized._errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class AccountList(generics.ListCreateAPIView):
 	"""
-**GET** Get all accounts
+    **GET** Get all accounts
 
-**POST** Create new account
+    **POST** Create new account
 	"""
 	queryset = Account.objects.all()
-	serializer_class = BasicAccountSerializer
+	serializer_class = BaseAccountSerializer
 
 
 class AccountDetail(generics.RetrieveUpdateDestroyAPIView):
@@ -22,16 +37,11 @@ class AccountDetail(generics.RetrieveUpdateDestroyAPIView):
 
 class AccountBasic(generics.RetrieveUpdateDestroyAPIView):
 	queryset = Account.objects.all()
-	serializer_class = BasicAccountSerializer
-
-
-class AccountMoments(generics.ListCreateAPIView):
-	queryset = Moment.objects.all()
-	serializer_class = AccountMomentAccountSerializer
+	serializer_class = BaseAccountSerializer
 
 
 class AccountMe(generics.RetrieveUpdateDestroyAPIView):
-	serializer_class = BasicAccountSerializer
+	serializer_class = BaseAccountSerializer
 
 	def get_queryset(self):
 		return Account.objects.get(pk=self.request.user.pk)
