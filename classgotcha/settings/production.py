@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'rest_framework_docs',
     'rest_framework.authtoken',
     'storages',
+    'django_socketio',
     # myapp
     'classgotcha.apps.accounts',
     'classgotcha.apps.posts',
@@ -51,7 +52,9 @@ INSTALLED_APPS = [
     'classgotcha.apps.comments',
     'classgotcha.apps.groups',
     'classgotcha.apps.notes',
-    'classgotcha.apps.tasks'
+    'classgotcha.apps.tasks',
+    'classgotcha.apps.chat'
+
 ]
 
 MIDDLEWARE = [

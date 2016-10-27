@@ -19,15 +19,19 @@ from classgotcha.apps.groups import urls as groups_urls
 from classgotcha.apps.posts import urls as moments_urls
 from django.conf.urls import include, url
 from django.contrib import admin
+from classgotcha.apps.chat import urls as chat_urls
 
 admin.autodiscover()
 
 urlpatterns = [
+    url(r'^chat/',include(chat_urls)),
     url(r'^account/', include(accounts_urls)),
     url(r'^moment/', include(moments_urls)),
     url(r'^classroom/', include(classroom_urls)),
     url(r'^admin/', admin.site.urls),
     url(r'^group/', include(groups_urls)),
     url(r'^apidocs/', include('rest_framework_docs.urls')),
-    url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework'))
+    url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
+    url("", include('django_socketio.urls')),
+    
 ]
