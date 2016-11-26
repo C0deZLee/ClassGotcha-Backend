@@ -1,25 +1,21 @@
-{% load static %}
-
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-
-    <meta charset="utf-8">
-    <title>{% block title %}Chat{% endblock %}</title>
-    <link rel="stylesheet" href="{% static 'css/chat.css' %}">
-    {% block extra_css %}{% endblock %}
-    <script src="http://code.jquery.com/jquery-latest.min.js"></script>
-    <script>
-        var showForm = function() {
-            $('form').slideDown(function() {
-                $('form input[type="text"]').focus();
-            });
-        };
-    </script>
-    {% block extra_js %}{% endblock %}
-
+  <meta charset="utf-8">
+  <title>{% block title %}Django Channels Example{% endblock %}</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href='//fonts.googleapis.com/css?family=Raleway:400,300,600,200' rel='stylesheet' type='text/css'>
+  {% load staticfiles %}
+  <link rel="stylesheet" href="{% static '../static/css/normalize.css' %}">
+  <link rel="stylesheet" href="{% static '../static/css/skeleton.css' %}">
+  <link rel="stylesheet" href="{% static '../static/css/chat.css' %}">
 </head>
 <body>
-    <div id="main">{% block main %}{% endblock %}</div>
-    {% block form %}{% endblock %}
+  <div class="section">
+    <div class="container">
+      {% block content %}{% endblock content %}
+    </div>
+  </div>  
+  {% block afterbody %}{% endblock afterbody %}
 </body>
+</html>

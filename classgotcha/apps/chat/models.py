@@ -9,7 +9,7 @@ from django.utils import timezone
 class Room(models.Model):
 
     name = models.CharField(max_length=20)
-    slug = models.SlugField(blank=True)
+    label = models.SlugField(blank=True)
 
     class Meta:
         ordering = ("name",)
@@ -22,15 +22,25 @@ class Room(models.Model):
         return ("room", (self.slug,))
 
     def save(self, *args, **kwargs):
-        if not self.slug:
-            self.slug = slugify(self.name)
-        super(ChatRoom, self).save(*args, **kwargs)
+        if not self.label:
+            self.label = slugify(self.name)
+        super(Room, self).save(*args, **kwargs)
 
 class Message(models.Model):
     room  = models.ForeignKey(Room,related_name = 'messages')
-    handle = models.CharField()
-    message = models.CharField()
+    handle = models.CharField(max_length=140)
+    message = models.CharField(max_length=140)
     timestamp = models.DateTimeField(default = timezone.now,db_index = True)
+
+    def __unicode__(self):
+        return '[{timestamp}] {handle}: {message}'.format(**self.as_dict())
+
+    @property
+    def formatted_timestamp(self):
+        return self.timestamp.strftime('%b %-d %-I:%M %p')
+
+    def as_dict(self):
+        return {'handle': self.handle, 'message': self.message, 'timestamp': self.formatted_timestamp}
 
 
 
