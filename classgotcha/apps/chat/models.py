@@ -3,9 +3,10 @@ from __future__ import unicode_literals
 from django.db import models
 from django.template.defaultfilters import slugify
 from ..accounts.models import Account
+from django.utils import timezone
 
 
-class ChatRoom(models.Model):
+class Room(models.Model):
 
     name = models.CharField(max_length=20)
     slug = models.SlugField(blank=True)
@@ -25,12 +26,19 @@ class ChatRoom(models.Model):
             self.slug = slugify(self.name)
         super(ChatRoom, self).save(*args, **kwargs)
 
+class Message(models.Model):
+    room  = models.ForeignKey(Room,related_name = 'messages')
+    handle = models.CharField()
+    message = models.CharField()
+    timestamp = models.DateTimeField(default = timezone.now,db_index = True)
+
+
 
 class ChatUser(models.Model):
 
     name = models.ForeignKey(Account,max_length=20,related_name = "name")
     session = models.CharField(max_length=20)
-    room = models.ForeignKey(ChatRoom, related_name="users")
+    room = models.ForeignKey(Room, related_name="users")
 
     class Meta:
         ordering = ("name",)

@@ -32,6 +32,6 @@ urlpatterns = [
     url(r'^group/', include(groups_urls)),
     url(r'^apidocs/', include('rest_framework_docs.urls')),
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
-    url("", include('django_socketio.urls')),
+    
     
 ]

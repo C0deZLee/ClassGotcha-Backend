@@ -53,7 +53,8 @@ INSTALLED_APPS = [
     'classgotcha.apps.groups',
     'classgotcha.apps.notes',
     'classgotcha.apps.tasks',
-    'classgotcha.apps.chat'
+    'classgotcha.apps.chat',
+    'channels'
 
 ]
 
@@ -69,6 +70,17 @@ MIDDLEWARE = [
     # 'account.middleware.LocaleMiddleware',
     # 'account.middleware.TimezoneMiddleware',
 ]
+
+# ______ Channel Layers_____
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "asgi_redis.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [os.environ.get('REDIS_URL', 'redis://localhost:6379')],
+        },
+        "ROUTING": "chat.routing.channel_routing",
+    },
+}
 
 # ------ Templates ------
 
