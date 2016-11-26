@@ -10,4 +10,5 @@ drfdocs==0.0.11
 Markdown==2.6.7
 pytz==2016.7
 sqlparse==0.2.1
-django-socketio==0.3.9
+asgi-redis == 1.0.0
+channels==0.17.3
