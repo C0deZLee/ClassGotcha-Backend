@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <h1>Django Channels Example</h1>
+  <p class="deck">
+    This is a demo using <a href="http://channels.readthedocs.org/en/latest/">
+    Django Channels</a> to implement a simple WebSocket-based chat server.
+    You can see the <a href="https://github.com/jacobian/channels-example">
+    code on GitHub</a>, or try the app:
+  </p>
+  <p>
+    <a class="button button-primary" href="{% url 'new_room' %}">Create new chat room</a>
+  </p>
+  <p class="quiet">
+    Or, you can visit <code>{{ request.scheme }}://{{ request.get_host }}/any-path-you-want</code> 
+    to create a arbitrary room or join one whose name you know.
+  </p>
+{% endblock content %}

@@ -20,7 +20,7 @@ PROJECT_APP_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 PROJECT_ROOT = os.path.abspath(os.path.dirname(PROJECT_APP_ROOT))
 
 with open(os.path.join(PROJECT_APP_ROOT, 'settings/secret.txt')) as f:
-	SECRET_KEY = f.read().strip()
+    SECRET_KEY = f.read().strip()
 
 DEBUG = False
 
@@ -34,64 +34,77 @@ ROOT_URLCONF = 'classgotcha.urls'
 WSGI_APPLICATION = 'classgotcha.wsgi.application'
 
 INSTALLED_APPS = [
-	'django.contrib.admin',
-	'django.contrib.auth',
-	'django.contrib.contenttypes',
-	'django.contrib.sessions',
-	'django.contrib.messages',
-	'django.contrib.staticfiles',
-	'django.contrib.sites',
-	# installed
-	'rest_framework',
-	'rest_framework_docs',
-	'rest_framework.authtoken',
-	'rest_framework_jwt',
-	'storages',
-	# myapp
-	'classgotcha.apps.accounts',
-	'classgotcha.apps.posts',
-	'classgotcha.apps.classrooms',
-	'classgotcha.apps.comments',
-	'classgotcha.apps.groups',
-	'classgotcha.apps.notes',
-	'classgotcha.apps.tasks'
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+    'django.contrib.sites',
+    # installed
+    'rest_framework',
+    'rest_framework_docs',
+    'rest_framework.authtoken',
+    'storages',
+    'channels',
+    # myapp
+    'classgotcha.apps.accounts',
+    'classgotcha.apps.posts',
+    'classgotcha.apps.classrooms',
+    'classgotcha.apps.comments',
+    'classgotcha.apps.groups',
+    'classgotcha.apps.notes',
+    'classgotcha.apps.tasks',
+    'classgotcha.apps.chat',
+
 ]
 
 MIDDLEWARE = [
-	'django.middleware.security.SecurityMiddleware',
-	'django.contrib.sessions.middleware.SessionMiddleware',
-	'django.middleware.common.CommonMiddleware',
-	'django.middleware.csrf.CsrfViewMiddleware',
-	'django.contrib.auth.middleware.AuthenticationMiddleware',
-	'django.contrib.messages.middleware.MessageMiddleware',
-	'django.middleware.clickjacking.XFrameOptionsMiddleware',
-	# --- account support ---
-	# 'account.middleware.LocaleMiddleware',
-	# 'account.middleware.TimezoneMiddleware',
+    'django.middleware.security.SecurityMiddleware',
+    'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.common.CommonMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
+    'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.contrib.messages.middleware.MessageMiddleware',
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    # --- account support ---
+    # 'account.middleware.LocaleMiddleware',
+    # 'account.middleware.TimezoneMiddleware',
 ]
+
+# ______ Channel Layers_____
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "asgi_redis.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [os.environ.get('REDIS_URL', 'redis://localhost:6379')],
+        },
+        "ROUTING": "classgotcha.routing.channel_routing",
+    },
+}
 
 # ------ Templates ------
 
 TEMPLATES = [
-	{
-		'BACKEND': 'django.template.backends.django.DjangoTemplates',
-		'DIRS': [os.path.join(PROJECT_ROOT, 'templates')],
-		'APP_DIRS': True,
-		'OPTIONS': {
-			'context_processors': [
-				# Insert your TEMPLATE_CONTEXT_PROCESSORS here or use this
-				# list if you haven't customized them:
-				'django.contrib.auth.context_processors.auth',
-				'django.template.context_processors.debug',
-				'django.template.context_processors.i18n',
-				'django.template.context_processors.media',
-				'django.template.context_processors.static',
-				'django.template.context_processors.tz',
-				'django.contrib.messages.context_processors.messages',
-			],
-			'debug': False,
-		},
-	},
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': [os.path.join(PROJECT_ROOT, 'templates')],
+        'APP_DIRS': True,
+        'OPTIONS': {
+            'context_processors': [
+                # Insert your TEMPLATE_CONTEXT_PROCESSORS here or use this
+                # list if you haven't customized them:
+                'django.contrib.auth.context_processors.auth',
+                'django.template.context_processors.debug',
+                'django.template.context_processors.i18n',
+                'django.template.context_processors.media',
+                'django.template.context_processors.static',
+                'django.template.context_processors.tz',
+                'django.contrib.messages.context_processors.messages',
+            ],
+            'debug': False,
+        },
+    },
 ]
 
 # ------ Database ------
@@ -101,27 +114,28 @@ DATABASES = {
 
 }
 
+
 # ------ Password validation ------
 # https://docs.djangoproject.com/en/1.10/ref/settings/#auth-password-validators
 
 AUTH_PASSWORD_VALIDATORS = [
-	{
-		'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
-	},
-	{
-		'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
-	},
-	{
-		'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
-	},
-	{
-		'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
-	},
+    {
+        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+    },
 
 ]
 
 AUTHENTICATION_BACKENDS = [
-	'django.contrib.auth.backends.ModelBackend',
+    'django.contrib.auth.backends.ModelBackend',
 ]
 
 # ------ Internationalization -------
@@ -132,6 +146,7 @@ USE_I18N = True
 USE_L10N = True
 USE_TZ = True
 
+
 # ------ Static files (CSS, JavaScript, Images) ------
 # https://docs.djangoproject.com/en/1.10/howto/static-files/
 STATIC_URL = '/static/'
@@ -141,18 +156,17 @@ AUTH_USER_MODEL = 'accounts.Account'
 
 # ------ Rest framework ------
 REST_FRAMEWORK = {
-	# Use Django's standard `django.contrib.auth` permissions,
-	# or allow read-only access for unauthenticated users.
-	'DEFAULT_PERMISSION_CLASSES': [
-		'rest_framework.permissions.IsAuthenticated',
-		'rest_framework.permissions.DjangoModelPermissions',
-		'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
-	],
-	'DEFAULT_AUTHENTICATION_CLASSES': [
-		'rest_framework.authentication.SessionAuthentication',
-		'rest_framework.authentication.BasicAuthentication',
-		'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
-	],
+    # Use Django's standard `django.contrib.auth` permissions,
+    # or allow read-only access for unauthenticated users.
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated',
+        'rest_framework.permissions.DjangoModelPermissions',
+        'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
+    ],
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.BasicAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+    ]
 }
 
 # ------ Amazon S3 ------

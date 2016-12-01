@@ -20,10 +20,12 @@ from classgotcha.apps.groups import urls as groups_urls
 from classgotcha.apps.posts import urls as moments_urls
 from django.conf.urls import include, url
 from django.contrib import admin
+from classgotcha.apps.chat import urls as chat_urls
 
 admin.autodiscover()
 
 urlpatterns = [
+    url(r'^chat/',include(chat_urls)),
     url(r'^account/', include(accounts_urls)),
     url(r'^moment/', include(moments_urls)),
     url(r'^classroom/', include(classroom_urls)),
