@@ -1,33 +1,6 @@
 from models import Account
-from rest_framework import generics
-from rest_framework import status
-from rest_framework.decorators import api_view
-from rest_framework.response import Response
-from serializers import FullAccountSerializer, BaseAccountSerializer
-
-
-@api_view(['POST'])
-def register(request):
-	serialized = BaseAccountSerializer(data=request.data)
-	if serialized.is_valid():
-		Account.objects.create_user(
-				serialized.init_data['email'],
-				serialized.init_data['username'],
-				serialized.init_data['password']
-		)
-		return Response(serialized.data, status=status.HTTP_201_CREATED)
-	else:
-		return Response(serialized._errors, status=status.HTTP_400_BAD_REQUEST)
-
-
-class AccountList(generics.ListCreateAPIView):
-	"""
-    **GET** Get all accounts
-
-    **POST** Create new account
-	"""
-	queryset = Account.objects.all()
-	serializer_class = BaseAccountSerializer
+from rest_framework import generics, permissions
+from serializers import FullAccountSerializer, BaseAccountSerializer, AuthAccountSerializer
 
 
 class AccountDetail(generics.RetrieveUpdateDestroyAPIView):
@@ -40,54 +13,36 @@ class AccountBasic(generics.RetrieveUpdateDestroyAPIView):
 	serializer_class = BaseAccountSerializer
 
 
-class AccountMe(generics.RetrieveUpdateDestroyAPIView):
+class AccountCreate(generics.CreateAPIView):
+	queryset = Account.objects.all()
+	serializer_class = AuthAccountSerializer
+
+
+class AccountMe(generics.GenericAPIView):
 	serializer_class = BaseAccountSerializer
+	permission_classes = (permissions.IsAuthenticated,)
 
 	def get_queryset(self):
-		return Account.objects.get(pk=self.request.user.pk)
+		return Account.objects.filter(pk=self.request.user.pk)
 
-# @csrf_exempt
-# @api_view(['GET', 'POST'])
-# def accounts_list(request):
-# 	"""
-# 	List all code snippets, or create a new snippet.
-# 	"""
-# 	if request.method == 'GET':
-# 		account = Account.objects.all()
-# 		serializer = AccountSerializer(account, many=True)
-# 		return Response(serializer.data)
+# from rest_framework.decorators import detail_route
 #
-# 	elif request.method == 'POST':
-# 		data = JSONParser().parse(request)
-# 		serializer = AccountSerializer(data=data)
-# 		if serializer.is_valid():
-# 			serializer.save()
-# 			return Response(serializer.data, status=status.HTTP_201_CREATED)
-# 		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+# class AccountViewSet(viewsets.ModelViewSet):
+#     """
+#     This viewset automatically provides `list`, `create`, `retrieve`,
+#     `update` and `destroy` actions.
 #
+#     Additionally we also provide an extra `highlight` action.
+#     """
+#     queryset = Snippet.objects.all()
+#     serializer_class = SnippetSerializer
+#     permission_classes = (permissions.IsAuthenticatedOrReadOnly,
+#                           IsOwnerOrReadOnly,)
 #
-# @csrf_exempt
-# @api_view(['GET', 'PUT', 'DELETE'])
-# def accounts_detail(request, pk):
-# 	"""
-# 	Retrieve, update or delete a code snippet.
-# 	"""
-# 	try:
-# 		account = Account.objects.get(pk=pk)
-# 	except Account.DoesNotExist:
-# 		return Response(status=status.HTTP_404_NOT_FOUND)
+#     @detail_route(renderer_classes=[renderers.StaticHTMLRenderer])
+#     def highlight(self, request, *args, **kwargs):
+#         snippet = self.get_object()
+#         return Response(snippet.highlighted)
 #
-# 	if request.method == 'GET':
-# 		serializer = AccountSerializer(account)
-# 		return Response(serializer.data)
-#
-# 	elif request.method == 'PUT':
-# 		serializer = AccountSerializer(account, data=request.data)
-# 		if serializer.is_valid():
-# 			serializer.save()
-# 			return Response(serializer.data)
-# 		return Response(serializer.errors, status=status.HTTP_404_NOT_FOUND)
-#
-# 	elif request.method == 'DELETE':
-# 		account.delete()
-# 		return Response(status=status.HTTP_204_NO_CONTENT)
+#     def perform_create(self, serializer):
+#         serializer.save(owner=self.request.user)

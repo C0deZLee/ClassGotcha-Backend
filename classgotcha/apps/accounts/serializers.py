@@ -29,7 +29,6 @@ class FullAccountSerializer(serializers.ModelSerializer):
 		          'teaches', 'classrooms', 'comments',
 		          'joined_groups', 'created_groups',
 		          'notes', 'posts', 'moments', 'tasks',)
-		write_only_fields = ('password',)
 		read_only_fields = ('is_admin', 'is_student', 'is_professor',
 		                    'created', 'updated',)
 
@@ -41,6 +40,17 @@ class BaseAccountSerializer(serializers.ModelSerializer):
 		          'first_name', 'mid_name', 'last_name',
 		          'gender', 'birthday', 'school_year',
 		          'major', 'avatar')
-		write_only_fields = ('password',)
 		read_only_fields = ('is_admin', 'is_student', 'is_professor',
 		                    'created', 'updated',)
+
+
+class AuthAccountSerializer(serializers.ModelSerializer):
+	class Meta:
+		model = Account
+		fields = ('email', 'username')
+		extra_kwargs = {'password': {'write_only': True}}
+
+	# def create(self, validated_data):
+	# 	account = Account(email=validated_data['email'], username=validated_data['username'])
+	# 	account.set_password(validated_data['password'])
+	# 	account.save()

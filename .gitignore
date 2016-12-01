@@ -1,0 +1,27 @@
+# python cache
+*.py[oc]
+__pycache__/
+
+# IDE files
+.idea/
+*.sublime-*
+
+# Local files
+local/env/*
+local/tmp/*
+.editorconfig
+.eslintrc
+build/
+client/
+
+# static files
+statics/node_modules
+
+# migrations
+classgotcha/apps/accounts/migrations/*
+classgotcha/apps/classrooms/migrations/*
+classgotcha/apps/comments/migrations/*
+classgotcha/apps/groups/migrations/*
+classgotcha/apps/notes/migrations/*
+classgotcha/apps/posts/migrations/*
+classgotcha/apps/tasks/migrations/*
