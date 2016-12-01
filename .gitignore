@@ -1,5 +1,5 @@
 # python cache
-*.py[oc]
+*.pyc
 __pycache__/
 
 # IDE files
