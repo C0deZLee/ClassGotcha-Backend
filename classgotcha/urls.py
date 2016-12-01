@@ -13,6 +13,7 @@ Including another URLconf
     1. Import the include() function: from django.conf.urls import url, include
     2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
+
 from classgotcha.apps.accounts import urls as accounts_urls
 from classgotcha.apps.classrooms import urls as classroom_urls
 from classgotcha.apps.groups import urls as groups_urls
@@ -29,5 +30,5 @@ urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^group/', include(groups_urls)),
     url(r'^apidocs/', include('rest_framework_docs.urls')),
-    url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework'))
+    url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
 ]
