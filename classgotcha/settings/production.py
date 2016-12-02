@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.sites',
+    'django_extensions',
     # installed
     'rest_framework',
     'rest_framework_docs',
@@ -56,6 +57,7 @@ INSTALLED_APPS = [
     'classgotcha.apps.notes',
     'classgotcha.apps.tasks',
     'classgotcha.apps.chat',
+
 
 ]
 

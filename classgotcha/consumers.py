@@ -4,6 +4,7 @@ import logging
 from channels import Group
 from channels.sessions import channel_session
 from classgotcha.apps.chat.models import Room
+from classgotcha.apps.chat.scripts.Conversation import run
 
 log = logging.getLogger(__name__)
 
@@ -65,10 +66,33 @@ def ws_receive(message):
     if data:
         log.debug('chat message room=%s handle=%s message=%s', 
             room.label, data['handle'], data['message'])
+        
+
+        # using ibm watson backend
+        #[intent, entity,response]=ibm_parse(data)
+        try :
+            context = json.loads(room.messages.latest().context)
+            
+        except:
+            context = None
+
         m = room.messages.create(**data)
+        Group('chat-'+label, channel_layer=message.channel_layer).send({'text': json.dumps(m.as_dict())})
+
+        response = json.loads(json.dumps(run(message = data['message'],context = context)))
+   
+        response_text = response['output']['text'][0]
+        context = json.loads(json.dumps(response['context']))
+        
+        #print response
+        m1 = room.messages.create(handle = 'robot',message = response_text, context = json.dumps(context)) 
+
+        # =backendhandler(intent, entity)
+        #room.message.create(response)
 
         # See above for the note about Group
-        Group('chat-'+label, channel_layer=message.channel_layer).send({'text': json.dumps(m.as_dict())})
+        
+        Group('chat-'+label, channel_layer=message.channel_layer).send({'text': json.dumps(m1.as_dict())})
 
 @channel_session
 def ws_disconnect(message):

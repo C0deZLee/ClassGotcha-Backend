@@ -14,3 +14,4 @@ pytz==2016.7
 sqlparse==0.2.1
 asgi-redis == 1.0.0
 channels==0.17.3
+watson-developer-cloud==0.22.0

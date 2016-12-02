@@ -10,6 +10,7 @@ class Room(models.Model):
 
     name = models.CharField(max_length=20)
     label = models.SlugField(blank=True)
+    
 
     class Meta:
         ordering = ("name",)
@@ -28,6 +29,7 @@ class Room(models.Model):
 
 class Message(models.Model):
     room  = models.ForeignKey(Room,related_name = 'messages')
+    context = models.CharField(max_length = 140,blank = True)
     handle = models.CharField(max_length=140)
     message = models.CharField(max_length=140)
     timestamp = models.DateTimeField(default = timezone.now,db_index = True)
@@ -41,6 +43,9 @@ class Message(models.Model):
 
     def as_dict(self):
         return {'handle': self.handle, 'message': self.message, 'timestamp': self.formatted_timestamp}
+
+    class Meta:
+      get_latest_by = 'timestamp'
 
 
 
