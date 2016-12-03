@@ -4,7 +4,7 @@ import logging
 from channels import Group
 from channels.sessions import channel_session
 from classgotcha.apps.chat.models import Room
-from classgotcha.apps.chat.scripts.Conversation import run
+from classgotcha.apps.chat.scripts.Conversation import run,Backendhandler
 
 log = logging.getLogger(__name__)
 
@@ -67,9 +67,14 @@ def ws_receive(message):
         log.debug('chat message room=%s handle=%s message=%s', 
             room.label, data['handle'], data['message'])
         
-
+        ######################## Obtaining the username (need to fix, get the username from front end)
+        try:
+            user_name = data['handle']
+        except:
+            user_name = "adminjiba"
+        #########################
         # using ibm watson backend
-        #[intent, entity,response]=ibm_parse(data)
+        
         try :
             context = json.loads(room.messages.latest().context)
             
@@ -83,11 +88,16 @@ def ws_receive(message):
    
         response_text = response['output']['text'][0]
         context = json.loads(json.dumps(response['context']))
-        
-        #print response
+        try:
+            node = json.loads(json.dumps(response['context']['system']['dialog_stack'][0]['dialog_node']))
+            intent = json.loads(json.dumps(response['intents'][0]['intent']))
+            entity = json.loads(json.dumps(response['entities'][0]['entity']))
+        except:
+            pass
+        print node
         m1 = room.messages.create(handle = 'robot',message = response_text, context = json.dumps(context)) 
-
-        # =backendhandler(intent, entity)
+        toreturn = Backendhandler(user_name,intent,entity,node)
+        print toreturn
         #room.message.create(response)
 
         # See above for the note about Group
