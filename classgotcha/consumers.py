@@ -83,21 +83,40 @@ def ws_receive(message):
 
         m = room.messages.create(**data)
         Group('chat-'+label, channel_layer=message.channel_layer).send({'text': json.dumps(m.as_dict())})
-
+        
         response = json.loads(json.dumps(run(message = data['message'],context = context)))
-   
+        #print response
         response_text = response['output']['text'][0]
         context = json.loads(json.dumps(response['context']))
         try:
-            node = json.loads(json.dumps(response['context']['system']['dialog_stack'][0]['dialog_node']))
-            intent = json.loads(json.dumps(response['intents'][0]['intent']))
-            entity = json.loads(json.dumps(response['entities'][0]['entity']))
+            #node = json.loads(json.dumps(response['context']['system']['dialog_stack'][-1]['dialog_node']))
+            node = json.loads(json.dumps(response['output']['nodes_visited'][-1]))
+            print node
+        except: 
+            node = "root"
+
+        try:
+            intent = []
+            for i in range(0,len(response['intents'])):
+                intent.append(json.loads(json.dumps(response['intents'][i]['intent'])))
+        except:
+            intent = "None"
+        try:
+            entity = []
+            for i in range(0,len(response['entities'])):
+                entity.append(json.loads(json.dumps(response['entities'][i]['value'])))
+        except:
+            print "entity bug"
+            entity = "None"
+
+        m1 = room.messages.create(handle = 'robot',message = response_text, context = json.dumps(context)) 
+        try:    
+        
+            toreturn = Backendhandler(user_name,intent,entity,node)
+            print toreturn
         except:
             pass
-        print node
-        m1 = room.messages.create(handle = 'robot',message = response_text, context = json.dumps(context)) 
-        toreturn = Backendhandler(user_name,intent,entity,node)
-        print toreturn
+        
         #room.message.create(response)
 
         # See above for the note about Group
