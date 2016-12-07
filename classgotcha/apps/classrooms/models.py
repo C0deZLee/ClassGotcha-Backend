@@ -6,7 +6,7 @@ from ..accounts.models import Account, Major
 class Classroom(models.Model):
 	# Basic
 	class_name = models.CharField(max_length=100)
-	class_number = models.IntegerField()
+	class_number = models.CharField(max_length=10)
 	class_code = models.IntegerField()
 	syllabus = models.URLField(blank=True, null=True)
 	description = models.TextField(blank=True)

@@ -1,6 +1,8 @@
 import json
 from watson_developer_cloud import ConversationV1
 import ast
+from classgotcha.apps.notes.models import Note 
+from classgotcha.apps.notes.models import Classroom
 
 
 Backend_apis = {}
@@ -74,9 +76,21 @@ class AIBackend():
   def get_document_for_course(self,intent,entity):
 
     if entity[1]=="syllabus":
-      return entity[0],intent
+      classroom = Classroom.objects.filter(class_number = entity[0])
+
+      return entity[0],intent,classroom.syllabus
     elif entity[1] =="note":
-      return entity[0],intent
+      # TODO: instead of give the url of file, give the url of the page showing all the files
+      classroom = Classroom.objects.filter(class_number = entity[0])
+      notes = classroom.notes
+      toreturn = []
+      for note in notes:
+        toreturn.append(note.file)
+
+
+      #notes = Note.objects.filter(classroom=entity[0])
+
+      return entity[0],intent,toreturn
 
   def find_study_group(self,intent,entity):
     # the course is entity[0]

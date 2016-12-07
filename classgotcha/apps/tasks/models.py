@@ -7,7 +7,7 @@ from ..groups.models import Group
 
 class Task(models.Model):
 	task_name = models.CharField(max_length=50)
-	task_des = models.CharField(max_length=500, blank=True)
+	task_des = models.CharField(max_length=500, blank=True) #task_description
 	start = models.DateTimeField(blank=True, null=True)
 	end = models.DateTimeField(blank=True, null=True)
 	due_date = models.DateTimeField(blank=True, null=True)
