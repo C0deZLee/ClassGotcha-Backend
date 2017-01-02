@@ -8,6 +8,12 @@ class Major(models.Model):
 	major_college = models.CharField(max_length=100)
 
 
+class Avatar(models.Model):
+	full_image = models.ImageField(upload_to='avatars', null=True, blank=True)
+	thumbnail = models.ImageField(upload_to='avatars', null=True, blank=True)
+	created = models.DateTimeField(auto_now_add=True)
+
+
 class AccountManager(BaseUserManager):
 	def create_user(self, email, password=None, **kwargs):
 		"""
@@ -54,15 +60,7 @@ class Account(AbstractBaseUser, PermissionsMixin):
 	gender = models.CharField(max_length=40, blank=True)
 	birthday = models.DateField(null=True, blank=True)
 	school_year = models.CharField(max_length=40, blank=True)
-	avatar = models.URLField(blank=True)
-	# models.ImageField(
-	#     upload_to="public/uploads/avatars/",
-	#     height_field="qr_image_height",
-	#     width_field="qr_image_width",
-	#     null=True,
-	#     blank=True,
-	#     editable=False
-	# )
+	avatar = models.ForeignKey(Avatar, blank=True, null=True, related_name='user_profiles_avatars')
 	# Relations
 	friends = models.ManyToManyField("self")
 	major = models.ForeignKey(Major, blank=True, null=True)

@@ -43,6 +43,12 @@
                       <span class="nav-label">Chat</span>
                   </a>
               </li>
+              <li>
+                  <a href="/#/upload/">
+                     <i class="fa fa-laptop"></i>
+                     <span class="nav-label">Upload</span>
+                  </a>
+              </li>
               <!-- menu servies start here -->
 
               <!-- <li

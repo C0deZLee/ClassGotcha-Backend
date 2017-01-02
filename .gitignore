@@ -5,6 +5,7 @@ __pycache__/
 # IDE files
 .idea/
 *.sublime-*
+.vscode/
 
 # Local files
 local/env/*
@@ -25,3 +26,4 @@ classgotcha/apps/groups/migrations/*
 classgotcha/apps/notes/migrations/*
 classgotcha/apps/posts/migrations/*
 classgotcha/apps/tasks/migrations/*
+.DS_Store

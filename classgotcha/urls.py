@@ -26,7 +26,7 @@ admin.autodiscover()
 
 urlpatterns = [
     url(r'^chat/',include(chat_urls)),
-    url(r'^account/', include(accounts_urls)),
+    url(r'^account', include(accounts_urls)),
     url(r'^moment/', include(moments_urls)),
     url(r'^classroom/', include(classroom_urls)),
     url(r'^admin/', admin.site.urls),

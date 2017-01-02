@@ -3,7 +3,7 @@ from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.models import Group
 
 from forms import UserChangeForm, UserCreationForm
-from models import Account, Major
+from models import Account, Major, Avatar
 
 
 class AccountAdmin(UserAdmin):
@@ -14,7 +14,7 @@ class AccountAdmin(UserAdmin):
     # The fields to be used in displaying the User model.
     # These override the definitions on the base UserAdmin
     # that reference specific fields on auth.User.
-    list_display = ('email', 'username', 'get_full_name', 'is_admin')
+    list_display = ('id','email', 'username', 'get_full_name', 'is_admin')
     list_filter = ['is_admin', 'school_year']
     fieldsets = (
         (None, {'fields': ('email', 'username', 'password')}),
@@ -39,9 +39,12 @@ class MajorAdmin(admin.ModelAdmin):
     list_display = ('major_short', 'major_full', 'major_college')
     list_filter = ['major_college']
 
+class AvatarAdmin(admin.ModelAdmin):
+    list_display = ('id', 'full_image')
 
 # Now register the new UserAdmin...
 admin.site.register(Account, AccountAdmin)
 admin.site.register(Major, MajorAdmin)
+admin.site.register(Avatar, AvatarAdmin)
 # ... and, since we're not using Django's built-in permissions, unregister the Group model from admin.
 admin.site.unregister(Group)
