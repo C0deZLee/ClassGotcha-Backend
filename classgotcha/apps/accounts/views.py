@@ -85,7 +85,7 @@ class AccountViewSet(viewsets.ModelViewSet):
 				return Response(status=200)
 
 	@detail_route(
-		methods=['post', 'put', 'get'],
+		methods=['post', 'put', 'get', 'option'],
 		permission_classes=(IsAuthenticatedOrReadOnly,),
 		serializer_class=AvatarSerializer,
 		parser_classes=(FormParser, MultiPartParser,)
