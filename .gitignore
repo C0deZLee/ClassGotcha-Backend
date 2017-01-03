@@ -13,7 +13,6 @@ local/tmp/*
 .editorconfig
 .eslintrc
 build/
-client/
 
 # static files
 statics/node_modules
