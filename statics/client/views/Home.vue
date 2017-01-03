@@ -1,6 +1,4 @@
 <template>
-  <div class="pages">
-
       <div class="wrapper wrapper-content">
           <div class="row  border-bottom white-bg dashboard-header">
             <div class="col-sm-4">
@@ -42,7 +40,8 @@
                   <div ui-calendar="uiConfig.calendar"  class="calendar" ng-model="eventSources"></div>
             </div>
           </div>
-      </div>
+
+
   <div class="row">
     <div class="col-lg-12">
       <div class="wrapper wrapper-content">
@@ -323,7 +322,7 @@
       </div>
       </div>
     </div>
-  </div>
+
   <div class="small-chat-box ng-small-chat fadeInRight animated">
 
       <div class="heading" draggable="true">
@@ -399,13 +398,13 @@
           </button> </span></div>
       </div>
 
-  </div>
+
   <div id="small-chat">
       <span class="badge badge-warning pull-right">5</span>
       <a class="open-small-chat">
           <i class="fa fa-comments"></i>
       </a>
-  </div>
+
 
   <div class="modal inmodal" id="uploadAvatar" tabindex="-1" role="dialog" aria-hidden="true"
        style="display: none;">
@@ -425,16 +424,16 @@
           </div>
       </div>
   </div>
-  </div>
+
 
 </template>
 
 <script>
-// import Counter from '../components/Counter'
-//
-// export default {
-//   components: {
-//     Counter
-//   }
-// }
+  // import Counter from '../components/Counter'
+  //
+  // export default {
+  //   components: {
+  //     Counter
+  //   }
+  // }
 </script>
