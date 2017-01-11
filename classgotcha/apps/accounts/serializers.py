@@ -36,13 +36,29 @@ from rest_framework import serializers
 class AccountSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = Account
-		fields = ('id', 'email', 'username',
-		          'first_name', 'mid_name', 'last_name',
-		          'gender', 'birthday', 'school_year',
-		          'major', 'avatar')
-		read_only_fields = ('is_admin', 'is_student', 'is_professor',
-		                    'created', 'updated',)
-		extra_kwargs = {'password': {'write_only': True}}
+		fields = ('id', 'email', 'username', 'password', 'first_name', 'mid_name', 'last_name',
+		          'gender', 'birthday', 'school_year', 'major', 'avatar',
+		          'is_admin', 'is_student', 'is_professor', 'created', 'updated',)
+		read_only_fields = ('is_admin', 'is_student', 'is_professor', 'created', 'updated',)
+		write_only_fields = ('password',)
+
+	def create(self, validated_data):
+		account = Account(email=validated_data['email'], username=validated_data['username'])
+		account.set_password(validated_data['password'])
+		account.save()
+		return account
+
+	# only for updating password
+	def update(self, instance, validated_data):
+		if not validated_data['password']:
+			# TODO: update profile
+			instance.save()
+		else:
+			# instance.update
+			instance.set_password(validated_data['password'])
+			instance.save()
+		return instance
+
 
 
 class AvatarSerializer(serializers.ModelSerializer):
@@ -52,13 +68,20 @@ class AvatarSerializer(serializers.ModelSerializer):
 		read_only_fields = ('created',)
 
 
-class AuthAccountSerializer(serializers.ModelSerializer):
-	class Meta:
-		model = Account
-		fields = ('email', 'username')
-		extra_kwargs = {'password': {'write_only': True}}
+# class AuthAccountSerializer(serializers.ModelSerializer):
+# 	class Meta:
+# 		model = Account
+# 		fields = ('email', 'username')
+# 		extra_kwargs = {'password': {'write_only': True}}
+#
+# 	def create(self, validated_data):
+# 		account = Account(email=validated_data['email'], username=validated_data['username'])
+# 		account.set_password(validated_data['password'])
+# 		account.save()
+# 		return account
+#
+# 	def change_password(self, instance, validated_data):
+# 		instance.set_password(validated_data['password'])
+# 		instance.save()
+# 		return instance
 
-	# def create(self, validated_data):
-	# 	account = Account(email=validated_data['email'], username=validated_data['username'])
-	# 	account.set_password(validated_data['password'])
-	# 	account.save()

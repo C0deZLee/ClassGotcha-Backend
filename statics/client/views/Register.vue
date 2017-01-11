@@ -84,7 +84,7 @@
 
 <script>
 export default {
-  name: 'login'
+  name: 'register'
 }
 
 // UI

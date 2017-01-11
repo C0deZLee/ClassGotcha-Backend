@@ -13,24 +13,27 @@ Including another URLconf
     1. Import the include() function: from django.conf.urls import url, include
     2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
-
+from rest_framework_jwt.views import obtain_jwt_token, refresh_jwt_token, verify_jwt_token
 from classgotcha.apps.accounts import urls as accounts_urls
 from classgotcha.apps.classrooms import urls as classroom_urls
 from classgotcha.apps.groups import urls as groups_urls
+from classgotcha.apps.chat import urls as chat_urls
 from classgotcha.apps.posts import urls as moments_urls
 from django.conf.urls import include, url
 from django.contrib import admin
-from classgotcha.apps.chat import urls as chat_urls
 
 admin.autodiscover()
 
 urlpatterns = [
     url(r'^chat/',include(chat_urls)),
-    url(r'^account', include(accounts_urls)),
+    url(r'^account/', include(accounts_urls)),
     url(r'^moment/', include(moments_urls)),
     url(r'^classroom/', include(classroom_urls)),
     url(r'^admin/', admin.site.urls),
     url(r'^group/', include(groups_urls)),
     url(r'^apidocs/', include('rest_framework_docs.urls')),
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
+    url(r'^api-token-auth/', obtain_jwt_token),
+    url(r'^api-token-refresh/', refresh_jwt_token),
+    url(r'^api-token-verify/', verify_jwt_token),
 ]

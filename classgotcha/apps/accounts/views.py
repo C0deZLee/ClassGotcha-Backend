@@ -6,7 +6,7 @@ from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework.decorators import detail_route
 from rest_framework.permissions import IsAuthenticated, AllowAny, IsAuthenticatedOrReadOnly
 
-from serializers import AccountSerializer, AuthAccountSerializer, AvatarSerializer
+from serializers import AccountSerializer, AvatarSerializer
 
 from permissions import IsAdminOrSelf
 
@@ -24,11 +24,11 @@ class AccountViewSet(viewsets.ModelViewSet):
 
 	Additionally we also provide an extra `highlight` action.
 	"""
-	queryset = Account.objects.all()
+	queryset = Account.objects.exclude(is_superuser=1)
 	permission_classes = (IsAuthenticatedOrReadOnly,)
 	serializer_class = AccountSerializer
 	parser_classes = (FormParser, MultiPartParser,)
-	# pagination_class =
+	lookup_field = 'email'
 
 	@detail_route(
 		methods=['put', 'get', 'delete'],
@@ -117,42 +117,6 @@ class AccountMe(generics.GenericAPIView):
 	def get_queryset(self):
 		return Account.objects.filter(pk=self.request.user.pk)
 
-
-# class AvatarUpload(viewsets.ModelViewSet):
-# 	queryset = Account.objects.all()
-# 	parser_classes = (MultiPartParser, FormParser)
-# 	serializer_class = AvatarSerializer
-#
-# 	def upload_avatar(self, request, format=None):
-# 		upload = request.FILES['avatar']
-# 		if not upload:
-# 			return Response(status=404)
-#
-# 		filename = 'myfile'
-# 		with open(filename, 'wb+') as temp_file:
-# 			for chunk in upload.chunks():
-# 				temp_file.write(chunk)
-# 		avatar = open(filename)  # there you go
-# 		new_avatar = Avatar(full_image=avatar)
-# 		new_avatar.save()
-# 		return Response(status=200)
-#
-# #
-# 	file_obj = request.FILES['file']
-#
-# 	upload = Account(user=request.user, avatar=file_obj.seek(0))
-# 	upload.save()
-#
-# 	conn = S3Connection(settings.AWS_ACCESS_KEY, settings.AWS_SECRET_KEY)
-# 	k = Key(conn.get_bucket(settings.AWS_S3_BUCKET))
-# 	k.key = 'upls/%s/%s.png' % (request.user.id, upload.key)
-# 	k.set_contents_from_string(file_obj.read())
-#
-# 	serializer = UploadSerializer(upload)
-#
-# 	return Response(serializer.data, status=201)
-
-# from rest_framework.decorators import detail_route
 #
 # class AccountViewSet(viewsets.ModelViewSet):
 #     """
