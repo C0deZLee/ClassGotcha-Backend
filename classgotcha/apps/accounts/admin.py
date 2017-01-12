@@ -14,12 +14,12 @@ class AccountAdmin(UserAdmin):
     # The fields to be used in displaying the User model.
     # These override the definitions on the base UserAdmin
     # that reference specific fields on auth.User.
-    list_display = ('id','email', 'username', 'get_full_name', 'is_admin')
-    list_filter = ['is_admin', 'school_year']
+    list_display = ('id', 'email', 'username', 'get_full_name', 'school_year', 'is_staff')
+    list_filter = ['is_staff', 'school_year']
     fieldsets = (
         (None, {'fields': ('email', 'username', 'password')}),
         ('Personal info', {'fields': ('first_name', 'last_name', 'gender', 'school_year', 'major', 'avatar')}),
-        ('Permissions', {'fields': ('is_admin', 'is_student', 'is_professor')}),
+        ('Permissions', {'fields': ('is_staff', 'is_student', 'is_professor')}),
     )
     readonly_fields = ('created', 'updated')
     # add_fieldsets is not a standard ModelAdmin attribute. UserAdmin

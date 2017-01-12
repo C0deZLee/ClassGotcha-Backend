@@ -7,33 +7,46 @@ from rest_framework.routers import DefaultRouter
 # router.register(r'', views.AccountViewSet)
 # urlpatterns = router.urls
 
-account_register = views.AccountViewSet.as_view({
-	'post': 'create'
-})
 
-account_list = views.AccountViewSet.as_view({
-	'get': 'list'
-})
+account_reset_password = views.AccountViewSet.as_view({'post': 'reset_password'})
+
+account_list = views.AccountViewSet.as_view({'get': 'list'})
 
 account_detail = views.AccountViewSet.as_view({
 	'get': 'retrieve',
-	'put': 'update',
-	'delete': 'remove',
+	'post': 'update',
+	'delete': 'destroy'
 })
 
 account_avatar = views.AccountViewSet.as_view({
 	'post': 'avatar'
 })
+account_friends = views.AccountViewSet.as_view({
+	'get': 'friend_list',
+})
 
+account_add_friends = views.AccountViewSet.as_view({
+	'post': 'friends',
+	'delete': 'friends'
+})
+
+account_me = views.AccountViewSet.as_view({
+	'get': 'me',
+})
 
 urlpatterns = [
-	url(r'auth-token/$', obtain_jwt_token),
-	url(r'auth-refresh/$', refresh_jwt_token),
-	url(r'auth-verify/$', verify_jwt_token),
+	url(r'friends/(?P<pk>[0-9]+)/$', account_add_friends, name='add_friend'),
+	url(r'friends/$', account_friends, name='friend'),
 
-	# url(r'upload/$', views.AccountViewSet.avatar),
-	url(r'register/$', account_register, name='register'),
-	# url(r'')
-	# url(r'(?P<pk>[0-9]+)/$', views.AccountBasic.as_view()),
-	# url(r'(?P<pk>[0-9]+)/detail$', views.AccountDetail.as_view()),
+	url(r'login/$', obtain_jwt_token),
+	url(r'login-refresh/$', refresh_jwt_token),
+	url(r'login-verify/$', verify_jwt_token),
+
+	url(r'(?P<pk>[0-9]+)/avatar/$', account_avatar, name='avatar'),
+	url(r'(?P<pk>[0-9]+)/$', account_detail, name='detail'),
+
+	url(r'register/$', views.account_register, name='register'),
+	url(r'reset/$', account_reset_password, name='reset_pass'),
+	url(r'all/$', account_list, name='all'),
+	url(r'me/$', account_me, name='me'),
 ]

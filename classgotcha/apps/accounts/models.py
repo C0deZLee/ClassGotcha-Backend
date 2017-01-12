@@ -35,7 +35,7 @@ class AccountManager(BaseUserManager):
 	def create_superuser(self, email, password, **kwargs):
 		account = self.create_user(email, password, **kwargs)
 
-		account.is_admin = True
+		account.is_staff = True
 		account.is_superuser = True
 		account.save()
 
@@ -47,7 +47,8 @@ class Account(AbstractBaseUser, PermissionsMixin):
 	email = models.EmailField(unique=True)
 	username = models.CharField(max_length=40, unique=True)
 	# Rule
-	is_admin = models.BooleanField(default=False)
+	is_staff = models.BooleanField(default=False)
+	is_active = models.BooleanField(default=True)
 	is_student = models.BooleanField(default=True)
 	is_professor = models.BooleanField(default=False)
 	# Timestamp
@@ -101,5 +102,5 @@ class Account(AbstractBaseUser, PermissionsMixin):
 		pass
 
 	@property
-	def is_staff(self):
-		return True
+	def is_admin(self):
+		return self.is_staff

@@ -28,7 +28,7 @@ ALLOWED_HOSTS = []
 
 SITE_ID = 1
 
-# ------ Application definition ------
+# ------ Application ------
 
 ROOT_URLCONF = 'classgotcha.urls'
 WSGI_APPLICATION = 'classgotcha.wsgi.application'
@@ -45,7 +45,6 @@ INSTALLED_APPS = [
     # installed
     'rest_framework',
     'rest_framework_docs',
-    'rest_framework.authtoken',
     'rest_framework_jwt',
     'storages',
     'channels',
@@ -160,17 +159,6 @@ STATIC_URL = '/templates/statics/'
 # ------ Custom User ------
 AUTH_USER_MODEL = 'accounts.Account'
 
-# ------ Rest framework ------
-REST_FRAMEWORK = {
-    # Use Django's standard `django.contrib.auth` permissions,
-    # or allow read-only access for unauthenticated users.
-    'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.IsAuthenticated',
-    ],
-    'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework.authentication.SessionAuthentication',
-    ]
-}
 
 # ------ Amazon S3 ------
 DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
@@ -203,3 +191,4 @@ CORS_ALLOW_HEADERS = (
     'x-requested-with',
     'cache-control'
 )
+
