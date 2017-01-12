@@ -1,15 +1,15 @@
+import os
 from models import Account, Avatar
 from django.shortcuts import get_object_or_404
+from django.core.files.base import File
 from rest_framework_jwt.settings import api_settings
 from rest_framework import generics, viewsets, status
 from rest_framework.response import Response
-from rest_framework.parsers import FormParser, MultiPartParser
-from rest_framework.decorators import detail_route, list_route, api_view, permission_classes
+from rest_framework.parsers import FormParser, MultiPartParser, FileUploadParser
+from rest_framework.decorators import detail_route, list_route, api_view, permission_classes, parser_classes
 from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly, AllowAny
-from permissions import IsAnonymous
 
 from serializers import AccountSerializer, AvatarSerializer
-
 
 from ..classrooms.models import Classroom
 from ..classrooms.serializers import ClassroomSerializer
@@ -27,6 +27,28 @@ def account_register(request):
 	payload = jwt_payload_handler(user)
 	token = jwt_encode_handler(payload)
 	return Response({'token': token}, status=status.HTTP_201_CREATED)
+
+
+@api_view(['POST', 'OPTION'])
+@permission_classes((IsAuthenticated,))
+@parser_classes((MultiPartParser, FormParser,))
+def account_avatar(request):
+	try:
+		upload = request.FILES['file']
+	except:
+		return Response(status=status.HTTP_400_BAD_REQUEST)
+	filename, file_extension = os.path.splitext(upload.name)
+	filename = str(request.user.id) + file_extension
+	with open(filename, 'wb+') as temp_file:
+		for chunk in upload.chunks():
+			temp_file.write(chunk)
+	avatar = open(filename)  # there you go
+	new_file = File(file=avatar)
+	new_avatar = Avatar(full_image=new_file)
+	new_avatar.save()
+	request.user.avatar = new_avatar
+	request.user.save()
+	return Response(status=status.HTTP_200_OK)
 
 
 class AccountViewSet(viewsets.ViewSet):
@@ -128,116 +150,6 @@ class AccountViewSet(viewsets.ViewSet):
 			classroom.save()
 			return Response(status=200)
 
-	@detail_route(
-		methods=['post', 'put', 'get', 'option'],
-		permission_classes=(IsAuthenticatedOrReadOnly,),
-		serializer_class=AvatarSerializer,
-		parser_classes=(FormParser, MultiPartParser,)
-	)
-	def avatar(self, request, pk=None):
-		if request.method in ['POST', 'OPTION']:
-			upload = request.FILES['avatar']
-			if not upload:
-				return Response(status=400)
-
-			filename = 'myfile'
-			with open(filename, 'wb+') as temp_file:
-				for chunk in upload.chunks():
-					temp_file.write(chunk)
-			avatar = open(filename)  # there you go
-			new_avatar = Avatar(full_image=avatar)
-			new_avatar.save()
-			return Response(status=200)
-		else:
-			avatar = request.user.avatar
-			serializer = AvatarSerializer(avatar)
-			return Response(serializer.data)
-
-#
-# class AccountViewSet(viewsets.ModelViewSet):
-#
-# 	queryset = Account.objects.exclude(is_superuser=1)
-# 	# permission_classes = (IsAuthenticatedOrReadOnly,)
-# 	serializer_class = AccountSerializer
-# 	parser_classes = (FormParser, MultiPartParser,)
-# 	lookup_field = 'pk'
-#
-# 	@detail_route(methods=['post', 'get', 'delete'], permission_classes=(IsAuthenticated,))
-# 	def friends(self, request, pk=None):
-# 		if request.method == 'GET':
-# 			friends = request.user.friends
-# 			serializer = AccountSerializer(friends, many=True)
-# 			return Response(serializer.data)
-# 		elif request.method == 'POST':
-# 			new_friend = Account.objects.get(pk=pk)
-# 			if not new_friend:
-# 				return Response(status=404)
-# 			else:
-# 				request.user.friends.add(new_friend)
-# 				request.user.save()
-# 				return Response(status=200)
-# 		else:
-# 			was_friend = Account.objects.get(pk=pk)
-# 			if not was_friend:
-# 				return Response(status=404)
-# 			else:
-# 				request.user.friends.remove(was_friend)
-# 				request.user.save()
-# 				return Response(status=200)
-#
-# 	@detail_route(
-# 		methods=['put', 'get', 'delete'],
-# 		permission_classes=(IsAuthenticated,),
-# 		serializer_class=ClassroomSerializer
-# 	)
-# 	def classrooms(self, request, pk=None):
-# 		if request.method == 'GET':
-# 			classrooms = Classroom.objects.filter(students__pk=request.user.pk)
-# 			serializer = ClassroomSerializer(classrooms, many=True)
-# 			return Response(serializer.data)
-# 		elif request.method == 'PUT':
-# 			classroom = Classroom.objects.get(pk=pk)
-# 			if not classroom:
-# 				return Response(status=404)
-# 			else:
-# 				classroom.students.add(request.user)
-# 				classroom.save()
-# 				return Response(status=200)
-# 		else:
-# 			classroom = Classroom.objects.get(pk=pk)
-# 			if not classroom:
-# 				return Response(status=404)
-# 			else:
-# 				# TODO: test if user is in classroom
-# 				classroom.students.remove(request.user)
-# 				classroom.save()
-# 				return Response(status=200)
-#
-# 	@detail_route(
-# 		methods=['post', 'put', 'get', 'option'],
-# 		permission_classes=(IsAuthenticatedOrReadOnly,),
-# 		serializer_class=AvatarSerializer,
-# 		parser_classes=(FormParser, MultiPartParser,)
-# 	)
-# 	def avatar(self, request, pk=None):
-# 		if request.method in ['POST', 'OPTION']:
-# 			upload = request.FILES['avatar']
-# 			if not upload:
-# 				return Response(status=400)
-#
-# 			filename = 'myfile'
-# 			with open(filename, 'wb+') as temp_file:
-# 				for chunk in upload.chunks():
-# 					temp_file.write(chunk)
-# 			avatar = open(filename)  # there you go
-# 			new_avatar = Avatar(full_image=avatar)
-# 			new_avatar.save()
-# 			return Response(status=200)
-# 		else:
-# 			avatar = request.user.avatar
-# 			serializer = AvatarSerializer(avatar)
-# 			return Response(serializer.data)
-
 
 class AccountMe(generics.GenericAPIView):
 	serializer_class = AccountSerializer
@@ -245,30 +157,3 @@ class AccountMe(generics.GenericAPIView):
 
 	def get_queryset(self):
 		return Account.objects.filter(pk=self.request.user.pk)
-
-
-
-
-
-
-
-#
-# class AccountViewSet(viewsets.ModelViewSet):
-#     """
-#     This viewset automatically provides `list`, `create`, `retrieve`,
-#     `update` and `destroy` actions.
-#
-#     Additionally we also provide an extra `highlight` action.
-#     """
-#     queryset = Snippet.objects.all()
-#     serializer_class = SnippetSerializer
-#     permission_classes = (permissions.IsAuthenticatedOrReadOnly,
-#                           IsOwnerOrReadOnly,)
-#
-#     @detail_route(renderer_classes=[renderers.StaticHTMLRenderer])
-#     def highlight(self, request, *args, **kwargs):
-#         snippet = self.get_object()
-#         return Response(snippet.highlighted)
-#
-#     def perform_create(self, serializer):
-#         serializer.save(owner=self.request.user)

@@ -171,24 +171,3 @@ AWS_STORAGE_BUCKET_NAME = 'classgotcha-us-standard-20161024'
 # Allow django-admin.py collectstatic to automatically put your static files in your bucket set
 # STATICFILES_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
 
-# ----- Cross Origin Header -----
-CORS_ORIGIN_ALLOW_ALL = True
-CORS_ORIGIN_WHITELIST = (
-    'google.com',
-    'hostname.example.com',
-    'localhost:4000',
-    '127.0.0.1:9000'
-)
-CORS_ALLOW_HEADERS = (
-    'accept',
-    'accept-encoding',
-    'authorization',
-    'content-type',
-    'dnt',
-    'origin',
-    'user-agent',
-    'x-csrftoken',
-    'x-requested-with',
-    'cache-control'
-)
-

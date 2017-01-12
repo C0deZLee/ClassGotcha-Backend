@@ -18,9 +18,6 @@ account_detail = views.AccountViewSet.as_view({
 	'delete': 'destroy'
 })
 
-account_avatar = views.AccountViewSet.as_view({
-	'post': 'avatar'
-})
 account_friends = views.AccountViewSet.as_view({
 	'get': 'friends',
 })
@@ -43,12 +40,13 @@ account_add_classrooms = views.AccountViewSet.as_view({
 	'delete': 'classrooms'
 })
 
+
 urlpatterns = [
 	url(r'friends/(?P<pk>[0-9]+)/$', account_add_friends, name='add_friend'),
 	url(r'classrooms/(?P<pk>[0-9]+)/$', account_add_classrooms, name='add_classroom'),
-	url(r'(?P<pk>[0-9]+)/avatar/$', account_avatar, name='avatar'),
 	url(r'(?P<pk>[0-9]+)/$', account_detail, name='detail'),
 
+	url(r'avatar/$', views.account_avatar, name='avatar'),
 	url(r'classrooms/$', account_classrooms, name='classrooms'),
 	url(r'friends/$', account_friends, name='friends'),
 	url(r'login/$', obtain_jwt_token),
