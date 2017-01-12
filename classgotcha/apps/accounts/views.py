@@ -14,6 +14,7 @@ from serializers import AccountSerializer, AvatarSerializer
 from ..classrooms.models import Classroom
 from ..classrooms.serializers import ClassroomSerializer
 
+
 @api_view(['POST'])
 @permission_classes((AllowAny,))
 def account_register(request):
@@ -32,26 +33,21 @@ class AccountViewSet(viewsets.ViewSet):
 	queryset = Account.objects.exclude(is_staff=1)
 	parser_classes = (FormParser, MultiPartParser,)
 	permission_classes = (IsAuthenticated,)
-	# lookup_field = 'pk'
-	# TODO: list_route and detail_route are not working as expected
+	# list_route and detail_route are for auto gen URL
 
-	@list_route()
 	def list(self, request):
 		serializer = AccountSerializer(self.queryset, many=True)
 		return Response(serializer.data)
 
-	@detail_route(methods=['get'])
 	def me(self, request):
 		serializer = AccountSerializer(request.user)
 		return Response(serializer.data)
 
-	@detail_route(methods=['get'])
 	def retrieve(self, request, pk):
 		user = get_object_or_404(self.queryset, pk=pk)
 		serializer = AccountSerializer(user)
 		return Response(serializer.data)
 
-	@detail_route(methods=['post'])
 	def update(self, request, pk):
 		if request.user.is_admin or request.user.id == int(pk):
 			user = get_object_or_404(self.queryset, pk=pk)
@@ -65,7 +61,6 @@ class AccountViewSet(viewsets.ViewSet):
 		else:
 			return Response(status=status.HTTP_403_FORBIDDEN)
 
-	@detail_route(methods=['delete'])
 	def destroy(self, request, pk=None):
 		if request.user.is_admin or request.user.pk == int(pk):
 			user = get_object_or_404(self.queryset, pk=pk)
@@ -74,7 +69,6 @@ class AccountViewSet(viewsets.ViewSet):
 		else:
 			return Response(status=status.HTTP_403_FORBIDDEN)
 
-	@detail_route(methods=['post'])
 	def reset_password(self, request, pk=None):
 		if request.user.is_admin or request.user.pk == int(pk):
 			try:
@@ -86,23 +80,23 @@ class AccountViewSet(viewsets.ViewSet):
 		else:
 			return Response(status=status.HTTP_403_FORBIDDEN)
 
-	@list_route()
-	def friend_list(self, request):
-		serializer = AccountSerializer(request.user.friends, many=True)
-		return Response(serializer.data)
-
-	@detail_route(methods=['post', 'delete'])
 	def friends(self, request, pk=None):
+		if request.method == 'GET':
+			serializer = AccountSerializer(request.user.friends, many=True)
+			return Response(serializer.data)
+
 		if request.method == 'POST':
-			if request.user.pk is not int(pk): # cant add yourself as your friend
+			if request.user.pk is int(pk): # cant add yourself as your friend
+				return Response({'detail': 'cant add yourself as your friend'}, status=status.HTTP_403_FORBIDDEN)
+			else:
 				new_friend = get_object_or_404(self.queryset, pk=pk)
+				if new_friend in request.user.friends.all():
+					return Response({'detail': 'friend already in list'}, status=status.HTTP_403_FORBIDDEN)
 				request.user.friends.add(new_friend)
 				request.user.save()
 				new_friend.friends.add(request.user)
 				new_friend.save()
 				return Response(status=200)
-			else:
-				return Response({'error': 'cant add yourself as your friend'}, status=status.HTTP_403_FORBIDDEN)
 
 		if request.method == 'DELETE':
 			was_friend = get_object_or_404(self.queryset, pk=pk)
@@ -112,29 +106,27 @@ class AccountViewSet(viewsets.ViewSet):
 			was_friend.save()
 			return Response(status=200)
 
-	@detail_route(methods=['put', 'get', 'delete'], permission_classes=(IsAuthenticated,), serializer_class=ClassroomSerializer)
 	def classrooms(self, request, pk=None):
+		classroom_queryset = Classroom.objects.all()
 		if request.method == 'GET':
 			classrooms = Classroom.objects.filter(students__pk=request.user.pk)
 			serializer = ClassroomSerializer(classrooms, many=True)
 			return Response(serializer.data)
-		elif request.method == 'PUT':
-			classroom = Classroom.objects.get(pk=pk)
-			if not classroom:
-				return Response(status=404)
-			else:
-				classroom.students.add(request.user)
-				classroom.save()
-				return Response(status=200)
-		else:
-			classroom = Classroom.objects.get(pk=pk)
-			if not classroom:
-				return Response(status=404)
-			else:
-				# TODO: test if user is in classroom
-				classroom.students.remove(request.user)
-				classroom.save()
-				return Response(status=200)
+
+		if request.method == 'POST':
+			classroom = get_object_or_404(classroom_queryset, pk=pk)
+			if request.user in classroom.students.all():
+				return Response({'detail': 'student already in classroom'}, status=status.HTTP_403_FORBIDDEN)
+			classroom.students.add(request.user)
+			classroom.save()
+			return Response(status=200)
+
+		if request.method == 'DELETE':
+			classroom = get_object_or_404(classroom_queryset, pk=pk)
+			# TODO: test if user is in classroom
+			classroom.students.remove(request.user)
+			classroom.save()
+			return Response(status=200)
 
 	@detail_route(
 		methods=['post', 'put', 'get', 'option'],

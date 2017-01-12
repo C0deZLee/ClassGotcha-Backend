@@ -7,6 +7,9 @@ class Major(models.Model):
 	major_full = models.CharField(max_length=100)
 	major_college = models.CharField(max_length=100)
 
+	def __unicode__(self):
+		return self.major_short
+
 
 class Avatar(models.Model):
 	full_image = models.ImageField(upload_to='avatars', null=True, blank=True)

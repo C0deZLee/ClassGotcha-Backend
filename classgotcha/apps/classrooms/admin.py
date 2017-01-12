@@ -7,8 +7,8 @@ class ClassroomAdmin(admin.ModelAdmin):
 	# The fields to be used in displaying the User model.
 	# These override the definitions on the base UserAdmin
 	# that reference specific fields on auth.User.
-	list_display = ('class_name', 'class_number', 'class_code')
-	# list_filter = ('is_admin', 'school_year')
+	list_display = ('class_code', 'class_name', 'class_number', 'section', 'students_count', 'major')
+	list_filter = ('class_name', 'major')
 	# fieldsets = (
 	#     (None, {'fields': ('email', 'username', 'password')}),
 	#     ('Personal info', {'fields': ('first_name', 'last_name', 'gender', 'school_year', 'major', 'avatar')}),

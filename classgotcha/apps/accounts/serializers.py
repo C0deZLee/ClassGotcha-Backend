@@ -1,6 +1,6 @@
 from models import Account, Avatar
 from rest_framework import serializers
-# from ..classrooms.models import Classroom
+from ..classrooms.models import Classroom
 # from ..comments.models import Comment
 # from ..groups.models import Group
 # from ..notes.models import Note
@@ -11,6 +11,7 @@ from rest_framework import serializers
 class AccountSerializer(serializers.ModelSerializer):
 
 	friends = serializers.PrimaryKeyRelatedField(many=True, queryset=Account.objects.all())
+	classrooms = serializers.PrimaryKeyRelatedField(many=True, queryset=Classroom.objects.all())
 
 	class Meta:
 		model = Account

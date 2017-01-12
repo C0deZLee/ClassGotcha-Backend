@@ -22,7 +22,7 @@ account_avatar = views.AccountViewSet.as_view({
 	'post': 'avatar'
 })
 account_friends = views.AccountViewSet.as_view({
-	'get': 'friend_list',
+	'get': 'friends',
 })
 
 account_add_friends = views.AccountViewSet.as_view({
@@ -34,17 +34,26 @@ account_me = views.AccountViewSet.as_view({
 	'get': 'me',
 })
 
+account_classrooms = views.AccountViewSet.as_view({
+	'get': 'classrooms'
+})
+
+account_add_classrooms = views.AccountViewSet.as_view({
+	'post': 'classrooms',
+	'delete': 'classrooms'
+})
+
 urlpatterns = [
 	url(r'friends/(?P<pk>[0-9]+)/$', account_add_friends, name='add_friend'),
-	url(r'friends/$', account_friends, name='friend'),
-
-	url(r'login/$', obtain_jwt_token),
-	url(r'login-refresh/$', refresh_jwt_token),
-	url(r'login-verify/$', verify_jwt_token),
-
+	url(r'classrooms/(?P<pk>[0-9]+)/$', account_add_classrooms, name='add_classroom'),
 	url(r'(?P<pk>[0-9]+)/avatar/$', account_avatar, name='avatar'),
 	url(r'(?P<pk>[0-9]+)/$', account_detail, name='detail'),
 
+	url(r'classrooms/$', account_classrooms, name='classrooms'),
+	url(r'friends/$', account_friends, name='friends'),
+	url(r'login/$', obtain_jwt_token),
+	url(r'login-refresh/$', refresh_jwt_token),
+	url(r'login-verify/$', verify_jwt_token),
 	url(r'register/$', views.account_register, name='register'),
 	url(r'reset/$', account_reset_password, name='reset_pass'),
 	url(r'all/$', account_list, name='all'),
