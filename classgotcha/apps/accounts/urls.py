@@ -44,8 +44,13 @@ account_notes = views.AccountViewSet.as_view({
 	'get': 'notes'
 })
 
+account_moments = views.AccountViewSet.as_view({
+	'get': 'moments'
+})
+
 urlpatterns = [
 	url(r'friends/(?P<pk>[0-9]+)/$', account_add_friends, name='add_friend'),
+	url(r'moments/(?P<page>[0-9]+)/$', account_moments, name='moments'),
 	url(r'classrooms/(?P<pk>[0-9]+)/$', account_add_classrooms, name='add_classroom'),
 	url(r'(?P<pk>[0-9]+)/$', account_detail, name='detail'),
 
@@ -58,6 +63,7 @@ urlpatterns = [
 	url(r'register/$', views.account_register, name='register'),
 	url(r'reset/$', account_reset_password, name='reset_pass'),
 	url(r'notes/$', account_notes, name='notes'),
+	url(r'moments/$', account_moments, name='moments'),
 
 	# url(r'all/$', account_list, name='all'),
 	url(r'me/$', account_me, name='me'),

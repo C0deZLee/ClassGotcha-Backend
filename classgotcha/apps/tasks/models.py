@@ -6,10 +6,7 @@ from ..groups.models import Group
 
 
 class Task(models.Model):
-	HOMEWORK = 0
-	GROUP_MEETING = 1
-	EXAM = 2
-	QUIZ = 3
+	HOMEWORK, GROUP_MEETING, EXAM, QUIZ = 0, 1, 2, 3
 
 	STATUS_CHOICES = (
 		(HOMEWORK, 'Homework'),
@@ -25,6 +22,10 @@ class Task(models.Model):
 	due_date = models.DateTimeField(blank=True, null=True)
 	type = models.IntegerField(default=HOMEWORK, choices=STATUS_CHOICES)
 	# Relationship
-	involved = models.ManyToManyField(Account, related_name='tasks')
+	involved = models.ManyToManyField(Account, related_name='tasks', blank=True, null=True)
 	classroom = models.ForeignKey(Classroom, blank=True, null=True, related_name='tasks')
 	group = models.ForeignKey(Group, blank=True, null=True)
+
+	def __unicode__(self):
+		return self.task_name
+

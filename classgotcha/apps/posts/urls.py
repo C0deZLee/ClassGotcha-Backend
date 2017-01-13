@@ -1,7 +1,12 @@
 import views
 from django.conf.urls import url
 
+moment_detail = views.MomentViewSet.as_view({
+	'get': 'retrieve',
+	'delete': 'destroy'
+
+})
+
 urlpatterns = [
-	url(r'$', views.MomentList.as_view(), name='momentlist'),
-	url(r'(?P<pk>[0-9]+)/$', views.MomentDetail.as_view(), name='momentdetail')
+	url(r'moment/(?P<pk>[0-9]+)/$', moment_detail, name='moment-detail'),
 ]

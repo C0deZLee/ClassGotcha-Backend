@@ -32,12 +32,14 @@ class AccountAdmin(UserAdmin):
     )
     search_fields = ('email', 'username')
     ordering = ('email',)
-    filter_horizontal = ()
+    #
+    # def classrooms(self):
 
 
 class MajorAdmin(admin.ModelAdmin):
     list_display = ('major_short', 'major_full', 'major_college')
     list_filter = ['major_college']
+
 
 class AvatarAdmin(admin.ModelAdmin):
     list_display = ('id', 'full_image')

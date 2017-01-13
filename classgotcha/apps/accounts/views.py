@@ -13,6 +13,7 @@ from serializers import AccountSerializer, AvatarSerializer
 
 from ..classrooms.serializers import Classroom, ClassroomSerializer
 from ..notes.serializers import Note, NoteSerializer
+from ..posts.serializers import MomentSerializer
 
 @api_view(['POST'])
 @permission_classes((AllowAny,))
@@ -62,7 +63,8 @@ class AccountViewSet(viewsets.ViewSet):
 		serializer = AccountSerializer(self.queryset, many=True)
 		return Response(serializer.data)
 
-	def me(self, request):
+	@staticmethod
+	def me(request):
 		serializer = AccountSerializer(request.user)
 		return Response(serializer.data)
 
@@ -92,8 +94,12 @@ class AccountViewSet(viewsets.ViewSet):
 		else:
 			return Response(status=status.HTTP_403_FORBIDDEN)
 
+	# verify past password
+	@staticmethod
 	def reset_password(self, request, pk=None):
 		if request.user.is_admin or request.user.pk == int(pk):
+			if not request.data['old-password']:
+				return Response(status=status.HTTP_400_BAD_REQUEST)
 			try:
 				request.user.set_password(request.data['password'])
 				request.user.save()
@@ -119,6 +125,7 @@ class AccountViewSet(viewsets.ViewSet):
 				request.user.save()
 				new_friend.friends.add(request.user)
 				new_friend.save()
+
 				return Response(status=200)
 
 		if request.method == 'DELETE':
@@ -129,7 +136,8 @@ class AccountViewSet(viewsets.ViewSet):
 			was_friend.save()
 			return Response(status=200)
 
-	def classrooms(self, request, pk=None):
+	@staticmethod
+	def classrooms(request, pk=None):
 		classroom_queryset = Classroom.objects.all()
 		if request.method == 'GET':
 			classrooms = Classroom.objects.filter(students__pk=request.user.pk)
@@ -146,18 +154,21 @@ class AccountViewSet(viewsets.ViewSet):
 
 		if request.method == 'DELETE':
 			classroom = get_object_or_404(classroom_queryset, pk=pk)
-			# TODO: test if user is in classroom
 			classroom.students.remove(request.user)
 			classroom.save()
 			return Response(status=200)
 
-	def notes(self, request):
+	@staticmethod
+	def notes(request):
 		serializer = NoteSerializer(request.user.notes.all(), many=True)
 		return Response(serializer.data)
 
-class AccountMe(generics.GenericAPIView):
-	serializer_class = AccountSerializer
-	permission_classes = (IsAuthenticated,)
-
-	def get_queryset(self):
-		return Account.objects.filter(pk=self.request.user.pk)
+	@staticmethod
+	def moments(request, page=None):
+		# TODO: can optimize here
+		if not page:
+			page = 0
+		else:
+			page = int(page)
+		serializer = MomentSerializer(request.user.moments.all().reverse()[page:page+5], many=True)
+		return Response(serializer.data)

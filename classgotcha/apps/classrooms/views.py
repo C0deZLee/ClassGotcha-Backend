@@ -5,6 +5,7 @@ from django.core.files.base import File
 from models import Account, Classroom
 from ..notes.serializers import Note, NoteSerializer
 from ..posts.serializers import Moment, MomentSerializer
+from ..tasks.serializers import Task, TaskSerializer
 from django.shortcuts import get_object_or_404
 from serializers import BasicClassroomSerializer, ClassroomSerializer
 
@@ -89,5 +90,17 @@ class ClassroomViewSet(viewsets.ViewSet):
 		serializer = MomentSerializer(moments, many=True)
 		return Response(serializer.data)
 
-	def task(self, request, pk):
+	def tasks(self, request, pk):
+		classroom = get_object_or_404(self.queryset, pk=pk)
+		if request.method == 'GET':
+			serializer = TaskSerializer(classroom.tasks.all(), many=True)
+			return Response(serializer.data)
+		if request.method == 'POST':
+			request.data['classroom'] = classroom.pk
+			serializer = TaskSerializer(data=request.data)
+			serializer.is_valid(raise_exception=True)
+			serializer.save()
+			return Response(status=status.HTTP_201_CREATED)
+
+	def students(self, request):
 		pass

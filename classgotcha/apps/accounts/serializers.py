@@ -1,9 +1,9 @@
 from models import Account, Avatar
 from rest_framework import serializers
 from ..classrooms.models import Classroom
-# from ..comments.models import Comment
+from ..posts.models import Moment
 # from ..groups.models import Group
-# from ..notes.models import Note
+from ..notes.models import Note
 # from ..posts.models import Moment, Post
 # from ..tasks.models import Task
 
@@ -12,6 +12,9 @@ class AccountSerializer(serializers.ModelSerializer):
 
 	friends = serializers.PrimaryKeyRelatedField(many=True, queryset=Account.objects.all())
 	classrooms = serializers.PrimaryKeyRelatedField(many=True, queryset=Classroom.objects.all())
+	moments = serializers.PrimaryKeyRelatedField(many=True, queryset=Moment.objects.exclude(flagged_num=3))
+	notes = serializers.PrimaryKeyRelatedField(many=True, queryset=Note.objects.all())
+
 
 	class Meta:
 		model = Account

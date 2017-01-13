@@ -13,4 +13,12 @@ class MomentSerializer(serializers.ModelSerializer):
 class CommentSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = Comment
-		fields = ('id', 'content', 'image', 'creator', 'moment')
+		fields = '__all__'
+
+
+class PostSerializer(serializers.ModelSerializer):
+	class Meta:
+		model = Post
+		fields = '__all__'
+
+

@@ -17,7 +17,7 @@ from classgotcha.apps.accounts import urls as accounts_urls
 from classgotcha.apps.classrooms import urls as classroom_urls
 from classgotcha.apps.groups import urls as groups_urls
 from classgotcha.apps.chat import urls as chat_urls
-from classgotcha.apps.posts import urls as moments_urls
+from classgotcha.apps.posts import urls as posts_urls
 from django.conf.urls import include, url
 from django.contrib import admin
 
@@ -30,7 +30,7 @@ admin.autodiscover()
 urlpatterns = [
     url(r'^chat/', include(chat_urls)),
     url(r'^account/', include(accounts_urls)),
-    url(r'^moment/', include(moments_urls)),
+    url(r'^post/', include(posts_urls)),
     url(r'^classroom/', include(classroom_urls)),
     url(r'^admin/', admin.site.urls),
     url(r'^group/', include(groups_urls)),
