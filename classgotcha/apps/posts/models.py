@@ -8,7 +8,7 @@ class Moment(models.Model):
 	# Basic
 	content = models.CharField(max_length=200)
 	images = models.TextField(default='[]')
-	flagged = models.IntegerField(default=False)
+	flagged_num = models.IntegerField(default=0)
 
 	creator = models.ForeignKey(Account, on_delete=models.CASCADE, related_name='moments', null=True, blank=True)
 	classroom = models.ForeignKey(Classroom, on_delete=models.CASCADE, related_name='moments', null=True, blank=True)
@@ -19,10 +19,20 @@ class Moment(models.Model):
 	# Relatives
 	# 1) comments
 
+	@property
+	def flagged(self):
+		if self.flagged_num >= 3:
+			return True
+		else:
+			return False
+
 
 class Post(models.Model):
 	# Basic
+	title = models.CharField(max_length=100)
 	content = models.TextField()
+	flagged_num = models.IntegerField(default=0)
+
 	# Relations
 	creator = models.ForeignKey(Account, on_delete=models.CASCADE, related_name='posts', null=True, blank=True)
 	# Timestamp
@@ -30,6 +40,13 @@ class Post(models.Model):
 	updated = models.DateTimeField(auto_now=True)
 	# Relatives
 	# 1) comments
+
+	@property
+	def flagged(self):
+		if self.flagged_num >= 3:
+			return True
+		else:
+			return False
 
 
 class Comment(models.Model):

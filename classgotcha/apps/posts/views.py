@@ -5,8 +5,7 @@ from rest_framework import permissions
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
-from serializers import MomentSerializer
-from ..comments.serializers import CommentSerializer
+from serializers import MomentSerializer, CommentSerializer
 
 
 class MomentList(generics.ListAPIView):
