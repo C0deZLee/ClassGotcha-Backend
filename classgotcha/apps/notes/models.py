@@ -9,9 +9,9 @@ class Note(models.Model):
 	creator = models.ForeignKey(Account, related_name='notes')
 	classroom = models.ForeignKey(Classroom, related_name='notes')
 	# Basics
-	file = models.URLField()
-# Relatives
-# 1) rating
+	file = models.FileField()
+	# Relatives
+	# 1) rating
 
 
 class Rate(models.Model):

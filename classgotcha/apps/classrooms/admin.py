@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from models import Classroom
+from models import Classroom, Semester
 
 
 class ClassroomAdmin(admin.ModelAdmin):
@@ -28,4 +28,8 @@ class ClassroomAdmin(admin.ModelAdmin):
 	# filter_horizontal = ()
 
 
+class SemesterAdmin(admin.ModelAdmin):
+	list_display = ('id', 'name', 'start', 'end')
+
 admin.site.register(Classroom, ClassroomAdmin)
+admin.site.register(Semester, SemesterAdmin)

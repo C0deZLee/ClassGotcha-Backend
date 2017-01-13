@@ -10,11 +10,11 @@ from rest_framework.routers import DefaultRouter
 
 account_reset_password = views.AccountViewSet.as_view({'post': 'reset_password'})
 
-account_list = views.AccountViewSet.as_view({'get': 'list'})
+# account_list = views.AccountViewSet.as_view({'get': 'list'})
 
 account_detail = views.AccountViewSet.as_view({
 	'get': 'retrieve',
-	'post': 'update',
+	'put': 'update',
 	'delete': 'destroy'
 })
 
@@ -54,6 +54,6 @@ urlpatterns = [
 	url(r'login-verify/$', verify_jwt_token),
 	url(r'register/$', views.account_register, name='register'),
 	url(r'reset/$', account_reset_password, name='reset_pass'),
-	url(r'all/$', account_list, name='all'),
+	# url(r'all/$', account_list, name='all'),
 	url(r'me/$', account_me, name='me'),
 ]

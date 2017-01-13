@@ -5,9 +5,9 @@ from django.core.files.base import File
 from rest_framework_jwt.settings import api_settings
 from rest_framework import generics, viewsets, status
 from rest_framework.response import Response
-from rest_framework.parsers import FormParser, MultiPartParser, FileUploadParser
+from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework.decorators import detail_route, list_route, api_view, permission_classes, parser_classes
-from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly, AllowAny
+from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly, AllowAny, IsAdminUser
 
 from serializers import AccountSerializer, AvatarSerializer
 
@@ -42,8 +42,9 @@ def account_avatar(request):
 	with open(filename, 'wb+') as temp_file:
 		for chunk in upload.chunks():
 			temp_file.write(chunk)
-	avatar = open(filename)  # there you go
-	new_file = File(file=avatar)
+	avatar = open(filename)
+	new_file = File(file=avatar)  # there you go
+
 	new_avatar = Avatar(full_image=new_file)
 	new_avatar.save()
 	request.user.avatar = new_avatar
@@ -57,6 +58,7 @@ class AccountViewSet(viewsets.ViewSet):
 	permission_classes = (IsAuthenticated,)
 	# list_route and detail_route are for auto gen URL
 
+	# TODO: admin user only
 	def list(self, request):
 		serializer = AccountSerializer(self.queryset, many=True)
 		return Response(serializer.data)
