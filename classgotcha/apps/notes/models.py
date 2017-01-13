@@ -9,7 +9,7 @@ class Note(models.Model):
 	creator = models.ForeignKey(Account, related_name='notes')
 	classroom = models.ForeignKey(Classroom, related_name='notes')
 	# Basics
-	file = models.FileField()
+	file = models.FileField(upload_to='avatars')
 	# Relatives
 	# 1) rating
 
