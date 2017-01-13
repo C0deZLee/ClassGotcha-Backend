@@ -7,7 +7,7 @@ from rest_framework import serializers
 class NoteSerializer(serializers.ModelSerializer):
 	# tasks = serializers.PrimaryKeyRelatedField(many=True, queryset=Task.objects.all())
 	# groups = serializers.PrimaryKeyRelatedField(many=True, queryset=Group.objects.all())
-	# students_count = serializers.ReadOnlyField()
+	overall_rating = serializers.ReadOnlyField()
 
 	class Meta:
 		model = Note

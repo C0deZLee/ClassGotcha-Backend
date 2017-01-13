@@ -7,7 +7,7 @@ class NoteAdmin(admin.ModelAdmin):
 	# The fields to be used in displaying the User model.
 	# These override the definitions on the base UserAdmin
 	# that reference specific fields on auth.User.
-	list_display = ('creator', 'classroom')
+	list_display = ('title', 'creator', 'classroom', 'overall_rating')
 # list_filter = ('is_admin', 'school_year')
 # fieldsets = (
 #     (None, {'fields': ('email', 'username', 'password')}),

@@ -1,6 +1,6 @@
-from django.contrib import admin
-
 from models import Moment
+
+from django.contrib import admin
 
 
 class MomentAdmin(admin.ModelAdmin):
@@ -10,6 +10,8 @@ class MomentAdmin(admin.ModelAdmin):
 	list_display = ('created', 'creator', 'flagged')
 
 	list_filter = ['flagged']
+
+
 # fieldsets = (
 #     (None, {'fields': ('email', 'username', 'password')}),
 #     ('Personal info', {'fields': ('first_name', 'last_name', 'gender', 'school_year', 'major', 'avatar')}),

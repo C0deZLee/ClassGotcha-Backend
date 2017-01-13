@@ -40,6 +40,9 @@ account_add_classrooms = views.AccountViewSet.as_view({
 	'delete': 'classrooms'
 })
 
+account_notes = views.AccountViewSet.as_view({
+	'get': 'notes'
+})
 
 urlpatterns = [
 	url(r'friends/(?P<pk>[0-9]+)/$', account_add_friends, name='add_friend'),
@@ -54,6 +57,8 @@ urlpatterns = [
 	url(r'login-verify/$', verify_jwt_token),
 	url(r'register/$', views.account_register, name='register'),
 	url(r'reset/$', account_reset_password, name='reset_pass'),
+	url(r'notes/$', account_notes, name='notes'),
+
 	# url(r'all/$', account_list, name='all'),
 	url(r'me/$', account_me, name='me'),
 ]

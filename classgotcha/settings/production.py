@@ -52,9 +52,8 @@ INSTALLED_APPS = [
     'widget_tweaks',
     # myapp
     'classgotcha.apps.accounts',
-    'classgotcha.apps.posts',
     'classgotcha.apps.classrooms',
-    'classgotcha.apps.comments',
+    'classgotcha.apps.posts',
     'classgotcha.apps.groups',
     'classgotcha.apps.notes',
     'classgotcha.apps.tasks',

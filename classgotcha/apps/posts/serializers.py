@@ -1,18 +1,16 @@
-from models import Moment
+from models import Moment, Comment, Post
 from rest_framework import serializers
-
-from ..comments.models import Comment
 
 
 class MomentSerializer(serializers.ModelSerializer):
-	creator = serializers.ReadOnlyField(source='creator.username')
 	comments = serializers.PrimaryKeyRelatedField(many=True, queryset=Comment.objects.all(), required=False)
 
 	class Meta:
 		model = Moment
-		fields = ('id', 'content', 'images', 'creator', 'comments')
-
-	def perform_create(self, serializer):
-		serializer.save(creator=self.request.user)
+		fields = '__all__'
 
 
+class CommentSerializer(serializers.ModelSerializer):
+	class Meta:
+		model = Comment
+		fields = ('id', 'content', 'image', 'creator', 'moment')

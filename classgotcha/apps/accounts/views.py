@@ -11,9 +11,8 @@ from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnl
 
 from serializers import AccountSerializer, AvatarSerializer
 
-from ..classrooms.models import Classroom
-from ..classrooms.serializers import ClassroomSerializer
-
+from ..classrooms.serializers import Classroom, ClassroomSerializer
+from ..notes.serializers import Note, NoteSerializer
 
 @api_view(['POST'])
 @permission_classes((AllowAny,))
@@ -152,6 +151,9 @@ class AccountViewSet(viewsets.ViewSet):
 			classroom.save()
 			return Response(status=200)
 
+	def notes(self, request):
+		serializer = NoteSerializer(request.user.notes.all(), many=True)
+		return Response(serializer.data)
 
 class AccountMe(generics.GenericAPIView):
 	serializer_class = AccountSerializer

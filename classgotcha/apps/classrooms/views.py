@@ -4,6 +4,7 @@ from django.core.files.base import File
 
 from models import Account, Classroom
 from ..notes.serializers import Note, NoteSerializer
+from ..posts.serializers import Moment, MomentSerializer
 from django.shortcuts import get_object_or_404
 from serializers import BasicClassroomSerializer, ClassroomSerializer
 
@@ -57,17 +58,9 @@ class ClassroomViewSet(viewsets.ViewSet):
 	@parser_classes((MultiPartParser, FormParser,))
 	def syllabus(self, request, pk):
 		classroom = get_object_or_404(self.queryset, pk=pk)
-		try:
-			upload = request.FILES['file']
-		except:
+		new_file = self.upload(request, file_name=classroom.class_code)
+		if not new_file:
 			return Response(status=status.HTTP_400_BAD_REQUEST)
-		filename, file_extension = os.path.splitext(upload.name)
-		# filename = str(request.user.id) + file_extension
-		with open(filename, 'wb+') as temp_file:
-			for chunk in upload.chunks():
-				temp_file.write(chunk)
-		syllabus = open(filename)
-		new_file = File(file=syllabus)  # there you go
 
 		classroom.syllabus = new_file
 		classroom.save()
@@ -91,7 +84,10 @@ class ClassroomViewSet(viewsets.ViewSet):
 			return Response(serializer.data)
 
 	def recent_moments(self, request, pk):
-		pass
+		classroom = get_object_or_404(self.queryset, pk=pk)
+		moments = classroom.moments.all().order_by('-created')[0:5]
+		serializer = MomentSerializer(moments, many=True)
+		return Response(serializer.data)
 
 	def task(self, request, pk):
 		pass
