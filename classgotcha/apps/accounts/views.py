@@ -9,7 +9,7 @@ from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework.decorators import detail_route, list_route, api_view, permission_classes, parser_classes
 from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly, AllowAny, IsAdminUser
 
-from serializers import AccountSerializer, AvatarSerializer
+from serializers import AccountSerializer, BasicAccountSerializer, AuthAccountSerializer
 
 from ..classrooms.serializers import Classroom, ClassroomSerializer
 from ..notes.serializers import Note, NoteSerializer
@@ -18,7 +18,7 @@ from ..posts.serializers import MomentSerializer
 @api_view(['POST'])
 @permission_classes((AllowAny,))
 def account_register(request):
-	serializer = AccountSerializer(data=request.data)
+	serializer = AuthAccountSerializer(data=request.data)
 	serializer.is_valid(raise_exception=True)
 	user = serializer.save()
 	jwt_payload_handler = api_settings.JWT_PAYLOAD_HANDLER
@@ -58,10 +58,10 @@ class AccountViewSet(viewsets.ViewSet):
 	permission_classes = (IsAuthenticated,)
 	# list_route and detail_route are for auto gen URL
 
-	# TODO: admin user only
-	def list(self, request):
-		serializer = AccountSerializer(self.queryset, many=True)
-		return Response(serializer.data)
+	# # TODO: admin user only
+	# def list(self, request):
+	# 	serializer = BasicAccountSerializer(self.queryset, many=True)
+	# 	return Response(serializer.data)
 
 	@staticmethod
 	def me(request):
@@ -111,7 +111,7 @@ class AccountViewSet(viewsets.ViewSet):
 
 	def friends(self, request, pk=None):
 		if request.method == 'GET':
-			serializer = AccountSerializer(request.user.friends, many=True)
+			serializer = BasicAccountSerializer(request.user.friends, many=True)
 			return Response(serializer.data)
 
 		if request.method == 'POST':

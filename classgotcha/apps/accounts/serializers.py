@@ -15,11 +15,30 @@ class AccountSerializer(serializers.ModelSerializer):
 	moments = serializers.PrimaryKeyRelatedField(many=True, queryset=Moment.objects.exclude(flagged_num=3))
 	notes = serializers.PrimaryKeyRelatedField(many=True, queryset=Note.objects.all())
 
-
 	class Meta:
 		model = Account
 		exclude = ('user_permissions', 'groups', 'is_superuser', 'is_staff', 'is_active')
 		read_only_fields = ('is_student', 'is_professor', 'created', 'updated',)
+		write_only_fields = ('password',)
+
+	def create(self, validated_data):
+		account = Account(email=validated_data['email'], username=validated_data['username'])
+		account.set_password(validated_data['password'])
+		account.save()
+		return account
+
+
+class BasicAccountSerializer(serializers.ModelSerializer):
+	class Meta:
+		model = Account
+		exclude = ('user_permissions', 'groups', 'is_superuser', 'is_staff', 'is_active', 'password')
+		read_only_fields = ('is_student', 'is_professor', 'created', 'updated',)
+
+
+class AuthAccountSerializer(serializers.ModelSerializer):
+	class Meta:
+		model = Account
+		fields = ('username', 'email', 'password')
 		write_only_fields = ('password',)
 
 	def create(self, validated_data):

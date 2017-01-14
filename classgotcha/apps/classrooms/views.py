@@ -6,6 +6,7 @@ from models import Account, Classroom
 from ..notes.serializers import Note, NoteSerializer
 from ..posts.serializers import Moment, MomentSerializer
 from ..tasks.serializers import Task, TaskSerializer
+from ..accounts.serializers import BasicAccountSerializer
 from django.shortcuts import get_object_or_404
 from serializers import BasicClassroomSerializer, ClassroomSerializer
 
@@ -20,9 +21,7 @@ class ClassroomViewSet(viewsets.ViewSet):
 	queryset = Classroom.objects.all()
 	permission_classes = (IsAuthenticated,)
 
-	'''
-	Can pass a filename as optional variable
-	'''
+	'''Can pass a filename as optional variable'''
 	def upload(self, request, file_name=None):
 		try:
 			upload = request.FILES['file']
@@ -102,5 +101,7 @@ class ClassroomViewSet(viewsets.ViewSet):
 			serializer.save()
 			return Response(status=status.HTTP_201_CREATED)
 
-	def students(self, request):
-		pass
+	def students(self, request, pk):
+		classroom = get_object_or_404(self.queryset, pk=pk)
+		serializer = BasicAccountSerializer(classroom.students, many=True)
+		return Response(serializer.data)
