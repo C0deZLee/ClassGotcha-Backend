@@ -30,7 +30,7 @@
         }
         this.$http.post('http://localhost:8000/account/login/', formData).then((response) => {
           // success
-          this.token = response.data.token
+          this.$root.authToken = response.data.token
           this.$router.push('/')
         }, (response) => {
           // failed
