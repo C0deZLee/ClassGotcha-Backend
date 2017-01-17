@@ -35,8 +35,12 @@
           'password': this.password
         }
         this.$http.post('http://localhost:8000/account/register/', formData).then((response) => {
-          //success
+          // success
+          // store auth token 
           this.$root.authToken = response.data.token
+          // write token to cookie, expires in 1 day
+          this.$cookie.set('token', response.data.token, 1)
+          // redirect to home page
           this.$router.push('/')
         }, (response) => {
           //failed

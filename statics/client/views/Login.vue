@@ -12,6 +12,7 @@
       </div>
       <p>{{errorMsg}}</p>      
       <button v-on:click="getToken($event)" class="btn btn-primary block full-width m-b">Login</button>
+      <button v-on:click="$root.checkAuth" class="btn btn-primary block full-width m-b">Auth Verify</button>
       <a href="#"><small>Forgot password?</small></a>
       <p class="text-muted text-center"><small>Do not have an account?</small></p>
       <a class="btn btn-sm btn-white btn-block" href="/#/register">Create an account</a>
@@ -30,7 +31,11 @@
         }
         this.$http.post('http://localhost:8000/account/login/', formData).then((response) => {
           // success
+          // store auth token 
           this.$root.authToken = response.data.token
+          // write token to cookie, expires in 1 day
+          this.$cookie.set('token', response.data.token, 1)
+          // redirect to home page
           this.$router.push('/')
         }, (response) => {
           // failed
