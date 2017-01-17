@@ -35,6 +35,14 @@
           this.$root.authToken = response.data.token
           // write token to cookie, expires in 1 day
           this.$cookie.set('token', response.data.token, 1)
+          // load user data
+          this.$http.get('http://localhost:8000/account/me/', {
+            headers: {
+              'Authorization': 'JWT ' + this.$root.authToken
+            }
+          }).then(response => {
+            this.$root.user = response.data
+          })
           // redirect to home page
           this.$router.push('/')
         }, (response) => {

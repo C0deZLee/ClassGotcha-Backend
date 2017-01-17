@@ -11,7 +11,7 @@
           </div>
           <ul class="nav navbar-top-links navbar-right">
               <li>
-                  <a href="#">
+                  <a href="#" v-on:click="$root.logout">
                       <i class="fa fa-sign-out"></i> Log out
                   </a>
               </li>

@@ -46,6 +46,7 @@ const app = new Vue({
     logout: function() {
       this.authToken = ''
       this.$cookie.delete('token')
+      this.$router.push('/login')
     }
   },
   router,
