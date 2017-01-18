@@ -34,6 +34,10 @@ classroom_check = views.ClassroomViewSet.as_view({
 	'get': 'is_in_class'
 })
 
+classroom_search = views.ClassroomViewSet.as_view({
+    'get': 'search'
+})
+
 urlpatterns = [
 	url(r'(?P<pk>[0-9]+)/notes/$', classroom_notes, name='classroom-notes'),
 	url(r'(?P<pk>[0-9]+)/tasks/$', classroom_tasks, name='classroom-tasks'),
@@ -42,6 +46,7 @@ urlpatterns = [
 	url(r'(?P<pk>[0-9]+)/check/$', classroom_check, name='classroom-check'),
 	url(r'(?P<pk>[0-9]+)/$', classroom_detail, name='classroom-detail'),
 	url(r'all/$', classroom_all, name='classroom-all'),
+	url(r'(?P<pk>[0-9]+)/search/$',classroom_search, name = 'classroom-search'),
 
 ]
 
