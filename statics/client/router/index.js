@@ -4,6 +4,7 @@ import Resource from 'vue-resource'
 
 import AuthLayout from '../components/AuthLayout'
 import DefaultLayout from '../components/DefaultLayout'
+import Page404 from '../components/404'
 
 import Home from '../views/Home'
 import AddClassroom from '../views/AddClassroom'
@@ -14,6 +15,7 @@ import Upload from '../views/Upload'
 import Chat from '../views/Chat'
 import Notes from '../views/Notes'
 import ClassroomList from '../views/ClassroomList'
+
 
 Vue.use(Router)
 Vue.use(Resource)
@@ -58,6 +60,9 @@ export default new Router({
     }, {
       path: '/chat',
       component: Chat
+    }, {
+      path: '/404',
+      component: Page404
     }]
   }]
 })

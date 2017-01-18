@@ -31,13 +31,11 @@ const app = new Vue({
         formData = {
           token: this.authToken
         }
-        console.log(this.authToken)
       } else {
         formData = {
           token: this.$cookie.get('token')
         }
         this.authToken = this.$cookie.get('token')
-        console.log(this.authToken)
       }
       this.$http.post(this.$root.apiEndPoint + '/account/login-verify/', formData).then(response => {
         // success
@@ -52,7 +50,7 @@ const app = new Vue({
         })
       }, response => {
         // failed
-        // this.logout()
+        this.logout()
       })
     },
     logout: function() {

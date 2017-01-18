@@ -132,7 +132,7 @@
                     <div class="ibox">
                         <div class="ibox-content">
                             <h3>Class Material</h3>
-                            <p>
+                            
                               <div class="btn-group">
                                  <a href="/#/classroom/id/demo/notes/" type="button" class="btn btn-success dropdown-toggle btn-lg">
                                      <span class="fa fa-file"></span>
@@ -157,18 +157,16 @@
                                    <span class="fa fa-file-powerpoint-o"></span>
                                </button>
                             </div>
-
-
-
                         </div>
                     </div>
                     <div class="ibox">
                         <div class="ibox-content">
-                            <h3>Create a Group Meeting</h3>
+                            <h3>Create a Group</h3>
                             <h5>People invited</h5>
                             <div class="user-friends">  <a href=""><img alt="image" class="img-circle" src="modules/classrooms/img/a4.jpg"></a>
                               <a href=""><img alt="image" class="img-circle" src="modules/classrooms/img/a5.jpg"></a>
                               <a href=""><img alt="image" class="img-circle" src="modules/classrooms/img/a6.jpg"></a>
+                              <a href=""><img alt="add people" class="img-circle" src="modules/classrooms/img/a6.jpg"></a>
                               </div>
                             <h5>Location</h5>
                           <input type="text" placeholder="IST 231"  class="form-control">
@@ -484,7 +482,9 @@
           console.log(response.data)
         }), (response => {
           // failed
-          console.log(response.data)
+          //console.log(response.data)
+          this.$router.push('/404')
+
         }))
         return class_short
       },
