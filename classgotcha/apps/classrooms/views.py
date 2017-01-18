@@ -55,6 +55,17 @@ class ClassroomViewSet(viewsets.ViewSet):
 		serializer = BasicClassroomSerializer(self.queryset, many=True)
 		return Response(serializer.data)
 
+	# TODO
+	def search(self, request):
+		pass
+
+	def is_in_class(self, request, pk):
+		classroom = get_object_or_404(self.queryset, pk=pk)
+		if request.user in classroom.students:
+			return Response(status=status.HTTP_200_OK)
+		else:
+			return Response(status=status.HTTP_403_FORBIDDEN)
+
 	@parser_classes((MultiPartParser, FormParser,))
 	def syllabus(self, request, pk):
 		classroom = get_object_or_404(self.queryset, pk=pk)
