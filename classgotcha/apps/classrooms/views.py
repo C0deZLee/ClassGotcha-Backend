@@ -64,7 +64,7 @@ class ClassroomViewSet(viewsets.ViewSet):
 		if request.user in classroom.students:
 			return Response(status=status.HTTP_200_OK)
 		else:
-			return Response(status=status.HTTP_403_FORBIDDEN)
+			return Response({'error': 'You are not in this classroom'}, status=status.HTTP_403_FORBIDDEN)
 
 	@parser_classes((MultiPartParser, FormParser,))
 	def syllabus(self, request, pk):

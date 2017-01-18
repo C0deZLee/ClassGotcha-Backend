@@ -50,7 +50,7 @@ export default new Router({
       //  access anywhere in the vm with this.$route.params.classroom_id
       component: Notes
     }, {
-      path: '',
+      path: '/',
       component: Home
     }, {
       path: '/upload',
