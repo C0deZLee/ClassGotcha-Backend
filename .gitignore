@@ -26,3 +26,4 @@ classgotcha/apps/notes/migrations/*
 classgotcha/apps/posts/migrations/*
 classgotcha/apps/tasks/migrations/*
 .DS_Store
+/npm-debug.log
