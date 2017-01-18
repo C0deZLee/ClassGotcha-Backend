@@ -57,7 +57,38 @@ class ClassroomViewSet(viewsets.ViewSet):
 
 	# TODO
 	def search(self, request):
-		pass
+		try:
+			search_token = request.data['search_token']
+			search_token = search_token.strip()
+		except:
+			return Response(status = status.HTTP_400_BAD_REQUEST)
+        if search_token.isdigit():
+        	try:
+        		classrooms = Classroom.objects.filter(class_code = search_token)
+        		serializer = ClassroomSerializer(classrooms, many=True)
+        		return (serializer.data)
+        	except :
+        		return Response(status = status.HTTP_400_BAD_REQUEST)
+
+        else:
+
+        	try:
+        		match = re.match(r"([a-z]+)([0-9]+)", 'foofo21', re.I)
+				if match:
+    				items = match.groups()
+        			classname = items[0]
+        			classnumber = items[1]
+        			classname.upper()
+        			classrooms = Classroom.objects.filter(class_name = classname, class_number = classnumber)
+        			serializer = ClassroomSerializer(classrooms, many=True)
+        			return (serializer.data)
+
+        	except:
+        		return Response(status = status.HTTP_400_BAD_REQUEST)
+
+        
+
+     
 
 	def is_in_class(self, request, pk):
 		classroom = get_object_or_404(self.queryset, pk=pk)
