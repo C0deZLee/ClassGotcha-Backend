@@ -42,4 +42,8 @@ class Classroom(models.Model):
 	def students_count(self):
 		return len(self.students.all())
 
+	@property
+	def class_short(self):
+		return self.major.major_short + ' ' + self.class_number
+
 

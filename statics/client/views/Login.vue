@@ -42,7 +42,18 @@
             }
           }).then(response => {
             this.$root.user = response.data
+            console.log(this.$root.user)
           })
+          // load user class
+          this.$http.get('http://localhost:8000/account/classrooms/', {
+            headers: {
+              'Authorization': 'JWT ' + this.$root.authToken
+            }
+          }).then(response => {
+            this.$root.classrooms = response.data
+            console.log(this.$root.classrooms)
+          })
+
           // redirect to home page
           this.$router.push('/')
         }, (response) => {

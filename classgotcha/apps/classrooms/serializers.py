@@ -8,6 +8,7 @@ class ClassroomSerializer(serializers.ModelSerializer):
 	tasks = serializers.PrimaryKeyRelatedField(many=True, queryset=Task.objects.all())
 	groups = serializers.PrimaryKeyRelatedField(many=True, queryset=Group.objects.all())
 	students_count = serializers.ReadOnlyField()
+	class_short = serializers.ReadOnlyField()
 
 	class Meta:
 		model = Classroom

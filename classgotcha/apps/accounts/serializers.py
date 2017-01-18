@@ -9,11 +9,12 @@ from ..notes.models import Note
 
 
 class AccountSerializer(serializers.ModelSerializer):
-
 	friends = serializers.PrimaryKeyRelatedField(many=True, queryset=Account.objects.all())
-	classrooms = serializers.PrimaryKeyRelatedField(many=True, queryset=Classroom.objects.all())
+	# classrooms = serializers.StringRelatedField(many=True, read_only=True)
 	moments = serializers.PrimaryKeyRelatedField(many=True, queryset=Moment.objects.exclude(flagged_num=3))
 	notes = serializers.PrimaryKeyRelatedField(many=True, queryset=Note.objects.all())
+	# tasks
+	# messages
 
 	class Meta:
 		model = Account

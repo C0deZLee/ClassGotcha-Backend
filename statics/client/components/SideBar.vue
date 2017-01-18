@@ -37,6 +37,9 @@
                 <ul class="nav nav-second-level collapse in">
                     <li><a href="/#/classroom/add">+ Add New</a></li>
                      <li><a href="/#/classroom/id/demo">CS 311 (demo)</a></li>
+                     <li v-for="classroom in $root.classrooms">
+                         <a :href="classroom_url(classroom.id)">{{classroom.class_short}}</a>
+                     </li>
                 </ul>
             </li>
               <li>
@@ -98,3 +101,14 @@
       </div>
   </nav>
 </template>
+
+<script>
+  export default {
+    name: 'sidebar',
+    methods: {
+      classroom_url: function(id) {
+        return '/#/classroom/id/' + id
+      }
+    }
+  }
+</script>

@@ -20,7 +20,8 @@ const app = new Vue({
   data: {
     currentRoute: window.location.pathname,
     authToken: '',
-    user: {}
+    user: {},
+    classrooms: {}
   },
   methods: {
     checkAuth: function() {
@@ -33,9 +34,11 @@ const app = new Vue({
         formData = {
           token: this.$cookie.get('token')
         }
+        this.authToken = this.$cookie.get('token')
       }
       console.log(this.authToken)
       this.$http.post('http://localhost:8000/account/login-verify/', formData).then(response => {
+
         // success
       }, response => {
         // console.log(response)
@@ -48,6 +51,9 @@ const app = new Vue({
       this.$cookie.delete('token')
       this.$router.push('/login')
     }
+  },
+  ready() {
+    this.checkAuth()
   },
   router,
   store,
