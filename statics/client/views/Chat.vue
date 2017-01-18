@@ -1,5 +1,6 @@
 <template>
     <div class="wrapper wrapper-content">
+        {{chattest()}}
         <div class="col-lg-12">
 
                 <div class="ibox chat-view">
@@ -158,3 +159,20 @@
 
     </div>
 </template>
+<script>
+  export default {
+    name: 'Chat',
+    methods: {
+      chattest: function() {
+        var ws_scheme = window.location.protocol == "https:" ? "wss" : "ws";
+        var chatsock = new ReconnectingWebSocket(ws_scheme + '://' + window.location.host + "/chat" + window.location.pathname)
+      }
+    },
+    data: function() {
+      return {
+        chatroom_location: '',
+
+      }
+    }
+  }
+</script>

@@ -17,19 +17,14 @@
 </template>
 
 <script>
-import SideBar from './SideBar'
-import TopBar from './TopBar'
+  import SideBar from './SideBar'
+  import TopBar from './TopBar'
 
-export default {
-  components: {
-    SideBar,
-    TopBar
+  export default {
+    name: 'DefaultLayout',
+    components: {
+      SideBar,
+      TopBar
+    }
   }
-}
-
-// UI
-$(document).ready(function () {
-  $("body").removeClass("gray-bg")
-})
-
 </script>
