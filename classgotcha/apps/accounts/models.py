@@ -78,6 +78,7 @@ class Account(AbstractBaseUser, PermissionsMixin):
 	# 7) posts
 	# 8) moments
 	# 9) tasks
+	# 10) rooms
 	# Manager
 	objects = AccountManager()
 	# Settings

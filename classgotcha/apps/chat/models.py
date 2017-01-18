@@ -1,14 +1,22 @@
 from __future__ import unicode_literals
 
 from django.db import models
-from django.template.defaultfilters import slugify
-from ..accounts.models import Account
 from django.utils import timezone
+
+from django.template.defaultfilters import slugify
+
+
+from ..accounts.models import Account
+from ..classrooms.models import Classroom
 
 
 class Room(models.Model):
 	name = models.CharField(max_length=20)
-	label = models.SlugField(blank=True)
+	label = models.SlugField(blank=True, null=True)
+	# relationship
+	accounts = models.ManyToManyField(Account, related_name='rooms')
+	creator = models.ForeignKey(Account)
+	classroom = models.ForeignKey(Classroom, related_name='class_chatroom')
 
 	class Meta:
 		ordering = ("name",)
@@ -31,14 +39,14 @@ class Message(models.Model):
 	context = models.CharField(max_length=140, blank=True)
 	handle = models.CharField(max_length=140)
 	message = models.CharField(max_length=140)
-	timestamp = models.DateTimeField(default=timezone.now, db_index=True)
+	created = models.DateTimeField(default=timezone.now, db_index=True)
 
 	def __unicode__(self):
 		return '[{timestamp}] {handle}: {message}'.format(**self.as_dict())
 
 	@property
 	def formatted_timestamp(self):
-		return self.timestamp.strftime('%b %-d %-I:%M %p')
+		return self.created.strftime('%b %-d %-I:%M %p')
 
 	def as_dict(self):
 		return {'handle': self.handle, 'message': self.message, 'timestamp': self.formatted_timestamp}

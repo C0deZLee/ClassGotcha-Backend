@@ -35,6 +35,7 @@
           this.$root.authToken = response.data.token
           // write token to cookie, expires in 1 day
           this.$cookie.set('token', response.data.token, 1)
+          console.log('token in cookie: ' + this.$cookie.get('token'))
           // load user data
           this.$http.get(this.$root.apiEndPoint + '/account/me/', {
             headers: {
@@ -51,7 +52,6 @@
             }
           }).then(response => {
             this.$root.classrooms = response.data
-            this.$cookie.set('token', response.data.token, 1)
             console.log(this.$root.classrooms)
           })
           // redirect to home page

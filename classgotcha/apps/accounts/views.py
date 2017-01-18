@@ -14,6 +14,7 @@ from serializers import AccountSerializer, BasicAccountSerializer, AuthAccountSe
 from ..classrooms.serializers import Classroom, ClassroomSerializer
 from ..notes.serializers import Note, NoteSerializer
 from ..posts.serializers import MomentSerializer
+from ..chat.serializers import RoomSerializer
 
 @api_view(['POST'])
 @permission_classes((AllowAny,))
@@ -171,4 +172,9 @@ class AccountViewSet(viewsets.ViewSet):
 		else:
 			page = int(page)
 		serializer = MomentSerializer(request.user.moments.all().reverse()[page:page+5], many=True)
+		return Response(serializer.data)
+
+	@staticmethod
+	def rooms(request):
+		serializer = RoomSerializer(request.user.rooms.all(), many=True)
 		return Response(serializer.data)

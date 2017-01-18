@@ -34,6 +34,7 @@ class Classroom(models.Model):
 	# 1) notes
 	# 2) tasks
 	# 3) groups
+	# 4) class_chatroom
 
 	def __unicode__(self):
 		return self.major.major_short + ' ' + self.class_number

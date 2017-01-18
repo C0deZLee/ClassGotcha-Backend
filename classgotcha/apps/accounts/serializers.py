@@ -1,6 +1,6 @@
 from models import Account, Avatar
 from rest_framework import serializers
-from ..classrooms.models import Classroom
+# from ..classrooms.models import Classroom
 from ..posts.models import Moment
 # from ..groups.models import Group
 from ..notes.models import Note
