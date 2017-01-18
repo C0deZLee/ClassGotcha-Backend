@@ -31,13 +31,15 @@ const app = new Vue({
         formData = {
           token: this.authToken
         }
+        console.log(this.authToken)
       } else {
         formData = {
           token: this.$cookie.get('token')
         }
         this.authToken = this.$cookie.get('token')
+        console.log(this.authToken)
       }
-      this.$http.post('http://localhost:8000/account/login-verify/', formData).then(response => {
+      this.$http.post(this.$root.apiEndPoint + '/account/login-verify/', formData).then(response => {
         // success
         // load user class
         this.$http.get(this.$root.apiEndPoint + '/account/classrooms/', {
@@ -50,7 +52,7 @@ const app = new Vue({
         })
       }, response => {
         // failed
-        this.logout()
+        // this.logout()
       })
     },
     logout: function() {
@@ -66,6 +68,7 @@ const app = new Vue({
   store,
   render: h => h(App)
 })
+
 export {
   app,
   router,
