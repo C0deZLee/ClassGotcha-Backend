@@ -1,9 +1,8 @@
 <template>
   <div class="page">
-
         <div class="row wrapper border-bottom white-bg page-heading">
             <div class="col-lg-10">
-                <h2>CS 311  <i class="fa fa-check" alt="You are in this class"></i>
+                <h2>{{classroom.class_short}}<i class="fa fa-check" alt="You are in this class"></i>
                 </h2>
                 <ol class="breadcrumb">
                     <li>
@@ -466,3 +465,56 @@
         </div>
   </div>
 </template>
+
+<script>
+  // VUe doesn't provide a method that can run after component load
+  export default {
+    name: 'classroom',
+    methods: {
+      getClassroomData: function() {
+        let class_short = ''
+        this.$http.get('http://localhost:8000/classroom/' + this.$route.params.classroom_id + '/', {
+          headers: {
+            'Authorization': 'JWT ' + this.$root.authToken
+          }
+        }).then((response => {
+          // success
+          this.classroom = response.data
+          class_short = response.data.class_short
+          console.log(response.data)
+        }), (response => {
+          // failed
+          console.log(response.data)
+        }))
+        return class_short
+      },
+      vaildUser: function() {
+        this.$http.get('http://localhost:8000/classroom/' + this.$route.params.classroom_id + '/check/', {
+          headers: {
+            'Authorization': 'JWT ' + this.$root.authToken
+          }
+        }).then((response => {
+          //success
+          return true;
+        }), (response => {
+          //failed
+          return false;
+        }))
+      }
+    },
+    data: function() {
+      return {
+        classroom: {}
+      }
+    },
+    created: function() {
+      // after component is created, load data
+      this.getClassroomData()
+    },
+    watch: {
+      // execute getClassroomData if route changes
+      '$route': 'getClassroomData'
+    },
+
+  }
+</script>
