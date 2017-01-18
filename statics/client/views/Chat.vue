@@ -1,5 +1,5 @@
 <template>
-    <div class="row">
+    <div class="wrapper wrapper-content">
         <div class="col-lg-12">
 
                 <div class="ibox chat-view">

@@ -127,7 +127,6 @@
                           <p>
                              .
                           </p>
-
                         </div>
                     </div>
 
@@ -136,12 +135,12 @@
                             <h3>Class Material</h3>
                             <p>
                               <div class="btn-group">
-                                 <a type="button" ui-sref="syllabus" class="btn btn-success dropdown-toggle btn-lg">
+                                 <a href="/#/classroom/id/demo/notes/" type="button" class="btn btn-success dropdown-toggle btn-lg">
                                      <span class="fa fa-file"></span>
                                  </a>
                                </div>
                             <div class="btn-group">
-                               <a type="button" ui-sref="c_notes" class="btn btn-info dropdown-toggle btn-lg">
+                               <a type="button" class="btn btn-info dropdown-toggle btn-lg">
                                    <span class="fa fa-stack-exchange"></span>
                                </a>
                             </div>
