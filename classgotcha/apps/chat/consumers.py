@@ -8,6 +8,7 @@ from classgotcha.apps.chat.scripts.Conversation import run,Backendhandler
 
 log = logging.getLogger(__name__)
 
+
 @channel_session
 def ws_connect(message):
     # Extract the room from the message. This expects message.path to be of the
@@ -37,6 +38,7 @@ def ws_connect(message):
     Group('chat-'+label, channel_layer=message.channel_layer).add(message.reply_channel)
 
     message.channel_session['room'] = room.label
+
 
 @channel_session
 def ws_receive(message):
@@ -122,6 +124,7 @@ def ws_receive(message):
         # See above for the note about Group
         
         Group('chat-'+label, channel_layer=message.channel_layer).send({'text': json.dumps(m1.as_dict())})
+
 
 @channel_session
 def ws_disconnect(message):
