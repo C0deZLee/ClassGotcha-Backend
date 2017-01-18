@@ -34,14 +34,14 @@
           'email': this.email,
           'password': this.password
         }
-        this.$http.post('http://localhost:8000/account/register/', formData).then((response) => {
+        this.$http.post(this.$root.apiEndPoint + '/account/register/', formData).then((response) => {
           // success
           // store auth token 
           this.$root.authToken = response.data.token
           // write token to cookie, expires in 1 day
           this.$cookie.set('token', response.data.token, 1)
           // load user data
-          this.$http.get('http://localhost:8000/account/me/', {
+          this.$http.get(this.$root.apiEndPoint + '/account/me/', {
             headers: {
               'Authorization': 'JWT ' + this.$root.authToken
             }

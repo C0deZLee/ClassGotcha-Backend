@@ -19,6 +19,7 @@ const app = new Vue({
   el: '#app',
   data: {
     currentRoute: window.location.pathname,
+    apiEndPoint: 'http://localhost:8000',
     authToken: '',
     user: {},
     classrooms: {}
@@ -36,14 +37,20 @@ const app = new Vue({
         }
         this.authToken = this.$cookie.get('token')
       }
-      console.log(this.authToken)
       this.$http.post('http://localhost:8000/account/login-verify/', formData).then(response => {
-
         // success
+        // load user class
+        this.$http.get(this.$root.apiEndPoint + '/account/classrooms/', {
+          headers: {
+            Authorization: 'JWT ' + this.$root.authToken
+          }
+        }).then(response => {
+          this.$root.classrooms = response.data
+          console.log(this.$root.classrooms)
+        })
       }, response => {
-        // console.log(response)
         // failed
-        this.$router.push('/login')
+        this.logout()
       })
     },
     logout: function() {
@@ -52,14 +59,13 @@ const app = new Vue({
       this.$router.push('/login')
     }
   },
-  ready() {
+  mounted: function() {
     this.checkAuth()
   },
   router,
   store,
   render: h => h(App)
 })
-
 export {
   app,
   router,

@@ -29,14 +29,14 @@
           'email': this.useremail,
           'password': this.userpass
         }
-        this.$http.post('http://localhost:8000/account/login/', formData).then((response) => {
+        this.$http.post(this.$root.apiEndPoint + '/account/login/', formData).then((response) => {
           // success
           // store auth token 
           this.$root.authToken = response.data.token
           // write token to cookie, expires in 1 day
           this.$cookie.set('token', response.data.token, 1)
           // load user data
-          this.$http.get('http://localhost:8000/account/me/', {
+          this.$http.get(this.$root.apiEndPoint + '/account/me/', {
             headers: {
               'Authorization': 'JWT ' + this.$root.authToken
             }
@@ -45,15 +45,15 @@
             console.log(this.$root.user)
           })
           // load user class
-          this.$http.get('http://localhost:8000/account/classrooms/', {
+          this.$http.get(this.$root.apiEndPoint + '/account/classrooms/', {
             headers: {
               'Authorization': 'JWT ' + this.$root.authToken
             }
           }).then(response => {
             this.$root.classrooms = response.data
+            this.$cookie.set('token', response.data.token, 1)
             console.log(this.$root.classrooms)
           })
-
           // redirect to home page
           this.$router.push('/')
         }, (response) => {
