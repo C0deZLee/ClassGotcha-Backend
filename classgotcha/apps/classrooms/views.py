@@ -1,8 +1,8 @@
+# -*- coding: utf-8 -*-
 import os, uuid, re, json
-
 from django.core.files.base import File
-
-from models import Account, Classroom
+from ..accounts.models import Major
+from models import Account, Classroom ,Semester
 from ..notes.serializers import Note, NoteSerializer
 from ..posts.serializers import Moment, MomentSerializer
 from ..tasks.serializers import Task, TaskSerializer
@@ -157,12 +157,25 @@ class ClassroomViewSet(viewsets.ViewSet):
 	# TODO
 	# Tools for upload all the courses
 	#@permission_classes((IsStaff,))
-	def admin_upload_all_course_info(self,request,filename = None):
-		with open(upload(request,filename)) as coursefile:
-			courselist = json.loads(coursefile)
-			for course in courselist:
-				try:
-					Classroom.objects.create(class_code=course['number'],class_name = course['name'].split()[0],class_number= course['name'].split()[1],description = course['description'],section = course['section'],major = course['major'])
-				except:
-					pass
+
+	def admin_upload_all_course_info(self,request,file_name = None):
+		try:
+			upload = request.FILES['file']
+		except:
+			return None
+		name, extension = os.path.splitext(upload.name)
+
+		if file_name:
+			name = file_name
+		name = name + '_' + uuid.uuid4().hex + extension
+		
+		for course in upload:
+			
+			cours = json.loads(course)
+			print cours['description']
+			major,created = Major.objects.get_or_create(major_short = cours['major'])
+			semester,created  = Semester.objects.get_or_create(name = "Spring 2017")
+			classroom = Classroom.objects.create(class_code=cours['number'],class_name = cours['name'].split()[0],class_number= cours['name'].split()[1],description = cours['description'],section = cours['section'],major = major,semester = semester)
+			classroom.save()
+		return Response(status = status.HTTP_201_CREATED)
 

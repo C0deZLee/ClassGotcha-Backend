@@ -5,8 +5,8 @@ from ..accounts.models import Account, Major
 
 class Semester(models.Model):
 	name = models.CharField(max_length=20)
-	start = models.DateField()
-	end = models.DateField()
+	start = models.DateField(null=True, blank=True)
+	end = models.DateField(null=True, blank=True)
 
 	def __unicode__(self):
 		return self.name
