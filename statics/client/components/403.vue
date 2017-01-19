@@ -7,9 +7,9 @@
             Sorry, but you are not allowed to visit this page, try to login to continue.
             <form class="form-inline m-t" role="form">
                 <div class="form-group">
-                    <a href="/#/login" class=" buttonform-control" placeholder="login"></a>
+                    <a href="/#/login" placeholder="login" class="btn btn-primary">Login</a>
                 </div>
-                <button type="submit" class="btn btn-primary">Search</button>
+                
             </form>
         </div>
     </div>

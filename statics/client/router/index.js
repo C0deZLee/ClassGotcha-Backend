@@ -5,6 +5,7 @@ import Resource from 'vue-resource'
 import AuthLayout from '../components/AuthLayout'
 import DefaultLayout from '../components/DefaultLayout'
 import Page404 from '../components/404'
+import Page403 from '../components/403'
 
 import Home from '../views/Home'
 import AddClassroom from '../views/AddClassroom'
@@ -63,6 +64,9 @@ export default new Router({
     }, {
       path: '/404',
       component: Page404
+    }, {
+      path: '/403',
+      component: Page403
     }]
   }]
 })

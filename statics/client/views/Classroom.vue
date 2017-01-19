@@ -131,7 +131,7 @@
 
                     <div class="ibox">
                         <div class="ibox-content">
-                            <h3>Class Material</h3>
+                            <h3>Class Notes</h3>
                             
                               <div class="btn-group">
                                  <a href="/#/classroom/id/demo/notes/" type="button" class="btn btn-success dropdown-toggle btn-lg">
@@ -483,7 +483,12 @@
         }), (response => {
           // failed
           //console.log(response.data)
-          this.$router.push('/404')
+          if (response.status == 404) {
+            this.$router.push('/404')
+          }
+          if (response.status == 403) {
+            this.$router.push('/403')
+          }
 
         }))
         return class_short
@@ -498,6 +503,7 @@
           return true;
         }), (response => {
           //failed
+          console.log(response)
           return false;
         }))
       }
