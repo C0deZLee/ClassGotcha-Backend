@@ -1,4 +1,4 @@
-import os, uuid
+import os, uuid, re
 
 from django.core.files.base import File
 
@@ -22,6 +22,7 @@ class ClassroomViewSet(viewsets.ViewSet):
 	permission_classes = (IsAuthenticated,)
 
 	'''Can pass a filename as optional variable'''
+
 	def upload(self, request, file_name=None):
 		try:
 			upload = request.FILES['file']
@@ -61,34 +62,32 @@ class ClassroomViewSet(viewsets.ViewSet):
 			search_token = request.data['search_token']
 			search_token = search_token.strip()
 		except:
-			return Response(status = status.HTTP_400_BAD_REQUEST)
-        if search_token.isdigit():
-        	try:
-        		classrooms = Classroom.objects.filter(class_code = search_token)
-        		serializer = ClassroomSerializer(classrooms, many=True)
-        		return (serializer.data)
-        	except :
-        		return Response(status = status.HTTP_400_BAD_REQUEST)
+			return Response(status=status.HTTP_400_BAD_REQUEST)
 
-        else:
+		if search_token.isdigit():
+			try:
+				classrooms = Classroom.objects.filter(class_code=search_token)
+				serializer = ClassroomSerializer(classrooms, many=True)
+				return (serializer.data)
+			except:
+				return Response(status=status.HTTP_400_BAD_REQUEST)
 
-        	try:
-        		match = re.match(r"([a-z]+)([0-9]+)", 'foofo21', re.I)
+		else:
+
+			try:
+				match = re.match(r"([a-z]+)([0-9]+)", 'foofo21', re.I)
 				if match:
-    				items = match.groups()
-        			classname = items[0]
-        			classnumber = items[1]
-        			classname.upper()
-        			classrooms = Classroom.objects.filter(class_name = classname, class_number = classnumber)
-        			serializer = ClassroomSerializer(classrooms, many=True)
-        			return (serializer.data)
+					items = match.groups()
+				classname = items[0]
+				classnumber = items[1]
+				classname.upper()
+				classrooms = Classroom.objects.filter(class_name=classname, class_number=classnumber)
+				serializer = ClassroomSerializer(classrooms, many=True)
+				return (serializer.data)
 
-        	except:
-        		return Response(status = status.HTTP_400_BAD_REQUEST)
+			except:
+				return Response(status=status.HTTP_400_BAD_REQUEST)
 
-        
-
-     
 
 	def is_in_class(self, request, pk):
 		classroom = get_object_or_404(self.queryset, pk=pk)
@@ -96,6 +95,7 @@ class ClassroomViewSet(viewsets.ViewSet):
 			return Response(status=status.HTTP_200_OK)
 		else:
 			return Response({'error': 'You are not in this classroom'}, status=status.HTTP_403_FORBIDDEN)
+
 
 	@parser_classes((MultiPartParser, FormParser,))
 	def syllabus(self, request, pk):
@@ -107,6 +107,7 @@ class ClassroomViewSet(viewsets.ViewSet):
 		classroom.syllabus = new_file
 		classroom.save()
 		return Response(status=status.HTTP_200_OK)
+
 
 	@parser_classes((MultiPartParser, FormParser,))
 	def notes(self, request, pk):
@@ -125,11 +126,13 @@ class ClassroomViewSet(viewsets.ViewSet):
 			serializer = NoteSerializer(classroom.notes, many=True)
 			return Response(serializer.data)
 
+
 	def recent_moments(self, request, pk):
 		classroom = get_object_or_404(self.queryset, pk=pk)
 		moments = classroom.moments.all().order_by('-created')[0:5]
 		serializer = MomentSerializer(moments, many=True)
 		return Response(serializer.data)
+
 
 	def tasks(self, request, pk):
 		classroom = get_object_or_404(self.queryset, pk=pk)
@@ -142,6 +145,7 @@ class ClassroomViewSet(viewsets.ViewSet):
 			serializer.is_valid(raise_exception=True)
 			serializer.save()
 			return Response(status=status.HTTP_201_CREATED)
+
 
 	def students(self, request, pk):
 		classroom = get_object_or_404(self.queryset, pk=pk)

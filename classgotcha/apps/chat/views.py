@@ -76,7 +76,7 @@ class ChatRoomViewSet(viewsets.ViewSet):
 		return Response(serializer.data)
 
 	'''
-	Get users in chat room
+	Get users in chat current room
 	'''
 	def users(self, request, pk):
 		room = get_object_or_404(self.queryset, pk=pk)

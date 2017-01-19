@@ -16,7 +16,7 @@ class Room(models.Model):
 	# relationship
 	accounts = models.ManyToManyField(Account, related_name='rooms')
 	creator = models.ForeignKey(Account)
-	classroom = models.ForeignKey(Classroom, related_name='class_chatroom')
+	classroom = models.ForeignKey(Classroom, related_name='class_chatroom', null=True, blank=True)
 
 	class Meta:
 		ordering = ("name",)

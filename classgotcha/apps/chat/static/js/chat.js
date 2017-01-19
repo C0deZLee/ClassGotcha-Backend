@@ -22,11 +22,12 @@ $(function() {
     };
 
     $("#chatform").on("submit", function(event) {
-        var message = {
+
+        chatsock.send(JSON.stringify( {
             handle: $('#handle').val(),
             message: $('#message').val(),
-        }
-        chatsock.send(JSON.stringify(message));
+        }));
+
         $("#message").val('').focus();
         return false;
     });
