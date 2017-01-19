@@ -27,13 +27,13 @@
               </li>
               <li>
                   <a href="/#/">
-                      <i class="fa fa-laptop"></i>
+                      <i class="fa fa-th-large"></i>
                       <span class="nav-label">Index</span>
                   </a>
               </li>
 
               <li class="active">
-                <a href="/#/classroom"><i class="fa fa-bar-chart-o"></i> <span class="nav-label">Classroom</span><span class="fa arrow"></span></a>
+                <a href="/#/classroom"><i class="fa fa-laptop"></i> <span class="nav-label">Classroom</span><span class="fa arrow"></span></a>
                 <ul class="nav nav-second-level collapse in">
                     <li><a href="/#/classroom/add">+ Add New</a></li>
                      <li><a href="/#/classroom/id/demo">CS 311 (demo)</a></li>

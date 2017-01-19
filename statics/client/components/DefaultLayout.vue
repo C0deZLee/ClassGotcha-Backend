@@ -10,6 +10,7 @@
             <router-view></router-view>
           <!-- End page wrapper-->
         </div>
+        <right-side-bar></right-side-bar>
     <!-- Modal window -->
     <modal-window></modal-window>
     <!-- End wrapper-->
@@ -19,12 +20,13 @@
 <script>
   import SideBar from './SideBar'
   import TopBar from './TopBar'
-
+  import RightSideBar from './RightSideBar'
   export default {
     name: 'DefaultLayout',
     components: {
       SideBar,
-      TopBar
+      TopBar,
+      RightSideBar
     }
   }
 </script>
