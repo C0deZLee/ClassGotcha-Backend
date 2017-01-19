@@ -16,7 +16,7 @@ class Classroom(models.Model):
 	# Basic
 	class_name = models.CharField(max_length=100)
 	class_number = models.CharField(max_length=10)
-	class_code = models.CharField(max_length=10)
+	class_code = models.CharField(max_length=10, unique=True)
 	syllabus = models.FileField(blank=True, null=True)
 	description = models.TextField(blank=True)
 	section = models.CharField(max_length=10)

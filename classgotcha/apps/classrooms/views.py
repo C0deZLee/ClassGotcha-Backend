@@ -1,4 +1,4 @@
-import os, uuid, re
+import os, uuid, re, json
 
 from django.core.files.base import File
 
@@ -11,10 +11,12 @@ from django.shortcuts import get_object_or_404
 from serializers import BasicClassroomSerializer, ClassroomSerializer
 
 from rest_framework import viewsets, status
-from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly, AllowAny
+from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly, AllowAny#, IsStaff
 from rest_framework.response import Response
 from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework.decorators import detail_route, list_route, api_view, permission_classes, parser_classes
+
+
 
 
 class ClassroomViewSet(viewsets.ViewSet):
@@ -56,7 +58,7 @@ class ClassroomViewSet(viewsets.ViewSet):
 		serializer = BasicClassroomSerializer(self.queryset, many=True)
 		return Response(serializer.data)
 
-	# TODO
+	# TODO search course to enroll, need to test 1/19/20217 Simo
 	def search(self, request):
 		try:
 			search_token = request.data['search_token']
@@ -151,3 +153,16 @@ class ClassroomViewSet(viewsets.ViewSet):
 		classroom = get_object_or_404(self.queryset, pk=pk)
 		serializer = BasicAccountSerializer(classroom.students, many=True)
 		return Response(serializer.data)
+
+	# TODO
+	# Tools for upload all the courses
+	#@permission_classes((IsStaff,))
+	def admin_upload_all_course_info(self,request,filename = None):
+		with open(upload(request,filename)) as coursefile:
+			courselist = json.loads(coursefile)
+			for course in courselist:
+				try:
+					Classroom.objects.create(class_code=course['number'],class_name = course['name'].split()[0],class_number= course['name'].split()[1],description = course['description'],section = course['section'],major = course['major'])
+				except:
+					pass
+
