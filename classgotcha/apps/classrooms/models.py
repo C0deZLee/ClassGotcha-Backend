@@ -5,8 +5,8 @@ from ..accounts.models import Account, Major
 
 class Semester(models.Model):
 	name = models.CharField(max_length=20)
-	start = models.DateField()
-	end = models.DateField()
+	start = models.DateField(null=True, blank=True)
+	end = models.DateField(null=True, blank=True)
 
 	def __unicode__(self):
 		return self.name
@@ -16,7 +16,7 @@ class Classroom(models.Model):
 	# Basic
 	class_name = models.CharField(max_length=100)
 	class_number = models.CharField(max_length=10)
-	class_code = models.CharField(max_length=10)
+	class_code = models.CharField(max_length=10, unique=True)
 	syllabus = models.FileField(blank=True, null=True)
 	description = models.TextField(blank=True)
 	section = models.CharField(max_length=10)

@@ -1,8 +1,8 @@
-import os, uuid, re
-
+# -*- coding: utf-8 -*-
+import os, uuid, re, json
 from django.core.files.base import File
-
-from models import Account, Classroom
+from ..accounts.models import Major
+from models import Account, Classroom ,Semester
 from ..notes.serializers import Note, NoteSerializer
 from ..posts.serializers import Moment, MomentSerializer
 from ..tasks.serializers import Task, TaskSerializer
@@ -11,10 +11,12 @@ from django.shortcuts import get_object_or_404
 from serializers import BasicClassroomSerializer, ClassroomSerializer
 
 from rest_framework import viewsets, status
-from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly, AllowAny
+from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly, AllowAny#, IsStaff
 from rest_framework.response import Response
 from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework.decorators import detail_route, list_route, api_view, permission_classes, parser_classes
+
+
 
 
 class ClassroomViewSet(viewsets.ViewSet):
@@ -56,7 +58,7 @@ class ClassroomViewSet(viewsets.ViewSet):
 		serializer = BasicClassroomSerializer(self.queryset, many=True)
 		return Response(serializer.data)
 
-	# TODO
+	# TODO search course to enroll, need to test 1/19/20217 Simo
 	def search(self, request):
 		try:
 			search_token = request.data['search_token']
@@ -151,3 +153,29 @@ class ClassroomViewSet(viewsets.ViewSet):
 		classroom = get_object_or_404(self.queryset, pk=pk)
 		serializer = BasicAccountSerializer(classroom.students, many=True)
 		return Response(serializer.data)
+
+	# TODO
+	# Tools for upload all the courses
+	#@permission_classes((IsStaff,))
+
+	def admin_upload_all_course_info(self,request,file_name = None):
+		try:
+			upload = request.FILES['file']
+		except:
+			return None
+		name, extension = os.path.splitext(upload.name)
+
+		if file_name:
+			name = file_name
+		name = name + '_' + uuid.uuid4().hex + extension
+		
+		for course in upload:
+			
+			cours = json.loads(course)
+			print cours['description']
+			major,created = Major.objects.get_or_create(major_short = cours['major'])
+			semester,created  = Semester.objects.get_or_create(name = "Spring 2017")
+			classroom = Classroom.objects.create(class_code=cours['number'],class_name = cours['name'].split()[0],class_number= cours['name'].split()[1],description = cours['description'],section = cours['section'],major = major,semester = semester)
+			classroom.save()
+		return Response(status = status.HTTP_201_CREATED)
+

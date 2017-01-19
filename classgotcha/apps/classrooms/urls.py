@@ -38,6 +38,10 @@ classroom_search = views.ClassroomViewSet.as_view({
     'get': 'search'
 })
 
+classroom_admin_upload = views.ClassroomViewSet.as_view({
+	'post': 'admin_upload_all_course_info'
+})
+
 urlpatterns = [
 	url(r'(?P<pk>[0-9]+)/notes/$', classroom_notes, name='classroom-notes'),
 	url(r'(?P<pk>[0-9]+)/tasks/$', classroom_tasks, name='classroom-tasks'),
@@ -47,6 +51,7 @@ urlpatterns = [
 	url(r'(?P<pk>[0-9]+)/$', classroom_detail, name='classroom-detail'),
 	url(r'all/$', classroom_all, name='classroom-all'),
 	url(r'(?P<pk>[0-9]+)/search/$',classroom_search, name = 'classroom-search'),
+	url(r'upload/$',classroom_admin_upload,name = 'classroom_admin_upload'),
 
 ]
 
