@@ -3,7 +3,7 @@ const pkg = require('../package')
 
 module.exports = {
   port: 4000,
-  title: 'classgotcha',
+  title: 'ClassGotcha',
   vendor: Object.keys(pkg.dependencies),
   babel: {
     babelrc: false,

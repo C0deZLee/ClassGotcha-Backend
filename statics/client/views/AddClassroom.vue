@@ -2,16 +2,16 @@
     <div>
     <div class="row wrapper border-bottom white-bg page-heading">
                 <div class="col-lg-10">
-                    <h2>Clients</h2>
+                    <h2>Add New</h2>
                     <ol class="breadcrumb">
                         <li>
                             <a href="index.html">Home</a>
                         </li>
                         <li>
-                            <a>App Views</a>
+                            <a>Classroom</a>
                         </li>
                         <li class="active">
-                            <strong>Clients</strong>
+                            <strong>Add New</strong>
                         </li>
                     </ol>
                 </div>
@@ -19,13 +19,13 @@
 
                 </div>
             </div>
-            <div class="wrapper wrapper-content  animated fadeInRight">
+        <div class="wrapper wrapper-content  animated fadeInRight">
             <div class="row">
                 <div class="col-sm-8">
                     <div class="ibox">
                         <div class="ibox-content">
                             <span class="text-muted small pull-right">Last modification: <i class="fa fa-clock-o"></i> 2:10 pm - 12.06.2014</span>
-                            <h2>Clients</h2>
+                            <h2>Search Your Class Here</h2>
                             <p>
                                 All clients need to be verified before you can send email and set a project.
                             </p>
@@ -43,7 +43,7 @@
                             </ul>
                             <div class="tab-content">
                                 <div id="tab-1" class="tab-pane active">
-                                    <div class="slimScrollDiv" style="position: relative; overflow: hidden; width: auto; height: 100%;"><div class="full-height-scroll" style="overflow: hidden; width: auto; height: 100%;">
+                                    <div class="full-height-scroll">
                                         <div class="table-responsive">
                                             <table class="table table-striped table-hover">
                                                 <tbody>
@@ -145,7 +145,7 @@
                                                 </tr>
                                                 <tr>
                                                     <td class="client-avatar"><a href=""><img alt="image" src="img/a5.jpg"></a> </td>
-                                                    <td><a data-toggle="tab" href="#contact-3" class="client-link">Edan Randall</a></td>
+                                                    <td><a data-toggle="tab" href="#contact-3"class="client-link">Edan Randall</a></td>
                                                     <td>Integer Sem Corp.</td>
                                                     <td class="contact-type"><i class="fa fa-phone"> </i></td>
                                                     <td> +422 600 213</td>
@@ -218,10 +218,10 @@
                                                 </tbody>
                                             </table>
                                         </div>
-                                    </div><div class="slimScrollBar" style="background: rgb(0, 0, 0); width: 7px; position: absolute; top: 0px; opacity: 0.4; display: none; border-radius: 7px; z-index: 99; right: 1px; height: 365.112px;"></div><div class="slimScrollRail" style="width: 7px; height: 100%; position: absolute; top: 0px; display: none; border-radius: 7px; background: rgb(51, 51, 51); opacity: 0.2; z-index: 90; right: 1px;"></div></div>
+                                    </div>
                                 </div>
                                 <div id="tab-2" class="tab-pane">
-                                    <div class="slimScrollDiv" style="position: relative; overflow: hidden; width: auto; height: 100%;"><div class="full-height-scroll" style="overflow: hidden; width: auto; height: 100%;">
+                                    <div class="full-height-scroll">
                                         <div class="table-responsive">
                                             <table class="table table-striped table-hover">
                                                 <tbody>
@@ -354,7 +354,7 @@
                                                 </tbody>
                                             </table>
                                         </div>
-                                    </div><div class="slimScrollBar" style="background: rgb(0, 0, 0); width: 7px; position: absolute; top: 0px; opacity: 0.4; display: block; border-radius: 7px; z-index: 99; right: 1px;"></div><div class="slimScrollRail" style="width: 7px; height: 100%; position: absolute; top: 0px; display: none; border-radius: 7px; background: rgb(51, 51, 51); opacity: 0.2; z-index: 90; right: 1px;"></div></div>
+                                    </div>
                                 </div>
                             </div>
 
@@ -373,7 +373,8 @@
                                             <h2>Nicki Smith</h2>
 
                                             <div class="m-b-sm">
-                                                <img alt="image" class="img-circle" src="img/a2.jpg" style="width: 62px">
+                                                <img alt="image" class="img-circle" src="img/a2.jpg"
+                                                     style="width: 62px">
                                             </div>
                                         </div>
                                         <div class="col-lg-8">
@@ -385,12 +386,13 @@
                                                 Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
                                                 tempor incididunt ut labore et dolore magna aliqua.
                                             </p>
-                                            <button type="button" class="btn btn-primary btn-sm btn-block"><i class="fa fa-envelope"></i> Send Message
+                                            <button type="button" class="btn btn-primary btn-sm btn-block"><i
+                                                    class="fa fa-envelope"></i> Send Message
                                             </button>
                                         </div>
                                     </div>
                                     <div class="client-detail">
-                                    <div class="slimScrollDiv" style="position: relative; overflow: hidden; width: auto; height: 100%;"><div class="full-height-scroll" style="overflow: hidden; width: auto; height: 100%;">
+                                    <div class="full-height-scroll">
 
                                         <strong>Last activity</strong>
 
@@ -421,7 +423,7 @@
                                             Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
                                             tempor incididunt ut labore et dolore magna aliqua.
                                         </p>
-                                        <hr>
+                                        <hr/>
                                         <strong>Timeline activity</strong>
                                         <div id="vertical-timeline" class="vertical-container dark-timeline">
                                             <div class="vertical-timeline-block">
@@ -485,7 +487,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                    </div><div class="slimScrollBar" style="background: rgb(0, 0, 0); width: 7px; position: absolute; top: 0px; opacity: 0.4; display: block; border-radius: 7px; z-index: 99; right: 1px; height: 405.058px;"></div><div class="slimScrollRail" style="width: 7px; height: 100%; position: absolute; top: 0px; display: none; border-radius: 7px; background: rgb(51, 51, 51); opacity: 0.2; z-index: 90; right: 1px;"></div></div>
+                                    </div>
                                     </div>
                                 </div>
                                 <div id="contact-2" class="tab-pane">
@@ -494,7 +496,8 @@
                                             <h2>Edan Randall</h2>
 
                                             <div class="m-b-sm">
-                                                <img alt="image" class="img-circle" src="img/a3.jpg" style="width: 62px">
+                                                <img alt="image" class="img-circle" src="img/a3.jpg"
+                                                     style="width: 62px">
                                             </div>
                                         </div>
                                         <div class="col-lg-8">
@@ -505,12 +508,13 @@
                                             <p>
                                                 Many desktop publishing packages and web page editors now use Lorem Ipsum as their default tempor incididunt model text.
                                             </p>
-                                            <button type="button" class="btn btn-primary btn-sm btn-block"><i class="fa fa-envelope"></i> Send Message
+                                            <button type="button" class="btn btn-primary btn-sm btn-block"><i
+                                                    class="fa fa-envelope"></i> Send Message
                                             </button>
                                         </div>
                                     </div>
                                     <div class="client-detail">
-                                        <div class="slimScrollDiv" style="position: relative; overflow: hidden; width: auto; height: 100%;"><div class="full-height-scroll" style="overflow: hidden; width: auto; height: 100%;">
+                                        <div class="full-height-scroll">
 
                                             <strong>Last activity</strong>
 
@@ -540,7 +544,7 @@
                                             <p>
                                                 There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour, or randomised words.
                                             </p>
-                                            <hr>
+                                            <hr/>
                                             <strong>Timeline activity</strong>
                                             <div id="vertical-timeline" class="vertical-container dark-timeline">
                                                 <div class="vertical-timeline-block">
@@ -594,7 +598,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div><div class="slimScrollBar" style="background: rgb(0, 0, 0); width: 7px; position: absolute; top: 0px; opacity: 0.4; display: block; border-radius: 7px; z-index: 99; right: 1px;"></div><div class="slimScrollRail" style="width: 7px; height: 100%; position: absolute; top: 0px; display: none; border-radius: 7px; background: rgb(51, 51, 51); opacity: 0.2; z-index: 90; right: 1px;"></div></div>
+                                        </div>
                                     </div>
                                 </div>
                                 <div id="contact-3" class="tab-pane">
@@ -603,7 +607,8 @@
                                             <h2>Jasper Carson</h2>
 
                                             <div class="m-b-sm">
-                                                <img alt="image" class="img-circle" src="img/a4.jpg" style="width: 62px">
+                                                <img alt="image" class="img-circle" src="img/a4.jpg"
+                                                     style="width: 62px">
                                             </div>
                                         </div>
                                         <div class="col-lg-8">
@@ -614,12 +619,13 @@
                                             <p>
                                                 Latin professor at Hampden-Sydney College in Virginia, looked  embarrassing hidden in the middle.
                                             </p>
-                                            <button type="button" class="btn btn-primary btn-sm btn-block"><i class="fa fa-envelope"></i> Send Message
+                                            <button type="button" class="btn btn-primary btn-sm btn-block"><i
+                                                    class="fa fa-envelope"></i> Send Message
                                             </button>
                                         </div>
                                     </div>
                                     <div class="client-detail">
-                                        <div class="slimScrollDiv" style="position: relative; overflow: hidden; width: auto; height: 100%;"><div class="full-height-scroll" style="overflow: hidden; width: auto; height: 100%;">
+                                        <div class="full-height-scroll">
 
                                             <strong>Last activity</strong>
 
@@ -649,7 +655,7 @@
                                             <p>
                                                 Lorem Ipsum passage, and going through the cites of the word in classical literature, discovered the undoubtable source.
                                             </p>
-                                            <hr>
+                                            <hr/>
                                             <strong>Timeline activity</strong>
                                             <div id="vertical-timeline" class="vertical-container dark-timeline">
                                                 <div class="vertical-timeline-block">
@@ -713,7 +719,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div><div class="slimScrollBar" style="background: rgb(0, 0, 0); width: 7px; position: absolute; top: 0px; opacity: 0.4; display: block; border-radius: 7px; z-index: 99; right: 1px;"></div><div class="slimScrollRail" style="width: 7px; height: 100%; position: absolute; top: 0px; display: none; border-radius: 7px; background: rgb(51, 51, 51); opacity: 0.2; z-index: 90; right: 1px;"></div></div>
+                                        </div>
                                     </div>
                                 </div>
                                 <div id="contact-4" class="tab-pane">
@@ -722,7 +728,8 @@
                                             <h2>Reuben Pacheco</h2>
 
                                             <div class="m-b-sm">
-                                                <img alt="image" class="img-circle" src="img/a5.jpg" style="width: 62px">
+                                                <img alt="image" class="img-circle" src="img/a5.jpg"
+                                                     style="width: 62px">
                                             </div>
                                         </div>
                                         <div class="col-lg-8">
@@ -733,12 +740,13 @@
                                             <p>
                                                 Finibus Bonorum et Malorum" (The Extremes of Good and Evil) by Cicero,written in 45 BC. This book is a treatise on.
                                             </p>
-                                            <button type="button" class="btn btn-primary btn-sm btn-block"><i class="fa fa-envelope"></i> Send Message
+                                            <button type="button" class="btn btn-primary btn-sm btn-block"><i
+                                                    class="fa fa-envelope"></i> Send Message
                                             </button>
                                         </div>
                                     </div>
                                     <div class="client-detail">
-                                        <div class="slimScrollDiv" style="position: relative; overflow: hidden; width: auto; height: 100%;"><div class="full-height-scroll" style="overflow: hidden; width: auto; height: 100%;">
+                                        <div class="full-height-scroll">
 
                                             <strong>Last activity</strong>
 
@@ -768,7 +776,7 @@
                                             <p>
                                                 Lorem Ipsum which looks reasonable. The generated Lorem Ipsum is therefore always free from repetition, injected humour, or non-characteristic words etc.
                                             </p>
-                                            <hr>
+                                            <hr/>
                                             <strong>Timeline activity</strong>
                                             <div id="vertical-timeline" class="vertical-container dark-timeline">
                                                 <div class="vertical-timeline-block">
@@ -832,7 +840,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div><div class="slimScrollBar" style="background: rgb(0, 0, 0); width: 7px; position: absolute; top: 0px; opacity: 0.4; display: block; border-radius: 7px; z-index: 99; right: 1px;"></div><div class="slimScrollRail" style="width: 7px; height: 100%; position: absolute; top: 0px; display: none; border-radius: 7px; background: rgb(51, 51, 51); opacity: 0.2; z-index: 90; right: 1px;"></div></div>
+                                        </div>
                                     </div>
                                 </div>
                                 <div id="company-1" class="tab-pane">
@@ -850,7 +858,7 @@
                                             </div>
                                     </div>
                                     <div class="client-detail">
-                                        <div class="slimScrollDiv" style="position: relative; overflow: hidden; width: auto; height: 100%;"><div class="full-height-scroll" style="overflow: hidden; width: auto; height: 100%;">
+                                        <div class="full-height-scroll">
 
                                             <strong>Last activity</strong>
 
@@ -872,7 +880,7 @@
                                             <p>
                                                 Lorem Ipsum which looks reasonable. The generated Lorem Ipsum is therefore always free from repetition, injected humour, or non-characteristic words etc.
                                             </p>
-                                            <hr>
+                                            <hr/>
                                             <strong>Timeline activity</strong>
                                             <div id="vertical-timeline" class="vertical-container dark-timeline">
                                                 <div class="vertical-timeline-block">
@@ -936,7 +944,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div><div class="slimScrollBar" style="background: rgb(0, 0, 0); width: 7px; position: absolute; top: 0px; opacity: 0.4; display: block; border-radius: 7px; z-index: 99; right: 1px;"></div><div class="slimScrollRail" style="width: 7px; height: 100%; position: absolute; top: 0px; display: none; border-radius: 7px; background: rgb(51, 51, 51); opacity: 0.2; z-index: 90; right: 1px;"></div></div>
+                                        </div>
                                     </div>
                                 </div>
                                 <div id="company-2" class="tab-pane">
@@ -954,7 +962,7 @@
                                         </div>
                                     </div>
                                     <div class="client-detail">
-                                        <div class="slimScrollDiv" style="position: relative; overflow: hidden; width: auto; height: 100%;"><div class="full-height-scroll" style="overflow: hidden; width: auto; height: 100%;">
+                                        <div class="full-height-scroll">
 
                                             <strong>Last activity</strong>
 
@@ -976,7 +984,7 @@
                                             <p>
                                                 Lorem Ipsum which looks reasonable. The generated Lorem Ipsum is therefore always free from repetition, injected humour, or non-characteristic words etc.
                                             </p>
-                                            <hr>
+                                            <hr/>
                                             <strong>Timeline activity</strong>
                                             <div id="vertical-timeline" class="vertical-container dark-timeline">
                                                 <div class="vertical-timeline-block">
@@ -1040,7 +1048,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div><div class="slimScrollBar" style="background: rgb(0, 0, 0); width: 7px; position: absolute; top: 0px; opacity: 0.4; display: block; border-radius: 7px; z-index: 99; right: 1px;"></div><div class="slimScrollRail" style="width: 7px; height: 100%; position: absolute; top: 0px; display: none; border-radius: 7px; background: rgb(51, 51, 51); opacity: 0.2; z-index: 90; right: 1px;"></div></div>
+                                        </div>
                                     </div>
                                 </div>
                                 <div id="company-3" class="tab-pane">
@@ -1058,7 +1066,7 @@
                                         </div>
                                     </div>
                                     <div class="client-detail">
-                                        <div class="slimScrollDiv" style="position: relative; overflow: hidden; width: auto; height: 100%;"><div class="full-height-scroll" style="overflow: hidden; width: auto; height: 100%;">
+                                        <div class="full-height-scroll">
 
                                             <strong>Last activity</strong>
 
@@ -1080,7 +1088,7 @@
                                             <p>
                                                 There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour.
                                             </p>
-                                            <hr>
+                                            <hr/>
                                             <strong>Timeline activity</strong>
                                             <div id="vertical-timeline" class="vertical-container dark-timeline">
                                                 <div class="vertical-timeline-block">
@@ -1134,7 +1142,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div><div class="slimScrollBar" style="background: rgb(0, 0, 0); width: 7px; position: absolute; top: 0px; opacity: 0.4; display: block; border-radius: 7px; z-index: 99; right: 1px;"></div><div class="slimScrollRail" style="width: 7px; height: 100%; position: absolute; top: 0px; display: none; border-radius: 7px; background: rgb(51, 51, 51); opacity: 0.2; z-index: 90; right: 1px;"></div></div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
