@@ -19,6 +19,9 @@ class Avatar(models.Model):
 
 class AccountManager(BaseUserManager):
 	def create_user(self, email, password=None, **kwargs):
+		"""
+		Creates and saves a User with the given email, username and password.
+		"""
 		if not email:
 			raise ValueError('Users must have a valid email address')
 
