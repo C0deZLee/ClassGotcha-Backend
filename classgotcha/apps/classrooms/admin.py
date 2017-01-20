@@ -1,6 +1,7 @@
 from django.contrib import admin
 
 from models import Classroom, Semester
+from ..chat.models import Room, Account
 
 
 class ClassroomAdmin(admin.ModelAdmin):
@@ -37,8 +38,7 @@ class ClassroomAdmin(admin.ModelAdmin):
         if not form.instance.chatroom:
             # TODO: UNSTABLE! Only retrieve the first admin user as the class
             # chat room controller
-            room = Room.objects.create(
-                creator=Account.objects.get(username='admin'))
+            room = Room.objects.create(creator=Account.objects.get(username='admin'))
             room.name = form.instance.major.major_short + ' ' + \
                 form.instance.class_number + ' - ' + form.instance.class_section + ' Chat Room'
             room.save()
