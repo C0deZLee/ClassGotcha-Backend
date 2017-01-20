@@ -10,7 +10,7 @@ class TaskAdmin(admin.ModelAdmin):
 	# all classroom students and group members to the involved section
 	def save_related(self, request, form, formsets, change):
 		super(TaskAdmin, self).save_related(request, form, formsets, change)
-		# only apply this when first created
+		# only apply this when first created (no involved when first created)
 		if not form.instance.involved:
 			if form.instance.classroom:
 				for student in form.instance.classroom.students.all():

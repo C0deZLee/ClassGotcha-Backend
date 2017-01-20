@@ -39,7 +39,7 @@ classroom_search = views.ClassroomViewSet.as_view({
 })
 
 classroom_admin_upload = views.ClassroomViewSet.as_view({
-	'post': 'admin_upload_all_course_info'
+	'post': 'upload_all_course_info'
 })
 
 urlpatterns = [
