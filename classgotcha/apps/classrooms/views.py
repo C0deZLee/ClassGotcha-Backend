@@ -175,7 +175,10 @@ class ClassroomViewSet(viewsets.ViewSet):
 			print cours['description']
 			major,created = Major.objects.get_or_create(major_short = cours['major'])
 			semester,created  = Semester.objects.get_or_create(name = "Spring 2017")
-			classroom = Classroom.objects.create(class_code=cours['number'],class_name = cours['name'].split()[0],class_number= cours['name'].split()[1],description = cours['description'],section = cours['section'],major = major,semester = semester)
-			classroom.save()
+			try:
+				classroom = Classroom.objects.create(class_code=cours['number'],class_name = cours['name'].split()[0],class_number= cours['name'].split()[1],description = cours['description'],section = cours['section'],major = major,semester = semester)
+				classroom.save()
+			except:
+				pass
 		return Response(status = status.HTTP_201_CREATED)
 
