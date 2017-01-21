@@ -8,68 +8,78 @@ from rest_framework.routers import DefaultRouter
 # urlpatterns = router.urls
 
 
-account_reset_password = views.AccountViewSet.as_view({'post': 'reset_password'})
+account_reset_password = views.AccountViewSet.as_view(
+    {'post': 'reset_password'})
 
 # account_list = views.AccountViewSet.as_view({'get': 'list'})
 
 account_detail = views.AccountViewSet.as_view({
-	'get': 'retrieve',
-	'put': 'update',
-	'delete': 'destroy'
+    'get': 'retrieve',
+    'put': 'update',
+    'delete': 'destroy'
 })
 
 account_friends = views.AccountViewSet.as_view({
-	'get': 'friends',
+    'get': 'friends',
 })
 
 account_add_friends = views.AccountViewSet.as_view({
-	'post': 'friends',
-	'delete': 'friends'
+    'post': 'friends',
+    'delete': 'friends'
 })
 
 account_me = views.AccountViewSet.as_view({
-	'get': 'me',
+    'get': 'me',
 })
 
 account_classrooms = views.AccountViewSet.as_view({
-	'get': 'classrooms'
+    'get': 'classrooms'
 })
 
 account_add_classrooms = views.AccountViewSet.as_view({
-	'post': 'classrooms',
-	'delete': 'classrooms'
+    'post': 'classrooms',
+    'delete': 'classrooms'
 })
 
 account_notes = views.AccountViewSet.as_view({
-	'get': 'notes'
+    'get': 'notes'
 })
 
 account_moments = views.AccountViewSet.as_view({
-	'get': 'moments'
+    'get': 'moments'
 })
 
 account_chatrooms = views.AccountViewSet.as_view({
-	'get': 'rooms'
+    'get': 'rooms'
+})
+
+account_tasks = views.AccountViewSet.as_view({
+    'get': 'tasks'
+})
+
+account_freetime = views.AccountViewSet.as_view({
+    'get': 'freetime'
 })
 
 urlpatterns = [
-	url(r'friends/(?P<pk>[0-9]+)/$', account_add_friends, name='add_friend'),
-	url(r'moments/(?P<page>[0-9]+)/$', account_moments, name='add_moments'),
-	url(r'classrooms/(?P<pk>[0-9]+)/$', account_add_classrooms, name='add_classroom'),
-	url(r'(?P<pk>[0-9]+)/$', account_detail, name='detail'),
+    url(r'friends/(?P<pk>[0-9]+)/$', account_add_friends, name='add_friend'),
+    url(r'moments/(?P<page>[0-9]+)/$', account_moments, name='add_moments'),
+    url(r'classrooms/(?P<pk>[0-9]+)/$',
+        account_add_classrooms, name='add_classroom'),
+    url(r'(?P<pk>[0-9]+)/$', account_detail, name='detail'),
 
-	url(r'avatar/$', views.account_avatar, name='avatar'),
-	url(r'classrooms/$', account_classrooms, name='user-classrooms'),
-	url(r'friends/$', account_friends, name='friends'),
-	url(r'login/$', obtain_jwt_token),
-	url(r'login-refresh/$', refresh_jwt_token),
-	url(r'login-verify/$', verify_jwt_token),
-	url(r'register/$', views.account_register, name='register'),
-	url(r'reset/$', account_reset_password, name='reset_pass'),
-	url(r'notes/$', account_notes, name='user-notes'),
-	url(r'moments/$', account_moments, name='user-moments'),
-	url(r'chatrooms/$', account_chatrooms, name='user-chatrooms'),
-
-	# url(r'all/$', account_list, name='all'),
-	url(r'me/$', account_me, name='me'),
+    url(r'avatar/$', views.account_avatar, name='avatar'),
+    url(r'classrooms/$', account_classrooms, name='user-classrooms'),
+    url(r'friends/$', account_friends, name='friends'),
+    url(r'login/$', obtain_jwt_token),
+    url(r'login-refresh/$', refresh_jwt_token),
+    url(r'login-verify/$', verify_jwt_token),
+    url(r'register/$', views.account_register, name='register'),
+    url(r'reset/$', account_reset_password, name='reset_pass'),
+    url(r'notes/$', account_notes, name='user-notes'),
+    url(r'moments/$', account_moments, name='user-moments'),
+    url(r'chatrooms/$', account_chatrooms, name='user-chatrooms'),
+    url(r'tasks/$', account_tasks, name='user_tasks'),
+    url(r'freetime/$', account_freetime, name='freetime'),
+    url(r'me/$', account_me, name='me'),
 ]

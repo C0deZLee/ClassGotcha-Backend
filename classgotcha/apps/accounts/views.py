@@ -15,6 +15,9 @@ from ..classrooms.serializers import Classroom, ClassroomSerializer
 from ..notes.serializers import Note, NoteSerializer
 from ..posts.serializers import MomentSerializer
 from ..chat.serializers import RoomSerializer
+from ..tasks.serializers import TaskSerializer
+from script import group, complement
+
 
 @api_view(['POST'])
 @permission_classes((AllowAny,))
@@ -151,12 +154,16 @@ class AccountViewSet(viewsets.ViewSet):
 				return Response({'detail': 'student already in classroom'}, status=status.HTTP_403_FORBIDDEN)
 			classroom.students.add(request.user)
 			classroom.save()
+			# not sure whether it is valid
+			request.user.tasks.add(classroom.class_time)
 			return Response(status=200)
 
 		if request.method == 'DELETE':
 			classroom = get_object_or_404(classroom_queryset, pk=pk)
 			classroom.students.remove(request.user)
 			classroom.save()
+			# not sure whether it is valid
+			request.user.tasks.remove(classroom.class_time)
 			return Response(status=200)
 
 	@staticmethod
@@ -178,3 +185,67 @@ class AccountViewSet(viewsets.ViewSet):
 	def rooms(request):
 		serializer = RoomSerializer(request.user.rooms.all(), many=True)
 		return Response(serializer.data)
+
+	@staticmethod
+	def tasks(request):
+		serializer = TaskSerializer(request.user.tasks.all(),many=True)
+		return Response(serializer.data)
+
+
+
+	@staticmethod
+	def freetime(request):
+		user_tasks = request.user.tasks.all()
+		# loop through the tasks
+		freetimedict = {'Mon':[],'Tue':[],'Wed':[],'Thu':[],'Fri':[],'Sat':[],'Sun':[]}
+		for task in user_tasks:
+			try: 
+				starttime = task.start.hour+task.start.minute*(1/60)
+				endtime = task.end.hour+task.end.minute*(1/60)
+			except:
+				pass
+			if 'Mo' in task.repeat:
+				freetimedict['Mon'].append([starttime,endtime])
+			else:
+				pass
+
+			if 'Tu' in task.repeat:
+				freetimedict['Tue'].append([starttime,endtime])
+			else:
+				pass
+
+			if 'We' in task.repeat:
+				freetimedict['Wed'].append([starttime,endtime])
+			else:
+				pass
+
+			if 'Th' in task.repeat:
+				freetimedict['Thu'].append([starttime,endtime])
+			else:
+				pass
+
+			if 'Fr'in task.repeat: 
+				freetimedict['Fri'].append([starttime,endtime])
+			else:
+				pass
+
+		# compute the intersections and return
+		print freetimedict
+		for freedictlist in freetimedict:
+
+			intervals = freetimedict[freedictlist]
+
+			freedictlist = group(intervals)# find the union of all unavailable time
+
+			print intervals
+
+			freedictlist = complement(intervals,first = 0, last = 24)
+
+
+
+		return Response({'freetime':freetimedict},status = status.HTTP_200_OK)
+
+
+
+
+

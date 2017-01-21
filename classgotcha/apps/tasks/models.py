@@ -6,14 +6,15 @@ from ..groups.models import Group
 
 
 class Task(models.Model):
-	HOMEWORK, GROUP_MEETING, EXAM, QUIZ, TODO = 0, 1, 2, 3, 4
+	HOMEWORK, QUIZ, TODO, GROUP_MEETING, EXAM, CLASS= 0, 1, 2, 3, 4, 5
 
 	STATUS_CHOICES = (
 		(HOMEWORK, 'Homework'),
-		(GROUP_MEETING, 'Group Meeting'),
-		(EXAM, 'Exam'),
 		(QUIZ, 'Quiz'),
 		(TODO, 'Todo'),
+		(GROUP_MEETING, 'Group Meeting'),
+		(EXAM, 'Exam'),
+		(CLASS,'Class'),
 	)
 
 	task_name = models.CharField(max_length=50)
@@ -22,6 +23,7 @@ class Task(models.Model):
 	end = models.DateTimeField(blank=True, null=True)
 	due_date = models.DateTimeField(blank=True, null=True)
 	type = models.IntegerField(default=HOMEWORK, choices=STATUS_CHOICES)
+	repeat = models.CharField(max_length=10, blank=True, null=True)  # MoTuWeThFi
 	# Relationship
 	involved = models.ManyToManyField(Account, related_name='tasks')
 	classroom = models.ForeignKey(Classroom, blank=True, null=True, related_name='tasks')
