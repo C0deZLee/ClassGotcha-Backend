@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
-import os, uuid, re, json
+import os, uuid, re, json, datetime
 from django.core.files.base import File
 from django.shortcuts import get_object_or_404
+from django.db import IntegrityError
 
 from rest_framework import viewsets, status
 from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly, AllowAny  # , IsStaff
@@ -9,8 +10,7 @@ from rest_framework.response import Response
 from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework.decorators import detail_route, list_route, api_view, permission_classes, parser_classes
 
-from models import Account, Classroom, Semester
-from ..accounts.models import Major
+from models import Account, Classroom, Semester, Major
 from ..chat.models import Room
 
 from serializers import BasicClassroomSerializer, ClassroomSerializer
@@ -52,10 +52,6 @@ class ClassroomViewSet(viewsets.ViewSet):
 			if key in ['description', 'syllabus']:
 				setattr(classroom, key, value)
 		serializer = ClassroomSerializer(classroom)
-		return Response(serializer.data)
-
-	def list(self, request):
-		serializer = BasicClassroomSerializer(self.queryset, many=True)
 		return Response(serializer.data)
 
 	# TODO search course to enroll, need to test 1/19/20217 Simo
@@ -161,19 +157,30 @@ class ClassroomViewSet(viewsets.ViewSet):
 				print cours['description']
 				major, created = Major.objects.get_or_create(major_short=cours['major'])
 				semester, created = Semester.objects.get_or_create(name="Spring 2017")
-				classroom = Classroom.objects.create(class_code=cours['number'],
-				                                     class_number=cours['name'].split()[1],
-				                                     class_name=cours['fullName'],
-				                                     description=cours['description'],
-				                                     section=cours['section'],
-				                                     major=major, semester=semester)
-				classroom.save()
-				room = Room.objects.create(creator=Account.objects.get(username='admin'))
-				room.name = classroom.major.major_short + ' ' + classroom.class_number + ' - ' + classroom.class_section + ' Chat Room'
-				# TODO: UNSTABLE! Only retrieve the first admin user as the class chat room controller
-				room.save()
-				classroom.chatroom = room
-				classroom.save()
+				try:
+					classroom = Classroom.objects.create(class_code=cours['number'],
+					                                     class_number=cours['name'].split()[1],
+					                                     class_name=cours['fullName'],
+					                                     description=cours['description'],
+					                                     class_section=cours['section'],
+					                                     class_credit=cours['unit'],
+					                                     class_room=cours['room'],
+					                                     major=major, semester=semester)
+					class_time = cours['time'].split()
+					if len(class_time) == 4:
+						classroom.repeat = class_time[0]
+						classroom.start = datetime.datetime.strptime(class_time[1], '%I:%M%p')
+						print classroom.start
+						classroom.end = datetime.datetime.strptime(class_time[3], '%I:%M%p')
+						print classroom.end
+					classroom.save()
+					room = Room.objects.create(creator=Account.objects.get(is_superuser=True))
+					room.name = classroom.major.major_short + ' ' + classroom.class_number + ' - ' + classroom.class_section + ' Chat Room'
+					room.save()
+					classroom.chatroom = room
+					classroom.save()
+				except IntegrityError:
+					pass
 			return Response(status=status.HTTP_201_CREATED)
 		else:
 			return Response(status=status.HTTP_400_BAD_REQUEST)

@@ -9,7 +9,6 @@ DEBUG = TEMPLATES[0]['OPTIONS']['debug'] = True
 if 'debug_toolbar' not in INSTALLED_APPS:
     INSTALLED_APPS += ('debug_toolbar',)
 
-
 SECRET = '42'
 
 # ______ Channel Layers_____
@@ -24,8 +23,7 @@ CHANNEL_LAYERS = {
     },
 }
 
-# Database
-
+# ------ Database ------
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -38,7 +36,6 @@ INTERNAL_IPS = ['127.0.0.1']
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 # ------ Account customization ------
-
 ACCOUNT_USER_DISPLAY = lambda user: user.email
 ACCOUNT_EMAIL_UNIQUE = True
 ACCOUNT_EMAIL_CONFIRMATION_REQUIRED = True
@@ -100,7 +97,6 @@ JWT_AUTH = {
 CORS_ORIGIN_ALLOW_ALL = True
 CORS_ORIGIN_WHITELIST = (
     'google.com',
-    'hostname.example.com',
     'localhost:4000',
     '127.0.0.1:9000'
 )

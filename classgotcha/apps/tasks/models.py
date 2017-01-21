@@ -23,7 +23,7 @@ class Task(models.Model):
 	due_date = models.DateTimeField(blank=True, null=True)
 	type = models.IntegerField(default=HOMEWORK, choices=STATUS_CHOICES)
 	# Relationship
-	involved = models.ManyToManyField(Account, related_name='tasks', blank=True, null=True)
+	involved = models.ManyToManyField(Account, related_name='tasks')
 	classroom = models.ForeignKey(Classroom, blank=True, null=True, related_name='tasks')
 	group = models.ForeignKey(Group, blank=True, null=True)
 

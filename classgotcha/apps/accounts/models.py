@@ -2,13 +2,7 @@ from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseU
 from django.db import models
 
 
-class Major(models.Model):
-	major_short = models.CharField(max_length=10)
-	major_full = models.CharField(max_length=100)
-	major_college = models.CharField(max_length=100)
 
-	def __unicode__(self):
-		return self.major_short
 
 
 class Avatar(models.Model):
@@ -67,7 +61,7 @@ class Account(AbstractBaseUser, PermissionsMixin):
 	avatar = models.ForeignKey(Avatar, blank=True, null=True, related_name='user_profiles_avatars')
 	# Relations
 	friends = models.ManyToManyField("self")
-	major = models.ForeignKey(Major, blank=True, null=True)
+	major = models.ForeignKey('classrooms.Major', blank=True, null=True)
 	# Relatives
 	# 1) teaches
 	# 2) classrooms
