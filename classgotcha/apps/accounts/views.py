@@ -201,40 +201,45 @@ class AccountViewSet(viewsets.ViewSet):
 		for task in user_tasks:
 			try: 
 				starttime = task.start.hour+task.start.minute*(1/60)
-				endtime = task.start.hour+task.start.minute*(1/60)
+				endtime = task.end.hour+task.end.minute*(1/60)
 			except:
 				pass
-			if 'Mo' in tasks.repeat:
+			if 'Mo' in task.repeat:
 				freetimedict['Mon'].append([starttime,endtime])
 			else:
 				pass
 
-			if 'Tu' in tasks.repeat:
+			if 'Tu' in task.repeat:
 				freetimedict['Tue'].append([starttime,endtime])
 			else:
 				pass
 
-			if 'We' in tasks.repeat:
+			if 'We' in task.repeat:
 				freetimedict['Wed'].append([starttime,endtime])
 			else:
 				pass
 
-			if 'Th' in tasks.repeat:
+			if 'Th' in task.repeat:
 				freetimedict['Thu'].append([starttime,endtime])
 			else:
 				pass
 
-			if 'Fr'in tasks.repeat: 
+			if 'Fr'in task.repeat: 
 				freetimedict['Fri'].append([starttime,endtime])
 			else:
 				pass
 
 		# compute the intersections and return
-		for freedict,freedictlist in freetimedict:
+		print freetimedict
+		for freedictlist in freetimedict:
 
-			freedictlist = group(freedictlist)# find the union of all unavailable time
+			intervals = freetimedict[freedictlist]
 
-			freedictlist = complement(freedictlist,first = 0, last = 24)
+			freedictlist = group(intervals)# find the union of all unavailable time
+
+			print intervals
+
+			freedictlist = complement(intervals,first = 0, last = 24)
 
 
 
