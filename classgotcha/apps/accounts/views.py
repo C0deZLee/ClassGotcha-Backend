@@ -16,6 +16,8 @@ from ..notes.serializers import Note, NoteSerializer
 from ..posts.serializers import MomentSerializer
 from ..chat.serializers import RoomSerializer
 from ..tasks.serializers import TaskSerializer
+from script import group, complement
+
 
 @api_view(['POST'])
 @permission_classes((AllowAny,))
@@ -188,3 +190,57 @@ class AccountViewSet(viewsets.ViewSet):
 	def tasks(request):
 		serializer = TaskSerializer(request.user.tasks.all(),many=True)
 		return Response(serializer.data)
+
+
+
+	@staticmethod
+	def freetime(request):
+		user_tasks = request.user.tasks.all()
+		# loop through the tasks
+		freetimedict = {'Mon':[],'Tue':[],'Wed':[],'Thu':[],'Fri':[],'Sat':[],'Sun':[]}
+		for task in user_tasks:
+			try: 
+				starttime = task.start.hour+task.start.minute*(1/60)
+				endtime = task.start.hour+task.start.minute*(1/60)
+			except:
+				pass
+			if 'Mo' in tasks.repeat:
+				freetimedict['Mon'].append([starttime,endtime])
+			else:
+				pass
+
+			if 'Tu' in tasks.repeat:
+				freetimedict['Tue'].append([starttime,endtime])
+			else:
+				pass
+
+			if 'We' in tasks.repeat:
+				freetimedict['Wed'].append([starttime,endtime])
+			else:
+				pass
+
+			if 'Th' in tasks.repeat:
+				freetimedict['Thu'].append([starttime,endtime])
+			else:
+				pass
+
+			if 'Fr'in tasks.repeat: 
+				freetimedict['Fri'].append([starttime,endtime])
+			else:
+				pass
+
+		# compute the intersections and return
+		for freedict,freedictlist in freetimedict:
+
+			freedictlist = group(freedictlist)# find the union of all unavailable time
+
+			freedictlist = complement(freedictlist,first = 0, last = 24)
+
+
+
+		return Response({'freetime':freetimedict},status = status.HTTP_200_OK)
+
+
+
+
+
