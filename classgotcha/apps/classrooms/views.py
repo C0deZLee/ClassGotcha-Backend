@@ -54,37 +54,27 @@ class ClassroomViewSet(viewsets.ViewSet):
 		serializer = ClassroomSerializer(classroom)
 		return Response(serializer.data)
 
-	# TODO search course to enroll, need to test 1/19/20217 Simo
-	def search(self, request):
-		try:
-			search_token = request.data['search_token']
-			search_token = search_token.strip()
-		except:
+	@staticmethod
+	def search(request):
+		search_token = request.data.get('search', False)
+		if not search_token:
 			return Response(status=status.HTTP_400_BAD_REQUEST)
-
+		# only class code
 		if search_token.isdigit():
-			try:
-				classrooms = Classroom.objects.filter(class_code=search_token)
-				serializer = ClassroomSerializer(classrooms, many=True)
-				return (serializer.data)
-			except:
-				return Response(status=status.HTTP_400_BAD_REQUEST)
-
+			classrooms = Classroom.objects.filter(class_code=search_token)
+			serializer = ClassroomSerializer(classrooms, many=True)
+			return Response(serializer.data)
+		# major + class number
 		else:
-
-			try:
-				match = re.match(r"([a-z]+)([0-9]+)", 'foofo21', re.I)
-				if match:
-					items = match.groups()
-				classname = items[0]
-				classnumber = items[1]
-				classname.upper()
-				classrooms = Classroom.objects.filter(class_name=classname, class_number=classnumber)
-				serializer = ClassroomSerializer(classrooms, many=True)
-				return (serializer.data)
-
-			except:
-				return Response(status=status.HTTP_400_BAD_REQUEST)
+			match = re.match(r"([a-z]+) *([0-9]+)", search_token, re.I)
+			if match:
+				items = match.groups()
+			class_major = items[0].upper()
+			class_number = items[1]
+			major = Major.objects.get(major_short=class_major)
+			classrooms = Classroom.objects.filter(major=major, class_number=class_number)
+			serializer = ClassroomSerializer(classrooms, many=True)
+			return Response(serializer.data)
 
 	def is_in_class(self, request, pk):
 		classroom = get_object_or_404(self.queryset, pk=pk)
@@ -144,11 +134,11 @@ class ClassroomViewSet(viewsets.ViewSet):
 		serializer = BasicAccountSerializer(classroom.students, many=True)
 		return Response(serializer.data)
 
-	# TODO
 	# Tools for upload all the courses
-	# @permission_classes((IsStaff,))
 	@staticmethod
 	def upload_all_course_info(request):
+		if not request.user.is_superuser:
+			return Response(status=status.HTTP_403_FORBIDDEN)
 		upload = request.FILES.get('file', False)
 		if upload:
 			upload = request.FILES['file']

@@ -31,7 +31,7 @@ classroom_check = views.ClassroomViewSet.as_view({
 })
 
 classroom_search = views.ClassroomViewSet.as_view({
-	'get': 'search'
+	'post': 'search'
 })
 
 classroom_admin_upload = views.ClassroomViewSet.as_view({
@@ -45,7 +45,7 @@ urlpatterns = [
 	url(r'(?P<pk>[0-9]+)/moments/$', classroom_moments, name='classroom-moments'),
 	url(r'(?P<pk>[0-9]+)/check/$', classroom_check, name='classroom-check'),
 	url(r'(?P<pk>[0-9]+)/$', classroom_detail, name='classroom-detail'),
-	url(r'(?P<pk>[0-9]+)/search/$', classroom_search, name='classroom-search'),
+	url(r'search/$', classroom_search, name='classroom-search'),
 	url(r'upload/$', classroom_admin_upload, name='classroom_admin_upload'),
 
 ]
