@@ -16,6 +16,6 @@
 </template>
 <script>
   export default {
-    name: '403'
+    name: 'Page403'
   }
 </script>

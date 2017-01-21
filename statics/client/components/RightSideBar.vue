@@ -375,20 +375,9 @@
 
 <script>
   export default {
-    name: 'Right Side Bar',
+    name: 'RightSideBar',
     data: function() {
-      return {
-        chatrooms: {}
-      }
+      return {}
     },
-    methods: {
-      getChatRooms: function() {
-        this.$http.get(this.$root.apiEndPoint + '/account/chatrooms/').then(response => {
-          // success
-        }, response => {
-          // failed
-        })
-      }
-    }
   }
 </script>

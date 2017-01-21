@@ -2,7 +2,7 @@
   <div class="page">
         <div class="row wrapper border-bottom white-bg page-heading">
             <div class="col-lg-10">
-                <h2>{{classroom.class_short}}<i class="fa fa-check" alt="You are in this class"></i>
+                <h2>{{classroom.class_short}}
                 </h2>
                 <ol class="breadcrumb">
                     <li>
