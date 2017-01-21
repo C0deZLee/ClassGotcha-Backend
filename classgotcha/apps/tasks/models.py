@@ -6,7 +6,7 @@ from ..groups.models import Group
 
 
 class Task(models.Model):
-	HOMEWORK, GROUP_MEETING, EXAM, QUIZ, TODO = 0, 1, 2, 3, 4
+	HOMEWORK, GROUP_MEETING, EXAM, QUIZ, TODO = 0, 1, 2, 3, 4, 5
 
 	STATUS_CHOICES = (
 		(HOMEWORK, 'Homework'),
@@ -14,6 +14,7 @@ class Task(models.Model):
 		(EXAM, 'Exam'),
 		(QUIZ, 'Quiz'),
 		(TODO, 'Todo'),
+		(CLASS,'Class'),
 	)
 
 	task_name = models.CharField(max_length=50)

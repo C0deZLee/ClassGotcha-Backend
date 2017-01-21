@@ -15,6 +15,7 @@ from ..classrooms.serializers import Classroom, ClassroomSerializer
 from ..notes.serializers import Note, NoteSerializer
 from ..posts.serializers import MomentSerializer
 from ..chat.serializers import RoomSerializer
+from ..tasks.serializers import TaskSerializer
 
 @api_view(['POST'])
 @permission_classes((AllowAny,))
@@ -151,12 +152,16 @@ class AccountViewSet(viewsets.ViewSet):
 				return Response({'detail': 'student already in classroom'}, status=status.HTTP_403_FORBIDDEN)
 			classroom.students.add(request.user)
 			classroom.save()
+			# not sure whether it is valid
+			request.user.tasks.add(classroom.class_time)
 			return Response(status=200)
 
 		if request.method == 'DELETE':
 			classroom = get_object_or_404(classroom_queryset, pk=pk)
 			classroom.students.remove(request.user)
 			classroom.save()
+			# not sure whether it is valid
+			request.user.tasks.remove(classroom.class_time)
 			return Response(status=200)
 
 	@staticmethod
@@ -177,4 +182,9 @@ class AccountViewSet(viewsets.ViewSet):
 	@staticmethod
 	def rooms(request):
 		serializer = RoomSerializer(request.user.rooms.all(), many=True)
+		return Response(serializer.data)
+
+	@staticmethod
+	def tasks(request):
+		serializer = TaskSerializer(request.user.tasks.all(),many=True)
 		return Response(serializer.data)

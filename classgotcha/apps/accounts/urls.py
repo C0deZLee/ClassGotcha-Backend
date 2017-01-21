@@ -52,6 +52,10 @@ account_rooms = views.AccountViewSet.as_view({
 	'get': 'rooms'
 })
 
+account_tasks = views.AccountViewSet.as_view({
+	'get': 'tasks'	
+})
+
 urlpatterns = [
 	url(r'friends/(?P<pk>[0-9]+)/$', account_add_friends, name='add_friend'),
 	url(r'moments/(?P<page>[0-9]+)/$', account_moments, name='add_moments'),
@@ -69,7 +73,7 @@ urlpatterns = [
 	url(r'notes/$', account_notes, name='user-notes'),
 	url(r'moments/$', account_moments, name='user-moments'),
 	url(r'rooms/$', account_rooms, name='user-chatrooms'),
-
+	url(r'tasks/$',account_tasks, name= 'user_tasks'),
 	# url(r'all/$', account_list, name='all'),
 	url(r'me/$', account_me, name='me'),
 ]

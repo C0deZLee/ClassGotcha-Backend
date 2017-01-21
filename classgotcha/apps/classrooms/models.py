@@ -29,9 +29,10 @@ class Classroom(models.Model):
 	class_room = models.CharField(max_length=50)
 	syllabus = models.FileField(blank=True, null=True)
 	description = models.TextField(blank=True)
-	start = models.TimeField(blank=True, null=True)
-	end = models.TimeField(blank=True, null=True)
-	repeat = models.CharField(max_length=10, blank=True, null=True)  # MoTuWeThFi
+	class_time = models.ForeignKey('tasks.Task', related_name='classtime',blank =True)
+	# start = models.TimeField(blank=True, null=True)
+	# end = models.TimeField(blank=True, null=True)
+	# repeat = models.CharField(max_length=10, blank=True, null=True)  # MoTuWeThFi
 	# Timestamp
 	created = models.DateField(auto_now_add=True)
 	updated = models.DateTimeField(auto_now=True)
