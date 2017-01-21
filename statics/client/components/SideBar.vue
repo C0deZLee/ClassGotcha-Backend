@@ -43,7 +43,7 @@
                 </ul>
             </li>
               <li>
-                  <a href="/#/chat">
+                  <a href="/#/chatroom/id/1">
                       <i class="fa fa-laptop"></i>
                       <span class="nav-label">Chat</span>
                   </a>

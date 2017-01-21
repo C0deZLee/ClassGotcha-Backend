@@ -30,9 +30,9 @@
                                 All clients need to be verified before you can send email and set a project.
                             </p>
                             <div class="input-group">
-                                <input type="text" placeholder="ex: 123456 or Math 141 or cmpsc121" v-model="search_token" class="input form-control">
+                                <input type="text" placeholder="ex: 123456 or Math 141 or cmpsc121" @keydown.enter="classroomSearch($event)" v-model="search_token" class="input form-control">
                                 <span class="input-group-btn">
-                                        <button type="button" @keydown.enter="classroomSearch()" v-on:click="classroomSearch()" class="btn btn btn-primary"> <i class="fa fa-search"></i> Search</button>
+                                        <button type="button" @click="classroomSearch($event)" class="btn btn btn-primary"> <i class="fa fa-search"></i> Search</button>
                                 </span>
                             
                             </div>
@@ -206,7 +206,8 @@
       }
     },
     methods: {
-      classroomSearch: function() {
+      classroomSearch: function(e) {
+        e.preventDefault();
         this.$http.post(this.$root.apiEndPoint + '/classroom/search/', {
           'search': this.search_token,
         }, {
@@ -216,7 +217,7 @@
           'search': this.search_token,
         }).then(response => {
           this.classrooms = response.data
-        })
+        }, )
       },
       select_classroom: function(classroom) {
         this.selected_classroom = classroom

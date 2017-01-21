@@ -20,9 +20,11 @@ const app = new Vue({
   data: {
     currentRoute: window.location.pathname,
     apiEndPoint: 'http://localhost:8000',
+    socketApiEndPoint: 'ws://localhost:8000',
     authToken: '',
     user: {},
-    classrooms: {}
+    classrooms: {},
+    chatrooms: {}
   },
   methods: {
     checkAuth: function() {
@@ -39,6 +41,14 @@ const app = new Vue({
       }
       this.$http.post(this.$root.apiEndPoint + '/account/login-verify/', formData).then(response => {
         // success
+        // load user data
+        this.$http.get(this.$root.apiEndPoint + '/account/me/', {
+          headers: {
+            Authorization: 'JWT ' + this.$root.authToken
+          }
+        }).then(response => {
+          this.$root.user = response.data
+        })
         // load user class
         this.$http.get(this.$root.apiEndPoint + '/account/classrooms/', {
           headers: {
@@ -46,7 +56,15 @@ const app = new Vue({
           }
         }).then(response => {
           this.$root.classrooms = response.data
-          console.log(this.$root.classrooms)
+        })
+        // load user chatrooms
+        this.$http.get(this.$root.apiEndPoint + '/account/chatrooms/', {
+          headers: {
+            Authorization: 'JWT ' + this.$root.authToken
+          }
+        }).then(response => {
+          this.$root.chatrooms = response.data
+          console.log(response.data)
         })
       }, response => {
         // failed

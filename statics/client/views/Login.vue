@@ -35,7 +35,6 @@
           this.$root.authToken = response.data.token
           // write token to cookie, expires in 1 day
           this.$cookie.set('token', response.data.token, 1)
-          console.log('token in cookie: ' + this.$cookie.get('token'))
           // load user data
           this.$http.get(this.$root.apiEndPoint + '/account/me/', {
             headers: {
@@ -43,7 +42,6 @@
             }
           }).then(response => {
             this.$root.user = response.data
-            console.log(this.$root.user)
           })
           // load user class
           this.$http.get(this.$root.apiEndPoint + '/account/classrooms/', {
@@ -52,7 +50,15 @@
             }
           }).then(response => {
             this.$root.classrooms = response.data
-            console.log(this.$root.classrooms)
+          })
+          // load user chatrooms
+          this.$http.get(this.$root.apiEndPoint + '/account/chatrooms/', {
+            headers: {
+              'Authorization': 'JWT ' + this.$root.authToken
+            }
+          }).then(response => {
+            this.$root.chatrooms = response.data
+            console.log(response.data)
           })
           // redirect to home page
           this.$router.push('/')

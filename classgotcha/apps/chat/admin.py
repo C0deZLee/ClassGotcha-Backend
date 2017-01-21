@@ -13,5 +13,13 @@ class RoomAdmin(admin.ModelAdmin):
 class MessageAdmin(admin.ModelAdmin):
 	list_display = ('id', 'room', 'created')
 
+	fieldsets = (
+		('Info', {'fields': ('room', 'username')}),
+		('Content', {'fields': ('message',)}),
+		('Timestamp', {'fields': ('created',)})
+	)
+	readonly_fields = ('created',)
+
+
 admin.site.register(Room, RoomAdmin)
 admin.site.register(Message, MessageAdmin)

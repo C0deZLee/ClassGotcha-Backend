@@ -1,6 +1,5 @@
 <template>
     <div class="wrapper wrapper-content">
-        {{chattest()}}
         <div class="col-lg-12">
 
                 <div class="ibox chat-view">
@@ -130,76 +129,64 @@
                                                 <a href="#">Janet Smith</a>
                                             </div>
                                         </div>
-
-
                                     </div>
-
                                 </div>
                             </div>
-
                         </div>
                         <div class="row">
                             <div class="col-lg-12">
                                 <div class="chat-message-form">
-
                                     <div class="form-group">
-
-                                        <textarea class="form-control message-input" name="message" placeholder="Enter message text"></textarea>
+                                        <textarea @keydown.enter="sendMessage($event)" v-model="message_text" class="form-control message-input" name="message" placeholder="Enter message text"></textarea>
                                     </div>
-
                                 </div>
                             </div>
                         </div>
-
-
                     </div>
-
                 </div>
         </div>
-
     </div>
 </template>
 <script>
   export default {
     name: 'Chat',
-    methods: {
-      chattest: function() {
-        const ws_scheme = window.location.protocol == "https:" ? "wss" : "ws";
-        let chatsock = new ReconnectingWebSocket(ws_scheme + '://' + window.location.host + "/chat" + window.location.pathname)
-        chatsock.onmessage = function(message) {
-          var data = JSON.parse(message.data);
-          var chat = $("#chat")
-          var ele = $("<tr></tr>'")
-
-          ele.append(
-            $("<td></td>").text(data.timestamp)
-          )
-          ele.append(
-            $("<td></td>").text(data.handle)
-          )
-          ele.append(
-            $("<td></td>").text(data.message)
-          )
-
-          chat.append(ele)
-        };
-
-      },
-      sendMessage: function() {
-        var message = {
-          handle: $('#handle').val(),
-          message: $('#message').val(),
-        }
-        chatsock.send(JSON.stringify(message));
-        $("#message").val('').focus();
-        return false;
-      }
-    },
     data: function() {
       return {
-        chatroom_location: '',
+        message_list: [],
+        chatsock: {},
+        message_text: ''
+      }
+    },
+    methods: {
+      connectSocket: function() {
+        this.chatsock = new ReconnectingWebSocket(this.$root.socketApiEndPoint + "/chat/" + this.$route.params.chatroom_id)
+        const self = this
+        this.chatsock.onmessage = function(message) {
+            self.message_list.push(JSON.parse(message.data))
+        }
+      },
+      sendMessage: function(e) {
+        e.preventDefault();
+        const _message = {
+          'username': this.$root.user.first_name + ' ' + this.$root.user.last_name,
+          'message': this.message_text,
+        }
+        console.log(_message)
+
+        this.chatsock.send(JSON.stringify(_message));
+        // this.chatsock.send(_message);
+        
+        // $("#message").val('').focus();
 
       }
-    }
+    },
+    created: function() {
+      // after component is created, load data
+      this.connectSocket()
+    },
+    watch: {
+      // execute getClassroomData if route changes
+      '$route': 'connectSocket'
+    },
   }
 </script>

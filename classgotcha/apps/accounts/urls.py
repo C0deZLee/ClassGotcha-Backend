@@ -48,7 +48,7 @@ account_moments = views.AccountViewSet.as_view({
 	'get': 'moments'
 })
 
-account_rooms = views.AccountViewSet.as_view({
+account_chatrooms = views.AccountViewSet.as_view({
 	'get': 'rooms'
 })
 
@@ -68,7 +68,7 @@ urlpatterns = [
 	url(r'reset/$', account_reset_password, name='reset_pass'),
 	url(r'notes/$', account_notes, name='user-notes'),
 	url(r'moments/$', account_moments, name='user-moments'),
-	url(r'rooms/$', account_rooms, name='user-chatrooms'),
+	url(r'chatrooms/$', account_chatrooms, name='user-chatrooms'),
 
 	# url(r'all/$', account_list, name='all'),
 	url(r'me/$', account_me, name='me'),

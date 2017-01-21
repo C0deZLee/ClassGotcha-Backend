@@ -59,7 +59,7 @@ export default new Router({
       path: '/upload',
       component: Upload
     }, {
-      path: '/chat',
+      path: '/chatroom/id/:chatroom_id',
       component: Chat
     }, {
       path: '/404',
