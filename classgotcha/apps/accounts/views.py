@@ -17,6 +17,9 @@ from ..posts.serializers import MomentSerializer
 from ..chat.serializers import RoomSerializer
 from ..tasks.serializers import TaskSerializer
 from script import group, complement
+from PIL import Image
+
+from resizeimage import resizeimage
 
 
 @api_view(['POST'])
@@ -46,10 +49,20 @@ def account_avatar(request):
 	with open(filename, 'wb+') as temp_file:
 		for chunk in upload.chunks():
 			temp_file.write(chunk)
+	
+	with open(filename) as avatar:
+		with Image.open(avatar) as image:
+			cover = resizeimage.resize_cover(image, [512, 512])
+			small = resizeimage.resize_cover(image,[128,128])
+			cover.save(filename, image.format)
+			small.save(str(request.user.id)+"small"+filename,image.format)
+	
 	avatar = open(filename)
 	new_file = File(file=avatar)  # there you go
+	smallavatar = open(str(request.user.id)+"small"+filename)
+	small_file = File(file = smallavatar)
 
-	new_avatar = Avatar(full_image=new_file)
+	new_avatar = Avatar(full_image=new_file,thumbnail = small_file)
 	new_avatar.save()
 	request.user.avatar = new_avatar
 	request.user.save()

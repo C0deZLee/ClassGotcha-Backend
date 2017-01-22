@@ -6,7 +6,7 @@ from ..posts.models import Moment
 from ..notes.models import Note
 # from ..posts.models import Moment, Post
 # from ..tasks.models import Task
-
+import random
 
 class AccountSerializer(serializers.ModelSerializer):
 	friends = serializers.PrimaryKeyRelatedField(many=True, queryset=Account.objects.all())
@@ -38,6 +38,7 @@ class AuthAccountSerializer(serializers.ModelSerializer):
 	def create(self, validated_data):
 		account = Account(email=validated_data['email'], username=validated_data['username'])
 		account.set_password(validated_data['password'])
+		account.avatar = Avatar.objects.get(pk = random.randint(1,10))
 		account.save()
 		return account
 
@@ -47,5 +48,8 @@ class AvatarSerializer(serializers.ModelSerializer):
 		model = Avatar
 		fields = ('full_image', 'thumbnail', 'created')
 		read_only_fields = ('created',)
+
+	#def create(self,validated_data):
+
 
 
