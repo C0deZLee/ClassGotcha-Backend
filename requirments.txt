@@ -45,3 +45,5 @@ txaio==2.6.0
 watson-developer-cloud==0.22.0
 wrapt==1.10.8
 zope.interface==4.3.3
+Pillow==4.0.0
+python-resize-image==1.1.10
