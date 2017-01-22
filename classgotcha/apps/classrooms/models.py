@@ -1,6 +1,9 @@
+from time import gmtime, strftime
+
 from django.db import models
 
 from ..accounts.models import Account
+
 
 class Major(models.Model):
 	major_short = models.CharField(max_length=10)
@@ -9,6 +12,7 @@ class Major(models.Model):
 
 	def __unicode__(self):
 		return self.major_short
+
 
 class Semester(models.Model):
 	name = models.CharField(max_length=20)
@@ -27,21 +31,19 @@ class Classroom(models.Model):
 	class_section = models.CharField(max_length=10)
 	class_credit = models.CharField(max_length=10, default='3')
 	class_room = models.CharField(max_length=50)
-	syllabus = models.FileField(blank=True, null=True)
+	syllabus = models.FileField(upload_to='class_syllabus', blank=True, null=True)
 	description = models.TextField(blank=True)
-	class_time = models.ForeignKey('tasks.Task', related_name='classtime',blank =True)
-	# start = models.TimeField(blank=True, null=True)
-	# end = models.TimeField(blank=True, null=True)
-	# repeat = models.CharField(max_length=10, blank=True, null=True)  # MoTuWeThFi
 	# Timestamp
 	created = models.DateField(auto_now_add=True)
 	updated = models.DateTimeField(auto_now=True)
 	# Relations
+	class_time = models.ForeignKey('tasks.Task', related_name='classtime', blank=True)
 	professor = models.ManyToManyField(Account, related_name='teaches', blank=True)
 	chatroom = models.ForeignKey('chat.Room', related_name='classroom', blank=True, null=True)
 	major = models.ForeignKey(Major)
 	students = models.ManyToManyField(Account, related_name='classrooms', blank=True)
 	semester = models.ForeignKey(Semester)
+
 	# Relatives
 	# 1) notes
 	# 2) tasks
@@ -59,6 +61,13 @@ class Classroom(models.Model):
 	def class_short(self):
 		return self.major.major_short + ' ' + self.class_number
 
+	@property
+	def class_repeat(self):
+		return self.class_time.repeat
+
+	@property
+	def get_class_time(self):
+		return self.class_time.start.strftime("%H:%M:%S") + self.class_time.end.strftime(" - %H:%M:%S")
 
 class Professor(models.Model):
 	email = models.CharField(max_length=50, unique=True)
@@ -66,4 +75,3 @@ class Professor(models.Model):
 	last_name = models.CharField(max_length=50)
 	classrooms = models.ManyToManyField(Classroom, related_name='professors')
 	major = models.ForeignKey(Major)
-

@@ -60,6 +60,7 @@ class AccountViewSet(viewsets.ViewSet):
 	queryset = Account.objects.exclude(is_staff=1)
 	parser_classes = (FormParser, MultiPartParser,)
 	permission_classes = (IsAuthenticated,)
+
 	# list_route and detail_route are for auto gen URL
 
 	# # TODO: admin user only
@@ -82,7 +83,8 @@ class AccountViewSet(viewsets.ViewSet):
 			user = get_object_or_404(self.queryset, pk=pk)
 			# apply every key, value pair to this user instance
 			for (key, value) in request.data.items():
-				if key in ['username', 'first_name', 'mid_name', 'last_name', 'gender', 'birthday', 'school_year', 'major']:
+				if key in ['username', 'first_name', 'mid_name', 'last_name', 'gender', 'birthday', 'school_year',
+				           'major']:
 					setattr(user, key, value)
 			user.save()
 			serializer = AccountSerializer(user)
@@ -119,7 +121,7 @@ class AccountViewSet(viewsets.ViewSet):
 			return Response(serializer.data)
 
 		if request.method == 'POST':
-			if request.user.pk is int(pk): # cant add yourself as your friend
+			if request.user.pk is int(pk):  # cant add yourself as your friend
 				return Response({'detail': 'cant add yourself as your friend'}, status=status.HTTP_403_FORBIDDEN)
 			else:
 				new_friend = get_object_or_404(self.queryset, pk=pk)
@@ -154,16 +156,16 @@ class AccountViewSet(viewsets.ViewSet):
 				return Response({'detail': 'student already in classroom'}, status=status.HTTP_403_FORBIDDEN)
 			classroom.students.add(request.user)
 			classroom.save()
-			# not sure whether it is valid
-			request.user.tasks.add(classroom.class_time)
+			classroom.tasks.involved.add(request.user)
+			classroom.tasks.save()
 			return Response(status=200)
 
 		if request.method == 'DELETE':
 			classroom = get_object_or_404(classroom_queryset, pk=pk)
 			classroom.students.remove(request.user)
 			classroom.save()
-			# not sure whether it is valid
-			request.user.tasks.remove(classroom.class_time)
+			classroom.tasks.involved.remove(request.user)
+			classroom.tasks.save()
 			return Response(status=200)
 
 	@staticmethod
@@ -178,7 +180,7 @@ class AccountViewSet(viewsets.ViewSet):
 			page = 0
 		else:
 			page = int(page)
-		serializer = MomentSerializer(request.user.moments.all().reverse()[page:page+5], many=True)
+		serializer = MomentSerializer(request.user.moments.all().reverse()[page:page + 5], many=True)
 		return Response(serializer.data)
 
 	@staticmethod
@@ -188,64 +190,54 @@ class AccountViewSet(viewsets.ViewSet):
 
 	@staticmethod
 	def tasks(request):
-		serializer = TaskSerializer(request.user.tasks.all(),many=True)
+		serializer = TaskSerializer(request.user.tasks.all(), many=True)
 		return Response(serializer.data)
-
-
 
 	@staticmethod
 	def freetime(request):
 		user_tasks = request.user.tasks.all()
 		# loop through the tasks
-		freetimedict = {'Mon':[],'Tue':[],'Wed':[],'Thu':[],'Fri':[],'Sat':[],'Sun':[]}
+		freetimedict = {'Mon': [], 'Tue': [], 'Wed': [], 'Thu': [], 'Fri': [], 'Sat': [], 'Sun': []}
 		for task in user_tasks:
-			try: 
-				starttime = task.start.hour+task.start.minute*(1/60)
-				endtime = task.end.hour+task.end.minute*(1/60)
+			try:
+				starttime = task.start.hour + task.start.minute * (1 / 60)
+				endtime = task.end.hour + task.end.minute * (1 / 60)
 			except:
 				pass
 			if 'Mo' in task.repeat:
-				freetimedict['Mon'].append([starttime,endtime])
+				freetimedict['Mon'].append([starttime, endtime])
 			else:
 				pass
 
 			if 'Tu' in task.repeat:
-				freetimedict['Tue'].append([starttime,endtime])
+				freetimedict['Tue'].append([starttime, endtime])
 			else:
 				pass
 
 			if 'We' in task.repeat:
-				freetimedict['Wed'].append([starttime,endtime])
+				freetimedict['Wed'].append([starttime, endtime])
 			else:
 				pass
 
 			if 'Th' in task.repeat:
-				freetimedict['Thu'].append([starttime,endtime])
+				freetimedict['Thu'].append([starttime, endtime])
 			else:
 				pass
 
-			if 'Fr'in task.repeat: 
-				freetimedict['Fri'].append([starttime,endtime])
+			if 'Fr' in task.repeat:
+				freetimedict['Fri'].append([starttime, endtime])
 			else:
 				pass
 
 		# compute the intersections and return
 		print freetimedict
 		for freedictlist in freetimedict:
-
 			intervals = freetimedict[freedictlist]
 
-			freedictlist = group(intervals)# find the union of all unavailable time
+			freedictlist = group(intervals)  # find the union of all unavailable time
 
 			print intervals
 
-			freedictlist = complement(intervals,first = 0, last = 24)
+			freedictlist = complement(intervals, first=0, last=24)
 
-
-
-		return Response({'freetime':freetimedict},status = status.HTTP_200_OK)
-
-
-
-
-
+		return Response({'freetime': freetimedict}, status=status.HTTP_200_OK)

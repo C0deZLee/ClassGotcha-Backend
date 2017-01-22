@@ -20,7 +20,7 @@ statics/node_modules
 # migrations
 classgotcha/apps/accounts/migrations/*
 classgotcha/apps/classrooms/migrations/*
-classgotcha/apps/comments/migrations/*
+classgotcha/apps/chat/migrations/*
 classgotcha/apps/groups/migrations/*
 classgotcha/apps/notes/migrations/*
 classgotcha/apps/posts/migrations/*

@@ -2,9 +2,6 @@ from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseU
 from django.db import models
 
 
-
-
-
 class Avatar(models.Model):
 	full_image = models.ImageField(upload_to='avatars', null=True, blank=True)
 	thumbnail = models.ImageField(upload_to='avatars', null=True, blank=True)

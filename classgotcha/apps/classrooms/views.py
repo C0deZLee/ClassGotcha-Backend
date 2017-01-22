@@ -42,7 +42,7 @@ class ClassroomViewSet(viewsets.ViewSet):
 		return new_file
 
 	def retrieve(self, request, pk):
-		classroom = get_object_or_404(self.queryset, pk=pk)
+		classroom = get_object_or_404(self.queryset, class_code=pk)
 		serializer = ClassroomSerializer(classroom)
 		return Response(serializer.data)
 
@@ -144,10 +144,23 @@ class ClassroomViewSet(viewsets.ViewSet):
 			upload = request.FILES['file']
 			for course in upload:
 				cours = json.loads(course)
-				print cours['description']
+				# print cours['description']
 				major, created = Major.objects.get_or_create(major_short=cours['major'])
 				semester, created = Semester.objects.get_or_create(name="Spring 2017")
 				try:
+					class_time = cours['time'].split()
+					# create class task
+					task = Task.objects.create(task_name=cours['name'] + ' - ' + cours['section'])
+					if len(class_time) == 4:
+						task.repeat = class_time[0]
+						task.start = datetime.datetime.strptime(class_time[1], '%I:%M%p')
+						task.end = datetime.datetime.strptime(class_time[3], '%I:%M%p')
+						task.save()
+					# create chat room
+					room = Room.objects.create(creator=Account.objects.get(is_superuser=True),
+					                           name=cours['name'] + ' - ' + cours['section'] + ' Chat Room')
+
+					# create classroom
 					classroom = Classroom.objects.create(class_code=cours['number'],
 					                                     class_number=cours['name'].split()[1],
 					                                     class_name=cours['fullName'],
@@ -155,19 +168,12 @@ class ClassroomViewSet(viewsets.ViewSet):
 					                                     class_section=cours['section'],
 					                                     class_credit=cours['unit'],
 					                                     class_room=cours['room'],
+					                                     class_time=task,
 					                                     major=major, semester=semester)
-					class_time = cours['time'].split()
-					if len(class_time) == 4:
-						classroom.repeat = class_time[0]
-						classroom.start = datetime.datetime.strptime(class_time[1], '%I:%M%p')
-						print classroom.start
-						classroom.end = datetime.datetime.strptime(class_time[3], '%I:%M%p')
-						print classroom.end
+					# save classroom to get pk in db
 					classroom.save()
-					room = Room.objects.create(creator=Account.objects.get(is_superuser=True))
-					room.name = classroom.major.major_short + ' ' + classroom.class_number + ' - ' + classroom.class_section + ' Chat Room'
-					room.save()
 					classroom.chatroom = room
+					task.classroom = classroom
 					classroom.save()
 				except IntegrityError:
 					pass
