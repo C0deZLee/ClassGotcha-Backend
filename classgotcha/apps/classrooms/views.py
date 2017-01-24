@@ -42,7 +42,7 @@ class ClassroomViewSet(viewsets.ViewSet):
 		return new_file
 
 	def retrieve(self, request, pk):
-		classroom = get_object_or_404(self.queryset, class_code=pk)
+		classroom = get_object_or_404(self.queryset, pk=pk)
 		serializer = ClassroomSerializer(classroom)
 		return Response(serializer.data)
 
@@ -69,14 +69,17 @@ class ClassroomViewSet(viewsets.ViewSet):
 			match = re.match(r"([a-z]+) *([0-9]+)", search_token, re.I)
 			if match:
 				items = match.groups()
-			class_major = items[0].upper()
-			class_number = items[1]
-			major = Major.objects.get(major_short=class_major)
-			classrooms = Classroom.objects.filter(major=major, class_number=class_number)
-			serializer = ClassroomSerializer(classrooms, many=True)
-			return Response(serializer.data)
+				class_major = items[0].upper()
+				class_number = items[1]
+				major = Major.objects.get(major_short=class_major)
+				classrooms = Classroom.objects.filter(major=major, class_number=class_number)
+				serializer = ClassroomSerializer(classrooms, many=True)
+				return Response(serializer.data)
+			else:
+				# TODO STEVE: need to consider more circumstances
+				return Response({})
 
-	def is_in_class(self, request, pk):
+	def validate(self, request, pk):
 		classroom = get_object_or_404(self.queryset, pk=pk)
 		if request.user in classroom.students:
 			return Response(status=status.HTTP_200_OK)
@@ -168,13 +171,12 @@ class ClassroomViewSet(viewsets.ViewSet):
 					                                     class_section=cours['section'],
 					                                     class_credit=cours['unit'],
 					                                     class_room=cours['room'],
-					                                     class_time=task,
-					                                     major=major, semester=semester)
+					                                     class_time=task, major=major,
+					                                     semester=semester, chatroom=room)
 					# save classroom to get pk in db
 					classroom.save()
-					classroom.chatroom = room
 					task.classroom = classroom
-					classroom.save()
+					task.save()
 				except IntegrityError:
 					pass
 			return Response(status=status.HTTP_201_CREATED)

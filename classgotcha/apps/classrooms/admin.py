@@ -19,9 +19,9 @@ class ClassroomAdmin(admin.ModelAdmin):
 		('Enrolled', {'fields': ('professor', ('students', 'students_count'), 'chatroom')}),
 		('Timestamp', {'fields': ('created', 'updated',)}),
 	)
-	readonly_fields = ('major', 'created', 'updated', 'class_repeat', 'get_class_time', 'students_count')
+	readonly_fields = ('major', 'created', 'updated', 'class_repeat', 'get_class_time', 'students_count', 'chatroom')
 
-	# + obj.class_time.start + obj.class_time.end
+	search_fields = ('class_code', 'id')
 
 	def save_related(self, request, form, formsets, change):
 		super(ClassroomAdmin, self).save_related(
