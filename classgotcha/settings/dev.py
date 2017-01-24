@@ -94,10 +94,11 @@ JWT_AUTH = {
 }
 
 # ----- Cross Origin Header -----
-CORS_ORIGIN_ALLOW_ALL = True
+# CORS_ORIGIN_ALLOW_ALL = True
 CORS_ORIGIN_WHITELIST = (
     'google.com',
     'localhost:4000',
+    'localhost:4004',
     '127.0.0.1:9000'
 )
 CORS_ALLOW_HEADERS = (
@@ -110,6 +111,7 @@ CORS_ALLOW_HEADERS = (
     'user-agent',
     'x-csrftoken',
     'x-requested-with',
-    'cache-control'
+    'cache-control',
+    'HTTP_X_XSRF_TOKEN'
 )
 

@@ -28,6 +28,8 @@ ALLOWED_HOSTS = []
 
 SITE_ID = 1
 
+APPEND_SLASH = False
+
 # ------ Application ------
 
 ROOT_URLCONF = 'classgotcha.urls'
