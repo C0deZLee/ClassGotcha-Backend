@@ -15,7 +15,7 @@ def ws_disconnect(message):
 	try:
 		pk = message.channel_session['room']
 		room = Room.objects.get(pk=pk)
-		Group('chat-' + pk, channel_layer=message.channel_layer).discard(message.reply_channel)
+		Group('chat-' + str(pk), channel_layer=message.channel_layer).discard(message.reply_channel)
 	except (KeyError, Room.DoesNotExist):
 		pass
 
@@ -50,7 +50,7 @@ def ws_connect(message):
 
 	# Need to be explicit about the channel layer so that testability works
 	# This may be a FIXME?
-	Group('chat-' + pk, channel_layer=message.channel_layer).add(message.reply_channel)
+	Group('chat-' + str(pk), channel_layer=message.channel_layer).add(message.reply_channel)
 	# Create room id in channel session
 	message.channel_session['room'] = room.pk
 

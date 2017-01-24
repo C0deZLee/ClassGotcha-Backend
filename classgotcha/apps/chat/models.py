@@ -7,47 +7,61 @@ from ..accounts.models import Account
 
 
 class Room(models.Model):
-    name = models.CharField(max_length=20)
-    # label = models.SlugField(blank=True, null=True)
-    # relationship
-    accounts = models.ManyToManyField(Account, related_name='rooms')
-    creator = models.ForeignKey(Account, related_name='owned_rooms')
-    created = models.DateTimeField(auto_now_add=True)
-    # Relationship
-    # 1) classroom
-    # 2) group
+	name = models.CharField(max_length=20)
+	# label = models.SlugField(blank=True, null=True)
+	# relationship
+	accounts = models.ManyToManyField(Account, related_name='rooms')
+	creator = models.ForeignKey(Account, related_name='owned_rooms')
+	created = models.DateTimeField(auto_now_add=True)
 
-    class Meta:
-        ordering = ("name",)
+	# Relationship
+	# 1) classroom
+	# 2) group
+	# 3) messages
 
-    def __unicode__(self):
-        return self.name
+	class Meta:
+		ordering = ("name",)
 
-    #
-    # @models.permalink
-    # def get_absolute_url(self):
-    # 	return ("room", (self.pk,))
+	def __unicode__(self):
+		return self.name
+
+	@property
+	def latest_message(self):
+		messages = self.messages.all().reverse()
+		if messages:
+			latest_message = {'message': messages[0].message, 'created': messages[0].created}
+			return latest_message
+		else:
+			return {}
+
+	# @property
+	# def latest_message_time(self):
+	# 	return self.messages.all().reverse()[0].created
+	# 	#
+	# 	# @models.permalink
+	# 	# def get_absolute_url(self):
+	# 	# 	return ("room", (self.pk,))
 
 
 class Message(models.Model):
-    room = models.ForeignKey(Room, related_name='messages')
-    context = models.CharField(max_length=140, blank=True)
-    username = models.CharField(max_length=140)
-    message = models.CharField(max_length=140)
-    created = models.DateTimeField(auto_now_add=True, db_index=True)
+	room = models.ForeignKey(Room, related_name='messages')
+	context = models.CharField(max_length=140, blank=True)
+	username = models.CharField(max_length=140)
+	message = models.CharField(max_length=140)
+	created = models.DateTimeField(auto_now_add=True, db_index=True)
 
-    def __unicode__(self):
-        return '[{created}] {username}: {message}'.format(**self.as_dict())
+	def __unicode__(self):
+		return '[{created}] {username}: {message}'.format(**self.as_dict())
 
-    @property
-    def formatted_timestamp(self):
-        return self.created.strftime('%b %-d %-I:%M %p')
+	@property
+	def formatted_timestamp(self):
+		return self.created.strftime('%b %-d %-I:%M %p')
 
-    def as_dict(self):
-        return {'username': self.username, 'message': self.message, 'created': self.formatted_timestamp}
+	def as_dict(self):
+		return {'username': self.username, 'message': self.message, 'created': self.formatted_timestamp}
 
-    class Meta:
-        get_latest_by = 'created'
+	class Meta:
+		get_latest_by = 'created'
 
 #
 # class ChatUser(models.Model):

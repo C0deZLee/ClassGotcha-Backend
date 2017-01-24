@@ -8,6 +8,7 @@ class RoomAdmin(admin.ModelAdmin):
 	# These override the definitions on the base UserAdmin
 	# that reference specific fields on auth.User.
 	list_display = ('id', 'name', 'created')
+	search_fields = ('id',)
 
 
 class MessageAdmin(admin.ModelAdmin):

@@ -3,6 +3,8 @@ from rest_framework import serializers
 
 
 class RoomSerializer(serializers.ModelSerializer):
+	latest_message = serializers.ReadOnlyField()
+
 	class Meta:
 		model = Room
 		fields = '__all__'

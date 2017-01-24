@@ -80,8 +80,18 @@ class ChatRoomViewSet(viewsets.ViewSet):
 	'''
 	def users(self, request, pk):
 		room = get_object_or_404(self.queryset, pk=pk)
-		serializer = AccountSerializer(room.accounts.all(), many=True)
-		return Response(serializer.data)
+		if request.user in room.accounts.all():
+			serializer = AccountSerializer(room.accounts.all(), many=True)
+			return Response(serializer.data)
+		else:
+			return Response(status=status.HTTP_403_FORBIDDEN)
+
+	def validate(self, request, pk):
+		room = get_object_or_404(self.queryset, pk=pk)
+		if request.user in room.accounts.all():
+			return Response(status=status.HTTP_200_OK)
+		else:
+			return Response(status=status.HTTP_400_BAD_REQUEST)
 
 	def join(self, request, pk):
 		room = get_object_or_404(self.queryset, pk=pk)
@@ -89,5 +99,8 @@ class ChatRoomViewSet(viewsets.ViewSet):
 		room.save()
 		return Response(status=status.HTTP_200_OK)
 
-	def send(self, request, pk):
-		pass
+	def quit(self, request, pk):
+		room = get_object_or_404(self.queryset, pk=pk)
+		room.accounts.remove(request.user)
+		room.save()
+		return Response(status=status.HTTP_200_OK)
