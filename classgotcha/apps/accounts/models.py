@@ -3,8 +3,9 @@ from django.db import models
 
 
 class Avatar(models.Model):
-	full_image = models.ImageField(upload_to='avatars', null=True, blank=True)
-	thumbnail = models.ImageField(upload_to='avatars', null=True, blank=True)
+	avatar4x = models.ImageField(upload_to='avatars', null=True, blank=True)
+	avatar2x = models.ImageField(upload_to='avatars', null=True, blank=True)
+	avatar1x = models.ImageField(upload_to='avatars', null=True, blank=True)
 	created = models.DateTimeField(auto_now_add=True)
 
 

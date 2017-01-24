@@ -1,17 +1,9 @@
 import views
 from django.conf.urls import url
 from rest_framework_jwt.views import obtain_jwt_token, refresh_jwt_token, verify_jwt_token
-from rest_framework.routers import DefaultRouter
-
-# router = DefaultRouter()
-# router.register(r'', views.AccountViewSet)
-# urlpatterns = router.urls
-
 
 account_reset_password = views.AccountViewSet.as_view(
     {'post': 'reset_password'})
-
-# account_list = views.AccountViewSet.as_view({'get': 'list'})
 
 account_detail = views.AccountViewSet.as_view({
     'get': 'retrieve',
@@ -66,7 +58,7 @@ urlpatterns = [
     url(r'moments/(?P<page>[0-9]+)/$', account_moments, name='add_moments'),
     url(r'classrooms/(?P<pk>[0-9]+)/$',
         account_add_classrooms, name='add_classroom'),
-    url(r'(?P<pk>[0-9]+)/$', account_detail, name='detail'),
+    url(r'(?P<pk>[0-9]+)/$', account_detail, name='user-detail'),
 
     url(r'avatar/$', views.account_avatar, name='avatar'),
     url(r'classrooms/$', account_classrooms, name='user-classrooms'),

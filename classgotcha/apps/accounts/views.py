@@ -1,7 +1,10 @@
 import os
-from models import Account, Avatar
+from resizeimage import resizeimage
+from PIL import Image
+
 from django.shortcuts import get_object_or_404
 from django.core.files.base import File
+
 from rest_framework_jwt.settings import api_settings
 from rest_framework import generics, viewsets, status
 from rest_framework.response import Response
@@ -9,17 +12,16 @@ from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework.decorators import detail_route, list_route, api_view, permission_classes, parser_classes
 from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly, AllowAny, IsAdminUser
 
-from serializers import AccountSerializer, BasicAccountSerializer, AuthAccountSerializer
-
+from serializers import AccountSerializer, BasicAccountSerializer, AuthAccountSerializer, AvatarSerializer
 from ..classrooms.serializers import Classroom, ClassroomSerializer
-from ..notes.serializers import Note, NoteSerializer
+from ..notes.serializers import NoteSerializer
 from ..posts.serializers import MomentSerializer
 from ..chat.serializers import RoomSerializer
 from ..tasks.serializers import TaskSerializer
-from script import group, complement
-from PIL import Image
 
-from resizeimage import resizeimage
+from models import Account, Avatar
+
+from script import group, complement
 
 
 @api_view(['POST'])
@@ -36,37 +38,43 @@ def account_register(request):
 	return Response({'token': token}, status=status.HTTP_201_CREATED)
 
 
-@api_view(['POST', 'OPTION'])
+@api_view(['GET', 'POST', 'OPTION'])
 @permission_classes((IsAuthenticated,))
 @parser_classes((MultiPartParser, FormParser,))
 def account_avatar(request):
-	try:
-		upload = request.FILES['file']
-	except:
-		return Response(status=status.HTTP_400_BAD_REQUEST)
-	filename, file_extension = os.path.splitext(upload.name)
-	filename = str(request.user.id) + file_extension
-	with open(filename, 'wb+') as temp_file:
-		for chunk in upload.chunks():
-			temp_file.write(chunk)
-	
-	with open(filename) as avatar:
-		with Image.open(avatar) as image:
-			cover = resizeimage.resize_cover(image, [512, 512])
-			small = resizeimage.resize_cover(image,[128,128])
-			cover.save(filename, image.format)
-			small.save(str(request.user.id)+"small"+filename,image.format)
-	
-	avatar = open(filename)
-	new_file = File(file=avatar)  # there you go
-	smallavatar = open(str(request.user.id)+"small"+filename)
-	small_file = File(file = smallavatar)
+	if request.method == 'POST':
+		try:
+			upload = request.FILES['file']
+		except:
+			return Response(status=status.HTTP_400_BAD_REQUEST)
+		filename, file_extension = os.path.splitext(upload.name)
 
-	new_avatar = Avatar(full_image=new_file,thumbnail = small_file)
-	new_avatar.save()
-	request.user.avatar = new_avatar
-	request.user.save()
-	return Response(status=status.HTTP_200_OK)
+		with open(filename, 'wb+') as avatar:
+			for chunk in upload.chunks():
+				avatar.write(chunk)
+			with Image.open(avatar) as image:
+				image4x = resizeimage.resize_cover(image, [512, 512])
+				image2x = resizeimage.resize_cover(image, [128, 128])
+				image1x = resizeimage.resize_cover(image, [48, 48])
+				img4x_name = str(request.user.id) + '@4x' + file_extension
+				img2x_name = str(request.user.id) + '@2x' + file_extension
+				img1x_name = str(request.user.id) + '@1x' + file_extension
+				image4x.save(img4x_name, image.format)
+				image2x.save(img2x_name, image.format)
+				image1x.save(img1x_name, image.format)
+
+		img4x = open(img4x_name)
+		img2x = open(img2x_name)
+		img1x = open(img1x_name)
+
+		new_avatar = Avatar(avatar4x=File(file=img4x), avatar2x=File(file=img2x), avatar1x=File(file=img1x))
+		new_avatar.save()
+		request.user.avatar = new_avatar
+		request.user.save()
+		return Response(status=status.HTTP_200_OK)
+	elif request.method == 'GET':
+		serializer = AvatarSerializer(request.user.avatar)
+		return Response(serializer.data)
 
 
 class AccountViewSet(viewsets.ViewSet):
@@ -155,6 +163,7 @@ class AccountViewSet(viewsets.ViewSet):
 			was_friend.save()
 			return Response(status=200)
 
+	# TODO: FIXME, 403 forbiiden front enf, post man 500
 	@staticmethod
 	def classrooms(request, pk=None):
 		classroom_queryset = Classroom.objects.all()
@@ -168,17 +177,21 @@ class AccountViewSet(viewsets.ViewSet):
 			if request.user in classroom.students.all():
 				return Response({'detail': 'student already in classroom'}, status=status.HTTP_403_FORBIDDEN)
 			classroom.students.add(request.user)
+			classroom.class_time.involved.add(request.user)
+			classroom.chatroom.accounts.add(request.user)
 			classroom.save()
-			classroom.tasks.involved.add(request.user)
-			classroom.tasks.save()
+			classroom.class_time.save()
+			classroom.chatroom.save()
 			return Response(status=200)
 
 		if request.method == 'DELETE':
 			classroom = get_object_or_404(classroom_queryset, pk=pk)
 			classroom.students.remove(request.user)
+			classroom.class_time.involved.remove(request.user)
+			classroom.chatroom.accounts.remove(request.user)
 			classroom.save()
-			classroom.tasks.involved.remove(request.user)
-			classroom.tasks.save()
+			classroom.class_time.save()
+			classroom.chatroom.save()
 			return Response(status=200)
 
 	@staticmethod
@@ -219,28 +232,18 @@ class AccountViewSet(viewsets.ViewSet):
 				pass
 			if 'Mo' in task.repeat:
 				freetimedict['Mon'].append([starttime, endtime])
-			else:
-				pass
 
 			if 'Tu' in task.repeat:
 				freetimedict['Tue'].append([starttime, endtime])
-			else:
-				pass
 
 			if 'We' in task.repeat:
 				freetimedict['Wed'].append([starttime, endtime])
-			else:
-				pass
 
 			if 'Th' in task.repeat:
 				freetimedict['Thu'].append([starttime, endtime])
-			else:
-				pass
 
 			if 'Fr' in task.repeat:
 				freetimedict['Fri'].append([starttime, endtime])
-			else:
-				pass
 
 		# compute the intersections and return
 		print freetimedict
