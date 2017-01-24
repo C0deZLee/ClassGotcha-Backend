@@ -28,7 +28,7 @@ from rest_framework.routers import DefaultRouter
 admin.autodiscover()
 
 urlpatterns = [
-    url(r'^chat/', include(chat_urls)),
+    url(r'^chatroom/', include(chat_urls)),
     url(r'^account/', include(accounts_urls)),
     url(r'^post/', include(posts_urls)),
     url(r'^classroom/', include(classroom_urls)),
@@ -36,3 +36,4 @@ urlpatterns = [
     url(r'^group/', include(groups_urls)),
     url(r'^docs/', include('rest_framework_docs.urls')),
 ]
+
