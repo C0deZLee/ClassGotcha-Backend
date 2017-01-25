@@ -2,26 +2,37 @@ from models import Account, Avatar
 from rest_framework import serializers
 # from ..classrooms.models import Classroom
 from ..posts.models import Moment
+from ..posts.serializers import MomentSerializer
 # from ..groups.models import Group
 from ..notes.models import Note
+from ..notes.serializers import NoteSerializer
 from ..chat.models import Message 
+from ..chat.serializers import MessageSerializer
+from ..classrooms.serializers import BasicClassroomSerializer
 # from ..posts.models import Moment, Post
 # from ..tasks.models import Task
 import random
 
 class AccountSerializer(serializers.ModelSerializer):
 	friends = serializers.PrimaryKeyRelatedField(many=True, queryset=Account.objects.filter())
+	
 	classrooms = serializers.StringRelatedField(many=True, read_only=True)
 	moments = serializers.PrimaryKeyRelatedField(many=True, queryset=Moment.objects.exclude(flagged_num=3))
-	notes = serializers.StringRelatedField(many=True, read_only = True)
-	tasks = serializers.StringRelatedField(many=True,read_only = True)
+	# however this nested way always encounters problem
+	#moments = MomentSerializer(read_only = True)
+	
+	notes = serializers.PrimaryKeyRelatedField(many=True, read_only = True)
+	tasks = serializers.PrimaryKeyRelatedField(many=True,read_only = True)
+	
+	#classroom = BasicClassroomSerializer(many = True, read_only = True)
+	#messages = MessageSerializer(many = True , read_only = True)
 	#messages = serializers.PrimaryKeyRelatedField(many=True,queryset = Message.objects.all())
 
 	class Meta:
 		model = Account
 		exclude = ('user_permissions', 'groups', 'is_superuser', 'is_staff', 'is_active', 'password')
-		read_only_fields = ('is_student', 'is_professor', 'created', 'updated')
-		#fields = ('friends','classrooms','moments','notes','tasks')
+		#read_only_fields = ('is_student', 'is_professor', 'created', 'updated')
+		#fields = ('classroom')
 
 class BasicAccountSerializer(serializers.ModelSerializer):
 	class Meta:
