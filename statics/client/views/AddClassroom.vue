@@ -223,7 +223,7 @@
         this.selected_classroom = classroom
       },
       classroomURL: function(classroom) {
-        const url = '/#/classroom/id/' + classroom.class_code
+        const url = '/classroom/id/' + classroom.id
         this.$router.push(url)
       }
 

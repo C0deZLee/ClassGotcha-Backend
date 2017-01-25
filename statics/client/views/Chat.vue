@@ -159,7 +159,7 @@
     },
     methods: {
       connectSocket: function() {
-        this.chatsock = new ReconnectingWebSocket(this.$root.socketApiEndPoint + "/chat/" + this.$route.params.chatroom_id)
+        this.chatsock = new ReconnectingWebSocket(this.$root.socketApiEndPoint + '/chat/' + this.$route.params.chatroom_id)
         const self = this
         this.chatsock.onmessage = function(message) {
             self.message_list.push(JSON.parse(message.data))
@@ -179,6 +179,20 @@
         // $("#message").val('').focus();
 
       }
+    },
+    beforeCreate: function() {
+        // chat room doesn't exist or user doesn't belong to chat room, redirect
+          this.$http.get(this.$root.apiEndPoint +'/chatroom/' + this.$route.params.chatroom_id + '/validate/', {
+            headers: {
+                'Authorization': 'JWT ' + this.$root.authToken
+            }
+        }).then((response => {
+            // success
+            console.log(response.data)
+        }), (response => {
+            // failed
+            this.$router.push('/')
+        }))
     },
     created: function() {
       // after component is created, load data

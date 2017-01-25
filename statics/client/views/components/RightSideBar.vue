@@ -27,8 +27,8 @@
 
                         <div>
 
-                            <div class="sidebar-message">
-                                <a href="#">
+                            <div class="sidebar-message" v-for="chatroom in this.$root.chatrooms">
+                                <a :href="chatroomUrl()">
                                     <div class="pull-left text-center">
                                         <img alt="image" class="img-circle message-avatar" src="img/a1.jpg">
 
@@ -39,9 +39,9 @@
                                     </div>
                                     <div class="media-body">
 
-                                        There are many variations of passages of Lorem Ipsum available.
+                                        {{chatroom.last_message}}
                                         <br>
-                                        <small class="text-muted">Today 4:21 pm</small>
+                                        <small class="text-muted">{{chatroom.last_message_time}}</small>
                                     </div>
                                 </a>
                             </div>
@@ -376,8 +376,11 @@
 <script>
   export default {
     name: 'RightSideBar',
-    data: function() {
+    data: function() {  
       return {}
     },
+    methods: {
+      chatroomUrl: function(chatroom) { if (chatroom) return '/#/chatroom/id/' + chatroom.id }
+    }
   }
 </script>
