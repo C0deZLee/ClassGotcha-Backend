@@ -5,7 +5,7 @@ classroom_detail = views.ClassroomViewSet.as_view({
 	'get': 'retrieve',
 	'put': 'update',
 	'post': 'syllabus',
-	'option': 'syllabus'
+	# 'option': 'syllabus'
 })
 
 classroom_notes = views.ClassroomViewSet.as_view({

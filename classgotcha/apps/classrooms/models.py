@@ -69,9 +69,3 @@ class Classroom(models.Model):
 	def get_class_time(self):
 		return self.class_time.start.strftime("%H:%M:%S") + self.class_time.end.strftime(" - %H:%M:%S")
 
-class Professor(models.Model):
-	email = models.CharField(max_length=50, unique=True)
-	first_name = models.CharField(max_length=50)
-	last_name = models.CharField(max_length=50)
-	classrooms = models.ManyToManyField(Classroom, related_name='professors')
-	major = models.ForeignKey(Major)

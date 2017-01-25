@@ -16,7 +16,7 @@ from serializers import AccountSerializer, BasicAccountSerializer, AuthAccountSe
 from ..classrooms.serializers import Classroom, ClassroomSerializer
 from ..notes.serializers import NoteSerializer
 from ..posts.serializers import MomentSerializer
-from ..chat.serializers import RoomSerializer
+from ..chat.serializers import Room, RoomSerializer
 from ..tasks.serializers import TaskSerializer
 
 from models import Account, Avatar
@@ -56,9 +56,9 @@ def account_avatar(request):
 				image4x = resizeimage.resize_cover(image, [512, 512])
 				image2x = resizeimage.resize_cover(image, [128, 128])
 				image1x = resizeimage.resize_cover(image, [48, 48])
-				img4x_name = str(request.user.id) + '@4x' + file_extension
-				img2x_name = str(request.user.id) + '@2x' + file_extension
-				img1x_name = str(request.user.id) + '@1x' + file_extension
+				img4x_name = str(request.user.id) + '.4x' + file_extension
+				img2x_name = str(request.user.id) + '.2x' + file_extension
+				img1x_name = str(request.user.id) + '.1x' + file_extension
 				image4x.save(img4x_name, image.format)
 				image2x.save(img2x_name, image.format)
 				image1x.save(img1x_name, image.format)
@@ -163,7 +163,7 @@ class AccountViewSet(viewsets.ViewSet):
 			was_friend.save()
 			return Response(status=200)
 
-	# TODO: FIXME, 403 forbiiden front enf, post man 500
+	# TODO: FIXME, 403 forbidden front enf, post man 500
 	@staticmethod
 	def classrooms(request, pk=None):
 		classroom_queryset = Classroom.objects.all()
@@ -210,9 +210,21 @@ class AccountViewSet(viewsets.ViewSet):
 		return Response(serializer.data)
 
 	@staticmethod
-	def rooms(request):
-		serializer = RoomSerializer(request.user.rooms.all(), many=True)
-		return Response(serializer.data)
+	def rooms(request, pk=None):
+		room_query_set = request.user.rooms.all()
+		if request.method == 'GET':
+			serializer = RoomSerializer(room_query_set, many=True)
+			return Response(serializer.data)
+		elif request.method == 'POST':
+			room = get_object_or_404(room_query_set, pk)
+			request.user.rooms.add(room)
+			request.user.save()
+			return Response(status=status.HTTP_200_OK)
+		elif request.method == 'DELETE':
+			room = get_object_or_404(room_query_set, pk)
+			request.user.rooms.delete(room)
+			request.user.save()
+			return Response(status=status.HTTP_200_OK)
 
 	@staticmethod
 	def tasks(request):
