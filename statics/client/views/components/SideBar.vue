@@ -3,23 +3,18 @@
         <div class="sidebar-collapse">
             <ul side-navigation class="nav metismenu" id="side-menu">
                 <li class="nav-header">
-                    <div class="dropdown profile-element">
-                        <!-- Picture of user -->
-                        <!--:src="$root.avatar.avatar1x"-->
-                        <img alt="image" class="img-circle" />
-                        <a class="dropdown-toggle" href>
-                            <span class="clear">
-                                  <span class="block m-t-xs">
-                                      <span data-ng-bind="user.username"></span>
-                            </span>
-                            </span>
-                        </a>
+                    <div class="dropdown profile-element"> <span>
+                             <img alt="image" class="img-circle" :src="avatar" />
+                             </span>
+                        <a data-toggle="dropdown" class="dropdown-toggle">
+                            <span class="clear"> <span class="block m-t-xs"> <strong class="font-bold">{{fullName}}</strong>
+                             </span> <span class="text-muted text-xs block">Art Director <b class="caret"></b></span> </span> </a>
                         <ul class="dropdown-menu animated fadeInRight m-t-xs">
-                            <li><a ui-sref="profile">Profile</a></li>
-                            <li><a ui-sref="contacts">Contacts</a></li>
-                            <li><a ui-sref="inbox">Mailbox</a></li>
+                            <li><a href="profile.html">Profile</a></li>
+                            <li><a href="contacts.html">Contacts</a></li>
+                            <li><a href="mailbox.html">Mailbox</a></li>
                             <li class="divider"></li>
-                            <li><a href="../login.html">Logout</a></li>
+                            <li><a href="login.html">Logout</a></li>
                         </ul>
                     </div>
                     <div class="logo-element">
@@ -38,7 +33,7 @@
                     <ul class="nav nav-second-level">
                         <li><a href="/#/classroom/add">+ Add New</a></li>
                         <li><a href="/#/classroom/id/2344">CS 311 </a></li>
-                        <li v-for="classroom in $root.classrooms">
+                        <li v-for="classroom in classrooms">
                             <a :href="classroomUrl(classroom.id)">{{classroom.class_short}}</a>
                         </li>
                     </ul>
@@ -55,49 +50,6 @@
                         <span class="nav-label">Upload</span>
                     </a>
                 </li>
-                <!-- menu servies start here -->
-
-                <!-- <li
-                  ng-repeat="item in menu.items | orderBy: 'position'"
-                  ng-if="item.shouldRender(authentication.user);"
-                  ng-switch="item.type"
-                  ng-class="{ active: location.path().includes(item.state) }"
-              >
-                  <a ng-switch-when="dropdown">
-                      <i class="fa {{item.iconClass}}"></i>
-                      <span class="nav-label">{{item.title}}</span>
-                      <span class="fa arrow"></span>
-                  </a>
-                  <ul
-                      ng-switch-when="dropdown"
-                      class="nav nav-second-level"
-                      ng-class="{in: location.path().includes(item.state) }"
-                  >
-                       Here is the subitem
-                      <li
-                          role="presentation"
-                          ng-repeat="subitem in item.items | orderBy: 'position'"
-                          ng-if="subitem.shouldRender(authentication.user);"
-                          ui-sref-active="active"
-                      >
-                          <a
-                              ui-sref="{{subitem.state}}"
-                              role="menuitem"
-                              tabindex="-1"
-                              ng-bind="subitem.title"
-                          ></a>
-                      </li>
-                  </ul>
-
-                  <a
-                      ng-switch-default
-                      ui-sref="{{item.state}}"
-                  >
-                      <i class="fa {{item.iconClass}}"></i>
-                      <span class="nav-label">{{item.title}}</span>
-                  </a>
-
-              </li> -->
             </ul>   
         </div>
     </nav>
@@ -106,13 +58,21 @@
 <script>
     export default {
         name: 'sidebar',
-        data: function() {
-            return {}
-        },
         methods: {
-            classroomUrl: function(id) {
+            classroomUrl(id) {
                 return '/#/classroom/id/' + id
             },
+        },
+        computed: {
+            fullName() {
+                return this.$store.getters.userFullName
+            },
+            avatar() {
+                return this.$store.getters.userAvatar1x
+            },
+            classrooms() {
+                return this.$store.getters.userClassrooms
+            }
         }
     }
 

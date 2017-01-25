@@ -106,10 +106,8 @@
                         </li>
                     </ul>
                 </li>
-
-
                 <li>
-                    <a v-on:click="$root.logout">
+                    <a v-on:click="$store.dispatch('logout')">
                         <i class="fa fa-sign-out"></i> Log out
                     </a>
                 </li>

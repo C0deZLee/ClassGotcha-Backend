@@ -18,15 +18,19 @@
 </template>
 
 <script>
-  import SideBar from './SideBar'
-  import TopBar from './TopBar'
-  import RightSideBar from './RightSideBar'
-  export default {
-    name: 'DefaultLayout',
-    components: {
-      SideBar,
-      TopBar,
-      RightSideBar
+    import SideBar from './SideBar'
+    import TopBar from './TopBar'
+    import RightSideBar from './RightSideBar'
+    import ModalWindow from './ModalWindow'
+
+    export default {
+        name: 'DefaultLayout',
+        components: {
+            SideBar,
+            TopBar,
+            RightSideBar,
+            ModalWindow
+        }
     }
-  }
+
 </script>

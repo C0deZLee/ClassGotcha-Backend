@@ -43,10 +43,10 @@
                                         <div class="table-responsive">
                                             <table class="table table-striped table-hover">
                                                 <tbody>
-                                                    <tr v-if="classrooms.length===0">
+                                                    <tr v-if="resultLength===0">
                                                        <td class="text-center">No result</td>
                                                     </tr>
-                                                    <tr v-for="classroom in classrooms">
+                                                    <tr v-for="classroom in searchResult">
                                                     <td><a data-toggle="tab" v-on:click="select_classroom(classroom)" class="client-link">{{classroom.class_code}}</a></td>
                                                     <td>{{classroom.class_short}}</td>
                                                     <td> Sec {{classroom.class_section}}</td>
@@ -196,37 +196,37 @@
 </template>
 
 <script>
-  export default {
-    name: 'AddClassroom',
-    data: function() {
-      return {
-        search_token: '',
-        classrooms: [],
-        selected_classroom: ''
-      }
-    },
-    methods: {
-      classroomSearch: function(e) {
-        e.preventDefault();
-        this.$http.post(this.$root.apiEndPoint + '/classroom/search/', {
-          'search': this.search_token,
-        }, {
-          headers: {
-            'Authorization': 'JWT ' + this.$root.authToken
-          },
-          'search': this.search_token,
-        }).then(response => {
-          this.classrooms = response.data
-        }, )
-      },
-      select_classroom: function(classroom) {
-        this.selected_classroom = classroom
-      },
-      classroomURL: function(classroom) {
-        const url = '/classroom/id/' + classroom.id
-        this.$router.push(url)
-      }
+    export default {
+        name: 'AddClassroom',
+        data: function() {
+            return {
+                search_token: '',
+                selected_classroom: ''
+            }
+        },
+        methods: {
+            classroomSearch(e) {
+                e.preventDefault();
+                const formData = { search: this.search_token }
+                this.$store.dispatch('classroomSearch', formData)
+            },
+            select_classroom(classroom) {
+                this.selected_classroom = classroom
+            },
+            classroomURL(classroom) {
+                const url = '/classroom/id/' + classroom.id
+                this.$router.push(url)
+            }
 
-    },
-  }
+        },
+        computed: {
+            searchResult() {
+                return this.$store.getters.classSearchResults
+            },
+            resultLength() {
+                return this.$store.getters.classSearchResults.length
+            }
+        }
+    }
+
 </script>

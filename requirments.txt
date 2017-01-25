@@ -29,7 +29,6 @@ Markdown==2.6.7
 mccabe==0.5.3
 msgpack-python==0.4.8
 pep8==1.7.0
-Pillow==3.4.2
 PyJWT==1.4.2
 pylint==1.6.4
 pylint-django==0.7.2

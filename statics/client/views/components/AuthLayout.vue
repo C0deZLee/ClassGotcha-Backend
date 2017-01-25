@@ -11,8 +11,9 @@
 </template>
 
 <script>
-  export default {
-    name: 'auth_layout',
+    export default {
+        name: 'AuthLayout',
 
-  }
+    }
+
 </script>

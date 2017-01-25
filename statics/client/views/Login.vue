@@ -12,7 +12,6 @@
     </div>
     <p>{{errorMsg}}</p>
     <button v-on:click="login($event)" class="btn btn-primary block full-width m-b">Login</button>
-    <button v-on:click="$root.checkAuth" class="btn btn-primary block full-width m-b">Auth Verify</button>
     <a href="#"><small>Forgot password?</small></a>
     <p class="text-muted text-center"><small>Do not have an account?</small></p>
     <a class="btn btn-sm btn-white btn-block" href="/#/register">Create an account</a>

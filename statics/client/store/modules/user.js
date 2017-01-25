@@ -7,17 +7,39 @@ import * as types from '../mutation-types'
 // shape: [{ id, quantity }]
 const state = {
     user: {},
-    classes: [],
+    avatar: {},
+    classrooms: [],
     chatrooms: [],
     friends: [],
     tasks: [],
-    loginStatus: false,
+    login_status: false,
     token: null
 }
 
 // getters
 const getters = {
-    loginStatus: state => state.loginStatus
+    login_status: state => state.login_status,
+    userFullName: state => {
+        if (state.login_status) {
+            return state.user.first_name + ' ' + state.user.last_name
+        } else {
+            return 'None'
+        }
+    },
+    userAvatar1x: state => {
+        if (state.login_status) {
+            return state.avatar.avatar1x
+        } else {
+            return 'None'
+        }
+    },
+    userClassrooms: state => {
+        if (state.login_status) {
+            return state.classrooms
+        } else {
+            return []
+        }
+    }
 
 }
 
@@ -43,6 +65,7 @@ const actions = {
             .then((response) => {
                 commit(types.LOGIN_SUCCESS, response)
                 dispatch('getUser')
+                dispatch('getAvatar')
                 dispatch('getClassrooms')
                 dispatch('getChatrooms')
                 dispatch('getFriends')
@@ -54,11 +77,11 @@ const actions = {
             })
     },
 
-    tokenVerify({ state, commit, dispatch }, formData) {
+    tokenVerify({ rootState, commit, dispatch }, formData) {
         userApi.tokenVerify(formData)
             .then((response) => {
-                if (state.route.path === '/login' || state.route.path === '/register') {
-                    commit(types.VERIFY_SUCCESS, response)
+                commit(types.VERIFY_SUCCESS, response)
+                if (rootState.route.path === '/login' || rootState.route.path === '/register') {
                     router.push('/')
                 }
             })
@@ -88,8 +111,17 @@ const actions = {
             .then((response) => {
                 commit(types.LOAD_USER, response)
             })
-            .catch((eror) => {
-                commit(type.LOAD_FAILED, error)
+            .catch((error) => {
+                commit(type.LOG_ERROR, error)
+            })
+    },
+    getAvatar({ commit }) {
+        userApi.getAvatar()
+            .then((response) => {
+                commit(types.LOAD_AVATAR, response)
+            })
+            .catch((error) => {
+                commit(type.LOAD_AVATAR_FAILED, error)
             })
     },
     getClassrooms({ commit }) {
@@ -97,8 +129,8 @@ const actions = {
             .then((response) => {
                 commit(types.LOAD_CLASSROOMS, response)
             })
-            .catch((eror) => {
-                commit(type.LOAD_FAILED, error)
+            .catch((error) => {
+                commit(type.LOG_ERROR, error)
             })
     },
     getChatrooms({ commit }) {
@@ -106,8 +138,8 @@ const actions = {
             .then((response) => {
                 commit(types.LOAD_CHATROOMS, response)
             })
-            .catch((eror) => {
-                commit(type.LOAD_FAILED, error)
+            .catch((error) => {
+                commit(type.LOG_ERROR, error)
             })
     },
     getFriends({ commit }) {
@@ -115,8 +147,8 @@ const actions = {
             .then((response) => {
                 commit(types.LOAD_FRIENDS, response)
             })
-            .catch((eror) => {
-                commit(type.LOAD_FAILED, error)
+            .catch((error) => {
+                commit(type.LOG_ERROR, error)
             })
     },
     getTasks({ commit }, products) {
@@ -124,85 +156,101 @@ const actions = {
             .then((response) => {
                 commit(types.LOAD_TASKS, response)
             })
-            .catch((eror) => {
-                commit(type.LOAD_FAILED, error)
+            .catch((error) => {
+                commit(type.LOG_ERROR, error)
+            })
+    },
+    addClassroom({ commit, dispatch }, pk) {
+        userApi.addClassroom(pk)
+            .then((response) => {
+                commit(types.ADD_CLASSROOM)
+                dispatch('getClassrooms')
+            })
+            .catch((error) => {
+                commit(type.LOG_ERROR, error)
+
             })
     }
 }
 
 // mutations
 const mutations = {
+    // auth
     [types.LOGIN_SUCCESS](state, response) {
         cookie.setCookie('token', response.token)
         state.token = response.token
-        state.loginStatus = true
+        state.login_status = true
         router.push('/')
     },
-
-    [types.LOAD_FAILED](state, error) {
-        state.errorMsg = error
+    [types.LOGIN_FAILED](state, error) {
+        state.login_status = false
+        state.token = null
+        state.error_msg = error
+        router.push('/login')
+    },
+    [types.LOGOUT](state) {
+        cookie.delCookie('token')
+        state.classrooms = []
+        state.chatrooms = []
+        state.friends = []
+        state.tasks = []
+        state.login_status = false
+        state.token = null
+        router.push('/login')
+    },
+    [types.LOG_ERROR](state, error) {
+        state.error_msg = error
     },
 
     [types.VERIFY_SUCCESS](state, response) {
         state.token = response.token
-        state.loginStatus = true
+        state.login_status = true
     },
 
     [types.VERIFY_FAILED](state, error) {
         cookie.delCookie('token')
-        state.loginStatus = false
+        state.login_status = false
         state.token = null
-        state.errorMsg = error
+        state.error_msg = error
         router.push('/login')
     },
 
     [types.REFRESH_SUCCESS](state, response) {
         cookie.setCookie('token', response.token)
         state.token = response.token
-        state.loginStatus = true
+        state.login_status = true
     },
 
     [types.REFRESH_FAILED](state, response) {
         cookie.delCookie('token')
-        state.loginStatus = false
+        state.login_status = false
         state.token = null
-        state.errorMsg = error
+        state.error_msg = error
         router.push('/login')
     },
-
-    [types.LOGIN_FAILED](state, error) {
-        state.loginStatus = false
-        state.token = null
-        state.errorMsg = error
-        router.push('/login')
-    },
-
-    [types.LOGOUT](state) {
-        cookie.delCookie('token')
-        state.classes = []
-        state.chatrooms = []
-        state.friends = []
-        state.tasks = []
-        state.loginStatus = false
-        state.token = null
-        router.push('/login')
-    },
-
+    // load data
     [types.LOAD_USER](state, response) {
-        state.user = response.data
+        state.user = response
+    },
+    [types.LOAD_AVATAR](state, response) {
+        state.avatar = response
     },
     [types.LOAD_CLASSROOMS](state, response) {
-        state.classrooms = response.data
+        state.classrooms = response
     },
     [types.LOAD_CHATROOMS](state, response) {
-        state.chatrooms = response.data
+        state.chatrooms = response
     },
     [types.LOAD_FRIENDS](state, response) {
-        state.friends = response.data
+        state.friends = response
     },
     [types.LOAD_TASKS](state, response) {
-        state.tasks = response.data
-    }
+        state.tasks = response
+    },
+    //post change
+    [types.ADD_CLASSROOM](state) {},
+    // [types.ADD_CLASSROOM_FAILED](state) {},
+
 }
 
 export default {

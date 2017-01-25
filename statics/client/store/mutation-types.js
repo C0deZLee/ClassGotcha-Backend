@@ -1,3 +1,4 @@
+// ------- USER --------
 export const LOGIN_SUCCESS = 'LOGIN_SUCCESS'
 export const LOGIN_FAILED = 'LOGIN_FAILED'
 
@@ -9,7 +10,12 @@ export const REFRESH_FAILED = 'REFRESH_FAILED'
 
 export const LOGOUT = 'LOGOUT'
 
-export const LOAD_FAILED = 'LOAD_FAILED'
+export const LOG_ERROR = 'LOG_ERROR'
+
+export const LOAD_AVATAR = 'LOAD_AVATAR'
+// export const LOAD_USER_FAILED = 'LOAD_USER_FAILED'
+export const UPDATE_AVATAR = 'UPDATE_AVATAR'
+export const UPDATE_AVATAR_FAILED = 'UPDATE_AVATAR_FAILED'
 
 
 export const LOAD_USER = 'LOAD_USER'
@@ -38,3 +44,10 @@ export const LOAD_CHATROOMS = 'LOAD_CHATROOMS'
 // export const LOAD_CHATROOM_FAILED = 'LOAD_CHATROOM_FAILED'
 export const ADD_CHATROOM = 'ADD_CHATROOM'
 export const REMOVE_CHATROOM = 'REMOVE_CHATROOM'
+
+// ------ Classroom -------
+export const SEARCH_CLASSROOMS = 'SEARCH_CLASSROOMS'
+
+export const JOIN_CLASSROOM = 'JOIN_CLASSROOM'
+export const JOIN_CLASSROOM_FAILED = 'JOIN_CLASSROOM_FAILED'
+export const QUIT_CLASSROOM = 'QUIT_CLASSROOM'

@@ -2,7 +2,7 @@
     <div class="page">
         <div class="row wrapper border-bottom white-bg page-heading">
             <div class="col-lg-10">
-                <h2>{{classroom.class_short}} <button title="Create new cluster" v-on:click="addClassroom()" class="btn btn-primary btn-xm"><i class="fa fa-plus"></i> <span class="bold">Add To My Classroom</span></button></h2>
+                <h2>{{currentClassroom.class_short}} <button title="Create new cluster" v-on:click="addClassroom()" class="btn btn-primary btn-xm"><i class="fa fa-plus"></i> <span class="bold">Add To My Classroom</span></button></h2>
 
 
                 <ol class="breadcrumb">
@@ -13,7 +13,7 @@
                         <a>Classrooms</a>
                     </li>
                     <li class="active">
-                        <strong>{{classroom.class_short}}</strong>
+                        <strong>{{currentClassroom.class_short}}</strong>
                     </li>
 
                 </ol>
@@ -468,66 +468,25 @@
 <script>
     // VUe doesn't provide a method that can run after component load
     export default {
-        name: 'classroom',
+        name: 'Classroom',
         methods: {
-            addClassroom: function() {
-                console.log('add class function')
-                this.$http.post(this.$root.apiEndPoint + '/account/classrooms/' + this.$route.params.classroom_id + '/', {}, {
-                    headers: {
-                        'Authorization': 'JWT ' + this.$root.authToken
-                    }
-                }).then((response => {
-                    //success
-                    return true;
-                }), (response => {
-                    //failed
-                    console.log(response)
-                    return false;
-                }))
+            addClassroom() {
+                this.$store.dispatch('addClassroom', this.$route.params.classroom_id)
             },
-            getClassroomData: function() {
-                let class_short = ''
-                this.$http.get(this.$root.apiEndPoint + '/classroom/' + this.$route.params.classroom_id + '/', {
-                    headers: {
-                        'Authorization': 'JWT ' + this.$root.authToken
-                    }
-                }).then((response => {
-                    // success
-                    this.classroom = response.data
-                    class_short = response.data.class_short
-                    console.log(response.data)
-                }), (response => {
-                    // failed
-                    //console.log(response.data)
-                    if (response.status == 404) {
-                        this.$router.push('/404')
-                    }
-                    if (response.status == 403) {
-                        this.$router.push('/403')
-                    }
-
-                }))
-                return class_short
+            getClassroomData() {
+                this.$store.dispatch('getClassrooms', this.$route.params.classroom_id)
             },
-            vaildUser: function() {
-                this.$http.get(this.$root.apiEndPoint + '/classroom/' + this.$route.params.classroom_id + '/check/', {
-                    headers: {
-                        'Authorization': 'JWT ' + this.$root.authToken
-                    }
-                }).then((response => {
-                    //success
-                    return true;
-                }), (response => {
-                    //failed
-                    console.log(response)
-                    return false;
-                }))
+            vaildUser() {
+                this.$store.dispatch('validateUserClassroom', this.$route.params.classroom_id)
+            }
+        },
+        computed: {
+            currentClassroom() {
+                return this.$store.getters.currentClassroom
             }
         },
         data: function() {
-            return {
-                classroom: {}
-            }
+            return {}
         },
         created: function() {
             // after component is created, load data
