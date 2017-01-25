@@ -49,6 +49,9 @@ class Message(models.Model):
 	username = models.CharField(max_length=140)
 	message = models.CharField(max_length=140)
 	created = models.DateTimeField(auto_now_add=True, db_index=True)
+	sendFrom = models.ManyToManyField(Account,related_name = 'recievedMessages') 
+	sendTo = models.ManyToManyField(Account,related_name = 'sentMessages')
+	read = models.BooleanField(default = False)
 
 	def __unicode__(self):
 		return '[{created}] {username}: {message}'.format(**self.as_dict())

@@ -26,7 +26,7 @@ class AccountSerializer(serializers.ModelSerializer):
 	
 	#classroom = BasicClassroomSerializer(many = True, read_only = True)
 	#messages = MessageSerializer(many = True , read_only = True)
-	#messages = serializers.PrimaryKeyRelatedField(many=True,queryset = Message.objects.all())
+	recievedMessages = serializers.PrimaryKeyRelatedField(many=True,queryset = Message.objects.all())
 
 	class Meta:
 		model = Account
