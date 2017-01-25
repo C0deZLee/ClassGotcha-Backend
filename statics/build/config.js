@@ -8,11 +8,6 @@ module.exports = {
     babel: {
         babelrc: false,
         presets: ['vue'],
-        // ['es2015', {
-        //   modules: false
-        // }],
-        // 'stage-1'
-        // ],
         plugins: [
             'transform-vue-jsx'
             //   'vue-resource'

@@ -81,13 +81,13 @@ export const userApi = {
             .then((response) => Promise.resolve(response.data))
             .catch((error) => Promise.reject(error))
     },
-    getChatroom(pk) {
-        return Vue.http.post(API_ROOT + 'account/classrooms/' + pk + '/', { headers: { Authorization: 'JWT ' + getCookie('token') } })
+    addChatroom(pk) {
+        return Vue.http.post(API_ROOT + 'account/clatrooms/' + pk + '/', { headers: { Authorization: 'JWT ' + getCookie('token') } })
             .then((response) => Promise.resolve(response.data))
             .catch((error) => Promise.reject(error))
     },
     delChatroom(pk) {
-        return Vue.http.delete(API_ROOT + 'account/classrooms/' + pk + '/', { headers: { Authorization: 'JWT ' + getCookie('token') } })
+        return Vue.http.delete(API_ROOT + 'account/clatrooms/' + pk + '/', { headers: { Authorization: 'JWT ' + getCookie('token') } })
             .then((response) => Promise.resolve(response.data))
             .catch((error) => Promise.reject(error))
     },

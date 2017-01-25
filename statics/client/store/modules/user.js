@@ -1,10 +1,7 @@
+import { userApi } from '../../api/account'
+import router from '../../router'
 import * as cookie from '../../utils/cookie'
 import * as types from '../mutation-types'
-
-
-import { userApi } from '../../api/account'
-
-import router from '../../router'
 
 // initial state
 // shape: [{ id, quantity }]
@@ -40,6 +37,7 @@ const actions = {
                 commit(types.LOGIN_FAILED, error)
             })
     },
+
     login({ commit, dispatch }, formData) {
         userApi.login(formData)
             .then((response) => {
@@ -55,6 +53,7 @@ const actions = {
                 commit(types.LOGIN_FAILED, error)
             })
     },
+
     tokenVerify({ state, commit, dispatch }, formData) {
         userApi.tokenVerify(formData)
             .then((response) => {
