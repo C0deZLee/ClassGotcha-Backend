@@ -88,32 +88,32 @@ export const userApi = {
     //         .catch((error) => Promise.reject(error))
     // },
     addClassroom(pk) {
-        return Vue.http.post(API_ROOT + 'account/classrooms/' + pk + '/', { headers: { Authorization: 'JWT ' + getCookie('token') } })
+        return Vue.http.post(API_ROOT + 'account/classrooms/' + pk + '/', {}, { headers: { Authorization: 'JWT ' + getCookie('token') } })
             .then((response) => Promise.resolve(response.data))
             .catch((error) => Promise.reject(error))
     },
     delClassroom(pk) {
-        return Vue.http.delete(API_ROOT + 'account/classrooms/' + pk + '/', { headers: { Authorization: 'JWT ' + getCookie('token') } })
+        return Vue.http.delete(API_ROOT + 'account/classrooms/' + pk + '/', {}, { headers: { Authorization: 'JWT ' + getCookie('token') } })
             .then((response) => Promise.resolve(response.data))
             .catch((error) => Promise.reject(error))
     },
     addChatroom(pk) {
-        return Vue.http.post(API_ROOT + 'account/clatrooms/' + pk + '/', { headers: { Authorization: 'JWT ' + getCookie('token') } })
+        return Vue.http.post(API_ROOT + 'account/clatrooms/' + pk + '/', {}, { headers: { Authorization: 'JWT ' + getCookie('token') } })
             .then((response) => Promise.resolve(response.data))
             .catch((error) => Promise.reject(error))
     },
     delChatroom(pk) {
-        return Vue.http.delete(API_ROOT + 'account/clatrooms/' + pk + '/', { headers: { Authorization: 'JWT ' + getCookie('token') } })
+        return Vue.http.delete(API_ROOT + 'account/clatrooms/' + pk + '/', {}, { headers: { Authorization: 'JWT ' + getCookie('token') } })
             .then((response) => Promise.resolve(response.data))
             .catch((error) => Promise.reject(error))
     },
     addFriends(pk) {
-        return Vue.http.post(API_ROOT + 'account/friends/' + pk + '/', { headers: { Authorization: 'JWT ' + getCookie('token') } })
+        return Vue.http.post(API_ROOT + 'account/friends/' + pk + '/', {}, { headers: { Authorization: 'JWT ' + getCookie('token') } })
             .then((response) => Promise.resolve(response.data))
             .catch((error) => Promise.reject(error))
     },
     delFriends(pk) {
-        return Vue.http.delete(API_ROOT + 'account/friends/' + pk + '/', { headers: { Authorization: 'JWT ' + getCookie('token') } })
+        return Vue.http.delete(API_ROOT + 'account/friends/' + pk + '/', {}, { headers: { Authorization: 'JWT ' + getCookie('token') } })
             .then((response) => Promise.resolve(response.data))
             .catch((error) => Promise.reject(error))
     }

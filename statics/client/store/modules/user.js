@@ -76,7 +76,6 @@ const actions = {
                 commit(types.LOGIN_FAILED, error)
             })
     },
-
     tokenVerify({ rootState, commit, dispatch }, formData) {
         userApi.tokenVerify(formData)
             .then((response) => {
@@ -167,7 +166,7 @@ const actions = {
                 dispatch('getClassrooms')
             })
             .catch((error) => {
-                commit(type.LOG_ERROR, error)
+                commit(types.LOG_ERROR, error)
 
             })
     }
