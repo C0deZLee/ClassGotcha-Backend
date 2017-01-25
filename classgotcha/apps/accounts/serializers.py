@@ -4,23 +4,24 @@ from rest_framework import serializers
 from ..posts.models import Moment
 # from ..groups.models import Group
 from ..notes.models import Note
+from ..chat.models import Message 
 # from ..posts.models import Moment, Post
 # from ..tasks.models import Task
 import random
 
 class AccountSerializer(serializers.ModelSerializer):
-	friends = serializers.PrimaryKeyRelatedField(many=True, queryset=Account.objects.all())
-	# classrooms = serializers.StringRelatedField(many=True, read_only=True)
+	friends = serializers.PrimaryKeyRelatedField(many=True, queryset=Account.objects.filter())
+	classrooms = serializers.StringRelatedField(many=True, read_only=True)
 	moments = serializers.PrimaryKeyRelatedField(many=True, queryset=Moment.objects.exclude(flagged_num=3))
-	notes = serializers.PrimaryKeyRelatedField(many=True, queryset=Note.objects.all())
-	# tasks
-	# messages
+	notes = serializers.StringRelatedField(many=True, read_only = True)
+	tasks = serializers.StringRelatedField(many=True,read_only = True)
+	#messages = serializers.PrimaryKeyRelatedField(many=True,queryset = Message.objects.all())
 
 	class Meta:
 		model = Account
 		exclude = ('user_permissions', 'groups', 'is_superuser', 'is_staff', 'is_active', 'password')
-		read_only_fields = ('is_student', 'is_professor', 'created', 'updated',)
-
+		read_only_fields = ('is_student', 'is_professor', 'created', 'updated')
+		#fields = ('friends','classrooms','moments','notes','tasks')
 
 class BasicAccountSerializer(serializers.ModelSerializer):
 	class Meta:
