@@ -3,8 +3,6 @@ from django.conf.urls import url
 
 chatroom_detail = views.ChatRoomViewSet.as_view({
 	'get': 'retrieve',
-	'post': 'join',
-	'delete': 'quit'
 })
 
 clatroom_create = views.ChatRoomViewSet.as_view({

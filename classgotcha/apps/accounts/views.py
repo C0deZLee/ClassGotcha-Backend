@@ -217,13 +217,13 @@ class AccountViewSet(viewsets.ViewSet):
 			return Response(serializer.data)
 		elif request.method == 'POST':
 			room = get_object_or_404(room_query_set, pk)
-			request.user.rooms.add(room)
-			request.user.save()
+			room.accounts.add(request.user)
+			room.save()
 			return Response(status=status.HTTP_200_OK)
 		elif request.method == 'DELETE':
 			room = get_object_or_404(room_query_set, pk)
-			request.user.rooms.delete(room)
-			request.user.save()
+			room.accounts.delete(request.user)
+			room.save()
 			return Response(status=status.HTTP_200_OK)
 
 	@staticmethod

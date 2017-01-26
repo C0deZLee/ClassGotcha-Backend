@@ -11,7 +11,7 @@ from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnl
 from serializers import RoomSerializer, MessageSerializer
 from models import Room
 
-from ..accounts.serializers import AccountSerializer
+from ..accounts.serializers import Account, AccountSerializer
 
 
 def rooms(request, template="rooms.html"):
@@ -66,6 +66,10 @@ class ChatRoomViewSet(viewsets.ViewSet):
 		room = Room.objects.create()
 		room.accounts.add(request.user)
 		room.creator = request.user
+		user_list = request.data.get('user_list', [])
+		for user_id in user_list:
+			user = get_object_or_404(Account, pk=user_id)
+			room.accounts.add(user)
 		room.save()
 		serializer = RoomSerializer(room)
 		return Response(serializer.data)
@@ -78,6 +82,7 @@ class ChatRoomViewSet(viewsets.ViewSet):
 	'''
 	Get users in chat current room
 	'''
+
 	def users(self, request, pk):
 		room = get_object_or_404(self.queryset, pk=pk)
 		if request.user in room.accounts.all():
@@ -92,15 +97,3 @@ class ChatRoomViewSet(viewsets.ViewSet):
 			return Response(status=status.HTTP_200_OK)
 		else:
 			return Response(status=status.HTTP_400_BAD_REQUEST)
-
-	def join(self, request, pk):
-		room = get_object_or_404(self.queryset, pk=pk)
-		room.accounts.add(request.user)
-		room.save()
-		return Response(status=status.HTTP_200_OK)
-
-	def quit(self, request, pk):
-		room = get_object_or_404(self.queryset, pk=pk)
-		room.accounts.remove(request.user)
-		room.save()
-		return Response(status=status.HTTP_200_OK)
