@@ -13,7 +13,7 @@ const isDebug = process.env.NODE_ENV !== 'production'
 
 const store = new Vuex.Store({
     // if strict mode is true, then all state change must be triigered by mutations, otherwise compiler will throw error
-    strict: isDebug,
+    strict: false,
     plugins: [PersistedState()],
     // state,
     // mutations,

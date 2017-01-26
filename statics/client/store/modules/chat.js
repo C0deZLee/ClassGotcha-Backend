@@ -59,15 +59,8 @@ const actions = {
         const socket = chatApi.connectSocket(pk)
         commit(types.CONNECT_SOCKET, socket)
     },
-    onMessage({ state, commit, dispath }, message) {
-        state.chat_socket.onmessage = (message) => {
-            commit(types.RECIEVE_MESSAGE, message)
-        }
-    },
     sendMessage({ state, commit, dispath }, message) {
-        state.chat_socket.send(JSON.stringify(message));
         commit(types.SEND_MESSAGE, message)
-
     },
 }
 
@@ -79,11 +72,15 @@ const mutations = {
     },
     [types.CONNECT_SOCKET](state, socket) {
         state.chat_socket = socket
+        state.chat_socket.onmessage = (message) => {
+            console.log("received message ")
+            console.log(message.data)
+            state.message_list.push(JSON.parse(message.data))
+        }
     },
-    [types.RECIEVE_MESSAGE](state, message) {
-        state.message_list.push(JSON.parse(message.data))
+    [types.SEND_MESSAGE](state, message) {
+        state.chat_socket.send(JSON.stringify(message));
     },
-    [types.SEND_MESSAGE](state, message) {},
     [types.USER_IN_CHATROOM](state) {},
 
     [types.USER_NOT_IN_CHATROOM](state) {

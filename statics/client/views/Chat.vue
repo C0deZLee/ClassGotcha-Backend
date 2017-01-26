@@ -154,7 +154,6 @@
         data: function() {
             return {
                 message_list: [],
-                chatsock: {},
                 message_text: ''
             }
         },
@@ -173,7 +172,6 @@
                 this.$store.dispatch('sendMessage', _message)
                 //this.chatsock.send(JSON.stringify(_message));
                 // this.chatsock.send(_message);
-
                 // $("#message").val('').focus();
 
             }

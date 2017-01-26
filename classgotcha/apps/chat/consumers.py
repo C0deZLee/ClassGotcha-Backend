@@ -86,13 +86,14 @@ def ws_receive(message):
 		return
 
 	if data:
+
 		log.debug('chat message room=%s username=%s message=%s',
 		          room.pk, data['username'], data['message'])
 
 		m = Message(send_from=Account.objects.get(pk=data['send_from']), username=data['username'],
 		            message=data['message'], room=room)
 		m.save()
-		print m
+		print "send\n", m
 		Group('chat-' + str(pk), channel_layer=message.channel_layer).send({'text': json.dumps(m.as_dict())})
 
 	# ------------------------- IBM -----------------------
