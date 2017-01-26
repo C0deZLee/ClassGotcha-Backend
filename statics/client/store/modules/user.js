@@ -88,10 +88,20 @@ const actions = {
                 commit(types.LOGIN_FAILED, error)
             })
     },
+    tokenRefresh({ commit, dispatch }, formData) {
+        userApi.tokenRefresh(formData)
+            .then((response) => {
+                commit(types.REFRESH_SUCCESS, response)
+            })
+            .catch((error) => {
+                commit(types.REFRESH_FAILED)
+            })
+    },
     tokenVerify({ rootState, commit, dispatch }, formData) {
         userApi.tokenVerify(formData)
             .then((response) => {
                 commit(types.VERIFY_SUCCESS, response)
+                // dispatch('tokenRefresh', formData)
                 if (rootState.route.path === '/login' || rootState.route.path === '/register') {
                     router.push('/')
                 }
@@ -105,15 +115,7 @@ const actions = {
                 }
             })
     },
-    tokenRefresh({ commit, dispatch }, formData) {
-        userApi.tokenRefresh(formData)
-            .then((response) => {
-                commit(types.REFRESH_SUCCESS, response)
-            })
-            .catch((error) => {
-                commit(types.REFRESH_FAILED)
-            })
-    },
+
     logout({ commit }) {
         commit(types.LOGOUT)
     },

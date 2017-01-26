@@ -158,35 +158,45 @@
             }
         },
         methods: {
+            validateChatroom: function() {
+                this.$store.dispatch('validateChatroom', this.$route.params.chatroom_id)
+                // chat room doesn't exist or user doesn't belong to chat room, redirect
+                if (this.$store.getters.validChatroom) {
+                    console.log("connectSocket")
+                    // after component is created, load data
+                    this.connectSocket()
+                }
+            },
             connectSocket: function() {
                 this.$store.dispatch('connectSocket', this.$route.params.chatroom_id)
+                this.$store.dispatch('getChatroom', this.$route.params.chatroom_id)
+                this.$store.dispatch('getChatroomUsers', this.$route.params.chatroom_id)
+
             },
             sendMessage: function(e) {
                 e.preventDefault();
-                const _message = {
-                    'send_from': this.$store.getters.userID,
-                    'username': this.$store.getters.userFullName,
-                    'message': this.message_text,
+                const data = {
+                    'message': {
+                        'send_from': this.$store.getters.userID,
+                        'username': this.$store.getters.userFullName,
+                        'message': this.message_text,
+                    },
+                    pk: this.$route.params.chatroom_id
                 }
-                console.log(_message)
-                this.$store.dispatch('sendMessage', _message)
+                this.$store.dispatch('sendMessage', data)
+                this.message_text = ''
                 //this.chatsock.send(JSON.stringify(_message));
                 // this.chatsock.send(_message);
                 // $("#message").val('').focus();
 
             }
         },
-        beforeCreate: function() {
-            // chat room doesn't exist or user doesn't belong to chat room, redirect
-            this.$store.dispatch('validateChatroom')
-        },
         created: function() {
-            // after component is created, load data
-            this.connectSocket()
+            this.validateChatroom()
         },
         watch: {
             // execute getClassroomData if route changes
-            '$route': 'connectSocket'
+            '$route': 'validateChatroom'
         },
     }
 

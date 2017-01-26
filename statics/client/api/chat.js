@@ -19,26 +19,26 @@ Vue.http.interceptors.push((request, next) => {
 export default {
     // fatch data
     getChatroom(pk) {
-        return Vue.http.get(API_ROOT + 'chatroom/+' + pk + '/', { headers: { Authorization: 'JWT ' + getCookie('token') } })
+        return Vue.http.get(API_ROOT + 'chatroom/' + pk + '/', { headers: { Authorization: 'JWT ' + getCookie('token') } })
             .then((response) => Promise.resolve(response.data))
             .catch((error) => Promise.reject(error))
     },
 
     getChatroomUsers(pk) {
-        return Vue.http.get(API_ROOT + 'chatroom/+' + pk + '/users/', { headers: { Authorization: 'JWT ' + getCookie('token') } })
+        return Vue.http.get(API_ROOT + 'chatroom/' + pk + '/users/', { headers: { Authorization: 'JWT ' + getCookie('token') } })
             .then((response) => Promise.resolve(response.data))
             .catch((error) => Promise.reject(error))
     },
 
-    validate(pk) {
-        return Vue.http.get(API_ROOT + 'chatroom/+' + pk + '/validate/', { headers: { Authorization: 'JWT ' + getCookie('token') } })
+    validateChatroom(pk) {
+        return Vue.http.get(API_ROOT + 'chatroom/' + pk + '/validate/', { headers: { Authorization: 'JWT ' + getCookie('token') } })
             .then((response) => Promise.resolve(response.data))
             .catch((error) => Promise.reject(error))
     },
 
     // post changes
     createChatroom(formData) {
-        return Vue.http.post(API_ROOT + 'classroom/', formData, { headers: { Authorization: 'JWT ' + getCookie('token') } })
+        return Vue.http.post(API_ROOT + 'chatroom/', formData, { headers: { Authorization: 'JWT ' + getCookie('token') } })
             .then((response) => Promise.resolve(response.data))
             .catch((error) => Promise.reject(error))
     },
