@@ -2,7 +2,12 @@
     <div class="page">
         <div class="row wrapper border-bottom white-bg page-heading">
             <div class="col-lg-10">
-                <h2>{{currentClassroom.class_short}} <button title="Create new cluster" v-on:click="addClassroom()" class="btn btn-primary btn-xm"><i class="fa fa-plus"></i> <span class="bold">Add To My Classroom</span></button></h2>
+                <h2>{{currentClassroom.class_short}} 
+                <button title="Create new cluster" v-on:click="addClassroom()" class="btn btn-primary btn-xm">
+                    <i class="fa fa-plus"></i> 
+                    <span class="bold">Add To My Classroom</span>
+                </button>
+                </h2>
 
 
                 <ol class="breadcrumb">
@@ -120,15 +125,15 @@
                     <span class="font-bold">Rating: <i class="fa fa-star text-navy"></i><i class="fa fa-star text-navy"></i><i class="fa fa-star text-navy"></i><i class="fa fa-star text-navy"></i><i class="fa fa-star text-navy"></i> </span>
 
                     <ul class="tag-list" style="padding: 0">
-<li><a href=""><i class="fa fa-tag"></i> Harsh</a></li>
-<li><a href=""><i class="fa fa-tag"></i> Huge Work Load</a></li>
-</ul>
-</p>
-<p>
-    .
-</p>
-</div>
-</div>
+                    <li><a href=""><i class="fa fa-tag"></i> Harsh</a></li>
+                    <li><a href=""><i class="fa fa-tag"></i> Huge Work Load</a></li>
+                    </ul>
+                    </p>
+                    <p>
+                        .
+                    </p>
+                    </div>
+                    </div>
 
 <div class="ibox">
     <div class="ibox-content">
@@ -173,7 +178,7 @@
         <h5>Time</h5>
 
         <input type="text" placeholder="4/12 5:00pm-6:00pm" class="form-control">
-        <br>
+        <br>    
         <a href="#" class="btn btn-sm btn-primary"> Invite!</a>
     </div>
 </div>
@@ -477,12 +482,15 @@
                 this.$store.dispatch('getClassrooms', this.$route.params.classroom_id)
             },
             vaildUser() {
-                this.$store.dispatch('validateUserClassroom', this.$route.params.classroom_id)
+                this.$store.dispatch('validateClassroom', this.$route.params.classroom_id)
             }
         },
         computed: {
             currentClassroom() {
                 return this.$store.getters.currentClassroom
+            },
+            userInClassroom() {
+                return this.$store.getters.userInClassroom
             }
         },
         data: function() {

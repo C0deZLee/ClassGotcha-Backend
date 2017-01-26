@@ -19,6 +19,11 @@ const state = {
 // getters
 const getters = {
     login_status: state => state.login_status,
+    userID: state => {
+        if (state.login_status) {
+            return state.user.id
+        }
+    },
     userFullName: state => {
         if (state.login_status) {
             return state.user.first_name + ' ' + state.user.last_name
@@ -36,6 +41,13 @@ const getters = {
     userClassrooms: state => {
         if (state.login_status) {
             return state.classrooms
+        } else {
+            return []
+        }
+    },
+    userChatrooms: state => {
+        if (state.login_status) {
+            return state.chatrooms
         } else {
             return []
         }
@@ -111,7 +123,7 @@ const actions = {
                 commit(types.LOAD_USER, response)
             })
             .catch((error) => {
-                commit(type.LOG_ERROR, error)
+                commit(types.LOG_ERROR, error)
             })
     },
     getAvatar({ commit }) {
@@ -120,7 +132,7 @@ const actions = {
                 commit(types.LOAD_AVATAR, response)
             })
             .catch((error) => {
-                commit(type.LOAD_AVATAR_FAILED, error)
+                commit(types.LOG_ERROR, error)
             })
     },
     getClassrooms({ commit }) {
@@ -129,7 +141,7 @@ const actions = {
                 commit(types.LOAD_CLASSROOMS, response)
             })
             .catch((error) => {
-                commit(type.LOG_ERROR, error)
+                commit(types.LOG_ERROR, error)
             })
     },
     getChatrooms({ commit }) {
@@ -138,7 +150,7 @@ const actions = {
                 commit(types.LOAD_CHATROOMS, response)
             })
             .catch((error) => {
-                commit(type.LOG_ERROR, error)
+                commit(types.LOG_ERROR, error)
             })
     },
     getFriends({ commit }) {
@@ -147,7 +159,7 @@ const actions = {
                 commit(types.LOAD_FRIENDS, response)
             })
             .catch((error) => {
-                commit(type.LOG_ERROR, error)
+                commit(types.LOG_ERROR, error)
             })
     },
     getTasks({ commit }, products) {
@@ -156,7 +168,7 @@ const actions = {
                 commit(types.LOAD_TASKS, response)
             })
             .catch((error) => {
-                commit(type.LOG_ERROR, error)
+                commit(types.LOG_ERROR, error)
             })
     },
     addClassroom({ commit, dispatch }, pk) {
@@ -164,12 +176,45 @@ const actions = {
             .then((response) => {
                 commit(types.ADD_CLASSROOM)
                 dispatch('getClassrooms')
+                dispatch('getChatrooms')
+                dispatch('getTasks')
             })
             .catch((error) => {
                 commit(types.LOG_ERROR, error)
-
             })
-    }
+    },
+    delClassroom({ commit, dispatch }, pk) {
+        userApi.delClassroom(pk)
+            .then((response) => {
+                commit(types.REMOVE_CLASSROOM)
+                dispatch('getClassrooms')
+                dispatch('getChatrooms')
+                dispatch('getTasks')
+            })
+            .catch((error) => {
+                commit(types.LOG_ERROR, error)
+            })
+    },
+    addChatroom({ commit, dispatch }, pk) {
+        userApi.addChatroom(pk)
+            .then((response) => {
+                commit(types.ADD_CHATROOM)
+                dispatch('getChatrooms')
+            })
+            .catch((error) => {
+                commit(types.LOG_ERROR, error)
+            })
+    },
+    delChatroom({ commit, dispatch }, pk) {
+        userApi.delChatroom(pk)
+            .then((response) => {
+                commit(types.REMOVE_CHATROOM)
+                dispatch('getChatrooms')
+            })
+            .catch((error) => {
+                commit(types.LOG_ERROR, error)
+            })
+    },
 }
 
 // mutations
@@ -199,6 +244,7 @@ const mutations = {
     },
     [types.LOG_ERROR](state, error) {
         state.error_msg = error
+        // TODO, need to handle errors
     },
 
     [types.VERIFY_SUCCESS](state, response) {

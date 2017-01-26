@@ -4,6 +4,7 @@ import PersistedState from 'vuex-persistedstate'
 
 import user from './modules/user'
 import classroom from './modules/classroom'
+import chat from './modules/chat'
 
 Vue.use(Vuex)
 
@@ -19,7 +20,8 @@ const store = new Vuex.Store({
     // actions
     modules: {
         user,
-        classroom
+        classroom,
+        chat
     }
 })
 export default store

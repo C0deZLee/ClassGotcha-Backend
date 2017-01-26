@@ -21,7 +21,9 @@ const getters = {
     },
     currentClassroom: (state) => {
         return state.classroom
-
+    },
+    userInClassroom: (state) => {
+        return state.is_in_class
     }
 }
 
@@ -45,7 +47,7 @@ const actions = {
                 commit(types.LOG_ERROR, error)
             })
     },
-    validateUserClassroom({ commit, dispatch }, pk) {
+    validateClassroom({ commit, dispatch }, pk) {
         classApi.validate(pk)
             .then((response) => {
                 commit(types.USER_IN_CLASSROOM, response)
@@ -72,6 +74,7 @@ const mutations = {
     },
     [types.LOG_ERROR](state, error) {
         state.error_msg = error
+        // TODO, need to handle errors
     },
 }
 

@@ -12,6 +12,7 @@ class Room(models.Model):
 	accounts = models.ManyToManyField(Account, related_name='rooms')
 	creator = models.ForeignKey(Account, related_name='owned_rooms')
 	created = models.DateTimeField(auto_now_add=True)
+	read = models.BooleanField(default=True)
 
 	# Relationship
 	# 1) classroom
@@ -31,18 +32,16 @@ class Room(models.Model):
 			latest_message = {'message': messages[0].message, 'created': messages[0].created}
 			return latest_message
 		else:
-			return {}
+			return {'message': '', 'created': ''}
 
 
 class Message(models.Model):
-	room = models.ForeignKey(Room, related_name='messages')
+	room = models.ForeignKey(Room, related_name='messages')  # send to
 	context = models.CharField(max_length=140, blank=True)
 	username = models.CharField(max_length=140)
 	message = models.CharField(max_length=140)
 	created = models.DateTimeField(auto_now_add=True, db_index=True)
-	sendFrom = models.ManyToManyField(Account, related_name='recievedMessages')
-	sendTo = models.ManyToManyField(Account, related_name='sentMessages')
-	read = models.BooleanField(default=False)
+	send_from = models.ForeignKey(Account, related_name='sent_messages')
 
 	def __unicode__(self):
 		return '[{created}] {username}: {message}'.format(**self.as_dict())
@@ -52,19 +51,8 @@ class Message(models.Model):
 		return self.created.strftime('%b %-d %-I:%M %p')
 
 	def as_dict(self):
-		return {'username': self.username, 'message': self.message, 'created': self.formatted_timestamp}
+		return {'send_from': self.send_from.pk, 'username': self.username, 'message': self.message,
+		        'created': self.formatted_timestamp}
 
 	class Meta:
 		get_latest_by = 'created'
-
-#
-# class ChatUser(models.Model):
-# 	name = models.ForeignKey(Account, max_length=20, related_name="name")
-# 	session = models.CharField(max_length=20)
-# 	room = models.ForeignKey(Room, related_name="users")
-#
-# 	class Meta:
-# 		ordering = ("name",)
-#
-# 	def __unicode__(self):
-# 		return self.name

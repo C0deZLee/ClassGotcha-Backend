@@ -4,8 +4,9 @@ from django.core.exceptions import ObjectDoesNotExist
 
 from channels import Group
 from channels.sessions import channel_session
-from classgotcha.apps.chat.models import Room
-from classgotcha.apps.chat.scripts.Conversation import run, Backendhandler
+from classgotcha.apps.chat.models import Room, Message, Account
+
+# from classgotcha.apps.chat.scripts.Conversation import run, Backendhandler
 
 log = logging.getLogger(__name__)
 
@@ -43,8 +44,7 @@ def ws_connect(message):
 		log.debug('ws room does not exist pk=%s', pk)
 		ws_disconnect(message)
 		return
-	print ('chat connect room=%s client=%s:%s',
-	       room.pk, message['client'][0], message['client'][1])
+	print ('chat connect room=' + str(room.pk) + ' client=' + message['client'][0], message['client'][1])
 	log.debug('chat connect room=%s client=%s:%s',
 	          room.pk, message['client'][0], message['client'][1])
 
@@ -80,7 +80,8 @@ def ws_receive(message):
 		log.debug("ws message isn't json text=%s", message['text'])
 		return
 
-	if set(data.keys()) != set(('username', 'message')):
+	if set(data.keys()) != set(('username', 'message', 'send_from')):
+		print ("ws message unexpected format data=", data)
 		log.debug("ws message unexpected format data=%s", data)
 		return
 
@@ -88,50 +89,52 @@ def ws_receive(message):
 		log.debug('chat message room=%s username=%s message=%s',
 		          room.pk, data['username'], data['message'])
 
-		user_name = data.get('username', 'robot')
-
-		m = room.messages.create(**data)
+		m = Message(send_from=Account.objects.get(pk=data['send_from']), username=data['username'],
+		            message=data['message'], room=room)
+		m.save()
+		print m
 		Group('chat-' + str(pk), channel_layer=message.channel_layer).send({'text': json.dumps(m.as_dict())})
 
-		# ------------------------- IBM ------------------------
-		# try:
-		# 	context = json.loads(room.messages.latest().context)
-		# except:
-		# 	context = None
-		# response = json.loads(json.dumps(run(message=data['message'], context=context)))
-		# # print response
-		# response_text = response['output']['text'][0]
-		# context = json.loads(json.dumps(response['context']))
-		# try:
-		# 	# node = json.loads(json.dumps(response['context']['system']['dialog_stack'][-1]['dialog_node']))
-		# 	node = json.loads(json.dumps(response['output']['nodes_visited'][-1]))
-		# 	print node
-		# except:
-		# 	node = "root"
-		#
-		# try:
-		# 	intent = []
-		# 	for i in range(0, len(response['intents'])):
-		# 		intent.append(json.loads(json.dumps(response['intents'][i]['intent'])))
-		# except:
-		# 	intent = "None"
-		# try:
-		# 	entity = []
-		# 	for i in range(0, len(response['entities'])):
-		# 		entity.append(json.loads(json.dumps(response['entities'][i]['value'])))
-		# except:
-		# 	print "entity bug"
-		# 	entity = "None"
-		#
-		# m1 = room.messages.create(username='robot', message=response_text, context=json.dumps(context))
-		# try:
-		# 	toreturn = Backendhandler(user_name, intent, entity, node)
-		# 	print toreturn
-		# except:
-		# 	pass
-		#
-		# # room.message.create(response)
-		#
-		# # See above for the note about Group
-		#
-		# Group('chat-' + str(pk), channel_layer=message.channel_layer).send({'text': json.dumps(m1.as_dict())})
+	# ------------------------- IBM -----------------------
+	# user_name = data.get('username', 'robot')
+	# try:
+	# 	context = json.loads(room.messages.latest().context)
+	# except:
+	# 	context = None
+	# response = json.loads(json.dumps(run(message=data['message'], context=context)))
+	# # print response
+	# response_text = response['output']['text'][0]
+	# context = json.loads(json.dumps(response['context']))
+	# try:
+	# 	# node = json.loads(json.dumps(response['context']['system']['dialog_stack'][-1]['dialog_node']))
+	# 	node = json.loads(json.dumps(response['output']['nodes_visited'][-1]))
+	# 	print node
+	# except:
+	# 	node = "root"
+	#
+	# try:
+	# 	intent = []
+	# 	for i in range(0, len(response['intents'])):
+	# 		intent.append(json.loads(json.dumps(response['intents'][i]['intent'])))
+	# except:
+	# 	intent = "None"
+	# try:
+	# 	entity = []
+	# 	for i in range(0, len(response['entities'])):
+	# 		entity.append(json.loads(json.dumps(response['entities'][i]['value'])))
+	# except:
+	# 	print "entity bug"
+	# 	entity = "None"
+	#
+	# m1 = room.messages.create(username='robot', message=response_text, context=json.dumps(context))
+	# try:
+	# 	toreturn = Backendhandler(user_name, intent, entity, node)
+	# 	print toreturn
+	# except:
+	# 	pass
+	#
+	# # room.message.create(response)
+	#
+	# # See above for the note about Group
+	#
+	# Group('chat-' + str(pk), channel_layer=message.channel_layer).send({'text': json.dumps(m1.as_dict())})

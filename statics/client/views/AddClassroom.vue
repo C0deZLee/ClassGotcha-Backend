@@ -64,7 +64,7 @@
                     </div>
                 </div>
                 <div class="col-sm-4">
-                    <div class="ibox" v-if="selected_classroom">
+                    <div class="ibox" v-show="selected_classroom">
 
                         <div class="ibox-content">
                             <div class="tab-content">
