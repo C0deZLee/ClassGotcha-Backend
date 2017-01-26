@@ -148,59 +148,48 @@
     </div>
 </template>
 <script>
-  export default {
-    name: 'Chat',
-    data: function() {
-      return {
-        message_list: [],
-        chatsock: {},
-        message_text: ''
-      }
-    },
-    methods: {
-      connectSocket: function() {
-        this.chatsock = new ReconnectingWebSocket(this.$root.socketApiEndPoint + '/chat/' + this.$route.params.chatroom_id)
-        const self = this
-        this.chatsock.onmessage = function(message) {
-            self.message_list.push(JSON.parse(message.data))
-        }
-      },
-      sendMessage: function(e) {
-        e.preventDefault();
-        const _message = {
-          'username': this.$root.user.first_name + ' ' + this.$root.user.last_name,
-          'message': this.message_text,
-        }
-        console.log(_message)
-
-        this.chatsock.send(JSON.stringify(_message));
-        // this.chatsock.send(_message);
-        
-        // $("#message").val('').focus();
-
-      }
-    },
-    beforeCreate: function() {
-        // chat room doesn't exist or user doesn't belong to chat room, redirect
-          this.$http.get(this.$root.apiEndPoint +'/chatroom/' + this.$route.params.chatroom_id + '/validate/', {
-            headers: {
-                'Authorization': 'JWT ' + this.$root.authToken
+    import { WS_ROOT } from '../config.js'
+    export default {
+        name: 'Chat',
+        data: function() {
+            return {
+                message_list: [],
+                chatsock: {},
+                message_text: ''
             }
-        }).then((response => {
-            // success
-            console.log(response.data)
-        }), (response => {
-            // failed
-            this.$router.push('/')
-        }))
-    },
-    created: function() {
-      // after component is created, load data
-      this.connectSocket()
-    },
-    watch: {
-      // execute getClassroomData if route changes
-      '$route': 'connectSocket'
-    },
-  }
+        },
+        methods: {
+            connectSocket: function() {
+                this.$store.dispatch('connectSocket', this.$route.params.chatroom_id)
+            },
+            sendMessage: function(e) {
+                e.preventDefault();
+                const _message = {
+                    'send_from': this.$store.getters.userID,
+                    'username': this.$store.getters.userFullName,
+                    'message': this.message_text,
+                }
+                console.log(_message)
+                this.$store.dispatch('sendMessage', _message)
+                //this.chatsock.send(JSON.stringify(_message));
+                // this.chatsock.send(_message);
+
+                // $("#message").val('').focus();
+
+            }
+        },
+        beforeCreate: function() {
+            // chat room doesn't exist or user doesn't belong to chat room, redirect
+            this.$store.dispatch('validateChatroom')
+        },
+        created: function() {
+            // after component is created, load data
+            this.connectSocket()
+        },
+        watch: {
+            // execute getClassroomData if route changes
+            '$route': 'connectSocket'
+        },
+    }
+
 </script>
