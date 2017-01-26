@@ -29,6 +29,10 @@ const getters = {
         if (state.chatrooms[state.current_chatroom_pk])
             return state.chatrooms[state.current_chatroom_pk].users
     },
+    currentChatroomMessages: (state) => {
+        if (state.chatrooms[state.current_chatroom_pk])
+            return state.chatrooms[state.current_chatroom_pk].message_list
+    },
     validChatroom: (state) => {
         return state.valid
     },
