@@ -38,15 +38,17 @@ class AccountManager(BaseUserManager):
 
 
 class Professor(models.Model):
-
-	first_name = models.CharField(max_length = 40)
-	last_name = models.CharField(max_length = 40)
-	mid_name = models.CharField(max_length = 40,blank = True)
-	email = models.CharField(max_length = 40)
-	department =  models.CharField(max_length = 40,blank = True)
+	first_name = models.CharField(max_length=40)
+	last_name = models.CharField(max_length=40)
+	mid_name = models.CharField(max_length=40, blank=True)
+	department = models.CharField(max_length=40, blank=True)
+	email = models.CharField(max_length=50, unique=True)
+	major = models.ForeignKey('classrooms.Major')
+	office = models.CharField(max_length=50, blank=True)
 
 	def __unicode__(self):
-		return self.firstname+self.last_name
+		return '%s %s' % (self.first_name, self.last_name)
+
 
 class Account(AbstractBaseUser, PermissionsMixin):
 	# Basic
@@ -55,9 +57,9 @@ class Account(AbstractBaseUser, PermissionsMixin):
 	# Rule
 	is_staff = models.BooleanField(default=False)
 	is_active = models.BooleanField(default=True)
-	#is_student = models.BooleanField(default=True)
-	#is_professor = models.BooleanField(default=False)
-	is_professor = models.ForeignKey(Professor,blank = True,null = True, related_name = 'is_professor')
+	# is_student = models.BooleanField(default=True)
+	# is_professor = models.BooleanField(default=False)
+	professor = models.ForeignKey(Professor, blank=True, null=True, related_name='is_professor')
 	# Timestamp
 	created = models.DateTimeField(auto_now_add=True)
 	updated = models.DateTimeField(auto_now=True)
@@ -70,7 +72,7 @@ class Account(AbstractBaseUser, PermissionsMixin):
 	school_year = models.CharField(max_length=40, blank=True)
 	avatar = models.ForeignKey(Avatar, blank=True, null=True, related_name='user_profiles_avatars')
 	# Relations
-	friends = models.ManyToManyField("self")
+	friends = models.ManyToManyField('self')
 	major = models.ForeignKey('classrooms.Major', blank=True, null=True)
 	# Relatives
 	# 1) teaches
@@ -97,7 +99,6 @@ class Account(AbstractBaseUser, PermissionsMixin):
 
 	@property
 	def get_full_name(self):
-		"""Returns the person's full name."""
 		return '%s %s' % (self.first_name, self.last_name)
 
 	def get_short_name(self):
@@ -112,3 +113,7 @@ class Account(AbstractBaseUser, PermissionsMixin):
 	@property
 	def is_admin(self):
 		return self.is_staff
+
+	@property
+	def is_professor(self):
+		return self.professor == None

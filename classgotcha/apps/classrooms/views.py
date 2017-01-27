@@ -10,7 +10,7 @@ from rest_framework.response import Response
 from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework.decorators import detail_route, list_route, api_view, permission_classes, parser_classes
 
-from models import Account, Classroom, Semester, Major
+from models import Account, Classroom, Semester, Major, Professor
 from ..chat.models import Room
 
 from serializers import BasicClassroomSerializer, ClassroomSerializer
@@ -162,8 +162,6 @@ class ClassroomViewSet(viewsets.ViewSet):
 					# create chat room
 					room = Room.objects.create(creator=Account.objects.get(is_superuser=True),
 					                           name=cours['name'] + ' - ' + cours['section'] + ' Chat Room')
-					
-
 
 					# create classroom
 					classroom = Classroom.objects.create(class_code=cours['number'],
@@ -175,21 +173,25 @@ class ClassroomViewSet(viewsets.ViewSet):
 					                                     class_room=cours['room'],
 					                                     class_time=task, major=major,
 					                                     semester=semester, chatroom=room)
-					try:
-						if cours['instructor1']!='Staff':
-							instructor1 = Professor.objects.create(first_name = cours['instructor1'].split()[0],last_name =cours['instructor1'].split()[1])
-							instructor1.save()
-							classroom.professor.add(instructor1)
-						else:
-							pass
 
-					try:
-						if cours['instructor2']!='Staff':
-							instructor2 = Professor.objects.create(first_name = cours['instructor2'].split()[0],last_name =cours['instructor2'].split()[1])
-							instructor2.save()
-							classroom.professor.add(instructor2)
-						else:
-							pass
+					if cours['instructor1'] != 'Staff':
+						instructor1 = Professor.objects.create(first_name=cours['instructor1'].split()[0],
+						                                       last_name=cours['instructor1'].split()[1],
+						                                       major=major)
+						instructor1.save()
+						classroom.professor.add(instructor1)
+					else:
+						pass
+
+					if cours['instructor2'] != 'Staff' and cours['instructor2'] != '':
+						instructor2 = Professor.objects.create(first_name=cours['instructor2'].split()[0],
+						                                       last_name=cours['instructor2'].split()[1],
+						                                       major=major)
+
+						instructor2.save()
+						classroom.professor.add(instructor2)
+					else:
+						pass
 
 					# save classroom to get pk in db
 					classroom.save()

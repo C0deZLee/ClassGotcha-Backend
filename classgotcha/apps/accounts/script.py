@@ -1,4 +1,3 @@
-
 def group(data):
 	data = sorted(data)
 	it = iter(data)
@@ -11,26 +10,27 @@ def group(data):
 			a, b = c, d
 	yield a, b
 
-#http://nullege.com/codes/search/Intervals.complement
-def complement( intervals, first = None, last = None):
-	"""complement a list of intervals with intervals not in list.
-	"""
 
+# http://nullege.com/codes/search/Intervals.complement
+def complement(intervals, first=None, last=None):
+	"""
+	complement a list of intervals with intervals not in list.
+	"""
 	if len(intervals) == 0:
-		if first != None and last != None:
-			return [(first,last)]
+		if first and last:
+			return [(first, last)]
 		else:
 			return []
 	new_intervals = []
 	intervals.sort()
 	last_from, last_to = intervals[0]
-	if first != None and first < last_from:
-		new_intervals.append( (first, last_from) )
+	if first and first < last_from:
+		new_intervals.append((first, last_from))
 	for this_from, this_to in intervals:
 		if this_from > last_to:
-			new_intervals.append( (last_to, this_from ) )            
+			new_intervals.append((last_to, this_from))
 		last_from = this_from
 		last_to = max(last_to, this_to)
 	if last and last > last_to:
-		new_intervals.append( (last_to, last))
+		new_intervals.append((last_to, last))
 	return new_intervals

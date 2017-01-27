@@ -2,7 +2,7 @@ from time import gmtime, strftime
 
 from django.db import models
 
-from ..accounts.models import Account
+from ..accounts.models import Account, Professor
 
 
 class Major(models.Model):
@@ -38,7 +38,7 @@ class Classroom(models.Model):
 	updated = models.DateTimeField(auto_now=True)
 	# Relations
 	class_time = models.ForeignKey('tasks.Task', related_name='classtime', blank=True)
-	professor = models.ManyToManyField(Professor, related_name='teaches', blank=True)
+	professors = models.ManyToManyField(Professor, related_name='teaches', blank=True)
 	chatroom = models.ForeignKey('chat.Room', related_name='classroom', blank=True, null=True)
 	major = models.ForeignKey(Major)
 	students = models.ManyToManyField(Account, related_name='classrooms', blank=True)
@@ -68,4 +68,3 @@ class Classroom(models.Model):
 	@property
 	def get_class_time(self):
 		return self.class_time.start.strftime("%H:%M:%S") + self.class_time.end.strftime(" - %H:%M:%S")
-

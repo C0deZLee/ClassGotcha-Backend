@@ -20,8 +20,10 @@ class AllowAny(permissions.BasePermission):
 		# allow anyone to view anyone's details
 		return True
 
+
 class IsAnonymous(permissions.BasePermission):
 	def has_permission(self, request, view):
 		return not request.user
+
 	def has_object_permission(self, request, view, obj):
 		return not request.user
