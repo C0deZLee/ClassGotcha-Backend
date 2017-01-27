@@ -21,9 +21,7 @@ Vue.http.headers.common['X-CSRFToken'] = cookie.getCookie('csrftoken')
 
 export const app = new Vue({
     el: '#app',
-    data: {
-        currentRoute: window.location.pathname,
-    },
+    data: {},
     mounted: function() {
         const formData = { token: cookie.getCookie('token') }
         console.log('tokenVerify', formData)

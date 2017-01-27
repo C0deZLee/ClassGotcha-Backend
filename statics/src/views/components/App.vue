@@ -5,8 +5,8 @@
 </template>
 
 <style>
-    @import '../../css/style.css';
-    @import '../../css/animate.css';
+    @import '../../../static/css/style.css';
+    @import '../../../static/css/animate.css';
 
 </style>
 
