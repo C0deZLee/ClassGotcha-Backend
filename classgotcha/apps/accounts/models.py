@@ -37,6 +37,17 @@ class AccountManager(BaseUserManager):
 		return account
 
 
+class Professor(models.Model):
+
+	first_name = models.CharField(max_length = 40)
+	last_name = models.CharField(max_length = 40)
+	mid_name = models.CharField(max_length = 40,blank = True)
+	email = models.CharField(max_length = 40)
+	department =  models.CharField(max_length = 40,blank = True)
+
+	def __unicode__(self):
+		return self.firstname+self.last_name
+
 class Account(AbstractBaseUser, PermissionsMixin):
 	# Basic
 	email = models.EmailField(unique=True)
@@ -44,8 +55,9 @@ class Account(AbstractBaseUser, PermissionsMixin):
 	# Rule
 	is_staff = models.BooleanField(default=False)
 	is_active = models.BooleanField(default=True)
-	is_student = models.BooleanField(default=True)
-	is_professor = models.BooleanField(default=False)
+	#is_student = models.BooleanField(default=True)
+	#is_professor = models.BooleanField(default=False)
+	is_professor = models.ForeignKey(Professor,blank = True,null = True, related_name = 'is_professor')
 	# Timestamp
 	created = models.DateTimeField(auto_now_add=True)
 	updated = models.DateTimeField(auto_now=True)

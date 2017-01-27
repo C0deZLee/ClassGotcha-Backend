@@ -38,7 +38,7 @@ class Classroom(models.Model):
 	updated = models.DateTimeField(auto_now=True)
 	# Relations
 	class_time = models.ForeignKey('tasks.Task', related_name='classtime', blank=True)
-	professor = models.ManyToManyField(Account, related_name='teaches', blank=True)
+	professor = models.ManyToManyField(Professor, related_name='teaches', blank=True)
 	chatroom = models.ForeignKey('chat.Room', related_name='classroom', blank=True, null=True)
 	major = models.ForeignKey(Major)
 	students = models.ManyToManyField(Account, related_name='classrooms', blank=True)
