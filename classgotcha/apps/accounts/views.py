@@ -8,14 +8,14 @@ from django.core.files.base import File
 from rest_framework_jwt.settings import api_settings
 from rest_framework import generics, viewsets, status
 from rest_framework.response import Response
-from rest_framework.parsers import FormParser, MultiPartParser
+from rest_framework.parsers import FormParser, MultiPartParser, JSONParser
 from rest_framework.decorators import detail_route, list_route, api_view, permission_classes, parser_classes
 from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly, AllowAny, IsAdminUser
 
 from serializers import AccountSerializer, BasicAccountSerializer, AuthAccountSerializer, AvatarSerializer
 from ..classrooms.serializers import Classroom, ClassroomSerializer
 from ..notes.serializers import NoteSerializer
-from ..posts.serializers import MomentSerializer
+from ..posts.serializers import Moment, MomentSerializer
 from ..chat.serializers import Room, RoomSerializer
 from ..tasks.serializers import TaskSerializer
 
@@ -79,7 +79,7 @@ def account_avatar(request):
 
 class AccountViewSet(viewsets.ViewSet):
 	queryset = Account.objects.exclude(is_staff=1)
-	parser_classes = (FormParser, MultiPartParser,)
+	parser_classes = (FormParser, MultiPartParser, JSONParser)
 	permission_classes = (IsAuthenticated,)
 
 	# list_route and detail_route are for auto gen URL
@@ -200,7 +200,38 @@ class AccountViewSet(viewsets.ViewSet):
 		return Response(serializer.data)
 
 	@staticmethod
-	def moments(request, page=None):
+	def moments(request, pk=None):
+		moment_query_set = request.user.moments.filter(deleted=False)
+		# Only return first 20 moments
+		if request.method == 'GET':
+			serializer = MomentSerializer(moment_query_set.reverse()[0:20], many=True)
+			return Response(serializer.data)
+
+		if request.method == 'POST':
+			# TODO: img upload
+			content = request.data.get('content', None)
+			classroom_id = request.data.get('classroom_id', None)
+			question = request.data.get('question', None)
+
+			if not content and not question:
+				return Response(status=status.HTTP_400_BAD_REQUEST)
+			# create new moment
+			moment = Moment(content=content, creator=request.user)
+			if classroom_id:
+				moment.classroom_id = classroom_id
+			if question == 'question':
+				moment.solved = False
+			moment.save()
+			return Response(status=status.HTTP_200_OK)
+
+		if request.method == 'DELETE':
+			moment = get_object_or_404(moment_query_set, pk)
+			moment.deleted = True
+			moment.save()
+			return Response(status=status.HTTP_200_OK)
+
+	@staticmethod
+	def moments_pagination(request, page=None):
 		# TODO: can optimize here
 		if not page:
 			page = 0

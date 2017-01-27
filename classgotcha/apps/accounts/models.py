@@ -116,4 +116,4 @@ class Account(AbstractBaseUser, PermissionsMixin):
 
 	@property
 	def is_professor(self):
-		return self.professor == None
+		return self.professor_id == None

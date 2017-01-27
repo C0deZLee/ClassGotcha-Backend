@@ -47,10 +47,21 @@ account_notes = views.AccountViewSet.as_view({
 	'get': 'notes'
 })
 
+account_moments_pagination = views.AccountViewSet.as_view({
+	'get': 'moments_pagination'
+})
 account_moments = views.AccountViewSet.as_view({
-	'get': 'moments'
+	'get': 'moments',
+	'post': 'moments'
+})
+account_add_moments = views.AccountViewSet.as_view({
+	'delete': 'moments'
 })
 
+account_add_moments = views.AccountViewSet.as_view({
+	'post': 'moments',
+	'delete': 'moments'
+})
 account_tasks = views.AccountViewSet.as_view({
 	'get': 'tasks'
 })
@@ -61,7 +72,8 @@ account_freetime = views.AccountViewSet.as_view({
 
 urlpatterns = [
 	url(r'friends/(?P<pk>[0-9]+)/$', account_add_friends, name='add_friend'),
-	url(r'moments/(?P<page>[0-9]+)/$', account_moments, name='add_moments'),
+	url(r'moments/(?P<pk>[0-9]+)/$', account_add_moments, name='moment-add'),
+	url(r'moments/page/(?P<page>[0-9]+)/$', account_moments_pagination, name='moment-pages'),
 	url(r'classrooms/(?P<pk>[0-9]+)/$', account_add_classrooms, name='add_classroom'),
 	url(r'chatrooms/(?P<pk>[0-9]+)/$', account_add_chatrooms, name='add_chatroom'),
 

@@ -6,11 +6,11 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
 
-from serializers import MomentSerializer, CommentSerializer, PostSerializer
+from serializers import MomentSerializer, CommentSerializer, PostSerializer, Comment
 
 
 class MomentViewSet(viewsets.ViewSet):
-	queryset = Moment.objects.exclude(flagged_num=3)
+	queryset = Moment.objects.exclude(deleted=True)
 	serializer_class = MomentSerializer
 	# Permission set
 	permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
@@ -20,10 +20,39 @@ class MomentViewSet(viewsets.ViewSet):
 		serializer = MomentSerializer(moment)
 		return Response(serializer.data)
 
-	def destroy(self, request, pk):
+	def solve(self, request, pk):
+		# can only change own moments' status
+		if pk != request.user.pk:
+			return Response(status=status.HTTP_403_FORBIDDEN)
 		moment = get_object_or_404(self.queryset, pk=pk)
-		moment.delete()
+		moment.solved = True
+		moment.save()
 		return Response(status=status.HTTP_200_OK)
 
+	def comment(self, request, pk):
+		moment = get_object_or_404(self.queryset, pk=pk)
+		content = request.data.get('content', None)
+		if content:
+			comment = Comment(content=content, moment=moment, creator=request.user)
+			comment.save()
+			moment.comments.add(comment)
+			moment.save()
+			return Response(status=status.HTTP_200_OK)
 
+		else:
+			return Response(status=status.HTTP_400_BAD_REQUEST)
+
+	def flag(self, request, pk):
+		moment = get_object_or_404(self.queryset, pk=pk)
+		moment.flagged_users.add(request.user)
+		if moment.is_flagged:
+			moment.deleted = True
+		moment.save()
+		return Response(status=status.HTTP_200_OK)
+
+	def like(self, request, pk):
+		moment = get_object_or_404(self.queryset, pk=pk)
+		moment.liked_users.add(request.user)
+		moment.save()
+		return Response(status=status.HTTP_200_OK)
 

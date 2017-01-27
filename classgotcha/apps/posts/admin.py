@@ -7,9 +7,17 @@ class MomentAdmin(admin.ModelAdmin):
 	# The fields to be used in displaying the User model.
 	# These override the definitions on the base UserAdmin
 	# that reference specific fields on auth.User.
-	list_display = ('created', 'creator', 'flagged')
+	list_display = ('creator', 'created', 'flagged', 'deleted')
 
 	list_filter = ['created']
+
+	fieldsets = (
+		('Content', {'fields': ('pk', 'content', 'images',)}),
+		('Info', {'fields': ('creator', 'classroom',)}),
+		('Info', {'fields': ('deleted', 'question', 'flagged_num', 'flagged')}),
+		('Timestamp', {'fields': ('created',)}),
+	)
+	readonly_fields = ('created', 'creator', 'classroom', 'flagged', 'pk')
 
 
 class PostAdmin(admin.ModelAdmin):
@@ -28,6 +36,8 @@ class CommentAdmin(admin.ModelAdmin):
 	list_display = ('created', 'creator')
 
 	list_filter = ['created']
+
+
 # fieldsets = (
 #     (None, {'fields': ('email', 'username', 'password')}),
 #     ('Personal info', {'fields': ('first_name', 'last_name', 'gender', 'school_year', 'major', 'avatar')}),

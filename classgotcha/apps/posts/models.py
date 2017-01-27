@@ -8,23 +8,27 @@ class Moment(models.Model):
 	# Basic
 	content = models.CharField(max_length=200)
 	images = models.TextField(default='[]')
-	flagged_num = models.IntegerField(default=0)
-
+	deleted = models.BooleanField(default=False)
+	solved = models.NullBooleanField()
+	# Relationship
 	creator = models.ForeignKey(Account, on_delete=models.CASCADE, related_name='moments', null=True, blank=True)
+	flagged_users = models.ManyToManyField(Account, null=True)
+	liked_users = models.ManyToManyField(Account, related_name='liked', null=True)
 	classroom = models.ForeignKey(Classroom, on_delete=models.CASCADE, related_name='moments', null=True, blank=True)
-
 	# Timestamp
 	created = models.DateTimeField(auto_now_add=True)
 	updated = models.DateTimeField(auto_now=True)
+
 	# Relatives
 	# 1) comments
 
 	@property
 	def flagged(self):
-		if self.flagged_num >= 3:
-			return True
-		else:
-			return False
+		return self.flagged_users.all().count() >= 3
+
+	@property
+	def likes(self):
+		return self.liked_users.all().count()
 
 
 class Post(models.Model):
@@ -38,6 +42,7 @@ class Post(models.Model):
 	# Timestamp
 	created = models.DateTimeField(auto_now_add=True)
 	updated = models.DateTimeField(auto_now=True)
+
 	# Relatives
 	# 1) comments
 
@@ -52,7 +57,6 @@ class Post(models.Model):
 class Comment(models.Model):
 	# Basic
 	content = models.CharField(max_length=200)
-	image = models.URLField(blank=True, null=True)
 	# relations
 	creator = models.ForeignKey(Account, on_delete=models.CASCADE, related_name='comments', null=True, blank=True)
 	post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='comments', null=True, blank=True)
@@ -63,4 +67,3 @@ class Comment(models.Model):
 	# Timestamp
 	created = models.DateTimeField(auto_now_add=True)
 	updated = models.DateTimeField(auto_now=True)
-
