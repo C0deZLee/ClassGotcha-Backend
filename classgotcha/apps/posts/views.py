@@ -31,6 +31,7 @@ class MomentViewSet(viewsets.ViewSet):
 
 	def comment(self, request, pk):
 		moment = get_object_or_404(self.queryset, pk=pk)
+		print moment
 		content = request.data.get('content', None)
 		if content:
 			comment = Comment(content=content, moment=moment, creator=request.user)
@@ -38,8 +39,8 @@ class MomentViewSet(viewsets.ViewSet):
 			moment.comments.add(comment)
 			moment.save()
 			return Response(status=status.HTTP_200_OK)
-
 		else:
+			print "no content"
 			return Response(status=status.HTTP_400_BAD_REQUEST)
 
 	def flag(self, request, pk):
