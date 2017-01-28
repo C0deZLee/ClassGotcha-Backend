@@ -8,6 +8,7 @@ import DefaultLayout from 'components/DefaultLayout'
 import Home from 'views/Home'
 import AddClassroom from 'views/AddClassroom'
 import Classroom from 'views/Classroom'
+import ClassroomStudents from 'views/ClassroomStudents'
 import Register from 'views/Register'
 import Login from 'views/Login'
 import Upload from 'views/Upload'
@@ -51,6 +52,10 @@ export default new Router({
             path: '/classroom/id/:classroom_id/notes',
             //  access anywhere in the vm with this.$route.params.classroom_id
             component: Notes
+        }, {
+            path: '/classroom/id/:classroom_id/students',
+            //  access anywhere in the vm with this.$route.params.classroom_id
+            component: ClassroomStudents
         }, {
             path: '/',
             component: Home

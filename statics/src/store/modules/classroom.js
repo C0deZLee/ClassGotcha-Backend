@@ -11,7 +11,6 @@ const state = {
     is_in_class: false,
     moments: [],
     notes: [],
-    students: [],
     error_msg: ''
 }
 

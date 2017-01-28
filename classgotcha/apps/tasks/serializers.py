@@ -29,3 +29,8 @@ class TaskSerializer(serializers.ModelSerializer):
 			task.save()
 		return task
 
+
+class BasicTaskSerializer(serializers.ModelSerializer):
+	class Meta:
+		model = Task
+		fields = ('start', 'end', 'repeat', 'task_name', 'type', 'task_des')

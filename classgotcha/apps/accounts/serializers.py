@@ -2,11 +2,10 @@ from models import Account, Avatar
 from rest_framework import serializers
 
 # from ..posts.serializers import Moment, MomentSerializer
-from ..notes.serializers import Note, NoteSerializer
-from ..chat.serializers import Message, MessageSerializer
-from ..classrooms.serializers import BasicClassroomSerializer
-
-import random
+# from ..notes.serializers import Note, NoteSerializer
+# from ..chat.serializers import Message, MessageSerializer
+# from ..classrooms.serializers import BasicClassroomSerializer
+# import random
 
 
 class AvatarSerializer(serializers.ModelSerializer):
@@ -52,7 +51,7 @@ class BasicAccountSerializer(serializers.ModelSerializer):
 
 	class Meta:
 		model = Account
-		fields = ('pk', 'avatar', 'username', 'email','full_name')
+		fields = ('pk', 'avatar', 'username', 'email', 'full_name')
 
 	def get_full_name(self, obj):
 		return obj.first_name + ' ' + obj.last_name
