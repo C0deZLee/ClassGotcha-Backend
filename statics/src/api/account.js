@@ -36,8 +36,13 @@ export const userApi = {
             .catch((error) => Promise.reject(error))
     },
     // Load User Data
-    getUser() {
+    getSelf() {
         return Vue.http.get(API_ROOT + 'account/me/', { headers: { Authorization: 'JWT ' + getCookie('token') } })
+            .then((response) => Promise.resolve(response.data))
+            .catch((error) => Promise.reject(error))
+    },
+    getUser(pk) {
+        return Vue.http.get(API_ROOT + 'account/' + pk + '/', { headers: { Authorization: 'JWT ' + getCookie('token') } })
             .then((response) => Promise.resolve(response.data))
             .catch((error) => Promise.reject(error))
     },

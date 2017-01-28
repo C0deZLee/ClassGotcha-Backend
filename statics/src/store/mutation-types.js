@@ -16,9 +16,11 @@ export const LOGOUT = 'LOGOUT'
 export const LOAD_AVATAR = 'LOAD_AVATAR'
 export const UPDATE_AVATAR = 'UPDATE_AVATAR'
 
+export const LOAD_SELF = 'LOAD_SELF'
+export const UPDATE_SELF = 'UPDATE_SELF'
+export const UPDATE_SELF_FAILED = 'UPDATE_SELF_FAILED'
+
 export const LOAD_USER = 'LOAD_USER'
-export const UPDATE_USER = 'UPDATE_USER'
-export const UPDATE_USER_FAILED = 'UPDATE_USER_FAILED'
 
 export const LOAD_CLASSROOMS = 'LOAD_CLASSROOMS'
 export const ADD_CLASSROOM = 'ADD_CLASSROOM'

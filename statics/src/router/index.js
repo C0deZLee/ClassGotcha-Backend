@@ -12,6 +12,7 @@ import ClassroomStudents from 'views/ClassroomStudents'
 import Register from 'views/Register'
 import Login from 'views/Login'
 import Upload from 'views/Upload'
+import Profile from 'views/Profile'
 import Chat from 'views/Chat'
 import Notes from 'views/Notes'
 import ClassroomList from 'views/ClassroomList'
@@ -71,6 +72,9 @@ export default new Router({
         }, {
             path: '/403',
             component: Page403
+        }, {
+            path: '/profile/id/:user_id',
+            component: Profile
         }]
     }]
 })

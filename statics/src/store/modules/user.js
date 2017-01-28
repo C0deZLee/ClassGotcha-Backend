@@ -7,14 +7,14 @@ import * as types from '../mutation-types'
 // shape: [{ id, quantity }]
 const state = {
     user: {},
-    avatar: {},
     classrooms: [],
     chatrooms: [],
     friends: [],
     moments: [],
     tasks: [],
     login_status: false,
-    token: null
+    token: null,
+    loaded_user: {}
 }
 
 // getters
@@ -34,7 +34,7 @@ const getters = {
     },
     userAvatar: state => {
         if (state.login_status) {
-            return state.avatar
+            return state.user.avatar
         } else {
             return 'None'
         }
@@ -59,6 +59,9 @@ const getters = {
         } else {
             return []
         }
+    },
+    loadedUser: state => {
+        return state.loaded_user
     }
 
 }
@@ -70,7 +73,7 @@ const actions = {
         userApi.register(formData)
             .then((response) => {
                 commit(types.LOGIN_SUCCESS, response)
-                dispatch('getUser')
+                dispatch('getSelf')
                 // getClassrooms()
                 // getChatrooms()
                 // getFriends()
@@ -87,7 +90,7 @@ const actions = {
                 console.log(response)
 
                 commit(types.LOGIN_SUCCESS, response)
-                dispatch('getUser')
+                dispatch('getSelf')
                 dispatch('getAvatar')
                 dispatch('getClassrooms')
                 dispatch('getChatrooms')
@@ -132,14 +135,13 @@ const actions = {
                 }
             })
     },
-
     logout({ commit }) {
         commit(types.LOGOUT)
     },
-    getUser({ commit }) {
-        userApi.getUser()
+    getSelf({ commit }) {
+        userApi.getSelf()
             .then((response) => {
-                commit(types.LOAD_USER, response)
+                commit(types.LOAD_SELF, response)
             })
             .catch((error) => {
                 commit(types.LOG_ERROR, error)
@@ -185,6 +187,15 @@ const actions = {
         userApi.getTasks()
             .then((response) => {
                 commit(types.LOAD_TASKS, response)
+            })
+            .catch((error) => {
+                commit(types.LOG_ERROR, error)
+            })
+    },
+    getUser({ commit }, pk) {
+        userApi.getUser(pk)
+            .then((response) => {
+                commit(types.LOAD_USER, response)
             })
             .catch((error) => {
                 commit(types.LOG_ERROR, error)
@@ -274,7 +285,6 @@ const mutations = {
     [types.LOG_ERROR](state, error) {
         state.error_msg = error
         console.log(error)
-
         // TODO, need to handle errors
     },
 
@@ -305,7 +315,7 @@ const mutations = {
         router.push('/login')
     },
     // load data
-    [types.LOAD_USER](state, response) {
+    [types.LOAD_SELF](state, response) {
         state.user = response
     },
     [types.LOAD_AVATAR](state, response) {
@@ -323,9 +333,15 @@ const mutations = {
     [types.LOAD_TASKS](state, response) {
         state.tasks = response
     },
+    [types.LOAD_USER](state, response) {
+        state.loaded_user = response
+    },
+
     // post change
     [types.ADD_CLASSROOM](state) {},
-    [types.POST_MOMENT](state) {},
+    [types.POST_MOMENT](state) {
+        // TODO, update only 1 moment
+    },
     // [types.ADD_CLASSROOM_FAILED](state) {},
 
 }

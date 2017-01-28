@@ -5,10 +5,13 @@
                     <h2>Students</h2>
                     <ol class="breadcrumb">
                         <li>
-                            <a href="index.html">Home</a>
+                            <a href="#">Home</a>
                         </li>
                         <li>
-                            App Views
+                           Clssrooms
+                        </li>
+                         <li>
+                           {{currentClassroom.class_short}}
                         </li>
                         <li class="active">
                             <strong>Contacts 2</strong>
@@ -28,7 +31,7 @@
 
                         <h3 class="m-b-xs"><strong>{{student.full_name}}</strong></h3>
 
-                        <!--<div class="font-bold">Graphics designer</div>-->
+                        <div class="font-bold">{{student.email}}</div>
                         <address class="m-t-md">
                             <strong>About</strong><br>
                             795 Folsom Ave, Suite 600<br>
