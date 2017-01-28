@@ -2,7 +2,7 @@
       <div >
           <div class="row  border-bottom white-bg dashboard-header">
             <div class="col-sm-4">
-                <h2>Welcome back! {{username()}}! Your token is {{token()}}</h2>
+                <h2>Welcome back! {{username()}}! </h2>
                 <small>Here is something you need to do today</small>
                 <ul class="list-group clear-list m-t">
                     <li class="list-group-item fist-item">

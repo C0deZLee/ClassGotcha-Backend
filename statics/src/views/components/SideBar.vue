@@ -18,7 +18,7 @@
                         </ul>
                     </div>
                     <div class="logo-element">
-                        CG
+                      <img alt="image" class="img-circle" :src="avatar" />
                     </div>
                 </li>
                 <li class="active">
@@ -29,7 +29,7 @@
                 </li>
 
                 <li>
-                    <a href="/#/classroom"><i class="fa fa-laptop"></i> <span class="nav-label">Classroom</span><span class="fa arrow"></span></a>
+                    <a href="/#/classroom"><i class="fa fa-book"></i> <span class="nav-label">Classroom</span><span class="fa arrow"></span></a>
                     <ul class="nav nav-second-level">
                         <li><a href="/#/classroom/add">+ Add New</a></li>
                         <li v-for="classroom in classrooms">
@@ -38,15 +38,27 @@
                     </ul>
                 </li>
                 <li>
-                    <a href="/#/chatroom/id/1">
-                        <i class="fa fa-laptop"></i>
-                        <span class="nav-label">Chat</span>
+                    <a href="/#/me/">
+                        <i class="fa fa-calendar-o"></i>
+                        <span class="nav-label">My Calendar</span>
                     </a>
                 </li>
                 <li>
-                    <a href="/#/upload/">
-                        <i class="fa fa-laptop"></i>
-                        <span class="nav-label">Upload</span>
+                    <a href="/#/me/">
+                        <i class="fa fa-file-text"></i>
+                        <span class="nav-label">My Notes</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/#/me/">
+                        <i class="fa fa-user"></i>
+                        <span class="nav-label">Profile</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/#/settings/">
+                        <i class="fa fa-gear"></i>
+                        <span class="nav-label">Settings</span>
                     </a>
                 </li>
             </ul>   

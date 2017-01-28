@@ -8,8 +8,6 @@
                     <span class="bold">Add To My Classroom</span>
                 </button>
                 </h2>
-
-
                 <ol class="breadcrumb">
                     <li>
                         <a href="/">Home</a>
@@ -37,29 +35,28 @@
                         <div class="">
                             <div>
                                 <h2 class="no-margins">
-                                    CS 311
+                                    {{currentClassroom.class_short}}
                                 </h2>
-                                <h4>abcd1234@psu.edu</h4>
+                                <h4>
+                                    Section {{currentClassroom.class_section}}
+                                </h4>
                                 <small>
-                                    There are many variations of passages of Lorem Ipsum available, but the majority
-                                    have suffered alteration in some form Ipsum available.
+                                                                       {{currentClassroom.description}}
+
                                 </small>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="col-md-6">
+                <div class="col-md-2">
                     <table class="table small m-b-xs">
                         <thead>
-                            &nbsp&nbspSummary
+                           Summary
                         </thead>
                         <tbody>
                             <tr>
                                 <td>
-                                    <strong>6-9</strong> Projects
-                                </td>
-                                <td>
-                                    <strong>10</strong> Weekly Quizs
+                                    <strong>{{currentClassroom.class_credit}}</strong> Credits
                                 </td>
 
                             </tr>
@@ -67,16 +64,10 @@
                                 <td>
                                     <strong>1</strong> Midterm
                                 </td>
-                                <td>
-                                    <strong>1</strong> Final
-                                </td>
                             </tr>
                             <tr>
                                 <td>
                                     <strong>154</strong> Classmates
-                                </td>
-                                <td>
-                                    <strong>2</strong> Papers
                                 </td>
                             </tr>
                         </tbody>
@@ -88,16 +79,16 @@
             </p>
             <div class="progress">
                 <div style="width: 25%" class="progress-bar progress-bar-primary">
-</div>
-<div style="width: 1%" class="progress-bar progress-bar-danger">
-</div>
-<div style="width: 25%" class="progress-bar progress-bar-primary">
-</div>
-<div style="width: 1%" class="progress-bar progress-bar-warning">
-</div>
-<div style="width: 25%" class="progress-bar progress-bar-primary">
-</div>
-</div>
+        </div>
+        <div style="width: 1%" class="progress-bar progress-bar-danger">
+        </div>
+        <div style="width: 25%" class="progress-bar progress-bar-primary">
+        </div>
+        <div style="width: 1%" class="progress-bar progress-bar-warning">
+        </div>
+        <div style="width: 25%" class="progress-bar progress-bar-primary">
+        </div>
+        </div>
 
 <div class="row">
     <div class="col-lg-3">
@@ -112,15 +103,12 @@
                         <li><a href="#">Make an Appointment</a></li>
                     </ul>
                 </div>
-                <div class="profile-image">
-                    <img src="http://www.cse.psu.edu/~buu1/bhuvan-mots.jpg" class="img-circle circle-border m-b-md" alt="profile">
-                </div>
-                <a>
-                    <h3>Professor Name</h3>
-                </a>
+              
+                    <h3>Professor Info</h3>
+               
 
                 <p class="small">
-                    Office Hour: 11:00AM - 13:00AM Mon/Thu <br> Office: 220 IST<br> Email: buu1@psu.edu<br>
+                    Name: <a href="">Professor Name</a><br>Office Hour: 11:00AM - 13:00AM Mon/Thu <br> Office: 220 IST<br> Email: buu1@psu.edu<br>
                     <br>
                     <span class="font-bold">Rating: <i class="fa fa-star text-navy"></i><i class="fa fa-star text-navy"></i><i class="fa fa-star text-navy"></i><i class="fa fa-star text-navy"></i><i class="fa fa-star text-navy"></i> </span>
 
@@ -129,9 +117,9 @@
                     <li><a href=""><i class="fa fa-tag"></i> Huge Work Load</a></li>
                     </ul>
                     </p>
-                    <p>
-                        .
-                    </p>
+
+                        <br>
+
                     </div>
                     </div>
 
@@ -187,20 +175,13 @@
     <div class="ibox-content">
         <h3>Your Classmates</h3>
         <div class="user-friends">
-            <a href=""><img alt="image" class="img-circle" src="modules/classrooms/img/a3.jpg"></a>
-            <a href=""><img alt="image" class="img-circle" src="modules/classrooms/img/a1.jpg"></a>
-            <a href=""><img alt="image" class="img-circle" src="modules/classrooms/img/a2.jpg"></a>
-            <a href=""><img alt="image" class="img-circle" src="modules/classrooms/img/a4.jpg"></a>
-            <a href=""><img alt="image" class="img-circle" src="modules/classrooms/img/a5.jpg"></a>
-            <a href=""><img alt="image" class="img-circle" src="modules/classrooms/img/a6.jpg"></a>
-            <a href=""><img alt="image" class="img-circle" src="modules/classrooms/img/a7.jpg"></a>
-            <a href=""><img alt="image" class="img-circle" src="modules/classrooms/img/a8.jpg"></a>
-            <a href=""><img alt="image" class="img-circle" src="modules/classrooms/img/a2.jpg"></a>
-            <a href=""><img alt="image" class="img-circle" src="modules/classrooms/img/a1.jpg"></a>
 
+            <a v-for="student in currentClassroom.students" href=""><img alt="image" class="img-circle" :src="student.avatar.avatar2x"></a>
         </div>
         <p>
-            <a>More..</a></p>
+            <a :href="studentsPagePath">More..</a>
+             <!--<router-link to="/classroom/id/:classroom_id/students">More..</router-link>-->
+            </p>
     </div>
 </div>
 
@@ -208,11 +189,29 @@
 
 <div class="col-lg-5">
     <div class="social-feed-box">
+    
         <div class="social-action">
-            <textarea class="form-control" v-model.lazy="content" placeholder="Wanna say something?"></textarea>
-            <input type="radio"  name="question" v-model="question" value="question">Post as a question
-            <button @click="postMoment" class="pull-right btn btn-sm btn-primary">Submit</button>
-            <br>
+            <a class="btn btn-info btn-rounded btn-block" data-toggle="modal" data-target="#post-moment"> Post New Moment</a>
+            <div class="modal inmodal in" id="post-moment" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                         <div class="vertical-alignment-helper">
+        <div class="modal-dialog vertical-align-center">
+                                <div class="modal-dialog">
+                                    <div class="modal-content animated fadeIn">
+                                   
+                                        <div class="modal-header">
+                                            <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+                                           <textarea class="form-control" v-model.lazy="content" placeholder="Wanna say something?"></textarea>
+                                            
+                                        </div>
+                                        <div class="modal-footer">
+            <input type="radio"  name="question" v-model="question" class="" value="question">Post as a question
+
+            <button @click="postMoment"  data-dismiss="modal" class="pull-right btn btn-primary">Submit</button>
+                                        </div>
+                                    </div></div></div>
+                                </div>
+                            </div>
+    
         </div>
     </div>
     <div class="social-feed-box" v-for="moment in moments">
@@ -358,8 +357,38 @@
 </div>
 </div>
 </div>
+<modal>
+    
+</modal>
 </div>
+
 </template>
+
+<style>
+    .vertical-alignment-helper {
+        display: table;
+        height: 100%;
+        width: 100%;
+        pointer-events: none;
+    }
+    
+    .vertical-align-center {
+        /* To center vertically */
+        display: table-cell;
+        vertical-align: middle;
+        pointer-events: none;
+    }
+    
+    .modal-content {
+        /* Bootstrap sets the size of the modal in the modal-dialog class, we need to inherit it */
+        width: inherit;
+        height: inherit;
+        /* To center horizontally */
+        margin: 0 auto;
+        pointer-events: all;
+    }
+
+</style>
 
 <script>
     import { customTime } from 'utils/timeFilter'
@@ -396,6 +425,7 @@
                     question: this.question
                 }
                 this.$store.dispatch('postMoment', formData)
+                this.content = ''
             },
             postComment(e) {
                 e.preventDefault()
@@ -417,7 +447,7 @@
             showCommentBox(moment) {
                 this.comment_content = ''
                 this.show_comment_id = moment.id
-            }
+            },
         },
         computed: {
             currentClassroom() {
@@ -431,7 +461,11 @@
             },
             userAvatar() {
                 return this.$store.getters.userAvatar.avatar2x
+            },
+            studentsPagePath() {
+                return '/#/classroom/id/' + this.$route.params.classroom_id + '/students'
             }
+
         },
         created: function() {
             // after component is created, load data

@@ -11,8 +11,6 @@
           <!-- End page wrapper-->
         </div>
         <right-side-bar></right-side-bar>
-    <!-- Modal window -->
-    <modal-window></modal-window>
     <!-- End wrapper-->
     </div>
 </template>
