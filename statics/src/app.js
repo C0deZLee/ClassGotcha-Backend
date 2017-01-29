@@ -2,10 +2,10 @@ import Vue from 'vue'
 import Resource from 'vue-resource'
 import Router from 'vue-router'
 import Mask from 'v-mask'
+import { sync } from 'vuex-router-sync'
 
 import router from './router'
 import store from './store'
-import { sync } from 'vuex-router-sync'
 
 import App from 'views/components/App'
 import * as cookie from './utils/cookie'

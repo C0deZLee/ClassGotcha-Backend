@@ -37,7 +37,7 @@
                 </ul>
             </div>
             <div class="col-sm-8">
-                  <div ui-calendar="uiConfig.calendar"  class="calendar" ng-model="eventSources"></div>
+                <full-calendar></full-calendar>
             </div>
           </div>
 
@@ -432,9 +432,14 @@
 </template>
 
 <script>
+    import Calendar from 'components/Calendar'
+
     import * as cookie from '../utils/cookie'
     export default {
         name: 'Home',
+        components: {
+            'full-calendar': Calendar
+        },
         methods: {
             token() {
                 return cookie.getCookie('token')
