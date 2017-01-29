@@ -1,6 +1,7 @@
 from models import Account, Avatar
 from rest_framework import serializers
 
+
 # from ..posts.serializers import Moment, MomentSerializer
 # from ..notes.serializers import Note, NoteSerializer
 # from ..chat.serializers import Message, MessageSerializer
@@ -34,6 +35,7 @@ class AccountSerializer(serializers.ModelSerializer):
 	# many=True, queryset=Message.objects.all())
 	avatar = AvatarSerializer(required=False)
 	is_professor = serializers.SerializerMethodField()
+	full_name = serializers.SerializerMethodField()
 
 	class Meta:
 		model = Account
@@ -44,6 +46,8 @@ class AccountSerializer(serializers.ModelSerializer):
 	def get_is_professor(self, obj):
 		return obj.is_professor
 
+	def get_full_name(self, obj):
+		return obj.get_full_name
 
 class BasicAccountSerializer(serializers.ModelSerializer):
 	avatar = AvatarSerializer(required=False)

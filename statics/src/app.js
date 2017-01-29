@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import Resource from 'vue-resource'
-import Cookie from 'vue-cookie'
 import Router from 'vue-router'
+import Mask from 'v-mask'
 
 import router from './router'
 import store from './store'
@@ -12,7 +12,7 @@ import * as cookie from './utils/cookie'
 
 Vue.use(Router)
 Vue.use(Resource)
-Vue.use(Cookie)
+Vue.use(Mask)
 
 sync(store, router)
 

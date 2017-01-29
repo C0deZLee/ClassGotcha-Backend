@@ -50,7 +50,7 @@
                     </a>
                 </li>
                 <li>
-                    <a href="/#/me/">
+                    <a href="/#/profile/id/me/">
                         <i class="fa fa-user"></i>
                         <span class="nav-label">Profile</span>
                     </a>

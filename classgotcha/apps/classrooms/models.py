@@ -9,6 +9,7 @@ class Major(models.Model):
 	major_short = models.CharField(max_length=10)
 	major_full = models.CharField(max_length=100)
 	major_college = models.CharField(max_length=100)
+	major_icon = models.FileField(upload_to='majors/', null=True)
 
 	def __unicode__(self):
 		return self.major_short

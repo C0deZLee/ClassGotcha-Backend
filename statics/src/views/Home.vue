@@ -1,5 +1,5 @@
 <template>
-      <div >
+<div>
           <div class="row  border-bottom white-bg dashboard-header">
             <div class="col-sm-4">
                 <h2>Welcome back! {{username()}}! </h2>
@@ -323,6 +323,7 @@
       </div>
     </div>
 
+  </div>
   <div class="small-chat-box ng-small-chat fadeInRight animated">
 
       <div class="heading" draggable="true">
@@ -399,13 +400,14 @@
       </div>
 
 
+  </div>
   <div id="small-chat">
       <span class="badge badge-warning pull-right">5</span>
       <a class="open-small-chat">
           <i class="fa fa-comments"></i>
       </a>
 
-
+  </div>
   <div class="modal inmodal" id="uploadAvatar" tabindex="-1" role="dialog" aria-hidden="true"
        style="display: none;">
       <div class="modal-dialog">
@@ -423,6 +425,7 @@
               </div>
           </div>
       </div>
+  </div>
   </div>
 
 

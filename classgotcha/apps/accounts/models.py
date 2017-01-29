@@ -71,6 +71,9 @@ class Account(AbstractBaseUser, PermissionsMixin):
 	birthday = models.DateField(null=True, blank=True)
 	school_year = models.CharField(max_length=40, blank=True)
 	avatar = models.ForeignKey(Avatar, blank=True, null=True, related_name='user_profiles_avatars')
+	about_me = models.CharField(max_length=200, default='Yo!')
+	level = models.IntegerField(default=1)
+	phone = models.CharField(max_length=20, null=True)
 	# Relations
 	friends = models.ManyToManyField('self')
 	major = models.ForeignKey('classrooms.Major', blank=True, null=True)

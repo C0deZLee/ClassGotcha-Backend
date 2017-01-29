@@ -20,6 +20,10 @@ const state = {
 // getters
 const getters = {
     login_status: state => state.login_status,
+    me: state => {
+        if (state.login_status)
+            return state.user
+    },
     userID: state => {
         if (state.login_status) {
             return state.user.id

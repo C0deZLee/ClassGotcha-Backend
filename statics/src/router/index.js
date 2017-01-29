@@ -18,6 +18,7 @@ import Notes from 'views/Notes'
 import ClassroomList from 'views/ClassroomList'
 import Page404 from 'views/404'
 import Page403 from 'views/403'
+import Test from 'views/Test'
 
 Vue.use(Router)
 Vue.use(Resource)
@@ -75,6 +76,9 @@ export default new Router({
         }, {
             path: '/profile/id/:user_id',
             component: Profile
+        }, {
+            path: '/test',
+            component: Test
         }]
     }]
 })

@@ -31,7 +31,7 @@
 
                         <h3 class="m-b-xs"><strong>{{student.full_name}}</strong></h3>
 
-                        <div class="font-bold">{{student.email}}</div>
+                        <div class="font-bold">@{{student.username}}</div>
                         <address class="m-t-md">
                             <strong>About</strong><br>
                             795 Folsom Ave, Suite 600<br>
