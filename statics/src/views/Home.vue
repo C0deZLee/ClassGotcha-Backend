@@ -37,7 +37,7 @@
                 </ul>
             </div>
             <div class="col-sm-8">
-                <full-calendar></full-calendar>
+                <full-calendar :events="events"></full-calendar>
             </div>
           </div>
 
@@ -324,83 +324,84 @@
     </div>
 
   </div>
-  <div class="small-chat-box ng-small-chat fadeInRight animated">
+           <div class="small-chat-box fadeInRight animated">
 
-      <div class="heading" draggable="true">
-          <small class="chat-date pull-right">
-              02.19.2015
-          </small>
-          Small chat
-      </div>
+            <div class="heading" draggable="true">
+                <small class="chat-date pull-right">
+                    02.19.2015
+                </small>
+                Small chat
+            </div>
 
-      <div class="content chat-slim-scroll" >
+            <div class="content">
 
-          <div class="left">
-              <div class="author-name">
-                  Monica smith <small class="chat-date">
-                  10:02 am
-              </small>
-              </div>
-              <div class="chat-message active">
-                  The class notes of CS311 this week is up, check it out if you miss anyof them.
-              </div>
+                <div class="left">
+                    <div class="author-name">
+                        Monica Jackson <small class="chat-date">
+                        10:02 am
+                    </small>
+                    </div>
+                    <div class="chat-message active">
+                        Lorem Ipsum is simply dummy text input.
+                    </div>
 
-          </div>
-          <div class="right">
-              <div class="author-name">
-                  Mick Smith
-                  <small class="chat-date">
-                      11:24 am
-                  </small>
-              </div>
-              <div class="chat-message">
-                  Thanks for note, it was pretty helpful
-              </div>
-          </div>
-          <div class="left">
-              <div class="author-name">
-                  Alice Novak
-                  <small class="chat-date">
-                      08:45 pm
-                  </small>
-              </div>
-              <div class="chat-message active">
-                The math Home work is due on Wednesday , instructor extended the DL agian :)
-               </div>
-          </div>
-          <div class="right">
-              <div class="author-name">
-                  Anna Lamson
-                  <small class="chat-date">
-                      11:24 am
-                  </small>
-              </div>
-              <div class="chat-message">
-                  The standard chunk of Lorem Ipsum
-              </div>
-          </div>
-          <div class="left">
-              <div class="author-name">
-                  Mick Lane
-                  <small class="chat-date">
-                      08:45 pm
-                  </small>
-              </div>
-              <div class="chat-message active">
-                  I belive that. Lorem Ipsum is simply dummy text.
-              </div>
-          </div>
-
-
-      </div>
-      <div class="form-chat">
-          <div class="input-group input-group-sm"><input type="text" class="form-control"> <span class="input-group-btn"> <button
-                  class="btn btn-primary" type="button">Send
-          </button> </span></div>
-      </div>
+                </div>
+                <div class="right">
+                    <div class="author-name">
+                        Mick Smith
+                        <small class="chat-date">
+                            11:24 am
+                        </small>
+                    </div>
+                    <div class="chat-message">
+                        Lorem Ipsum is simpl.
+                    </div>
+                </div>
+                <div class="left">
+                    <div class="author-name">
+                        Alice Novak
+                        <small class="chat-date">
+                            08:45 pm
+                        </small>
+                    </div>
+                    <div class="chat-message active">
+                        Check this stock char.
+                    </div>
+                </div>
+                <div class="right">
+                    <div class="author-name">
+                        Anna Lamson
+                        <small class="chat-date">
+                            11:24 am
+                        </small>
+                    </div>
+                    <div class="chat-message">
+                        The standard chunk of Lorem Ipsum
+                    </div>
+                </div>
+                <div class="left">
+                    <div class="author-name">
+                        Mick Lane
+                        <small class="chat-date">
+                            08:45 pm
+                        </small>
+                    </div>
+                    <div class="chat-message active">
+                        I belive that. Lorem Ipsum is simply dummy text.
+                    </div>
+                </div>
 
 
-  </div>
+            </div>
+            <div class="form-chat">
+                <div class="input-group input-group-sm">
+                    <input type="text" class="form-control">
+                    <span class="input-group-btn"> <button
+                        class="btn btn-primary" type="button">Send
+                </button> </span></div>
+            </div>
+
+        </div>
   <div id="small-chat">
       <span class="badge badge-warning pull-right">5</span>
       <a class="open-small-chat">
@@ -437,6 +438,28 @@
     import * as cookie from '../utils/cookie'
     export default {
         name: 'Home',
+        data() {
+            return {
+                events: [{
+                        title: "My repeating event",
+                        start: '10:00', // a start time (10am in this example)
+                        end: '14:00', // an end time (2pm in this example)
+                        dow: [1, 4], // Repeat monday and thursday
+                        ranges: [{ start: "2017-01-01", end: "2017-04-01" }]
+                    },
+                    {
+                        title: 'event2',
+                        start: '2017-01-30',
+                        end: '2017-02-02',
+                    },
+                    {
+                        title: 'event3',
+                        start: '2017-01-29T12:30:00',
+                        allDay: false,
+                    },
+                ]
+            }
+        },
         components: {
             'full-calendar': Calendar
         },
@@ -447,6 +470,26 @@
             username() {
                 return this.$store.getters.userFullName
             }
+        },
+        created() {
+            let event_list = []
+            for (let counter in this.$store.getters.userClassrooms) {
+                const classroom = this.$store.getters.userClassrooms[counter]
+
+                // classes
+                event_list.push({
+                    title: classroom.class_time.task_name,
+                    start: classroom.class_time.formatted_start_time,
+                    end: classroom.class_time.formatted_end_time,
+                    dow: classroom.class_time.repeat_list,
+                    repeat: [{
+                        start: classroom.semester.formatted_start_date,
+                        end: classroom.semester.formatted_end_date
+                    }]
+                })
+
+            }
+            this.events = event_list
         }
     }
 

@@ -6,33 +6,23 @@
     export default {
         props: {
             events: {
-                default () {
-                    return []
-                },
+                default () { return [] },
             },
 
             eventSources: {
-                default () {
-                    return []
-                },
+                default () { return [] },
             },
 
             editable: {
-                default () {
-                    return true
-                },
+                default () { return true },
             },
 
             selectable: {
-                default () {
-                    return true
-                },
+                default () { return true },
             },
 
             selectHelper: {
-                default () {
-                    return true
-                },
+                default () { return true },
             },
 
             header: {
@@ -45,16 +35,10 @@
                 },
             },
 
-            defaultView: {
-                default () {
-                    return 'agendaWeek'
-                },
-            },
+            defaultView: { default () { return 'agendaWeek' }, },
 
             sync: {
-                default () {
-                    return false
-                }
+                default () { return false }
             },
         },
 
@@ -143,6 +127,7 @@
                 })
             },
         },
+
     }
 
 </script>
@@ -225,6 +210,11 @@
         /* border color */
     }
     
+    .fc-event {
+        border: 0px;
+        border-left: 5px solid #1ab394;
+    }
+    
     .fc-event-time,
     .fc-event-title {
         color: #717171;
@@ -234,6 +224,10 @@
     .ui-calendar .fc-event-time,
     .ui-calendar .fc-event-title {
         color: #fff;
+    }
+    
+    .fc-agenda-view .fc-day-grid .fc-row {
+        min-height: 1.5em;
     }
 
 </style>

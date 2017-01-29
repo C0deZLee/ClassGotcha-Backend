@@ -31,7 +31,7 @@ const getters = {
     },
     userFullName: state => {
         if (state.login_status) {
-            return state.user.first_name + ' ' + state.user.last_name
+            return state.user.full_name
         } else {
             return 'None'
         }
@@ -60,6 +60,13 @@ const getters = {
     userMoments: state => {
         if (state.login_status) {
             return state.moments
+        } else {
+            return []
+        }
+    },
+    userTasks: state => {
+        if (state.login_status) {
+            return state.user.tasks
         } else {
             return []
         }
@@ -97,7 +104,6 @@ const actions = {
                 dispatch('getClassrooms')
                 dispatch('getChatrooms')
                 dispatch('getFriends')
-                dispatch('getTasks')
                 router.push('/')
             })
             .catch((error) => {
