@@ -2,13 +2,13 @@
   <div>
     <div class="row wrapper border-bottom white-bg page-heading">
       <div class="col-sm-4">
-        <h2>Project detail</h2>
+        <h2>Profile</h2>
         <ol class="breadcrumb">
           <li>
-            <a href="index.html">Home</a>
+            <a href="/#/">Home</a>
           </li>
           <li class="active">
-            <strong>Project detail</strong>
+            <strong>Profile</strong>
           </li>
         </ol>
       </div>
@@ -499,11 +499,12 @@
     export default {
         name: 'Profile',
         components: {
-            'upload-avatar': Upload
+            'upload-avatar': Upload,
         },
         data: () => {
             return {
                 show: false,
+                user: {},
                 change_avatar_button_message: 'Change avatar',
                 img_data: '',
                 headers: {
@@ -513,16 +514,8 @@
             }
         },
         computed: {
-            user() {
-                if (this.$route.params.user_id === 'me')
-                    return this.$store.getters.me
-                else {
-                    this.$store.dispatch('getUser', this.$route.params.user_id)
-                    return this.$store.getters.loadedUser
-                }
-            },
             myProfile() {
-                return this.$route.params.user_id === 'me'
+                return (this.$route.params.user_id === 'me' || this.$route.params.user_id === this.$store.getters.userID.toString())
             },
         },
         methods: {
@@ -531,6 +524,15 @@
             },
             editAboutMe() {
                 // TODO
+            },
+            getUser() {
+                if (this.$route.params.user_id === 'me')
+                    this.user = this.$store.getters.me
+                else {
+                    // TODO: cannot load user immediatily after dispath getUser
+                    this.$store.dispatch('getUser', this.$route.params.user_id)
+                    this.user = this.$store.getters.loadedUser
+                }
             },
             toggleShow() {
                 this.show = !this.show
@@ -546,7 +548,14 @@
             cropUploadSuccess(jsonData, field) {
                 this.$store.dispatch('getSelf')
             }
-        }
+        },
+        created() {
+            this.getUser()
+        },
+        watch: {
+            // execute getClassroomData if route changes
+            '$route': 'getUser',
+        },
     }
 
 </script>

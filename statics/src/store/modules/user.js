@@ -88,11 +88,9 @@ const actions = {
             })
     },
     login({ commit, dispatch }, formData) {
-        console.log('in store, login functoin be called with formData = ', formData)
         userApi.login(formData)
             .then((response) => {
                 console.log(response)
-
                 commit(types.LOGIN_SUCCESS, response)
                 dispatch('getSelf')
                 dispatch('getAvatar')

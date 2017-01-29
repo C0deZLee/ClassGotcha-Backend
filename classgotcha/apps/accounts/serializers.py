@@ -49,13 +49,14 @@ class AccountSerializer(serializers.ModelSerializer):
 	def get_full_name(self, obj):
 		return obj.get_full_name
 
+
 class BasicAccountSerializer(serializers.ModelSerializer):
 	avatar = AvatarSerializer(required=False)
 	full_name = serializers.SerializerMethodField()
 
 	class Meta:
 		model = Account
-		fields = ('pk', 'avatar', 'username', 'email', 'full_name')
+		fields = ('pk', 'avatar', 'username', 'email', 'full_name', 'about_me', 'level')
 
 	def get_full_name(self, obj):
 		return obj.first_name + ' ' + obj.last_name
@@ -68,8 +69,7 @@ class AuthAccountSerializer(serializers.ModelSerializer):
 		write_only_fields = ('password',)
 
 	def create(self, validated_data):
-		account = Account(email=validated_data[
-			'email'], username=validated_data['username'])
+		account = Account(email=validated_data['email'], username=validated_data['username'])
 		account.set_password(validated_data['password'])
 		# account.avatar = Avatar.objects.get(pk=random.randint(1, 10))
 		account.avatar = Avatar.objects.get(pk=1)

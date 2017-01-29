@@ -1,9 +1,11 @@
 from models import Room, Message
 from rest_framework import serializers
+from ..accounts.serializers import BasicAccountSerializer
 
 
 class RoomSerializer(serializers.ModelSerializer):
 	latest_message = serializers.ReadOnlyField()
+	accounts = BasicAccountSerializer(many=True)
 
 	class Meta:
 		model = Room

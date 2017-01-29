@@ -27,12 +27,20 @@ class Room(models.Model):
 
 	@property
 	def latest_message(self):
-		messages = self.messages.all().reverse()
+		messages = self.messages.all()
 		if messages:
-			latest_message = {'message': messages[0].message, 'created': messages[0].created}
+			latest_message = {
+				'full_name': messages[0].send_from.get_full_name,
+				'message': messages[0].message,
+				'created': messages[0].created.strftime('%b %-d %-I:%M %p')
+			}
 			return latest_message
 		else:
-			return {'message': '', 'created': ''}
+			return {
+				'full_name': '',
+				'message': '',
+				'created': ''
+			}
 
 
 class Message(models.Model):
@@ -51,7 +59,9 @@ class Message(models.Model):
 		return self.created.strftime('%b %-d %-I:%M %p')
 
 	def as_dict(self):
-		return {'send_from': self.send_from.pk, 'username': self.username, 'message': self.message,
+		return {'send_from': self.send_from.pk,
+		        'username': self.username,
+		        'message': self.message,
 		        'created': self.formatted_timestamp}
 
 	class Meta:

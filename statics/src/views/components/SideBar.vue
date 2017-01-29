@@ -8,13 +8,13 @@
                              </span>
                         <a data-toggle="dropdown" class="dropdown-toggle">
                             <span class="clear"> <span class="block m-t-xs"> <strong class="font-bold">{{fullName}}</strong>
-                             </span> <span class="text-muted text-xs block">Art Director <b class="caret"></b></span> </span> </a>
+                             </span> <span class="text-muted text-xs block">@{{username}} <b class="caret"></b></span> </span> </a>
                         <ul class="dropdown-menu animated fadeInRight m-t-xs">
-                            <li><a href="profile.html">Profile</a></li>
-                            <li><a href="contacts.html">Contacts</a></li>
+                            <li><a href="/#/profile/id/me">Profile</a></li>
+                         
                             <li><a href="mailbox.html">Mailbox</a></li>
                             <li class="divider"></li>
-                            <li><a href="login.html">Logout</a></li>
+                               <li> <a v-on:click="$store.dispatch('logout')"><i class="fa fa-sign-out"></i> Log out</a></li>
                         </ul>
                     </div>
                     <div class="logo-element">
@@ -80,6 +80,9 @@
             },
             avatar() {
                 return this.$store.getters.userAvatar.avatar1x
+            },
+            username() {
+                return this.$store.getters.me.username
             },
             classrooms() {
                 return this.$store.getters.userClassrooms

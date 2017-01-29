@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import chatApi from '../../api/chat'
-// import router from '../../router'
+import router from '../../router'
 // import * as cookie from '../../utils/cookie'
 import * as types from '../mutation-types'
 
@@ -126,8 +126,7 @@ const mutations = {
         state.valid = false
         state.current_chatroom_pk = null
         // state.chatrooms[pk].valid = false
-
-        // router.push('/')
+        router.push('/')
         // TODO, FIXME, need to redirect to previous page
     },
     [types.LOG_ERROR](state, error) {

@@ -21,22 +21,17 @@
             </div>
         <div class="wrapper wrapper-content animated fadeInRight">
         <div class="row">
-            <div class="col-lg-3" v-for="student in currentClassroom.students">
+            <div class="col-lg-3 col-sm-3" v-for="student in currentClassroom.students">
                 <div class="contact-box center-version">
 
-                    <a href="profile.html">
-
+                    <a :href="profileUrl(student)">
                         <img alt="image" class="img-circle" :src="student.avatar.avatar2x">
-
-
                         <h3 class="m-b-xs"><strong>{{student.full_name}}</strong></h3>
 
                         <div class="font-bold">@{{student.username}}</div>
                         <address class="m-t-md">
                             <strong>About</strong><br>
-                            795 Folsom Ave, Suite 600<br>
-                            San Francisco, CA 94107<br>
-                            <abbr title="Phone">P:</abbr> (123) 456-7890
+                          {{student.about_me}}
                         </address>
 
                     </a>
@@ -55,6 +50,11 @@
 <script>
     export default {
         name: 'ClassroomStudent',
+        methods: {
+            profileUrl(student) {
+                return '/#/profile/id/' + student.pk
+            }
+        },
         computed: {
             currentClassroom() {
                 return this.$store.getters.currentClassroom

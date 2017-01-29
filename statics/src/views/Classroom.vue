@@ -68,10 +68,10 @@
           </table>
         </div>
       </div>
-      <p>
-        Semester Process
+           <p>
+        Semester Progcess
       </p>
-      <div class="progress">
+      <div class="progress progress-mini">
         <div style="width: 25%" class="progress-bar progress-bar-primary">
         </div>
         <div style="width: 1%" class="progress-bar progress-bar-danger">
@@ -84,7 +84,9 @@
         </div>
       </div>
     </div>
+
     <div class="row">
+        
       <div class="col-lg-3">
         <div class="ibox">
           <div class="ibox-content">

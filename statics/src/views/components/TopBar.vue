@@ -10,7 +10,7 @@
               </form>
           </div>
             <ul class="nav navbar-top-links navbar-right">
-                <li><span class="m-r-sm text-muted welcome-message">Welcome to INSPINIA+ Admin Theme.</span></li>
+                <li><span class="m-r-sm text-muted welcome-message"></span></li>
                 <li class="dropdown">
                     <a class="dropdown-toggle count-info" data-toggle="dropdown" href="#">
                         <i class="fa fa-envelope"></i>  <span class="label label-warning">16</span>
@@ -65,8 +65,8 @@
                     </ul>
                 </li>
                 <li class="dropdown">
-                    <a class="dropdown-toggle count-info" data-toggle="dropdown" href="#">
-                        <i class="fa fa-bell"></i>  <span class="label label-primary">8</span>
+                    <a class="dropdown-toggle count-info" data-toggle="dropdown" href="">
+                        <i class="fa fa-bell"></i><span class="label label-primary">8</span> Notifications  
                     </a>
                     <ul class="dropdown-menu dropdown-alerts">
                         <li>
@@ -107,13 +107,8 @@
                     </ul>
                 </li>
                 <li>
-                    <a v-on:click="$store.dispatch('logout')">
-                        <i class="fa fa-sign-out"></i> Log out
-                    </a>
-                </li>
-                <li>
                     <a class="right-sidebar-toggle">
-                        <i class="fa fa-tasks"></i>
+                        <i class="fa fa-comments"></i> Chat
                     </a>
                 </li>
             </ul>
