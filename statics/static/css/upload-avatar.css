@@ -44,42 +44,17 @@
 }
 
 .vue-image-crop-upload {
-    position: fixed;
-    display: block;
-    -webkit-box-sizing: border-box;
-    box-sizing: border-box;
-    z-index: 10000;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.65);
-    -webkit-tap-highlight-color: transparent;
-    -moz-tap-highlight-color: transparent;
+    clear: both;
+    margin-bottom: 25px;
+    margin-top: 0;
+    padding: 0;
 }
 
 .vue-image-crop-upload .vicp-wrap {
-    -webkit-box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.23);
-    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.23);
-    position: fixed;
-    display: block;
-    -webkit-box-sizing: border-box;
-    box-sizing: border-box;
-    z-index: 10000;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    margin: auto;
-    width: 600px;
-    height: 330px;
-    padding: 25px;
-    background-color: #fff;
-    border-radius: 2px;
-    -webkit-animation: vicp 0.12s ease-in;
-    animation: vicp 0.12s ease-in;
+    clear: both;
+    margin-bottom: 25px;
+    margin-top: 0;
+    padding: 0;
 }
 
 .vue-image-crop-upload .vicp-wrap .vicp-close {

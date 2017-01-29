@@ -19,7 +19,7 @@
           <div class="contact-box center-version">
             <a>
               <h3>Name Card</h3>
-              <img alt="image" class="img-circle" :src="user.avatar.avatar4x">
+              <img alt="image" class="img-circle" :src="user.avatar.avatar2x">
               <h3 class="m-b-xs"><strong>{{user.full_name}}</strong></h3>
               <div class="font-bold">@{{user.username}}</div>
               <span class="label label-warning">Level {{user.level}}</span>
@@ -184,22 +184,22 @@
                             <div class="form-group">
                               <label class="col-sm-2 control-label">Avatar</label>
                               <div class="col-sm-5">
-                                 <img alt="image" :src="user.avatar.avatar4x" class="img-circle">
-                                <button class="btn btn-white col-sm-offset-1" @click="toggleShow"> Change avatar</button>
-                                <upload-avatar field="img"
-                                @crop-success="cropImg"
-                                @crop-upload-success="cropUploadSuccess"
-                                @crop-upload-fail="cropUploadFail"
-                                v-model="show"
-                                :width="500"
-                                :height="500"
-                                url="/upload"
-           
-                                img-format="png"></upload-avatar>
-                            <img :src="img_data">
+                                 <img alt="image" :src="user.avatar.avatar2x" class="img-circle circle-border">
+                                <button class="btn btn-white col-sm-offset-1" @click="toggleShow"> {{change_avatar_button_message}}</button>
                                 </div> 
                             </div>
-                      
+                            <div class="form-group">
+                                <div class="col-sm-7 col-sm-offset-2">
+                                <upload-avatar 
+                                @crop-success="cropImg"
+                                @crop-upload-success="cropUploadSuccess"
+                                v-model="show"
+                                :width="512"
+                                :height="512"
+                                :headers="headers"
+                                img-format="png"></upload-avatar>
+                                </div>
+                            </div>
 
                             <div class="form-group">
                               <label class="col-sm-2 control-label">Name</label>
@@ -494,6 +494,7 @@
 
 <script>
     import Upload from 'components/UploadAvatar'
+    import * as cookie from 'utils/cookie'
 
     export default {
         name: 'Profile',
@@ -502,8 +503,13 @@
         },
         data: () => {
             return {
-                show: true,
-                img_data: ''
+                show: false,
+                change_avatar_button_message: 'Change avatar',
+                img_data: '',
+                headers: {
+                    'Authorization': 'JWT ' + cookie.getCookie("token"),
+                    'X-CSRFToken': cookie.getCookie('csrftoken')
+                }
             }
         },
         computed: {
@@ -517,7 +523,7 @@
             },
             myProfile() {
                 return this.$route.params.user_id === 'me'
-            }
+            },
         },
         methods: {
             editName() {
@@ -528,25 +534,17 @@
             },
             toggleShow() {
                 this.show = !this.show
+                if (this.show)
+                    this.change_avatar_button_message = 'Cancel'
+                else
+                    this.change_avatar_button_message = 'Change avatar'
+
             },
             cropImg(img_data) {
                 this.img_data = img_data
             },
             cropUploadSuccess(jsonData, field) {
-                console.log('-------- upload success --------')
-                console.log(jsonData)
-                console.log('field: ' + field)
-            },
-            /**
-             * upload fail
-             *
-             * [param] status    server api return error status, like 500
-             * [param] field
-             */
-            cropUploadFail(status, field) {
-                console.log('-------- upload fail --------')
-                console.log(status)
-                console.log('field: ' + field)
+                this.$store.dispatch('getSelf')
             }
         }
     }

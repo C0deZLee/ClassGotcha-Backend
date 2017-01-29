@@ -1,31 +1,18 @@
 <template>
 <div class="vue-image-crop-upload" v-show="value">
-    <div class="vicp-wrap">
-        <div class="vicp-close" @click="off">
-            <i class="vicp-icon4"></i>
-        </div>
 
+    <div class="vicp-wrap">
         <div class="vicp-step1" v-show="step === 1">
-            <div class="vicp-drop-area"
-				@dragleave="preventDefault"
-				@dragover="preventDefault"
-				@dragenter="preventDefault"
-				@click="handleClick"
-				@drop="handleChange">
-                <i class="vicp-icon1" v-show="loading !== 1">
-					<i class="vicp-icon1-arrow"></i>
-	                <i class="vicp-icon1-body"></i>
-	                <i class="vicp-icon1-bottom"></i>
-                </i>
-                <span class="vicp-hint" >Drag or Click to upload</span>
+            <div class="vicp-drop-area"	@dragleave="preventDefault" @dragover="preventDefault"	@dragenter="preventDefault"	@click="handleClick" @drop="handleChange">
+                <h3>
+                <i class="fa fa-upload" v-show="loading !== 1"></i>
+                <span >Drag the file here or click</span>
+                </h3>
                 <span class="vicp-no-supported-hint" v-show="!isSupported">{{ lang.noSupported }}</span>
                 <input type="file" v-show="false" @change="handleChange" ref="fileinput">
             </div>
-            <div class="vicp-error" v-show="hasError">
-                <i class="vicp-icon2"></i> {{ errorMsg }}
-            </div>
-            <div class="vicp-operate">
-                <a @click="off" @mousedown="ripple">{{ lang.btn.off }}</a>
+            <div class="font-bold text-danger text-center" v-show="hasError">
+                <i class="fa fa-warning"></i> {{ errorMsg }}
             </div>
         </div>
 
@@ -49,7 +36,6 @@
 							@mouseup="createImg"
 							@mouseout="createImg"
 							ref="img">
-                        <div class="vicp-img-shade vicp-img-shade-1" :style="sourceImgShadeStyle"></div>
                         <div class="vicp-img-shade vicp-img-shade-2" :style="sourceImgShadeStyle"></div>
                     </div>
                     <div class="vicp-range">
@@ -64,16 +50,12 @@
                             <img :src="createImgUrl" :style="previewStyle">
                             <span>{{ lang.preview }}</span>
                         </div>
-                        <div class="vicp-preview-item">
-                            <img :src="createImgUrl" :style="previewStyle" v-if="!noCircle">
-                            <span>{{ lang.preview }}</span>
-                        </div>
                     </div>
                 </div>
             </div>
             <div class="vicp-operate">
-                <a @click="setStep(1)" @mousedown="ripple">{{ lang.btn.back }}</a>
-                <a class="vicp-operate-btn" @click="upload" @mousedown="ripple">{{ lang.btn.save }}</a>
+                <a @click="setStep(1)" >{{ lang.btn.back }}</a>
+                <a class="vicp-operate-btn" @click="upload" >{{ lang.btn.save }}</a>
             </div>
         </div>
 
@@ -83,16 +65,15 @@
                 <div class="vicp-progress-wrap">
                     <span class="vicp-progress" v-show="loading === 1" :style="progressStyle"></span>
                 </div>
-                <div class="vicp-error" v-show="hasError">
-                    <i class="vicp-icon2"></i> {{ errorMsg }}
-                </div>
-                <div class="vicp-success" v-show="loading === 2">
-                    <i class="vicp-icon3"></i> {{ lang.success }}
-                </div>
+            <div class="font-bold text-danger text-center" v-show="hasError">
+                <i class="fa fa-warning"></i> {{ errorMsg }}
+            </div>
+                 <div class="font-bold  text-navy text-center" v-show="loading === 2">
+                <i class="fa fa-check-circle"></i> {{ lang.success }}
+            </div>
             </div>
             <div class="vicp-operate">
-                <a @click="setStep(2)" @mousedown="ripple">{{ lang.btn.back }}</a>
-                <a @click="off" @mousedown="ripple">{{ lang.btn.close }}</a>
+                <a @click="setStep(2)" >{{ lang.btn.back }}</a>
             </div>
         </div>
         <canvas v-show="false" :width="width" :height="height" ref="canvas"></canvas>
@@ -101,7 +82,7 @@
 </template>
 
 <script>
-    'use strict'
+    import { API_ROOT } from '../../config'
 
     const mimes = {
         'jpg': 'image/jpeg',
@@ -110,39 +91,7 @@
         'svg': 'image/svg+xml',
         'psd': 'image/photoshop'
     }
-    //  点击波纹效果
-    const effectRipple = function(e, arg_opts) {
-        let opts = Object.assign({
-            ele: e.target, //  波纹作用元素
-            type: 'hit', //  hit点击位置扩散center中心点扩展
-            bgc: 'rgba(0, 0, 0, 0.15)' //  波纹颜色
-        }, arg_opts)
-        let target = opts.ele
-        if (target) {
-            let rect = target.getBoundingClientRect()
-            let ripple = target.querySelector('.e-ripple')
-            if (!ripple) {
-                ripple = document.createElement('span')
-                ripple.className = 'e-ripple'
-                ripple.style.height = ripple.style.width = Math.max(rect.width, rect.height) + 'px'
-                target.appendChild(ripple)
-            } else {
-                ripple.className = 'e-ripple'
-            }
-            switch (opts.type) {
-                case 'center':
-                    ripple.style.top = (rect.height / 2 - ripple.offsetHeight / 2) + 'px'
-                    ripple.style.left = (rect.width / 2 - ripple.offsetWidth / 2) + 'px'
-                    break
-                default:
-                    ripple.style.top = (e.pageY - rect.top - ripple.offsetHeight / 2 - document.body.scrollTop) + 'px'
-                    ripple.style.left = (e.pageX - rect.left - ripple.offsetWidth / 2 - document.body.scrollLeft) + 'px'
-            }
-            ripple.style.backgroundColor = opts.bgc
-            ripple.className = 'e-ripple z-active'
-            return false
-        }
-    }
+
     //  database64文件格式转换为2进制
     const data2blob = function(data, mime) {
         //  dataURL 的格式为 “data:image/pngbase64,****”,逗号之前都是一些说明性的文字，我们只需要逗号之后的就行了
@@ -164,7 +113,7 @@
             //  域，上传文件name，触发事件会带上（如果一个页面多个图片上传控件，可以做区分
             field: {
                 type: String,
-                'default': 'avatar'
+                'default': 'file'
             },
             //  原名key，类似于id，触发事件会带上（如果一个页面多个图片上传控件，可以做区分
             ki: {
@@ -177,7 +126,7 @@
             //  上传地址
             url: {
                 type: String,
-                'default': ''
+                'default': API_ROOT + 'account/avatar/'
             },
             //  其他要上传文件附带的数据，对象格式
             params: {
@@ -246,7 +195,7 @@
                     off: 'Cancel',
                     close: 'Close',
                     back: 'Back',
-                    save: 'Save'
+                    save: 'Upload'
                 },
                 error: {
                     onlyImg: 'Image only',
@@ -427,10 +376,6 @@
             }
         },
         methods: {
-            //  点击波纹效果
-            ripple(e) {
-                effectRipple(e)
-            },
             //  关闭控件
             off() {
                 let that = this
@@ -795,20 +740,15 @@
                 }).then(
                     //  上传成功
                     function(resData) {
-                        if (that.value) {
-                            that.loading = 2
-                            that.$emit('crop-upload-success', resData, field, ki)
-                        }
-
+                        that.loading = 2
+                        that.$emit('crop-upload-success', resData, field, ki)
                     },
                     //  上传失败
-                    function(sts) {
-                        if (that.value) {
-                            that.loading = 3
-                            that.hasError = true
-                            that.errorMsg = lang.fail
-                            that.$emit('crop-upload-fail', sts, field, ki)
-                        }
+                    function(error) {
+                        that.loading = 3
+                        that.hasError = true
+                        that.errorMsg = lang.fail
+                        that.$emit('crop-upload-fail', error, field, ki)
                     }
                 )
             }

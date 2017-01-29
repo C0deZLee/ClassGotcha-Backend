@@ -71,7 +71,7 @@ def account_avatar(request):
 		new_avatar.save()
 		request.user.avatar = new_avatar
 		request.user.save()
-		return Response(status=status.HTTP_200_OK)
+		return Response({'data': 'success'}, status=status.HTTP_200_OK)
 	elif request.method == 'GET':
 		serializer = AvatarSerializer(request.user.avatar)
 		return Response(serializer.data)

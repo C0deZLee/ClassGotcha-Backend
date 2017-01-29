@@ -78,17 +78,16 @@ export const userApi = {
     },
 
     // Post changes
-    updateUser(pk) {
-        return Vue.http.post(API_ROOT + 'account/update/' + pk + '/', { headers: { Authorization: 'JWT ' + getCookie('token') } })
+    updateUser(pk, formData) {
+        return Vue.http.post(API_ROOT + 'account/update/' + pk + '/', formData, { headers: { Authorization: 'JWT ' + getCookie('token') } })
             .then((response) => Promise.resolve(response.data))
             .catch((error) => Promise.reject(error))
     },
-    // TODO
-    // updateAvatar(pk) {
-    //     return Vue.http.post(API_ROOT + 'account/update/' + pk + '/', { headers: { Authorization: 'JWT ' + getCookie('token') } })
-    //         .then((response) => Promise.resolve(response.data))
-    //         .catch((error) => Promise.reject(error))
-    // },
+    updateAvatar(pk, formData) {
+        return Vue.http.post(API_ROOT + 'account/update/' + pk + '/', formData, { headers: { Authorization: 'JWT ' + getCookie('token') } })
+            .then((response) => Promise.resolve(response.data))
+            .catch((error) => Promise.reject(error))
+    },
     addClassroom(pk) {
         return Vue.http.post(API_ROOT + 'account/classrooms/' + pk + '/', {}, { headers: { Authorization: 'JWT ' + getCookie('token') } })
             .then((response) => Promise.resolve(response.data))
