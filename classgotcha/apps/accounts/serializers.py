@@ -1,12 +1,13 @@
 from models import Account, Avatar
 from rest_framework import serializers
 
-
 # from ..posts.serializers import Moment, MomentSerializer
 # from ..notes.serializers import Note, NoteSerializer
 # from ..chat.serializers import Message, MessageSerializer
 # from ..classrooms.serializers import BasicClassroomSerializer
 # import random
+
+from ..tasks.serializers import BasicTaskSerializer
 
 
 class AvatarSerializer(serializers.ModelSerializer):
@@ -33,6 +34,7 @@ class AccountSerializer(serializers.ModelSerializer):
 	# messages = MessageSerializer(many = True , read_only = True)
 	# receivedMessages = serializers.PrimaryKeyRelatedField()
 	# many=True, queryset=Message.objects.all())
+	tasks = BasicTaskSerializer(many=True)
 	avatar = AvatarSerializer(required=False)
 	is_professor = serializers.SerializerMethodField()
 	full_name = serializers.SerializerMethodField()

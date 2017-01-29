@@ -23,6 +23,18 @@ class Semester(models.Model):
 	def __unicode__(self):
 		return self.name
 
+	def formatted_start_date(self):
+		if self.start:
+			return self.start.strftime('%Y-%m-%d')
+		else:
+			return ''
+
+	def formatted_end_date(self):
+		if self.end:
+			return self.end.strftime('%Y-%m-%d')
+		else:
+			return ''
+
 
 class Classroom(models.Model):
 	# Basic

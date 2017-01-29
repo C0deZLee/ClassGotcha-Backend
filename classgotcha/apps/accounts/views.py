@@ -13,7 +13,7 @@ from rest_framework.decorators import detail_route, list_route, api_view, permis
 from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly, AllowAny, IsAdminUser
 
 from serializers import AccountSerializer, BasicAccountSerializer, AuthAccountSerializer, AvatarSerializer
-from ..classrooms.serializers import Classroom, ClassroomSerializer
+from ..classrooms.serializers import Classroom, BasicClassroomSerializer
 from ..notes.serializers import NoteSerializer
 from ..posts.serializers import Moment, MomentSerializer
 from ..chat.serializers import Room, RoomSerializer
@@ -169,7 +169,7 @@ class AccountViewSet(viewsets.ViewSet):
 		classroom_queryset = Classroom.objects.all()
 		if request.method == 'GET':
 			classrooms = Classroom.objects.filter(students__pk=request.user.pk)
-			serializer = ClassroomSerializer(classrooms, many=True)
+			serializer = BasicClassroomSerializer(classrooms, many=True)
 			return Response(serializer.data)
 
 		if request.method == 'POST':

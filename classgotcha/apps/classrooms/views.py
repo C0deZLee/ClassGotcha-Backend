@@ -73,7 +73,7 @@ class ClassroomViewSet(viewsets.ViewSet):
 				class_number = items[1]
 				major = Major.objects.get(major_short=class_major)
 				classrooms = Classroom.objects.filter(major=major, class_number=class_number)
-				serializer = ClassroomSerializer(classrooms, many=True)
+				serializer = BasicClassroomSerializer(classrooms, many=True)
 				return Response(serializer.data)
 			else:
 				# TODO STEVE: need to consider more circumstances

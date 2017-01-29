@@ -3,6 +3,11 @@ from rest_framework import serializers
 
 
 class TaskSerializer(serializers.ModelSerializer):
+	formatted_start_time = serializers.ReadOnlyField()
+	formatted_end_time = serializers.ReadOnlyField()
+	repeat_start_date = serializers.ReadOnlyField()
+	repeat_end_date = serializers.ReadOnlyField()
+
 	class Meta:
 		model = Task
 		fields = '__all__'
@@ -31,6 +36,13 @@ class TaskSerializer(serializers.ModelSerializer):
 
 
 class BasicTaskSerializer(serializers.ModelSerializer):
+	formatted_start_time = serializers.ReadOnlyField()
+	formatted_end_time = serializers.ReadOnlyField()
+	repeat_start_date = serializers.ReadOnlyField()
+	repeat_end_date = serializers.ReadOnlyField()
+	repeat_list = serializers.ReadOnlyField()
+
 	class Meta:
 		model = Task
-		fields = ('start', 'end', 'repeat', 'task_name', 'type', 'task_des')
+		fields = ('formatted_start_time', 'formatted_end_time', 'repeat_start_date',
+		          'repeat_end_date', 'repeat_list', 'task_name', 'type', 'task_des')
