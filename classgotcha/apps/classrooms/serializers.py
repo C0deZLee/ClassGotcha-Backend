@@ -40,7 +40,10 @@ class ClassroomSerializer(serializers.ModelSerializer):
 class BasicClassroomSerializer(serializers.ModelSerializer):
 	students_count = serializers.ReadOnlyField()
 	class_short = serializers.ReadOnlyField()
+	class_time = BasicTaskSerializer()
+	semester = SemesterSerializer()
 
 	class Meta:
 		model = Classroom
-		fields = ('id', 'class_code', 'class_short', 'students_count', 'class_section', 'description')
+		fields = ('id', 'class_code', 'class_short', 'students_count',
+		          'class_section', 'description', 'class_time', 'semester')

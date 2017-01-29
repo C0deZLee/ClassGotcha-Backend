@@ -13,7 +13,6 @@ export const REFRESH_FAILED = 'REFRESH_FAILED'
 
 export const LOGOUT = 'LOGOUT'
 
-export const LOAD_AVATAR = 'LOAD_AVATAR'
 export const UPDATE_AVATAR = 'UPDATE_AVATAR'
 
 export const LOAD_SELF = 'LOAD_SELF'

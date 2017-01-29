@@ -100,7 +100,6 @@ const actions = {
                 console.log(response)
                 commit(types.LOGIN_SUCCESS, response)
                 dispatch('getSelf')
-                dispatch('getAvatar')
                 dispatch('getClassrooms')
                 dispatch('getChatrooms')
                 dispatch('getFriends')
@@ -150,15 +149,6 @@ const actions = {
         userApi.getSelf()
             .then((response) => {
                 commit(types.LOAD_SELF, response)
-            })
-            .catch((error) => {
-                commit(types.LOG_ERROR, error)
-            })
-    },
-    getAvatar({ commit }) {
-        userApi.getAvatar()
-            .then((response) => {
-                commit(types.LOAD_AVATAR, response)
             })
             .catch((error) => {
                 commit(types.LOG_ERROR, error)
@@ -325,9 +315,6 @@ const mutations = {
     // load data
     [types.LOAD_SELF](state, response) {
         state.user = response
-    },
-    [types.LOAD_AVATAR](state, response) {
-        state.avatar = response
     },
     [types.LOAD_CLASSROOMS](state, response) {
         state.classrooms = response

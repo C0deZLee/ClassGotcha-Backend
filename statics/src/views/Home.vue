@@ -440,24 +440,7 @@
         name: 'Home',
         data() {
             return {
-                events: [{
-                        title: "My repeating event",
-                        start: '10:00', // a start time (10am in this example)
-                        end: '14:00', // an end time (2pm in this example)
-                        dow: [1, 4], // Repeat monday and thursday
-                        ranges: [{ start: "2017-01-01", end: "2017-04-01" }]
-                    },
-                    {
-                        title: 'event2',
-                        start: '2017-01-30',
-                        end: '2017-02-02',
-                    },
-                    {
-                        title: 'event3',
-                        start: '2017-01-29T12:30:00',
-                        allDay: false,
-                    },
-                ]
+                events: []
             }
         },
         components: {
@@ -475,7 +458,7 @@
             let event_list = []
             for (let counter in this.$store.getters.userClassrooms) {
                 const classroom = this.$store.getters.userClassrooms[counter]
-
+                console.log(classroom)
                 // classes
                 event_list.push({
                     title: classroom.class_time.task_name,

@@ -162,7 +162,7 @@
             },
 
         },
-        created: function() {
+        created() {
             this.validateChatroom()
         },
         watch: {
