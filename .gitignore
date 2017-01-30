@@ -12,7 +12,7 @@ local/env/*
 local/tmp/*
 .editorconfig
 .eslintrc
-build/
+dist/
 
 # static files
 statics/node_modules

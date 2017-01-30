@@ -235,20 +235,35 @@
         <div id="vertical-timeline" class="vertical-container light-timeline no-margins">
           <div class="vertical-timeline-block">
             <div class="vertical-timeline-icon navy-bg">
-              <i class="fa fa-question"></i>
+              <i class="fa fa-star"></i>
             </div>
             <div class="vertical-timeline-content">
-              <h2>Add a new due?</h2>
-              <textarea class="form-control" placeholder="Homwwork due tomorrow?"></textarea>
-              <a href="#" class="btn btn-sm btn-primary"> More info</a>
-              <span class="vertical-date">
-                <select>
-                  <option value ="volvo">Homework</option>
-                  <option value ="saab">Quiz</option>
-                  <option value="opel">Exam</option>
-                  <option value="audi">Meeting</option>
+              <h2><a class="btn btn-xm btn-primary m-b" @click="showAddTask"><i class="fa fa-plus"></i></a>Add a new task to classroom?</h2>
+              <div v-if="add_task">
+                <div class="row">
+                   <div class="col-md-4">
+              <input class="form-control m-b" placeholder="Title"></input>
+              </div>
+                   <div class="col-md-4">
+               <span class="vertical-date">
+                <select class="form-control m-b">
+                  <option >--Type--</option>                  
+                  <option value="Homework">Homework</option>
+                  <option value="Lab">Homework</option>
+                  <option value="Quiz">Quiz</option>
+                  <option value="Exam">Exam</option>
                 </select>
               </span>
+                 </div>
+                 <div class="col-md-4">
+              <input class="form-control m-b" placeholder="Time"></input>                   
+                   </div>
+             
+              
+              </div>
+              <textarea class="form-control m-b" placeholder="Homwwork due tomorrow?"></textarea>
+              <a href="#" class="btn btn-sm btn-primary"> More info</a>
+              </div>
             </div>
           </div>
           <div class="vertical-timeline-block">
@@ -351,10 +366,14 @@
                 content: '',
                 question: '',
                 comment_content: '',
-                show_comment_id: -1
+                show_comment_id: -1,
+                add_task: false
             }
         },
         methods: {
+            showAddTask() {
+                this.add_task = !this.add_task
+            },
             formatTime(time) {
                 return customTime(time)
             },
