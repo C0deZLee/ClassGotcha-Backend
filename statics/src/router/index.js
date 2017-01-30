@@ -19,6 +19,7 @@ import ClassroomList from 'views/ClassroomList'
 import Page404 from 'views/404'
 import Page403 from 'views/403'
 import Test from 'views/Test'
+import Professor from 'views/Professor'
 
 Vue.use(Router)
 Vue.use(Resource)
@@ -79,6 +80,9 @@ export default new Router({
         }, {
             path: '/test',
             component: Test
+        }, {
+            path: '/professor/id/:professor_id',
+            component: Professor
         }]
     }]
 })

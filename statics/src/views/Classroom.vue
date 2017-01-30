@@ -100,10 +100,10 @@
               </ul>
             </div>
             <h3>Professor Info</h3>
-            <p class="small">
-              Name: <a href="">Professor Name</a><br>Office Hour: 11:00AM - 13:00AM Mon/Thu <br> Office: 220 IST<br> Email: buu1@psu.edu<br>
+            <img alt="image" src="https://classgotcha-us-standard-20161024.s3.amazonaws.com/avatars/3.1x.png?Signature=tEjj1XqtEwU5Tct6HrX%2BkavEmuc%3D&amp;Expires=1485737897&amp;AWSAccessKeyId=AKIAIC72HESTHUCZQHLQ" class="img-circle">
+             <h5> Name: <a href="">Professor Name</a><br> Office: 220 IST<br> Email: buu1@psu.edu<br>
               <br>
-              <span class="font-bold">Rating: <i class="fa fa-star text-navy"></i><i class="fa fa-star text-navy"></i><i class="fa fa-star text-navy"></i><i class="fa fa-star text-navy"></i><i class="fa fa-star text-navy"></i> </span>
+              <span class="font-bold">Rating: <i class="fa fa-star text-navy"></i><i class="fa fa-star text-navy"></i><i class="fa fa-star text-navy"></i><i class="fa fa-star text-navy"></i><i class="fa fa-star text-navy"></i> </span></h5>
             <ul class="tag-list" style="padding: 0">
               <li><a href=""><i class="fa fa-tag"></i> Harsh</a></li>
               <li><a href=""><i class="fa fa-tag"></i> Huge Work Load</a></li>

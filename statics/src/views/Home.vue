@@ -1,10 +1,23 @@
 <template>
 <div>
           <div class="row  border-bottom white-bg dashboard-header">
-            <div class="col-sm-4">
-                <h2>Welcome back! {{username()}}! </h2>
-                <small>Here is something you need to do today</small>
-                <ul class="list-group clear-list m-t">
+            <div class="col-sm-3">
+                <h2>Welcome back! {{username()}}! </h2><br>
+                <p>Here are tasks we recommand you to do today!</p>
+              
+                <div id="external-events">
+                        <h5>Drag a event and drop into callendar.</h5>
+                        <div class="external-event lazur-bg ui-draggable ui-draggable-handle" style="position: relative;">Go to shop and buy some products.</div>
+                        <div class="external-event lazur-bg ui-draggable ui-draggable-handle" style="position: relative;">Check the new CI from Corporation.</div>
+                        <div class="external-event lazur-bg ui-draggable ui-draggable-handle" style="position: relative;">Send documents to John.</div>
+                        <div class="external-event lazur-bg ui-draggable ui-draggable-handle" style="position: relative;">Phone to Sandra.</div>
+                        <div class="external-event lazur-bg ui-draggable ui-draggable-handle" style="position: relative;">Chat with Michael.</div>
+                       
+                    </div>
+                    <br>
+                <p>Here are your tasks today!</p>
+                    
+                      <ul class="list-group clear-list m-t">
                     <li class="list-group-item fist-item">
                                         <span class="pull-right">
                                             10:30 am
@@ -35,8 +48,9 @@
                         <span class="label label-primary">5</span> CS465 Homework submission
                     </li>
                 </ul>
+                <button class="btn btn-primary pull-right">See detail</button>
             </div>
-            <div class="col-sm-8">
+            <div class="col-sm-9">
                 <full-calendar :events="events"></full-calendar>
             </div>
           </div>
@@ -48,62 +62,53 @@
         <div class="row">
           <div class="col-lg-4">
               <div class="ibox float-e-margins">
-                  <div class="ibox-title">
-                      <h5>New Message!</h5> <span class="label label-primary">IN+</span>
-                      <div ibox-tools></div>
-                  </div>
-                  <div class="ibox-content">
-                      <div>
+                    <div class="ibox-title">
+                        <h5>Small todo list</h5>
+                        <div class="ibox-tools">
+                            <a class="collapse-link">
+                                <i class="fa fa-chevron-up"></i>
+                            </a>
+                            <a class="close-link">
+                                <i class="fa fa-times"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="ibox-content">
+                        <ul class="todo-list m-t small-list">
+                            <li>
+                                <a href="#" class="check-link"><i class="fa fa-check-square"></i> </a>
+                                <span class="m-l-xs todo-completed">Buy a milk</span>
 
-                          <div class="pull-right text-right">
-                              <bar-chart data="main.BarChart.data" options="main.BarChart.options"></bar-chart>
-                              <br/>
-                              <small class="font-bold">4/10 14:05pm</small>
-                          </div>
-                          <h4>CS 311 TA replied your question!
-                              <br/>
-                              <small class="m-r"><a ui-sref="flot_chart"> Click here to see! </a></small>
-                          </h4>
-                      </div>
-                  </div>
-              </div>
-              <div class="ibox float-e-margins">
-                  <div class="ibox-title">
-                      <h5>Read below comments and tweets</h5>
-                      <div ibox-tools></div>
-                  </div>
-                  <div class="ibox-content no-padding">
-                      <ul class="list-group">
-                          <li class="list-group-item">
-                              <p><a class="text-info" href="">@ Monica smith</a>The class notes of CS311 this week is up, check it out if you miss anyof them.</p>
-                              <small class="block text-muted"><i class="fa fa-clock-o"></i> 1 minuts ago</small>
-                          </li>
-                          <li class="list-group-item">
-                              <p><a class="text-info" href="">@mick Smith</a> Thanks for note, it was pretty helpful!</p>
-                              <div class="text-center m">
-                                  <span id="sparkline8"></span>
-                              </div>
-                              <small class="block text-muted"><i class="fa fa-clock-o"></i> 2 hours ago</small>
-                          </li>
-                          <li class="list-group-item">
-                              <p><a class="text-info" href="">@Kevin Smith</a> The math Home work is due on Wednesday , instructor extended the DL agian :) </p>
-                              <small class="block text-muted"><i class="fa fa-clock-o"></i> 2 minuts ago</small>
-                          </li>
-                          <li class="list-group-item ">
-                              <p><a class="text-info" href="">@Jonathan Febrick</a> Finished the Drawing project, The requiremnt for the detail was high this time </p>
-                              <small class="block text-muted"><i class="fa fa-clock-o"></i> 1 hour ago</small>
-                          </li>
-                          <li class="list-group-item">
-                              <p><a class="text-info" href="">@Alan Marry</a> @Jonathan have not started the drawing project yet, still need more tool for this projects:)</p>
-                              <small class="block text-muted"><i class="fa fa-clock-o"></i> 1 minuts ago</small>
-                          </li>
-                          <li class="list-group-item">
-                              <p><a class="text-info" href="">@Kevin Smith</a> Anyone wannt to do the CS311 projects after the help session  </p>
-                              <small class="block text-muted"><i class="fa fa-clock-o"></i> 2 minuts ago</small>
-                          </li>
-                      </ul>
-                  </div>
-              </div>
+                            </li>
+                            <li>
+                                <a href="#" class="check-link"><i class="fa fa-check-square"></i> </a>
+                                <span class="m-l-xs todo-completed">Go to shop and find some products.</span>
+
+                            </li>
+                            <li>
+                                <a href="#" class="check-link"><i class="fa fa-square-o"></i> </a>
+                                <span class="m-l-xs">Send documents to Mike</span>
+                                <small class="label label-primary"><i class="fa fa-clock-o"></i> 1 mins</small>
+                            </li>
+                            <li>
+                                <a href="#" class="check-link"><i class="fa fa-square-o"></i> </a>
+                                <span class="m-l-xs">Go to the doctor dr Smith</span>
+                            </li>
+                            <li>
+                                <a href="#" class="check-link"><i class="fa fa-square-o"></i> </a>
+                                <span class="m-l-xs">Plan vacation</span>
+                            </li>
+                            <li>
+                                <a href="#" class="check-link"><i class="fa fa-square-o"></i> </a>
+                                <span class="m-l-xs">Create new stuff</span>
+                            </li>
+                            <li>
+                                <a href="#" class="check-link"><i class="fa fa-square-o"></i> </a>
+                                <span class="m-l-xs">Call to Anna for dinner</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
           </div>
           <div class="col-lg-4">
               <div class="ibox float-e-margins">

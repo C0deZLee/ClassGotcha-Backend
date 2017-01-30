@@ -82,10 +82,8 @@
                       <div class="panel-options">
                         <ul class="nav nav-tabs">
                           <li class="active"><a href="#tab-1" data-toggle="tab">Rencent activity</a></li>
-                            
                           <li class=""><a href="#tab-2" data-toggle="tab">Personal Information</a></li>
                           <li class=""><a href="#tab-4" data-toggle="tab">Security</a></li>
-                          
                           <li class="" v-if="myProfile"><a href="#tab-3" data-toggle="tab">Badges Process</a></li>
                           <li class="" v-if="myProfile"><a href="#tab-3" data-toggle="tab">Self</a></li>
                         </ul>
