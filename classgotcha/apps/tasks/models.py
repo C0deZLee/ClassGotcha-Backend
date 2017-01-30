@@ -21,7 +21,7 @@ class Task(models.Model):
 	)
 
 	task_name = models.CharField(max_length=50)
-	task_des = models.CharField(max_length=500, blank=True)  # task_description
+	description = models.CharField(max_length=500, null=True, blank=True)  # task_description
 	start = models.DateTimeField(blank=True, null=True)
 	end = models.DateTimeField(blank=True, null=True)
 	due = models.DateTimeField(blank=True, null=True)
@@ -29,8 +29,9 @@ class Task(models.Model):
 	repeat = models.CharField(max_length=20, default='')  # MoTuWeThFi
 	repeat_start = models.DateField(null=True)
 	repeat_end = models.DateField(null=True)
+	location = models.CharField(max_length=50, null=True)
 	# Relationship
-	involved = models.ManyToManyField(Account, related_name='tasks')
+	involved = models.ManyToManyField(Account, related_name='tasks', blank=True)
 	classroom = models.ForeignKey(Classroom, blank=True, null=True, related_name='tasks', on_delete=models.CASCADE)
 	group = models.ForeignKey(Group, blank=True, null=True, related_name='tasks', on_delete=models.CASCADE)
 
