@@ -3,6 +3,39 @@ from django.db import models
 from ..accounts.models import Account
 from ..classrooms.models import Classroom
 
+from django.db import models
+from django.db.models import Avg
+
+from ..accounts.models import Account
+from ..classrooms.models import Classroom
+
+
+class Note(models.Model):
+	# Relations
+	title = models.CharField(max_length=100)
+	description = models.TextField(blank=True, null=True)
+	creator = models.ForeignKey(Account, related_name='notes')
+	classroom = models.ForeignKey(Classroom, related_name='notes')
+	created = models.DateTimeField(auto_now_add=True)
+	# Basics
+	file = models.FileField(upload_to='avatars')
+	# Relatives
+	# 1) rating
+
+	@property
+	def overall_rating(self):
+		return self.rating.all().aggregate(Avg('num'))['num__avg']
+
+	def __unicode__(self):
+		return self.title
+
+
+class Rate(models.Model):
+	# Relations
+	creator = models.ForeignKey(Account)
+	num = models.IntegerField()
+	note = models.ForeignKey(Note, on_delete=models.CASCADE, related_name='rating')
+
 
 class Moment(models.Model):
 	# Basic
@@ -61,9 +94,7 @@ class Comment(models.Model):
 	creator = models.ForeignKey(Account, on_delete=models.CASCADE, related_name='comments', null=True, blank=True)
 	post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='comments', null=True, blank=True)
 	moment = models.ForeignKey(Moment, on_delete=models.CASCADE, related_name='comments', null=True, blank=True)
-	# how related_name work:
-	# http://stackoverflow.com/questions/2642613/what-is-related-name-used-for-in-django
-	# note = models.ForeignKey(Note, on_delete=models.CASCADE, related_name='comments', null=True, blank=True)
+	note = models.ForeignKey(Note, on_delete=models.CASCADE, related_name='comments', null=True, blank=True)
 	# Timestamp
 	created = models.DateTimeField(auto_now_add=True)
 	updated = models.DateTimeField(auto_now=True)

@@ -14,8 +14,7 @@ from models import Account, Classroom, Semester, Major, Professor
 from ..chat.models import Room
 
 from serializers import BasicClassroomSerializer, ClassroomSerializer
-from ..notes.serializers import Note, NoteSerializer
-from ..posts.serializers import Moment, MomentSerializer
+from ..posts.serializers import Moment, MomentSerializer,  Note, NoteSerializer
 from ..tasks.serializers import Task, TaskSerializer
 from ..accounts.serializers import BasicAccountSerializer
 

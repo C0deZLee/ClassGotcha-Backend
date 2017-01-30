@@ -22,8 +22,9 @@ classgotcha/apps/accounts/migrations/*
 classgotcha/apps/classrooms/migrations/*
 classgotcha/apps/chat/migrations/*
 classgotcha/apps/groups/migrations/*
-classgotcha/apps/notes/migrations/*
 classgotcha/apps/posts/migrations/*
 classgotcha/apps/tasks/migrations/*
+classgotcha/apps/tags/migrations/*
+
 .DS_Store
 /npm-debug.log

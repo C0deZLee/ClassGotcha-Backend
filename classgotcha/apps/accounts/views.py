@@ -14,8 +14,7 @@ from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnl
 
 from serializers import AccountSerializer, BasicAccountSerializer, AuthAccountSerializer, AvatarSerializer
 from ..classrooms.serializers import Classroom, BasicClassroomSerializer
-from ..notes.serializers import NoteSerializer
-from ..posts.serializers import Moment, MomentSerializer
+from ..posts.serializers import Moment, MomentSerializer, NoteSerializer
 from ..chat.serializers import Room, RoomSerializer
 from ..tasks.serializers import TaskSerializer
 
@@ -263,40 +262,48 @@ class AccountViewSet(viewsets.ViewSet):
 		return Response(serializer.data)
 
 	@staticmethod
-	def freetime(request):
+	def free_time(request):
 		user_tasks = request.user.tasks.all()
 		# loop through the tasks
-		freetimedict = {'Mon': [], 'Tue': [], 'Wed': [], 'Thu': [], 'Fri': [], 'Sat': [], 'Sun': []}
+		free_time_dict = {'Mon': [], 'Tue': [], 'Wed': [], 'Thu': [], 'Fri': [], 'Sat': [], 'Sun': []}
 		for task in user_tasks:
 			try:
-				starttime = task.start.hour + task.start.minute * (1 / 60)
-				endtime = task.end.hour + task.end.minute * (1 / 60)
+				start_time = task.start.hour + task.start.minute * (1 / 60)
+				end_time = task.end.hour + task.end.minute * (1 / 60)
 			except:
 				pass
 			if 'Mo' in task.repeat:
-				freetimedict['Mon'].append([starttime, endtime])
+				free_time_dict['Mon'].append([start_time, end_time])
 
 			if 'Tu' in task.repeat:
-				freetimedict['Tue'].append([starttime, endtime])
+				free_time_dict['Tue'].append([start_time, end_time])
 
 			if 'We' in task.repeat:
-				freetimedict['Wed'].append([starttime, endtime])
+				free_time_dict['Wed'].append([start_time, end_time])
 
 			if 'Th' in task.repeat:
-				freetimedict['Thu'].append([starttime, endtime])
+				free_time_dict['Thu'].append([start_time, end_time])
 
 			if 'Fr' in task.repeat:
-				freetimedict['Fri'].append([starttime, endtime])
+				free_time_dict['Fri'].append([start_time, end_time])
 
 		# compute the intersections and return
-		print freetimedict
-		for freedictlist in freetimedict:
-			intervals = freetimedict[freedictlist]
-
-			freedictlist = group(intervals)  # find the union of all unavailable time
-
+		print free_time_dict
+		for free_dict_list in free_time_dict:
+			intervals = free_time_dict[free_dict_list]
+			free_dict_list = group(intervals)  # find the union of all unavailable time
 			print intervals
+			free_dict_list = complement(intervals, first=0, last=24)
 
-			freedictlist = complement(intervals, first=0, last=24)
+		return Response({'freetime': free_time_dict}, status=status.HTTP_200_OK)
 
-		return Response({'freetime': freetimedict}, status=status.HTTP_200_OK)
+	def recent_activity(self, request):
+		# TODO: show recent activity in profile page
+		# include posted moments, comments, notes
+		pass
+
+	def home_page_activity(self, request):
+		# TODO: show latest activity related to me
+		# include moments, comments, notes my classmates and friends posted
+		pass
+

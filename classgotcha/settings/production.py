@@ -57,9 +57,9 @@ INSTALLED_APPS = [
 	'classgotcha.apps.classrooms',
 	'classgotcha.apps.posts',
 	'classgotcha.apps.groups',
-	'classgotcha.apps.notes',
 	'classgotcha.apps.tasks',
 	'classgotcha.apps.chat',
+	'classgotcha.apps.tags',
 
 ]
 
