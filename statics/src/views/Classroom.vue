@@ -1,12 +1,9 @@
 <template>
   <div class="page">
-    <div class="row wrapper border-bottom white-bg page-heading">
+    <!--<div class="row wrapper border-bottom white-bg page-heading">
       <div class="col-lg-10">
         <h2>{{currentClassroom.class_short}} 
-          <button title="Create new cluster" v-on:click="addClassroom()" class="btn btn-primary btn-xm">
-          <i class="fa fa-plus"></i> 
-          <span class="bold">Add To My Classroom</span>
-          </button>
+         
         </h2>
         <ol class="breadcrumb">
           <li>
@@ -20,18 +17,21 @@
           </li>
         </ol>
       </div>
-    </div>
+    </div>-->
     <div class="wrapper wrapper-content animated fadeInRight">
       <div class="row m-b-lg m-t-lg">
         <div class="col-md-6">
           <div class="profile-image">
-            <img src="modules/classrooms/img/CS.png" class="img-circle circle-border m-b-md" alt="profile">
+            <img src="img/CS.png" class="img-circle circle-border m-b-md" alt="profile">
           </div>
           <div class="profile-info">
             <div class="">
               <div>
                 <h2 class="no-margins">
-                  {{currentClassroom.class_short}}
+                  {{currentClassroom.class_short}}  <button title="Create new cluster" v-on:click="addClassroom()" class="btn btn-xm btn-primary ">
+          <i class="fa fa-plus"></i> 
+          <span class="bold">Add To My Classroom</span>
+          </button>
                 </h2>
                 <h4>
                   Section {{currentClassroom.class_section}}
@@ -115,26 +115,14 @@
         <div class="ibox">
           <div class="ibox-content">
             <h3>Class Notes</h3>
-            <div class="btn-group">
-              <a href="/#/classroom/id/demo/notes/" type="button" class="btn btn-success dropdown-toggle btn-lg">
-              <span class="fa fa-file"></span>
-              </a>
-            </div>
-            <div class="btn-group">
-              <a type="button" class="btn btn-info dropdown-toggle btn-lg">
-              <span class="fa fa-stack-exchange"></span>
-              </a>
-            </div>
-            <div class="btn-group">
-              <button type="button" class="btn btn-primary dropdown-toggle btn-lg " data-toggle="dropdown">
-              <span class="fa fa-file-picture-o"></span>
-              </button>
-            </div>
-            <div class="btn-group">
-              <button type="button" class="btn btn-danger dropdown-toggle btn-lg" data-toggle="dropdown">
-              <span class="fa fa-file-powerpoint-o"></span>
-              </button>
-            </div>
+            <ul class="folder-list m-b-md" style="padding: 0">
+                <li class="text-navy"><a href="/#/classroom/id/demo/notes/"> <i class="fa fa-inbox"></i> Notes <span class="label label-warning pull-right">16</span> </a></li>
+                <li><a href="mailbox.html"> <i class="fa fa-envelope-o"></i> Lectures</a></li>
+                <li><a href="mailbox.html"> <i class="fa fa-certificate"></i> Labs</a></li>
+                <li><a href="mailbox.html"> <i class="fa fa-file-text-o"></i> Homeworks <span class="label label-danger pull-right">2</span></a></li>
+                <li><a href="mailbox.html"> <i class="fa fa-trash-o"></i> Exams</a></li>
+            </ul>
+            <a>More...</a>
           </div>
         </div>
         <div class="ibox">
