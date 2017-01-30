@@ -49,9 +49,25 @@ class BasicTaskSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = Task
 		fields = ('formatted_start_time', 'formatted_end_time', 'repeat_start_date',
-		          'repeat_end_date', 'repeat_list', 'task_name', 'type', 'task_des')
+		          'repeat_end_date', 'repeat_list', 'task_name', 'type', 'description')
 
+'''
+The serializer for showing tasks in classroom page
+'''
+class ClassroomTaskSerializer(serializers.ModelSerializer):
+	formatted_due_datetime = serializers.ReadOnlyField()
+	repeat_start_date = serializers.ReadOnlyField()
+	repeat_end_date = serializers.ReadOnlyField()
+	repeat_list = serializers.ReadOnlyField()
 
+	class Meta:
+		model = Task
+		fields = ('formatted_due_datetime', 'repeat_start_date',
+		          'repeat_end_date', 'repeat_list', 'task_name', 'type', 'description')
+
+'''
+The serializer for showing class schedule
+'''
 class ClassTimeTaskSerializer(serializers.ModelSerializer):
 	formatted_start_time = serializers.ReadOnlyField()
 	formatted_end_time = serializers.ReadOnlyField()

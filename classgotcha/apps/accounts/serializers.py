@@ -1,13 +1,18 @@
 from models import Account, Avatar
 from rest_framework import serializers
+from ..tasks.serializers import BasicTaskSerializer
+
+# try:
+# 	from ..posts.serializers import MomentSerializer
+# except ImportError:
+# 	import sys
+# 	MomentSerializer = sys.modules['classgotcha.apps.posts.serializers.MomentSerializer']
 
 # from ..posts.serializers import Moment, MomentSerializer
 # from ..notes.serializers import Note, NoteSerializer
 # from ..chat.serializers import Message, MessageSerializer
 # from ..classrooms.serializers import BasicClassroomSerializer
 # import random
-
-from ..tasks.serializers import BasicTaskSerializer
 
 
 class AvatarSerializer(serializers.ModelSerializer):
@@ -22,7 +27,7 @@ class AccountSerializer(serializers.ModelSerializer):
 	# 	many=True, queryset=Account.objects.filter())
 	#
 	# classrooms = serializers.StringRelatedField(many=True, read_only=True)
-	# moments = serializers.PrimaryKeyRelatedField(
+	# moments = MomentSerializer(many=True)
 	# 	many=True, queryset=Moment.objects.exclude(flagged_num=3))
 	# # however this nested way always encounters problem
 	# # moments = MomentSerializer(read_only = True)
