@@ -1,4 +1,4 @@
-import postApi from '../../api/posts'
+import postApi from '../../api/post-api'
 // import router from '../../router'
 // import * as cookie from '../../utils/cookie'
 import * as types from '../mutation-types'
@@ -37,7 +37,7 @@ const actions = {
     addMomentLike({ commit, dispatch }, pk) {
         postApi.addLike(pk)
             .then((response) => {
-                commit(types.ADD_MOMENT_LIKE, response)
+                commit(types.POST_CLASSROOM_TASK, response)
             })
             .catch((error) => {
                 commit(types.LOG_ERROR, error)
@@ -51,6 +51,7 @@ const mutations = {
     [types.ADD_MOMENT_SOLVE](state, response) {},
     [types.ADD_MOMENT_LIKE](state, response) {},
     [types.POST_MOMENT_COMMENT](state, response) {},
+    [types.POST_CLASSROOM_TASK](state, response) {},
     [types.LOG_ERROR](state, error) {
         state.error_msg = error
         // TODO, need to handle errors

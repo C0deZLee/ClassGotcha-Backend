@@ -1,5 +1,5 @@
 import Vue from 'vue'
-import chatApi from '../../api/chat'
+import chatApi from '../../api/chat-api'
 import router from '../../router'
 // import * as cookie from '../../utils/cookie'
 import * as types from '../mutation-types'

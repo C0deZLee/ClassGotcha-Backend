@@ -1,4 +1,4 @@
-import classApi from '../../api/classroom'
+import classApi from '../../api/classroom-api'
 // import router from '../../router'
 // import * as cookie from '../../utils/cookie'
 import * as types from '../mutation-types'
@@ -73,6 +73,15 @@ const actions = {
                 commit(types.LOG_ERROR, error)
             })
     },
+    postClassroomTask({ commit, dispatch }, data) {
+        classApi.postTask(data.pk, data.formData)
+            .then((response) => {
+                commit(types.POST_CLASSROOM_TASK, response)
+            })
+            .catch((error) => {
+                commit(types.LOG_ERROR, error)
+            })
+    },
 }
 
 // mutations
@@ -92,6 +101,7 @@ const mutations = {
     [types.LOAD_CLASSROOM_MOMENTS](state, response) {
         state.moments = response
     },
+    [types.POST_CLASSROOM_TASK](state, response) {},
     [types.LOG_ERROR](state, error) {
         state.error_msg = error
         console.log(error)

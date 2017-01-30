@@ -1,4 +1,4 @@
-import { userApi } from '../../api/account'
+import { userApi } from '../../api/user-api'
 import router from '../../router'
 import * as cookie from '../../utils/cookie'
 import * as types from '../mutation-types'
@@ -211,8 +211,8 @@ const actions = {
                 commit(types.LOG_ERROR, error)
             })
     },
-    delClassroom({ commit, dispatch }, pk) {
-        userApi.delClassroom(pk)
+    remClassroom({ commit, dispatch }, pk) {
+        userApi.remClassroom(pk)
             .then((response) => {
                 commit(types.REMOVE_CLASSROOM)
                 dispatch('getClassrooms')
@@ -233,8 +233,8 @@ const actions = {
                 commit(types.LOG_ERROR, error)
             })
     },
-    delChatroom({ commit, dispatch }, pk) {
-        userApi.delChatroom(pk)
+    remChatroom({ commit, dispatch }, pk) {
+        userApi.remChatroom(pk)
             .then((response) => {
                 commit(types.REMOVE_CHATROOM)
                 dispatch('getChatrooms')

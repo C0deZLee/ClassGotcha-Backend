@@ -45,12 +45,12 @@ export default {
             .catch((error) => Promise.reject(error))
     },
     // post changes
-    addNotes(pk, formData) {
+    postNote(pk, formData) {
         return Vue.http.post(API_ROOT + 'classroom/' + pk + '/notes/', formData, { headers: { Authorization: 'JWT ' + getCookie('token') } })
             .then((response) => Promise.resolve(response.data))
             .catch((error) => Promise.reject(error))
     },
-    addTasks(pk, formData) {
+    postTask(pk, formData) {
         return Vue.http.post(API_ROOT + 'classroom/' + pk + '/tasks/', formData, { headers: { Authorization: 'JWT ' + getCookie('token') } })
             .then((response) => Promise.resolve(response.data))
             .catch((error) => Promise.reject(error))

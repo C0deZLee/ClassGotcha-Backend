@@ -77,7 +77,7 @@ export const userApi = {
             .catch((error) => Promise.reject(error))
     },
 
-    // Post changes
+    // update changes
     updateUser(pk, formData) {
         return Vue.http.post(API_ROOT + 'account/update/' + pk + '/', formData, { headers: { Authorization: 'JWT ' + getCookie('token') } })
             .then((response) => Promise.resolve(response.data))
@@ -88,12 +88,14 @@ export const userApi = {
             .then((response) => Promise.resolve(response.data))
             .catch((error) => Promise.reject(error))
     },
+
+    // change relation
     addClassroom(pk) {
         return Vue.http.post(API_ROOT + 'account/classrooms/' + pk + '/', {}, { headers: { Authorization: 'JWT ' + getCookie('token') } })
             .then((response) => Promise.resolve(response.data))
             .catch((error) => Promise.reject(error))
     },
-    delClassroom(pk) {
+    remClassroom(pk) {
         return Vue.http.delete(API_ROOT + 'account/classrooms/' + pk + '/', {}, { headers: { Authorization: 'JWT ' + getCookie('token') } })
             .then((response) => Promise.resolve(response.data))
             .catch((error) => Promise.reject(error))
@@ -103,7 +105,7 @@ export const userApi = {
             .then((response) => Promise.resolve(response.data))
             .catch((error) => Promise.reject(error))
     },
-    delChatroom(pk) {
+    remChatroom(pk) {
         return Vue.http.delete(API_ROOT + 'account/clatrooms/' + pk + '/', {}, { headers: { Authorization: 'JWT ' + getCookie('token') } })
             .then((response) => Promise.resolve(response.data))
             .catch((error) => Promise.reject(error))
@@ -113,11 +115,12 @@ export const userApi = {
             .then((response) => Promise.resolve(response.data))
             .catch((error) => Promise.reject(error))
     },
-    delFriend(pk) {
+    remFriend(pk) {
         return Vue.http.delete(API_ROOT + 'account/friends/' + pk + '/', {}, { headers: { Authorization: 'JWT ' + getCookie('token') } })
             .then((response) => Promise.resolve(response.data))
             .catch((error) => Promise.reject(error))
     },
+    // post new 
     postMoment(formdata) {
         return Vue.http.post(API_ROOT + 'account/moments/', formdata, { headers: { Authorization: 'JWT ' + getCookie('token') } })
             .then((response) => Promise.resolve(response.data))
