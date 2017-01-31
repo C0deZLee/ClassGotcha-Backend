@@ -1,8 +1,5 @@
 <template>
-  <form class="m-t" role="form">
-    <p>Perfectly designed and precisely prepared admin theme with over 50 pages with extra new web app views.
-      <!--Continually expanded and constantly improved Inspinia Admin Them (IN+)-->
-    </p>
+  <form class="animated fadeInDown" role="form" >
     <p>Login in. To see it in action.</p>
     <div class="form-group">
       <input type="email" v-model="useremail" class="form-control" placeholder="Email" required>
@@ -22,8 +19,7 @@
     export default {
         name: 'login',
         methods: {
-            login(e) {
-                e.preventDefault()
+            login() {
                 var formData = {
                     'email': this.useremail,
                     'password': this.userpass

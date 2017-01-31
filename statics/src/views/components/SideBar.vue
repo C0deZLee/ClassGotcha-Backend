@@ -54,7 +54,7 @@
                         <i class="fa fa-users"></i>
                         <span class="nav-label">My Groups</span>
                     </a>
-                </li>
+                </li>frdedeeee3e33e3e3e3e          
                 <li>
                     <a href="/#/profile/id/me/">
                         <i class="fa fa-user"></i>

@@ -30,7 +30,7 @@ export const userApi = {
             .then((response) => Promise.resolve(response.data))
             .catch((error) => Promise.reject(error))
     },
-    tokenRefreash(formData) {
+    tokenRefresh(formData) {
         return Vue.http.post(API_ROOT + 'account/login-refresh/', formData)
             .then((response) => Promise.resolve(response.data))
             .catch((error) => Promise.reject(error))
