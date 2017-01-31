@@ -1,4 +1,4 @@
-from models import Account, Avatar, Group
+from models import Account, Avatar, Group, Professor
 from rest_framework import serializers
 from ..tasks.serializers import BasicTaskSerializer
 
@@ -88,3 +88,11 @@ class GroupSerializers(serializers.ModelSerializer):
 	class Meta:
 		model = Group
 		fields = ('group_type', 'members', 'classroom', 'creator')
+
+
+class ProfessorSerializers(serializers.ModelSerializer):
+	full_name = serializers.ReadOnlyField()
+	class Meta:
+		model = Professor
+		fields = '__all__'
+		read_only_fields = ('created',)

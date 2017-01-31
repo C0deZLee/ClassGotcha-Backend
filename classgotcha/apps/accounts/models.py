@@ -11,9 +11,7 @@ class Avatar(models.Model):
 
 class AccountManager(BaseUserManager):
 	def create_user(self, email, password=None, **kwargs):
-		"""
-		Creates and saves a User with the given email, username and password.
-		"""
+		"""Creates and saves a User with the given email, username and password."""
 		if not email:
 			raise ValueError('Users must have a valid email address')
 
@@ -60,6 +58,10 @@ class Professor(models.Model):
 	@property
 	def department(self):
 		return self.major.department
+
+	@property
+	def full_name(self):
+		return self.first_name + ' ' + self.last_name
 
 
 class Account(AbstractBaseUser, PermissionsMixin):
@@ -143,5 +145,6 @@ class Group(models.Model):
 	members = models.ManyToManyField(Account, blank=True, related_name='joined_groups')
 	classroom = models.ForeignKey('classrooms.Classroom', blank=True, null=True, related_name='groups')
 	creator = models.ForeignKey(Account, related_name='created_groups')
+
 # Relatives
 # 1) chatroom
