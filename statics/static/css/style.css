@@ -2385,6 +2385,31 @@ div.dt-button-info {
     cursor: pointer;
 }
 
+input[type=checkbox] {
+    display: none;
+}
+
+input[type=checkbox]+label {
+    display: inline-block;
+    *display: inline;
+    vertical-align: middle;
+    margin: 0;
+    padding: 0;
+    width: 22px;
+    height: 22px;
+    background: url(../css/patterns/icheck/green.png) no-repeat;
+    border: none;
+    cursor: pointer;
+}
+
+input[type=checkbox]+label {
+    background-position: 0 0;
+}
+
+input[type=checkbox]:checked+label {
+    background-position: -48px 0;
+}
+
 .icheckbox_square-green {
     background-position: 0 0;
 }

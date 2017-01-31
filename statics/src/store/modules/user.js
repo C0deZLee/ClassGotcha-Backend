@@ -89,6 +89,7 @@ const actions = {
             .then((response) => {
                 commit(types.REGSITER_SUCCESS, response)
                 dispatch('getSelf')
+                return Promise.resolve(response)
                 // getClassrooms()
                 // getChatrooms()
                 // getFriends()
@@ -96,6 +97,7 @@ const actions = {
             })
             .catch((error) => {
                 commit(types.REGSITER_FAILED, error)
+                return Promise.reject(error)
             })
     },
     login({ commit, dispatch }, formData) {
@@ -117,17 +119,17 @@ const actions = {
             })
     },
     tokenVerify({ rootState, commit, dispatch }, formData) {
-        const d = dispatch
         userApi.tokenVerify(formData)
             .then((response) => {
-                d('tokenRefresh', formData)
                 commit(types.VERIFY_SUCCESS, response)
                 if (rootState.route.path === '/login' || rootState.route.path === '/register') {
                     router.push('/')
                 }
             })
             .catch((error) => {
-                commit(types.VERIFY_FAILED)
+                if (rootState.route.path !== '/register') {
+                    dispatch('tokenRefresh', formData)
+                }
                 commit(types.LOG_ERROR, error)
             })
     },
@@ -137,7 +139,7 @@ const actions = {
                 commit(types.REFRESH_SUCCESS, response)
             })
             .catch((error) => {
-                commit(types.REFRESH_FAILED)
+                commit(types.LOGIN_FAILED)
                 commit(types.LOG_ERROR, error)
 
             })
@@ -280,7 +282,6 @@ const mutations = {
         state.login_status = true
         router.push('/')
     },
-
     [types.LOGIN_FAILED](state, error) {
         state.login_status = false
         state.token = null
@@ -303,27 +304,12 @@ const mutations = {
         state.login_status = true
     },
 
-    [types.VERIFY_FAILED](state, error) {
-        cookie.delCookie('token')
-        state.login_status = false
-        state.token = null
-        state.error_msg = error
-        router.push('/login')
-    },
-
     [types.REFRESH_SUCCESS](state, response) {
         cookie.setCookie('token', response.token)
         state.token = response.token
         state.login_status = true
     },
 
-    [types.REFRESH_FAILED](state, error) {
-        cookie.delCookie('token')
-        state.login_status = false
-        state.token = null
-        state.error_msg = error
-        router.push('/login')
-    },
     // load data
     [types.LOAD_SELF](state, response) {
         state.user = response

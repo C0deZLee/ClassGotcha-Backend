@@ -249,8 +249,6 @@
                                   <p class="m-b-xs"><strong>Meeting</strong></p>
 
                                   <p>meeet with adiver Mahon and talk about the schedule next semester .</p>
-
-                                  <p><line-chart data="main.LineChart.data" options="main.LineChart.options"></line-chart></p>
                               </div>
                           </div>
                       </div>

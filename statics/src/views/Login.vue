@@ -1,5 +1,5 @@
 <template>
-  <form class="animated fadeInDown" role="form" >
+  <div class="animated fadeInDown">
     <p>Login in. To see it in action.</p>
     <div class="form-group">
       <input type="email" v-model="useremail" class="form-control" placeholder="Email" required>
@@ -12,7 +12,7 @@
     <a href="#"><small>Forgot password?</small></a>
     <p class="text-muted text-center"><small>Do not have an account?</small></p>
     <a class="btn btn-sm btn-white btn-block" href="/#/register">Create an account</a>
-  </form>
+  </div>
 </template>
 
 <script>
