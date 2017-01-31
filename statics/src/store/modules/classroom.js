@@ -72,7 +72,17 @@ const getters = {
         return state.moments
     },
     classroomTasks: (state) => {
-        return state.classroom.tasks
+        if (state.classroom)
+            return state.classroom.tasks
+        else
+            return []
+    },
+    classroomProfessors: (state) => {
+        if (state.classroom)
+            return state.classroom.professors
+        else
+            return []
+
     }
 }
 
@@ -87,26 +97,19 @@ const actions = {
                 commit(types.LOG_ERROR, error)
             })
     },
-    // validateClassroom({ commit, dispatch }, pk) {
-    //     classApi.validate(pk)
-    //         .then((response) => {
-    //             commit(types.USER_IN_CLASSROOM)
-    //         })
-    //         .catch((error) => {
-    //             commit(types.USER_NOT_IN_CLASSROOM)
-    //         })
-    // },
     getClassroom({ rootState, commit, dispatch }, pk) {
         classApi.getClassroom(pk)
             .then((response) => {
                 commit(types.GET_CLASSROOM, response)
                 let not_in_class = true
+                // If user in classroom's student list, commit USER_IN_CLASSROOM
                 for (let i in response.students) {
                     if (response.students[i].id === rootState.user.user.id) {
                         commit(types.USER_IN_CLASSROOM)
                         not_in_class = false
                     }
                 }
+                // If user not in classroom's student list, commit USER_NOT_IN_CLASSROOM
                 if (not_in_class) {
                     commit(types.USER_NOT_IN_CLASSROOM)
                 }
