@@ -72,14 +72,13 @@ class BasicAccountSerializer(serializers.ModelSerializer):
 class AuthAccountSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = Account
-		fields = ('username', 'email', 'password')
+		fields = ('username', 'email', 'password', 'first_name', 'last_name')
 		write_only_fields = ('password',)
 
 	def create(self, validated_data):
-		account = Account(email=validated_data['email'], username=validated_data['username'])
+		account = Account(email=validated_data['email'], username=validated_data['username'],
+		                  first_name=validated_data['first_name'], last_name=validated_data['last_name'])
 		account.set_password(validated_data['password'])
-		# account.avatar = Avatar.objects.get(pk=random.randint(1, 10))
-		account.avatar = Avatar.objects.get(pk=1)
 		account.save()
 		return account
 

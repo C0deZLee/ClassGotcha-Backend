@@ -20,7 +20,14 @@ class AccountManager(BaseUserManager):
 		if not kwargs.get('username'):
 			raise ValueError('Users must have a valid username')
 
-		account = self.model(email=self.normalize_email(email), username=kwargs.get('username'))
+		if not kwargs.get('first_name'):
+			raise ValueError('Users must have a valid first name')
+
+		if not kwargs.get('last_name'):
+			raise ValueError('Users must have a valid last name')
+
+		account = self.model(email=self.normalize_email(email), username=kwargs.get('username'),
+		                     first_name=kwargs.get('first_name'), last_name=kwargs.get('last_name'))
 
 		account.set_password(password)
 		account.save()
@@ -119,7 +126,7 @@ class Account(AbstractBaseUser, PermissionsMixin):
 
 	@property
 	def is_professor(self):
-		return self.professor_id == None
+		return self.professor_id is not None
 
 
 class Group(models.Model):
