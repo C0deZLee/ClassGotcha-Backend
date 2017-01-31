@@ -2,7 +2,7 @@
    <div class="page">
    <!--<div class="row wrapper border-bottom white-bg page-heading">
       <div class="col-lg-10">
-        <h2>{{currentClassroom.class_short}} 
+        <h2>{{current_classroom.class_short}} 
          
         </h2>
         <ol class="breadcrumb">
@@ -13,7 +13,7 @@
             <a>Classrooms</a>
           </li>
           <li class="active">
-            <strong>{{currentClassroom.class_short}}</strong>
+            <strong>{{current_classroom.class_short}}</strong>
           </li>
         </ol>
       </div>
@@ -28,16 +28,16 @@
                <div class="">
                   <div>
                      <h2 class="no-margins">
-                        {{currentClassroom.class_short}}  <button @click="addClassroom()" class="btn btn-xm btn-primary ">
+                        {{current_classroom.class_short}}  <button @click="addClassroom()" class="btn btn-xm btn-primary ">
                         <i class="fa fa-plus"></i> 
                         <span class="bold">Add To My Classroom</span>
                         </button>
                      </h2>
                      <h4>
-                        Section {{currentClassroom.class_section}}
+                        Section {{current_classroom.class_section}}
                      </h4>
                      <small>
-                     {{currentClassroom.description}}
+                     {{current_classroom.description}}
                      </small>
                   </div>
                </div>
@@ -51,7 +51,7 @@
                <tbody>
                   <tr>
                      <td>
-                        <strong>{{currentClassroom.class_credit}}</strong> Credits
+                        <strong>{{current_classroom.class_credit}}</strong> Credits
                      </td>
                   </tr>
                   <tr>
@@ -146,10 +146,10 @@
             <div class="ibox-content">
                <h3>Your Classmates</h3>
                <div class="user-friends">
-                  <a v-for="student in currentClassroom.students" href=""><img alt="image" class="img-circle" :src="student.avatar.avatar2x"></a>
+                  <a v-for="student in current_classroom.students" href=""><img alt="image" class="img-circle" :src="student.avatar.avatar2x"></a>
                </div>
                <p>
-                  <a :href="studentsPagePath">More..</a>
+                  <a :href="user_page_url">More..</a>
                   <!--<router-link to="/classroom/id/:classroom_id/students">More..</router-link>-->
                </p>
             </div>
@@ -188,7 +188,7 @@
             </div>
             <div class="social-avatar">
                <a href="" class="pull-left">
-               <img alt="image" :src="moment.creator.avatar.avatar2x">
+               <img alt="image" class="img-circle" :src="moment.creator.avatar.avatar2x">
                </a>
                <div class="media-body">
                   <a href="#"> {{moment.creator.full_name}} </a>
@@ -210,7 +210,7 @@
             <div class="social-footer" v-show="moment.comments.length > 0 || moment.id === comment_id">
                <div class="social-comment" v-for="comment in moment.comments">
                   <a href="" class="pull-left">
-                  <img alt="image" :src="comment.creator.avatar.avatar1x">
+                  <img class="img-circle" alt="image" :src="comment.creator.avatar.avatar1x">
                   </a>
                   <div class="media-body">
                      <a href="">{{comment.creator.full_name}}</a> 
@@ -221,7 +221,7 @@
                </div>
                <div class="social-comment" v-show="moment.id === comment_id">
                   <a href="" class="pull-left">
-                  <img alt="image" :src="userAvatar">
+                  <img alt="image" :src="user_avatar">
                   </a>
                   <div class="media-body">
                      <textarea class="form-control" v-model="comment_content" @keyup.enter="postComment($event)"  placeholder="Write comment..."></textarea>
@@ -241,8 +241,10 @@
                     <div class="col-md-10">
                   <h2>Add a new task to classroom?</h2>
                   </div>
+
                   <div class="col-md-2">
-                    <a class="btn btn-xm btn-primary m-b" @click="showAddTask"><i :class="add_task_button_class"></i></a>
+                    <a @click="showAddTask"> <span class="label label-primary pull-right"><i :class="add_task_button_class"></span></a>
+
                     </div>
                 </div>
                   <div v-if="add_task">
@@ -281,17 +283,17 @@
                      
                   </div>
                </div>
-               <div class="vertical-timeline-block">
+               <div v-for="task in current_classroom.tasks" class="vertical-timeline-block">
                   <div class="vertical-timeline-icon navy-bg">
                      <i class="fa fa-briefcase"></i>
                   </div>
                   <div class="vertical-timeline-content">
-                     <h2>Group Meeting</h2>
-                     <p>We have set up a group meeting on 135 Pattee Library.
+                     <h2>{{task.task_name}}</h2>
+                     <p>{{task.description}}
                      </p>
                      <a href="#" class="btn btn-sm btn-primary"> More info</a>
                      <span class="vertical-date">
-                     Today <br>
+                     {{task.formatted_due_datetime}} <br>
                      <small>Apr 1</small>
                      </span>
                   </div>
@@ -460,21 +462,22 @@
 
         },
         computed: {
-            currentClassroom() {
+            current_classroom() {
                 return this.$store.getters.currentClassroom
             },
-            userInClassroom() {
+            user_in_classroom() {
                 return this.$store.getters.userInClassroom
             },
             moments() {
                 return this.$store.getters.classroomMoments
             },
-            userAvatar() {
+            user_avatar() {
                 return this.$store.getters.userAvatar.avatar2x
             },
-            studentsPagePath() {
+            user_page_url() {
                 return '/#/classroom/id/' + this.$route.params.classroom_id + '/students'
-            }
+            },
+
 
         },
         created: function() {

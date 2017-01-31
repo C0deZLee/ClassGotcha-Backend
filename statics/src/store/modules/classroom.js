@@ -4,13 +4,52 @@ import classApi from '../../api/classroom-api'
 import * as types from '../mutation-types'
 
 // initial state
-// shape: [{ id, quantity }]
 const state = {
     search_results: [],
-    classroom: {},
+    classroom: {
+        class_number: '',
+        id: null,
+        chatroom: null,
+        created: '',
+        groups: [],
+        description: '',
+        class_short: '',
+        class_room: '',
+        class_credit: '',
+        class_name: '',
+        class_time: {
+            formatted_end_time: '',
+            formatted_start_time: '',
+            location: null,
+            repeat_list: [],
+            task_name: '',
+            type: 0
+        },
+        class_code: '',
+        class_section: '',
+        major: {
+            id: null,
+            major_college: '',
+            major_full: '',
+            major_icon: null,
+            major_short: '',
+        },
+        professors: [],
+        semester: {
+            formatted_end_date: '',
+            formatted_start_date: '',
+            name: ''
+        },
+        students: [],
+        students_count: 0,
+        syllabus: null,
+        tasks: [],
+        updated: '',
+    },
     is_in_class: false,
     moments: [],
     notes: [],
+    tasks: [],
     error_msg: ''
 }
 
@@ -27,6 +66,9 @@ const getters = {
     },
     classroomMoments: (state) => {
         return state.moments
+    },
+    classroomTasks: (state) => {
+        return state.classroom.tasks
     }
 }
 
@@ -38,18 +80,6 @@ const actions = {
                 commit(types.SEARCH_CLASSROOMS, response)
             })
             .catch((error) => {
-                console.log('classroomSearch')
-                commit(types.LOG_ERROR, error)
-            })
-    },
-    getClassroom({ commit, dispatch }, pk) {
-        classApi.getClassroom(pk)
-            .then((response) => {
-                commit(types.GET_CLASSROOM, response)
-            })
-            .catch((error) => {
-                console.log('getClassroom')
-
                 commit(types.LOG_ERROR, error)
             })
     },
@@ -59,15 +89,31 @@ const actions = {
                 commit(types.USER_IN_CLASSROOM, response)
             })
             .catch((error) => {
-                console.log('validateClassroom')
-
                 commit(types.USER_NOT_IN_CLASSROOM, error)
+            })
+    },
+    getClassroom({ commit, dispatch }, pk) {
+        classApi.getClassroom(pk)
+            .then((response) => {
+                commit(types.GET_CLASSROOM, response)
+            })
+            .catch((error) => {
+                commit(types.LOG_ERROR, error)
             })
     },
     getClassroomMoments({ commit, dispatch }, pk) {
         classApi.getMoments(pk)
             .then((response) => {
                 commit(types.LOAD_CLASSROOM_MOMENTS, response)
+            })
+            .catch((error) => {
+                commit(types.LOG_ERROR, error)
+            })
+    },
+    getClassroomTasks({ commit, dispatch }, pk) {
+        classApi.getTasks(pk)
+            .then((response) => {
+                commit(types.LOAD_CLASSROOM_TASKS, response)
             })
             .catch((error) => {
                 commit(types.LOG_ERROR, error)
