@@ -1,7 +1,11 @@
-import { userApi } from '../../api/account'
+import { userApi } from '../../api/user-api'
 import router from '../../router'
 import * as cookie from '../../utils/cookie'
 import * as types from '../mutation-types'
+
+import default_avatar1x from 'img/default-avatar1x.png'
+import default_avatar2x from 'img/default-avatar2x.png'
+import default_avatar4x from 'img/default-avatar4x.png'
 
 // initial state
 // shape: [{ id, quantity }]
@@ -81,9 +85,9 @@ const getters = {
 const actions = {
     register({ commit, dispatch }, formData) {
         console.log('register', formData)
-        userApi.register(formData)
+        return userApi.register(formData)
             .then((response) => {
-                commit(types.LOGIN_SUCCESS, response)
+                commit(types.REGSITER_SUCCESS, response)
                 dispatch('getSelf')
                 // getClassrooms()
                 // getChatrooms()
@@ -91,11 +95,12 @@ const actions = {
                 // getTasks()
             })
             .catch((error) => {
-                commit(types.LOGIN_FAILED, error)
+                commit(types.REGSITER_FAILED, error)
+                return Promise.reject(error)
             })
     },
     login({ commit, dispatch }, formData) {
-        userApi.login(formData)
+        return userApi.login(formData)
             .then((response) => {
                 console.log(response)
                 commit(types.LOGIN_SUCCESS, response)
@@ -106,11 +111,23 @@ const actions = {
                 router.push('/')
             })
             .catch((error) => {
-                console.log(error)
-
                 commit(types.LOGIN_FAILED, error)
+                return Promise.reject(error)
+            })
+    },
+    tokenVerify({ rootState, commit, dispatch }, formData) {
+        userApi.tokenVerify(formData)
+            .then((response) => {
+                commit(types.VERIFY_SUCCESS, response)
+                if (rootState.route.path === '/login' || rootState.route.path === '/register') {
+                    router.push('/')
+                }
+            })
+            .catch((error) => {
+                if (rootState.route.path !== '/register') {
+                    dispatch('tokenRefresh', formData)
+                }
                 commit(types.LOG_ERROR, error)
-
             })
     },
     tokenRefresh({ commit, dispatch }, formData) {
@@ -119,27 +136,9 @@ const actions = {
                 commit(types.REFRESH_SUCCESS, response)
             })
             .catch((error) => {
-                commit(types.REFRESH_FAILED)
+                commit(types.LOGIN_FAILED)
                 commit(types.LOG_ERROR, error)
 
-            })
-    },
-    tokenVerify({ rootState, commit, dispatch }, formData) {
-        userApi.tokenVerify(formData)
-            .then((response) => {
-                commit(types.VERIFY_SUCCESS, response)
-                // dispatch('tokenRefresh', formData)
-                if (rootState.route.path === '/login' || rootState.route.path === '/register') {
-                    router.push('/')
-                }
-            })
-            .catch((error) => {
-                if (error.status === 401) {
-                    dispatch('tokenRefresh', formData)
-                } else {
-                    commit(types.VERIFY_FAILED)
-                    commit(types.LOG_ERROR, error)
-                }
             })
     },
     logout({ commit }) {
@@ -203,6 +202,7 @@ const actions = {
         userApi.addClassroom(pk)
             .then((response) => {
                 commit(types.ADD_CLASSROOM)
+                dispatch('getSelf')
                 dispatch('getClassrooms')
                 dispatch('getChatrooms')
                 dispatch('getTasks')
@@ -211,8 +211,8 @@ const actions = {
                 commit(types.LOG_ERROR, error)
             })
     },
-    delClassroom({ commit, dispatch }, pk) {
-        userApi.delClassroom(pk)
+    remClassroom({ commit, dispatch }, pk) {
+        userApi.remClassroom(pk)
             .then((response) => {
                 commit(types.REMOVE_CLASSROOM)
                 dispatch('getClassrooms')
@@ -233,8 +233,8 @@ const actions = {
                 commit(types.LOG_ERROR, error)
             })
     },
-    delChatroom({ commit, dispatch }, pk) {
-        userApi.delChatroom(pk)
+    remChatroom({ commit, dispatch }, pk) {
+        userApi.remChatroom(pk)
             .then((response) => {
                 commit(types.REMOVE_CHATROOM)
                 dispatch('getChatrooms')
@@ -274,11 +274,22 @@ const mutations = {
         state.login_status = true
         router.push('/')
     },
+    [types.REGSITER_SUCCESS](state, response) {
+        cookie.setCookie('token', response.token)
+        state.token = response.token
+        state.login_status = true
+        router.push('/')
+    },
     [types.LOGIN_FAILED](state, error) {
         state.login_status = false
         state.token = null
         state.error_msg = error
         router.push('/login')
+    },
+    [types.REGSITER_FAILED](state, error) {
+        state.login_status = false
+        state.token = null
+        state.error_msg = error
     },
     [types.LOG_ERROR](state, error) {
         state.error_msg = error
@@ -291,30 +302,22 @@ const mutations = {
         state.login_status = true
     },
 
-    [types.VERIFY_FAILED](state, error) {
-        cookie.delCookie('token')
-        state.login_status = false
-        state.token = null
-        state.error_msg = error
-        router.push('/login')
-    },
-
     [types.REFRESH_SUCCESS](state, response) {
         cookie.setCookie('token', response.token)
         state.token = response.token
         state.login_status = true
     },
 
-    [types.REFRESH_FAILED](state, error) {
-        cookie.delCookie('token')
-        state.login_status = false
-        state.token = null
-        state.error_msg = error
-        router.push('/login')
-    },
     // load data
     [types.LOAD_SELF](state, response) {
         state.user = response
+        if (!state.user.avatar) {
+            state.user.avatar = {
+                avatar1x: default_avatar1x,
+                avatar2x: default_avatar2x,
+                avatar4x: default_avatar4x
+            }
+        }
     },
     [types.LOAD_CLASSROOMS](state, response) {
         state.classrooms = response
@@ -330,6 +333,13 @@ const mutations = {
     },
     [types.LOAD_USER](state, response) {
         state.loaded_user = response
+        if (!state.user.avatar) {
+            state.user.avatar = {
+                avatar1x: default_avatar1x,
+                avatar2x: default_avatar2x,
+                avatar4x: default_avatar4x
+            }
+        }
     },
 
     // post change

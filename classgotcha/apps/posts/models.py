@@ -8,17 +8,28 @@ from django.db.models import Avg
 
 from ..accounts.models import Account
 from ..classrooms.models import Classroom
+from ..tags.models import Tag
+
+
+def generate_filename(self, filename):
+	url = "files/users/%s/%s" % (self.classroom.class_short, filename)
+	return url
 
 
 class Note(models.Model):
-	# Relations
+	# Basics
 	title = models.CharField(max_length=100)
 	description = models.TextField(blank=True, null=True)
+	file = models.FileField(upload_to=generate_filename)
+
+	# Relations
 	creator = models.ForeignKey(Account, related_name='notes')
 	classroom = models.ForeignKey(Classroom, related_name='notes')
+	tags = models.ManyToManyField(Tag, related_name='notes')
+
+	# Timestamp
 	created = models.DateTimeField(auto_now_add=True)
-	# Basics
-	file = models.FileField(upload_to='avatars')
+
 	# Relatives
 	# 1) rating
 
@@ -40,13 +51,13 @@ class Rate(models.Model):
 class Moment(models.Model):
 	# Basic
 	content = models.CharField(max_length=200)
-	images = models.TextField(default='[]')
+	images = models.FileField(upload_to=generate_filename)
 	deleted = models.BooleanField(default=False)
 	solved = models.NullBooleanField()
 	# Relationship
 	creator = models.ForeignKey(Account, on_delete=models.CASCADE, related_name='moments', null=True, blank=True)
-	flagged_users = models.ManyToManyField(Account, null=True)
-	liked_users = models.ManyToManyField(Account, related_name='liked', null=True)
+	flagged_users = models.ManyToManyField(Account)
+	liked_users = models.ManyToManyField(Account, related_name='liked')
 	classroom = models.ForeignKey(Classroom, on_delete=models.CASCADE, related_name='moments', null=True, blank=True)
 	# Timestamp
 	created = models.DateTimeField(auto_now_add=True)

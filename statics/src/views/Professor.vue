@@ -415,7 +415,7 @@
 <script>
     export default {
         name: 'Professor',
-        created() {
+        updated() {
             /* global $:true */
             $(document).ready(() => {
                 $('.product-images').slick({ dots: true })

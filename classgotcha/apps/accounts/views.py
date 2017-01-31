@@ -6,16 +6,16 @@ from django.shortcuts import get_object_or_404
 from django.core.files.base import File
 
 from rest_framework_jwt.settings import api_settings
-from rest_framework import generics, viewsets, status
+from rest_framework import viewsets, status
 from rest_framework.response import Response
 from rest_framework.parsers import FormParser, MultiPartParser, JSONParser
-from rest_framework.decorators import detail_route, list_route, api_view, permission_classes, parser_classes
-from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly, AllowAny, IsAdminUser
+from rest_framework.decorators import api_view, permission_classes, parser_classes
+from rest_framework.permissions import IsAuthenticated, AllowAny
 
 from serializers import AccountSerializer, BasicAccountSerializer, AuthAccountSerializer, AvatarSerializer
 from ..classrooms.serializers import Classroom, BasicClassroomSerializer
 from ..posts.serializers import Moment, MomentSerializer, NoteSerializer
-from ..chat.serializers import Room, RoomSerializer
+from ..chat.serializers import RoomSerializer, Room
 from ..tasks.serializers import TaskSerializer
 
 from models import Account, Avatar
@@ -82,12 +82,6 @@ class AccountViewSet(viewsets.ViewSet):
 	permission_classes = (IsAuthenticated,)
 
 	# list_route and detail_route are for auto gen URL
-
-	# # TODO: admin user only
-	# def list(self, request):
-	# 	serializer = BasicAccountSerializer(self.queryset, many=True)
-	# 	return Response(serializer.data)
-
 	@staticmethod
 	def me(request):
 		serializer = AccountSerializer(request.user)
@@ -166,6 +160,8 @@ class AccountViewSet(viewsets.ViewSet):
 	@staticmethod
 	def classrooms(request, pk=None):
 		classroom_queryset = Classroom.objects.all()
+		chatroom_queryset = Room.objects.all()
+
 		if request.method == 'GET':
 			classrooms = Classroom.objects.filter(students__pk=request.user.pk)
 			serializer = BasicClassroomSerializer(classrooms, many=True)
@@ -177,17 +173,15 @@ class AccountViewSet(viewsets.ViewSet):
 				return Response({'detail': 'student already in classroom'}, status=status.HTTP_403_FORBIDDEN)
 			classroom.students.add(request.user)
 			classroom.class_time.involved.add(request.user)
-			classroom.chatroom.accounts.add(request.user)
-			classroom.save()
-			classroom.class_time.save()
-			classroom.chatroom.save()
+			chatroom = get_object_or_404(chatroom_queryset, classroom_id=classroom.pk)
+			chatroom.accounts.add(request.user)
 			return Response(status=200)
 
 		if request.method == 'DELETE':
 			classroom = get_object_or_404(classroom_queryset, pk=pk)
 			classroom.students.remove(request.user)
 			classroom.class_time.involved.remove(request.user)
-			classroom.chatroom.accounts.remove(request.user)
+			classroom.class_room.accounts.remove(request.user)
 			classroom.save()
 			classroom.class_time.save()
 			classroom.chatroom.save()
@@ -307,3 +301,6 @@ class AccountViewSet(viewsets.ViewSet):
 		# include moments, comments, notes my classmates and friends posted
 		pass
 
+
+class GroupViewSet(viewsets.ViewSet):
+	pass

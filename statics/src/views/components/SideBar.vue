@@ -49,6 +49,12 @@
                         <span class="nav-label">My Notes</span>
                     </a>
                 </li>
+                   <li>
+                    <a href="/#/me/">
+                        <i class="fa fa-users"></i>
+                        <span class="nav-label">My Groups</span>
+                    </a>
+                </li>   
                 <li>
                     <a href="/#/profile/id/me/">
                         <i class="fa fa-user"></i>

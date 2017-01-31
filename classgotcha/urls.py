@@ -13,27 +13,27 @@ Including another URLconf
     1. Import the include() function: from django.conf.urls import url, include
     2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
-from classgotcha.apps.accounts import urls as accounts_urls
-from classgotcha.apps.classrooms import urls as classroom_urls
-from classgotcha.apps.groups import urls as groups_urls
-from classgotcha.apps.chat import urls as chat_urls
-from classgotcha.apps.posts import urls as posts_urls
 from django.conf.urls import include, url
 from django.contrib import admin
 
-from classgotcha.apps.accounts.views import AccountViewSet
-from rest_framework.routers import DefaultRouter
-
+from classgotcha.apps.accounts import urls as accounts_urls
+from classgotcha.apps.classrooms import urls as classroom_urls
+from classgotcha.apps.chat import urls as chat_urls
+from classgotcha.apps.posts import urls as posts_urls
+from rest_framework_docs import urls as docs_urls
 
 admin.autodiscover()
 
 urlpatterns = [
-    url(r'^chatroom/', include(chat_urls)),
+    # models
     url(r'^account/', include(accounts_urls)),
-    url(r'^post/', include(posts_urls)),
+    url(r'^chatroom/', include(chat_urls)),
     url(r'^classroom/', include(classroom_urls)),
+    url(r'^post/', include(posts_urls)),
+
+    # admin site and docs
     url(r'^admin/', admin.site.urls),
-    url(r'^group/', include(groups_urls)),
-    url(r'^docs/', include('rest_framework_docs.urls')),
+    url(r'^docs/', include(docs_urls)),
+
 ]
 

@@ -5,11 +5,18 @@ from ..classrooms.models import Classroom
 
 
 class Tag(models.Model):
+	# Lectures, Labs, Notes, Homeworks, Quizs, Exams,
 	# Basic
 	content = models.CharField(max_length=200)
-	# Relationship
-	professors = models.ManyToManyField('accounts.Professor', related_name='tags')
-	notes = models.ManyToManyField('posts.Note', related_name='tags')
 	# Timestamp
 	created = models.DateTimeField(auto_now_add=True)
+	# Relationship
+	# 1) Professor
+	# 2) Note
 
+	def __unicode__(self):
+		return self.content
+
+	# @property
+	# def freq(self):
+	# 	return self.professor.all().

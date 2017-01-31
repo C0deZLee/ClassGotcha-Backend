@@ -1,12 +1,12 @@
-<template>
-  <div class="middle-box text-center loginscreen animated fadeInDown">
-      <div>
-          <div>
-              <h1 class="logo-name">IN+</h1>
+<template><div>
+       <div class="text-center m-t">
+              <h2 class="logo-name">Class </h2> <h2 class="logo-name">Gotcha</h2>
           </div>
+  <div class="middle-box text-center loginscreen">
+
           <router-view></router-view>
-          <p class="m-t"> <small>Chineserooms Studio</small> </p>
-      </div>
+          <p class="m-t"> <small>2015-2017 @Chineserooms Studio</small> </p>
+  </div>
   </div>
 </template>
 

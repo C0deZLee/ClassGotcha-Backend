@@ -8,11 +8,15 @@ from ..accounts.models import Account
 
 class Room(models.Model):
 	name = models.CharField(max_length=20)
-	# relationship
+	read = models.BooleanField(default=True)
+
+	# Relationship
 	accounts = models.ManyToManyField(Account, related_name='rooms')
 	creator = models.ForeignKey(Account, related_name='owned_rooms')
+	classroom = models.ForeignKey('classrooms.Classroom', related_name='chatroom', on_delete=models.CASCADE, null=True)
+	group = models.ForeignKey('accounts.Group', related_name='chatroom', on_delete=models.CASCADE, null=True)
+	# Timestamp
 	created = models.DateTimeField(auto_now_add=True)
-	read = models.BooleanField(default=True)
 
 	# Relationship
 	# 1) classroom
@@ -44,7 +48,7 @@ class Room(models.Model):
 
 
 class Message(models.Model):
-	room = models.ForeignKey(Room, related_name='messages')  # send to
+	room = models.ForeignKey(Room, related_name='messages', on_delete=models.CASCADE)  # send to
 	context = models.CharField(max_length=140, blank=True)
 	username = models.CharField(max_length=140)
 	message = models.CharField(max_length=140)

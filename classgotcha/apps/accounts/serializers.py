@@ -1,13 +1,18 @@
-from models import Account, Avatar
+from models import Account, Avatar, Group
 from rest_framework import serializers
+from ..tasks.serializers import BasicTaskSerializer
+
+# try:
+# 	from ..posts.serializers import MomentSerializer
+# except ImportError:
+# 	import sys
+# 	MomentSerializer = sys.modules['classgotcha.apps.posts.serializers.MomentSerializer']
 
 # from ..posts.serializers import Moment, MomentSerializer
 # from ..notes.serializers import Note, NoteSerializer
 # from ..chat.serializers import Message, MessageSerializer
 # from ..classrooms.serializers import BasicClassroomSerializer
 # import random
-
-from ..tasks.serializers import BasicTaskSerializer
 
 
 class AvatarSerializer(serializers.ModelSerializer):
@@ -22,7 +27,7 @@ class AccountSerializer(serializers.ModelSerializer):
 	# 	many=True, queryset=Account.objects.filter())
 	#
 	# classrooms = serializers.StringRelatedField(many=True, read_only=True)
-	# moments = serializers.PrimaryKeyRelatedField(
+	# moments = MomentSerializer(many=True)
 	# 	many=True, queryset=Moment.objects.exclude(flagged_num=3))
 	# # however this nested way always encounters problem
 	# # moments = MomentSerializer(read_only = True)
@@ -67,13 +72,18 @@ class BasicAccountSerializer(serializers.ModelSerializer):
 class AuthAccountSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = Account
-		fields = ('username', 'email', 'password')
+		fields = ('username', 'email', 'password', 'first_name', 'last_name')
 		write_only_fields = ('password',)
 
 	def create(self, validated_data):
-		account = Account(email=validated_data['email'], username=validated_data['username'])
+		account = Account(email=validated_data['email'], username=validated_data['username'],
+		                  first_name=validated_data['first_name'], last_name=validated_data['last_name'])
 		account.set_password(validated_data['password'])
-		# account.avatar = Avatar.objects.get(pk=random.randint(1, 10))
-		account.avatar = Avatar.objects.get(pk=1)
 		account.save()
 		return account
+
+
+class GroupSerializers(serializers.ModelSerializer):
+	class Meta:
+		model = Group
+		fields = ('group_type', 'members', 'classroom', 'creator')

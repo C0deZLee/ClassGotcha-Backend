@@ -20,7 +20,7 @@ class AccountManager(BaseUserManager):
 		if not kwargs.get('username'):
 			raise ValueError('Users must have a valid username')
 
-		account = self.model(email=self.normalize_email(email), username=kwargs.get('username'))
+		account = self.model(email=self.normalize_email(email), username=kwargs.get('username'), )
 
 		account.set_password(password)
 		account.save()
@@ -37,17 +37,29 @@ class AccountManager(BaseUserManager):
 		return account
 
 
+# TODO: Some professors work for multiple departments,
+# TODO: Some professors in same major has same name,
+# TODO: same professors teach multiple majors' courses under same department
 class Professor(models.Model):
+	class Meta:
+		unique_together = (('first_name', 'last_name', 'major'),)
+
+	# Basic
 	first_name = models.CharField(max_length=40)
 	last_name = models.CharField(max_length=40)
 	mid_name = models.CharField(max_length=40, blank=True)
-	department = models.CharField(max_length=40, blank=True)
-	email = models.CharField(max_length=50, unique=True)
+	email = models.CharField(max_length=50)
 	major = models.ForeignKey('classrooms.Major')
 	office = models.CharField(max_length=50, blank=True)
+	# Timestamp
+	created = models.DateTimeField(auto_now_add=True)
 
 	def __unicode__(self):
 		return '%s %s' % (self.first_name, self.last_name)
+
+	@property
+	def department(self):
+		return self.major.department
 
 
 class Account(AbstractBaseUser, PermissionsMixin):
@@ -76,6 +88,7 @@ class Account(AbstractBaseUser, PermissionsMixin):
 	phone = models.CharField(max_length=20, null=True)
 	# Relations
 	friends = models.ManyToManyField('self')
+	pending_friends = models.ManyToManyField('self')
 	major = models.ForeignKey('classrooms.Major', blank=True, null=True)
 	# Relatives
 	# 1) teaches
@@ -119,4 +132,16 @@ class Account(AbstractBaseUser, PermissionsMixin):
 
 	@property
 	def is_professor(self):
-		return self.professor_id == None
+		return self.professor_id is not None
+
+
+class Group(models.Model):
+	# Basic Info
+	# class, subclass, individual, club
+	group_type = models.CharField(max_length=20)
+	# Relations
+	members = models.ManyToManyField(Account, blank=True, related_name='joined_groups')
+	classroom = models.ForeignKey('classrooms.Classroom', blank=True, null=True, related_name='groups')
+	creator = models.ForeignKey(Account, related_name='created_groups')
+# Relatives
+# 1) chatroom

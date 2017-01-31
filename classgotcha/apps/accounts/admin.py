@@ -1,13 +1,9 @@
-import os
-from resizeimage import resizeimage
-from PIL import Image
-
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from django.contrib.auth.models import Group
+from django.contrib.auth.models import Group as AdminGroup
 
 from forms import UserChangeForm, UserCreationForm
-from models import Account, Avatar
+from models import Account, Avatar, Group, Professor
 
 
 class AccountAdmin(UserAdmin):
@@ -23,16 +19,16 @@ class AccountAdmin(UserAdmin):
 	fieldsets = (
 		(None, {'fields': ('email', 'username', 'password')}),
 		('Personal info', {'fields': ('first_name', 'last_name', 'gender', 'school_year', 'major', 'avatar')}),
-		('Permissions', {'fields': ('is_student', 'is_professor', 'is_staff', 'is_superuser')}),
+		('Permissions', {'fields': ('is_professor', 'is_staff', 'is_superuser')}),
 		('Timestamp', {'fields': ('created', 'updated')})
 	)
-	readonly_fields = ('created', 'updated', 'is_staff', 'is_superuser')
+	readonly_fields = ('created', 'updated', 'is_staff', 'is_superuser', 'is_professor')
 	# add_fieldsets is not a standard ModelAdmin attribute. UserAdmin
 	# overrides get_fieldsets to use this attribute when creating a user.
 	add_fieldsets = (
 		(None, {
 			'classes': ('wide',),
-			'fields': ('email', 'username', 'password1', 'password2')}
+			'fields': ('first_name', 'last_name', 'email', 'username', 'password1')}
 		 ),
 	)
 	search_fields = ('email', 'username')
@@ -42,8 +38,32 @@ class AccountAdmin(UserAdmin):
 class AvatarAdmin(admin.ModelAdmin):
 	list_display = ('id', 'avatar4x')
 
-# Now register the new UserAdmin...
+
+class GroupAdmin(admin.ModelAdmin):
+	# The fields to be used in displaying the User model.
+	# These override the definitions on the base UserAdmin
+	# that reference specific fields on auth.User.
+	list_display = ('group_type', 'creator', 'classroom')
+	list_filter = ['group_type']
+
+	def get_members(self):
+		return "\n".join([a.username for a in self.members.all()])
+
+
+class ProfessorAdmin(admin.ModelAdmin):
+	list_display = ('first_name', 'last_name', 'department', 'major')
+	fieldsets = (
+		(None, {'fields': ('email', 'first_name', 'last_name')}),
+		('major', {'fields': ('department', 'major')}),
+		# ('Permissions', {'fields': ('is_professor', 'is_staff', 'is_superuser')}),
+		('Timestamp', {'fields': ('created',)})
+	)
+	search_fields = ('first_name', 'last_name')
+	readonly_fields = ('department', 'created')
+
+
+admin.site.register(Group, GroupAdmin)
 admin.site.register(Account, AccountAdmin)
 admin.site.register(Avatar, AvatarAdmin)
-# ... and, since we're not using Django's built-in permissions, unregister the Group model from admin.
-admin.site.unregister(Group)
+admin.site.register(Professor, ProfessorAdmin)
+admin.site.unregister(AdminGroup)

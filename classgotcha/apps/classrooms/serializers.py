@@ -1,10 +1,8 @@
 from models import Classroom, Semester, Major
 from rest_framework import serializers
 
-from ..tasks.serializers import BasicTaskSerializer
-from ..accounts.serializers import BasicAccountSerializer
-
-from ..groups.models import Group
+from ..tasks.serializers import ClassroomTaskSerializer, ClassTimeTaskSerializer
+from ..accounts.serializers import BasicAccountSerializer, Group
 
 
 class MajorSerializer(serializers.ModelSerializer):
@@ -23,8 +21,8 @@ class SemesterSerializer(serializers.ModelSerializer):
 
 
 class ClassroomSerializer(serializers.ModelSerializer):
-	class_time = BasicTaskSerializer()
-	tasks = BasicTaskSerializer(many=True)
+	class_time = ClassTimeTaskSerializer()
+	tasks = ClassroomTaskSerializer(many=True)
 	students = BasicAccountSerializer(many=True)
 	groups = serializers.PrimaryKeyRelatedField(many=True, queryset=Group.objects.all())
 	students_count = serializers.ReadOnlyField()
@@ -40,7 +38,7 @@ class ClassroomSerializer(serializers.ModelSerializer):
 class BasicClassroomSerializer(serializers.ModelSerializer):
 	students_count = serializers.ReadOnlyField()
 	class_short = serializers.ReadOnlyField()
-	class_time = BasicTaskSerializer()
+	class_time = ClassTimeTaskSerializer()
 	semester = SemesterSerializer()
 
 	class Meta:
