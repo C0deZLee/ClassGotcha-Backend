@@ -15,7 +15,7 @@ from rest_framework.permissions import IsAuthenticated, AllowAny
 from serializers import AccountSerializer, BasicAccountSerializer, AuthAccountSerializer, AvatarSerializer
 from ..classrooms.serializers import Classroom, BasicClassroomSerializer
 from ..posts.serializers import Moment, MomentSerializer, NoteSerializer
-from ..chat.serializers import RoomSerializer
+from ..chat.serializers import RoomSerializer, Room
 from ..tasks.serializers import TaskSerializer
 
 from models import Account, Avatar
@@ -160,6 +160,8 @@ class AccountViewSet(viewsets.ViewSet):
 	@staticmethod
 	def classrooms(request, pk=None):
 		classroom_queryset = Classroom.objects.all()
+		chatroom_queryset = Room.objects.all()
+
 		if request.method == 'GET':
 			classrooms = Classroom.objects.filter(students__pk=request.user.pk)
 			serializer = BasicClassroomSerializer(classrooms, many=True)
@@ -171,17 +173,15 @@ class AccountViewSet(viewsets.ViewSet):
 				return Response({'detail': 'student already in classroom'}, status=status.HTTP_403_FORBIDDEN)
 			classroom.students.add(request.user)
 			classroom.class_time.involved.add(request.user)
-			classroom.chatroom.accounts.add(request.user)
-			classroom.save()
-			classroom.class_time.save()
-			classroom.chatroom.save()
+			chatroom = get_object_or_404(chatroom_queryset, classroom_id=classroom.pk)
+			chatroom.accounts.add(request.user)
 			return Response(status=200)
 
 		if request.method == 'DELETE':
 			classroom = get_object_or_404(classroom_queryset, pk=pk)
 			classroom.students.remove(request.user)
 			classroom.class_time.involved.remove(request.user)
-			classroom.chatroom.accounts.remove(request.user)
+			classroom.class_room.accounts.remove(request.user)
 			classroom.save()
 			classroom.class_time.save()
 			classroom.chatroom.save()

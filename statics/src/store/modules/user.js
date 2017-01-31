@@ -89,7 +89,6 @@ const actions = {
             .then((response) => {
                 commit(types.REGSITER_SUCCESS, response)
                 dispatch('getSelf')
-                return Promise.resolve(response)
                 // getClassrooms()
                 // getChatrooms()
                 // getFriends()
@@ -101,7 +100,7 @@ const actions = {
             })
     },
     login({ commit, dispatch }, formData) {
-        userApi.login(formData)
+        return userApi.login(formData)
             .then((response) => {
                 console.log(response)
                 commit(types.LOGIN_SUCCESS, response)
@@ -112,10 +111,8 @@ const actions = {
                 router.push('/')
             })
             .catch((error) => {
-                console.log(error)
                 commit(types.LOGIN_FAILED, error)
-                commit(types.LOG_ERROR, error)
-
+                return Promise.reject(error)
             })
     },
     tokenVerify({ rootState, commit, dispatch }, formData) {
@@ -205,6 +202,7 @@ const actions = {
         userApi.addClassroom(pk)
             .then((response) => {
                 commit(types.ADD_CLASSROOM)
+                dispatch('getSelf')
                 dispatch('getClassrooms')
                 dispatch('getChatrooms')
                 dispatch('getTasks')
@@ -335,8 +333,8 @@ const mutations = {
     },
     [types.LOAD_USER](state, response) {
         state.loaded_user = response
-        if (!state.loaded_user.avatar) {
-            state.loaded_user.avatar = {
+        if (!state.user.avatar) {
+            state.user.avatar = {
                 avatar1x: default_avatar1x,
                 avatar2x: default_avatar2x,
                 avatar4x: default_avatar4x

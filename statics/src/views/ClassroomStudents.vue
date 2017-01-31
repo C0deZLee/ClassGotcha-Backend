@@ -14,7 +14,7 @@
                            {{currentClassroom.class_short}}
                         </li>
                         <li class="active">
-                            <strong>Contacts 2</strong>
+                            <strong>Classmates</strong>
                         </li>
                     </ol>
                 </div>

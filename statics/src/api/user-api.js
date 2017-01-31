@@ -9,8 +9,6 @@ Vue.use(Resource)
 export const userApi = {
     // Authorization
     login(formData) {
-        console.log('in userApi, login function be called with formData=', formData, API_ROOT)
-        // return Vue.http.post(API_ROOT + 'account/login/', formData)
         return Vue.http.post(API_ROOT + 'account/login/', formData)
             .then((response) => Promise.resolve(response.data))
             .catch((error) => Promise.reject(error))

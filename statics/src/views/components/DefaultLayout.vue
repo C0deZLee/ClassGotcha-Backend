@@ -27,9 +27,30 @@
             TopBar,
             RightSideBar,
         },
-        updated() {
-            /* global $:true SmoothlyMenu:true */
+        created() {
+            const SmoothlyMenu = () => {
+                if (!$('body').hasClass('mini-navbar') || $('body').hasClass('body-small')) {
+                    // Hide menu in order to smoothly turn on when maximize menu
+                    $('#side-menu').hide()
+                    // For smoothly turn on menu
+                    setTimeout(
+                        function() {
+                            $('#side-menu').fadeIn(400)
+                        }, 200)
+                } else if ($('body').hasClass('fixed-sidebar')) {
+                    $('#side-menu').hide()
+                    setTimeout(
+                        function() {
+                            $('#side-menu').fadeIn(400)
+                        }, 100)
+                } else {
+                    // Remove all inline style from jquery fadeIn function to reset menu state
+                    $('#side-menu').removeAttr('style')
+                }
+            }
+            /* global $:true */
             $(document).ready(function() {
+                console.log('ready!')
                 // Add body-small class if window less than 768px
                 if ($(this).width() < 769) {
                     $('body').addClass('body-small')

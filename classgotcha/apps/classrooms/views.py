@@ -14,7 +14,7 @@ from models import Account, Classroom, Semester, Major, Professor
 from ..chat.models import Room
 
 from serializers import BasicClassroomSerializer, ClassroomSerializer
-from ..posts.serializers import Moment, MomentSerializer, Note, NoteSerializer
+from ..posts.serializers import MomentSerializer, Note, NoteSerializer
 from ..tasks.serializers import Task, TaskSerializer
 from ..accounts.serializers import BasicAccountSerializer
 
@@ -171,7 +171,7 @@ class ClassroomViewSet(viewsets.ViewSet):
 					                                                     description=cours['description'],
 					                                                     class_section=cours['section'],
 					                                                     class_credit=cours['unit'],
-					                                                     class_room=cours['room'],
+					                                                     class_location=cours['room'],
 					                                                     class_time=task, major=major,
 					                                                     semester=semester)
 

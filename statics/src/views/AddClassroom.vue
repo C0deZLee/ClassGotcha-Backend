@@ -42,6 +42,15 @@
                                   <div class="full-height-scroll">
                                         <div class="table-responsive">
                                             <table class="table table-striped table-hover">
+                                                <thead>
+                                                    <tr v-if="resultLength!==0">
+                                                        <th>Class code</th>
+                                                        <th>Class name</th>
+                                                        <th>Class section</th>
+                                                        <th>Classmates</th>
+                                                        <th></th>
+                                                    </tr>
+                                                </thead>
                                                 <tbody>
                                                     <tr v-if="resultLength===0">
                                                        <td class="text-center">No result</td>
@@ -52,7 +61,7 @@
                                                     <td> Sec {{classroom.class_section}}</td>
                                                     
                                                     <td><i class="fa fa-group"></i> {{classroom.students_count}}</td>
-                                                    <td class="client-status"><span class="label label-primary">Active</span></td>
+                                                    <td class="client-status"><span class="label label-primary"><a data-toggle="tab" v-on:click="select_classroom(classroom)" class="client-link">Show Detail</a></span></td>
                                                     </tr>
                                                 </tbody>
                                             </table>
@@ -83,7 +92,7 @@
                                                {{selected_classroom.description}}
                                             </p>
                                             <a v-on:click="classroomURL(selected_classroom)" class="btn btn-primary btn-sm btn-block"><i
-                                                    class="fa fa-envelope"></i> Enter Classroom
+                                                    class="fa fa-chevron-up"></i> Enter Classroom
                                             </a>
                                         </div>
                                     </div>

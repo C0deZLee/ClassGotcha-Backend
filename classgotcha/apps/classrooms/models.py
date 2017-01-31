@@ -44,7 +44,7 @@ class Classroom(models.Model):
 	class_code = models.CharField(max_length=10, unique=True)
 	class_section = models.CharField(max_length=10)
 	class_credit = models.CharField(max_length=10, default='3')
-	class_room = models.CharField(max_length=50)
+	class_location = models.CharField(max_length=50)
 	syllabus = models.FileField(upload_to='class_syllabus', blank=True, null=True)
 	description = models.TextField(blank=True)
 	# Timestamp

@@ -25,8 +25,8 @@
                <img src="img/CS.png" class="img-circle circle-border m-b-md" alt="profile">
             </div>
             <div class="profile-info">
-               <div class="">
-                  <div>
+               <div>
+                  
                      <h2 class="no-margins">
                         {{current_classroom.class_short}}  <button @click="addClassroom()" class="btn btn-xm btn-primary ">
                         <i class="fa fa-plus"></i> 
@@ -39,7 +39,7 @@
                      <small>
                      {{current_classroom.description}}
                      </small>
-                  </div>
+                  
                </div>
             </div>
          </div>
@@ -98,12 +98,14 @@
                   </ul>
                </div>
                <h3>Professor Info</h3>
-               <img alt="image" src="https://classgotcha-us-standard-20161024.s3.amazonaws.com/avatars/3.1x.png?Signature=tEjj1XqtEwU5Tct6HrX%2BkavEmuc%3D&amp;Expires=1485737897&amp;AWSAccessKeyId=AKIAIC72HESTHUCZQHLQ" class="img-circle">
+               <!--<div class="profile-image">
+                    <img src="http://www.cse.psu.edu/~buu1/bhuvan-mots.jpg" class="img-circle circle-border m-b-md" alt="profile">
+                </div>-->
                <h5> Name: <a href="">Professor Name</a><br> Office: 220 IST<br> Email: buu1@psu.edu<br>
                   <br>
                   <span class="font-bold">Rating: <i class="fa fa-star text-navy"></i><i class="fa fa-star text-navy"></i><i class="fa fa-star text-navy"></i><i class="fa fa-star text-navy"></i><i class="fa fa-star text-navy"></i> </span>
                </h5>
-               <ul class="tag-list" style="padding: 0">
+               <ul class="tag-list m-b" style="padding: 0">
                   <li><a href=""><i class="fa fa-tag"></i> Harsh</a></li>
                   <li><a href=""><i class="fa fa-tag"></i> Huge Work Load</a></li>
                </ul>
@@ -124,7 +126,20 @@
                <a>More...</a>
             </div>
          </div>
+ 
          <div class="ibox">
+            <div class="ibox-content">
+               <h3>Your Classmates</h3>
+               <div class="user-friends">
+                  <a v-for="student in current_classroom.students" href=""><img alt="image" class="img-circle" :src="student.avatar.avatar2x"></a>
+               </div>
+               <p>
+                  <a :href="user_page_url">More..</a>
+                  <!--<router-link to="/classroom/id/:classroom_id/students">More..</router-link>-->
+               </p>
+            </div>
+         </div>
+                 <div class="ibox">
             <div class="ibox-content">
                <h3>Create a Group</h3>
                <h5>People invited</h5>
@@ -142,43 +157,23 @@
                <a href="#" class="btn btn-sm btn-primary"> Invite!</a>
             </div>
          </div>
-         <div class="ibox">
-            <div class="ibox-content">
-               <h3>Your Classmates</h3>
-               <div class="user-friends">
-                  <a v-for="student in current_classroom.students" href=""><img alt="image" class="img-circle" :src="student.avatar.avatar2x"></a>
-               </div>
-               <p>
-                  <a :href="user_page_url">More..</a>
-                  <!--<router-link to="/classroom/id/:classroom_id/students">More..</router-link>-->
-               </p>
-            </div>
-         </div>
       </div>
       <div class="col-lg-5">
-         <div class="social-feed-box">
-            <div class="social-action">
-               <a class="btn btn-info btn-rounded btn-block" data-toggle="modal" data-target="#post-moment"> Post New Moment</a>
-               <div class="modal inmodal in" id="post-moment" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-                  <div class="vertical-alignment-helper">
-                     <div class="modal-dialog vertical-align-center">
-                        <div class="modal-dialog">
-                           <div class="modal-content animated fadeIn">
-                              <div class="modal-header">
-                                 <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
-                                 <textarea class="form-control" v-model.lazy="content" placeholder="Wanna say something?"></textarea>
-                              </div>
-                              <div class="modal-footer">
-                                 <input type="radio"  name="question" v-model="question" class="" value="question">Post as a question
-                                 <button @click="postMoment"  data-dismiss="modal" class="pull-right btn btn-primary">Submit</button>
-                              </div>
-                           </div>
-                        </div>
-                     </div>
-                  </div>
-               </div>
-            </div>
-         </div>
+          <div class="ibox float-e-margins" v-show="user_in_classroom">
+                    <div class="ibox-title">
+                      <textarea class="form-control" v-model.lazy="content" placeholder="Wanna say something?"></textarea>
+
+                                </div>
+                                <div class="ibox-content" style="padding:10px 10px 15px">
+                                    <div class="m-b-10">
+                                     <input type="checkbox" v-model="checked" id="check" name="check" required>
+                                    <label for="check"></label> 
+                                    <i class="m-r"></i>Post as a question
+                                    <input type="checkbox" v-model="question" class="" value="question">
+                                    <button @click="postMoment"  data-dismiss="modal" class=" btn btn-sm btn-primary pull-right">Post</button>
+                                    </div>
+                        </div>         
+                      </div>
          <div class="social-feed-box" v-for="moment in moments">
             <div class="pull-right social-action dropdown">
                <button data-toggle="dropdown" class="dropdown-toggle btn-white"> <i class="fa fa-angle-down"></i></button>
@@ -233,10 +228,10 @@
       <div class="col-lg-4 m-b-lg">
          <div id="vertical-timeline" class="vertical-container light-timeline no-margins">
             <div class="vertical-timeline-block">
-               <div class="vertical-timeline-icon navy-bg">
+               <div class="vertical-timeline-icon navy-bg" v-show="user_in_classroom">
                   <i class="fa fa-star"></i>
                </div>
-               <div class="vertical-timeline-content">
+               <div class="vertical-timeline-content" v-show="user_in_classroom">
                 <div class="row">
                     <div class="col-md-10">
                   <h2>Add a new task to classroom?</h2>
