@@ -11,17 +11,17 @@ class ClassroomAdmin(admin.ModelAdmin):
 	list_display = ('class_code', 'class_name', 'major', 'class_number',
 	                'class_section', 'class_credit', 'students_count')
 	list_filter = ('major',)
-
+	#
 	fieldsets = (
 		('Class Info', {'fields': ('class_code', 'class_name', 'major', 'class_number', 'class_credit')}),
 		('Descr', {'fields': ('description', 'syllabus')}),
 		('Time', {'fields': ('semester', ('class_repeat', 'get_class_time'), 'class_time', 'class_room')}),
-		('Enrolled', {'fields': ('professor', ('students', 'students_count'), 'chatroom')}),
+		('Enrolled', {'fields': ('professors', ('students', 'students_count'), )}),
 		('Timestamp', {'fields': ('created', 'updated',)}),
 	)
-	readonly_fields = ('major', 'created', 'updated', 'class_repeat', 'get_class_time', 'students_count', 'chatroom')
+	readonly_fields = ('professors', 'major', 'created', 'updated', 'class_repeat', 'get_class_time', 'students_count')
 
-	search_fields = ('class_code', 'id')
+	# search_fields = ('class_code', 'id')
 
 	def save_related(self, request, form, formsets, change):
 		super(ClassroomAdmin, self).save_related(
@@ -31,14 +31,13 @@ class ClassroomAdmin(admin.ModelAdmin):
 		if not form.instance.chatroom:
 			# TODO: UNSTABLE! Only retrieve the first admin user as the class
 			# chat room controller
-			room = Room.objects.create(creator=Account.objects.get(username='admin'))
-			room.name = form.instance.major.major_short + ' ' + \
-			            form.instance.class_number + ' - ' + form.instance.class_section + ' Chat Room'
-			room.save()
-			form.instance.chatroom = room
-			form.instance.save()
+			Room.objects.create(creator=Account.objects.get(is_staff=True),
+			                    name=form.instance.major.major_short + ' ' + \
+			                         form.instance.class_number + ' - ' + form.instance.class_section + ' Chat Room',
+			                    classroom=form.instance)
 			form.instance.task.classroom = form.instance
 			form.instance.task.save()
+
 
 class SemesterAdmin(admin.ModelAdmin):
 	list_display = ('id', 'name', 'start', 'end')

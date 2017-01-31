@@ -7,8 +7,9 @@ from ..accounts.models import Account, Professor
 
 class Major(models.Model):
 	major_short = models.CharField(max_length=10)
-	major_full = models.CharField(max_length=100)
-	major_college = models.CharField(max_length=100)
+	major_full = models.CharField(max_length=100, blank=True)
+	major_college = models.CharField(max_length=100, blank=True)
+	department = models.CharField(max_length=100, blank=True)
 	major_icon = models.FileField(upload_to='majors/', null=True)
 
 	def __unicode__(self):
@@ -52,7 +53,6 @@ class Classroom(models.Model):
 	# Relations
 	class_time = models.ForeignKey('tasks.Task', related_name='classtime', blank=True)
 	professors = models.ManyToManyField(Professor, related_name='teaches', blank=True)
-	chatroom = models.ForeignKey('chat.Room', related_name='classroom', blank=True, null=True)
 	major = models.ForeignKey(Major)
 	students = models.ManyToManyField(Account, related_name='classrooms', blank=True)
 	semester = models.ForeignKey(Semester)
@@ -61,7 +61,7 @@ class Classroom(models.Model):
 	# 1) notes
 	# 2) tasks
 	# 3) groups
-	# 4) class_chatroom
+	# 4) chatroom
 
 	def __unicode__(self):
 		return self.major.major_short + ' ' + self.class_number

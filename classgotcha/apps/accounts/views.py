@@ -82,12 +82,6 @@ class AccountViewSet(viewsets.ViewSet):
 	permission_classes = (IsAuthenticated,)
 
 	# list_route and detail_route are for auto gen URL
-
-	# # TODO: admin user only
-	# def list(self, request):
-	# 	serializer = BasicAccountSerializer(self.queryset, many=True)
-	# 	return Response(serializer.data)
-
 	@staticmethod
 	def me(request):
 		serializer = AccountSerializer(request.user)

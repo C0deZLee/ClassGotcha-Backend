@@ -14,7 +14,7 @@ from models import Account, Classroom, Semester, Major, Professor
 from ..chat.models import Room
 
 from serializers import BasicClassroomSerializer, ClassroomSerializer
-from ..posts.serializers import Moment, MomentSerializer,  Note, NoteSerializer
+from ..posts.serializers import Moment, MomentSerializer, Note, NoteSerializer
 from ..tasks.serializers import Task, TaskSerializer
 from ..accounts.serializers import BasicAccountSerializer
 
@@ -127,7 +127,7 @@ class ClassroomViewSet(viewsets.ViewSet):
 		if request.method == 'POST':
 			request.data['classroom'] = classroom.pk
 			if 'due' in request.data:
-				request.data['due'] = datetime.datetime.fromtimestamp(request.data['due']/1000)
+				request.data['due'] = datetime.datetime.fromtimestamp(request.data['due'] / 1000)
 
 			print request.data
 			serializer = TaskSerializer(data=request.data)
@@ -157,43 +157,41 @@ class ClassroomViewSet(viewsets.ViewSet):
 					class_time = cours['time'].split()
 					# create class task
 					task = Task.objects.create(task_name=cours['name'] + ' - ' + cours['section'],
-					                           location=cours['location'])
+					                           location=cours['room'])
 					if len(class_time) == 4:
 						task.repeat = class_time[0]
-						task.start = datetime.datetime.strptime(class_time[1], '%I:%M%p')
-						task.end = datetime.datetime.strptime(class_time[3], '%I:%M%p')
+						task.start = datetime.datetime.strptime(class_time[1], '%I:%M%p') - datetime.timedelta(
+							minutes=1)
+						task.end = datetime.datetime.strptime(class_time[3], '%I:%M%p') - datetime.timedelta(minutes=1)
 						task.save()
-					# create chat room
-					room = Room(creator=Account.objects.get(is_superuser=True),
-					                           name=cours['name'] + ' - ' + cours['section'] + ' Chat Room')
-
 					# create classroom
-					classroom = Classroom(class_code=cours['number'],
-		                                     class_number=cours['name'].split()[1],
-		                                     class_name=cours['fullName'],
-		                                     description=cours['description'],
-		                                     class_section=cours['section'],
-		                                     class_credit=cours['unit'],
-		                                     class_room=cours['room'],
-		                                     class_time=task, major=major,
-		                                     semester=semester, chatroom=room)
+					classroom, created = Classroom.objects.get_or_create(class_code=cours['number'],
+					                                                     class_number=cours['name'].split()[1],
+					                                                     class_name=cours['fullName'],
+					                                                     description=cours['description'],
+					                                                     class_section=cours['section'],
+					                                                     class_credit=cours['unit'],
+					                                                     class_room=cours['room'],
+					                                                     class_time=task, major=major,
+					                                                     semester=semester)
 
 					if cours['instructor1'] != 'Staff':
-						instructor1 = Professor(first_name=cours['instructor1'].split()[0],
-						                                       last_name=cours['instructor1'].split()[1],
-						                                       major=major)
-						instructor1.save()
-						classroom.professor.add(instructor1)
+						cours['instructor1'].replace(',', '')
+						instructor1, created = Professor.objects.get_or_create(
+							first_name=cours['instructor1'].split()[0],
+							last_name=cours['instructor1'].split()[1],
+							major=major)
+						classroom.professors.add(instructor1)
 					else:
 						pass
 
-					if cours['instructor2'] != 'Staff' and cours['instructor2'] != '':
-						instructor2 = Professor(first_name=cours['instructor2'].split()[0],
-			                                       last_name=cours['instructor2'].split()[1],
-			                                       major=major)
-
-						instructor2.save()
-						classroom.professor.add(instructor2)
+					if 'instructor2' in cours and cours['instructor2'] != 'Staff' and cours['instructor2'] != '':
+						cours['instructor2'].replace(',', '')
+						instructor2, created = Professor.objects.get_or_create(
+							first_name=cours['instructor2'].split()[0],
+							last_name=cours['instructor2'].split()[1],
+							major=major)
+						classroom.professors.add(instructor2)
 					else:
 						pass
 
@@ -201,8 +199,12 @@ class ClassroomViewSet(viewsets.ViewSet):
 					classroom.save()
 					task.classroom = classroom
 					task.save()
+					# create chat room
+					Room.objects.create(creator=Account.objects.get(is_superuser=True),
+					                    name=cours['name'] + ' - ' + cours['section'] + ' Chat Room',
+					                    classroom=classroom)
 				except IntegrityError:
-					pass
+					raise
 			return Response(status=status.HTTP_201_CREATED)
 		else:
 			return Response(status=status.HTTP_400_BAD_REQUEST)

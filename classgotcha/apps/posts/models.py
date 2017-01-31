@@ -56,8 +56,8 @@ class Moment(models.Model):
 	solved = models.NullBooleanField()
 	# Relationship
 	creator = models.ForeignKey(Account, on_delete=models.CASCADE, related_name='moments', null=True, blank=True)
-	flagged_users = models.ManyToManyField(Account, null=True)
-	liked_users = models.ManyToManyField(Account, related_name='liked', null=True)
+	flagged_users = models.ManyToManyField(Account)
+	liked_users = models.ManyToManyField(Account, related_name='liked')
 	classroom = models.ForeignKey(Classroom, on_delete=models.CASCADE, related_name='moments', null=True, blank=True)
 	# Timestamp
 	created = models.DateTimeField(auto_now_add=True)
