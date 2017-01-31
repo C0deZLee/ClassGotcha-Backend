@@ -2,9 +2,7 @@ from models import Classroom, Semester, Major
 from rest_framework import serializers
 
 from ..tasks.serializers import ClassroomTaskSerializer, ClassTimeTaskSerializer
-from ..accounts.serializers import BasicAccountSerializer
-
-from ..groups.models import Group
+from ..accounts.serializers import BasicAccountSerializer, Group
 
 
 class MajorSerializer(serializers.ModelSerializer):

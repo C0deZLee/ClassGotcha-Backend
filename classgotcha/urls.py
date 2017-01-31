@@ -15,7 +15,6 @@ Including another URLconf
 """
 from classgotcha.apps.accounts import urls as accounts_urls
 from classgotcha.apps.classrooms import urls as classroom_urls
-from classgotcha.apps.groups import urls as groups_urls
 from classgotcha.apps.chat import urls as chat_urls
 from classgotcha.apps.posts import urls as posts_urls
 from django.conf.urls import include, url
@@ -33,7 +32,6 @@ urlpatterns = [
     url(r'^post/', include(posts_urls)),
     url(r'^classroom/', include(classroom_urls)),
     url(r'^admin/', admin.site.urls),
-    url(r'^group/', include(groups_urls)),
     url(r'^docs/', include('rest_framework_docs.urls')),
 ]
 

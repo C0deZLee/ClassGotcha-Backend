@@ -6,16 +6,16 @@ from django.shortcuts import get_object_or_404
 from django.core.files.base import File
 
 from rest_framework_jwt.settings import api_settings
-from rest_framework import generics, viewsets, status
+from rest_framework import viewsets, status
 from rest_framework.response import Response
 from rest_framework.parsers import FormParser, MultiPartParser, JSONParser
-from rest_framework.decorators import detail_route, list_route, api_view, permission_classes, parser_classes
-from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly, AllowAny, IsAdminUser
+from rest_framework.decorators import api_view, permission_classes, parser_classes
+from rest_framework.permissions import IsAuthenticated, AllowAny
 
 from serializers import AccountSerializer, BasicAccountSerializer, AuthAccountSerializer, AvatarSerializer
 from ..classrooms.serializers import Classroom, BasicClassroomSerializer
 from ..posts.serializers import Moment, MomentSerializer, NoteSerializer
-from ..chat.serializers import Room, RoomSerializer
+from ..chat.serializers import RoomSerializer
 from ..tasks.serializers import TaskSerializer
 
 from models import Account, Avatar
@@ -307,3 +307,6 @@ class AccountViewSet(viewsets.ViewSet):
 		# include moments, comments, notes my classmates and friends posted
 		pass
 
+
+class GroupViewSet(viewsets.ViewSet):
+	pass

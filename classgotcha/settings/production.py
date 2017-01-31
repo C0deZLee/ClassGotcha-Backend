@@ -11,7 +11,6 @@ https://docs.djangoproject.com/en/1.10/ref/settings/
 """
 
 import datetime
-
 import os
 
 # ------ Basic Settings ------
@@ -42,7 +41,6 @@ INSTALLED_APPS = [
 	'django.contrib.sessions',
 	'django.contrib.messages',
 	'django.contrib.staticfiles',
-	'django.contrib.sites',
 	'django_extensions',
 	# installed
 	'rest_framework',
@@ -56,7 +54,6 @@ INSTALLED_APPS = [
 	'classgotcha.apps.accounts',
 	'classgotcha.apps.classrooms',
 	'classgotcha.apps.posts',
-	'classgotcha.apps.groups',
 	'classgotcha.apps.tasks',
 	'classgotcha.apps.chat',
 	'classgotcha.apps.tags',
@@ -93,7 +90,7 @@ CHANNEL_LAYERS = {
 TEMPLATES = [
 	{
 		'BACKEND': 'django.template.backends.django.DjangoTemplates',
-		'DIRS': [os.path.join(PROJECT_ROOT, 'templates')],
+		'DIRS': [os.path.join(PROJECT_ROOT, 'classgotcha/templates')],
 		'APP_DIRS': True,
 		'OPTIONS': {
 			'context_processors': [
@@ -101,7 +98,6 @@ TEMPLATES = [
 				# list if you haven't customized them:
 				'django.contrib.auth.context_processors.auth',
 				'django.template.context_processors.debug',
-				'django.template.context_processors.i18n',
 				'django.template.context_processors.media',
 				'django.template.context_processors.static',
 				'django.template.context_processors.tz',

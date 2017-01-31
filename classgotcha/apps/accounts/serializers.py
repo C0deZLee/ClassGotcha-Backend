@@ -1,4 +1,4 @@
-from models import Account, Avatar
+from models import Account, Avatar, Group
 from rest_framework import serializers
 from ..tasks.serializers import BasicTaskSerializer
 
@@ -82,3 +82,9 @@ class AuthAccountSerializer(serializers.ModelSerializer):
 		account.avatar = Avatar.objects.get(pk=1)
 		account.save()
 		return account
+
+
+class GroupSerializers(serializers.ModelSerializer):
+	class Meta:
+		model = Group
+		fields = ('group_type', 'members', 'classroom', 'creator')
