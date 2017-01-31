@@ -87,19 +87,29 @@ const actions = {
                 commit(types.LOG_ERROR, error)
             })
     },
-    validateClassroom({ commit, dispatch }, pk) {
-        classApi.validate(pk)
-            .then((response) => {
-                commit(types.USER_IN_CLASSROOM, response)
-            })
-            .catch((error) => {
-                commit(types.USER_NOT_IN_CLASSROOM, error)
-            })
-    },
-    getClassroom({ commit, dispatch }, pk) {
+    // validateClassroom({ commit, dispatch }, pk) {
+    //     classApi.validate(pk)
+    //         .then((response) => {
+    //             commit(types.USER_IN_CLASSROOM)
+    //         })
+    //         .catch((error) => {
+    //             commit(types.USER_NOT_IN_CLASSROOM)
+    //         })
+    // },
+    getClassroom({ rootState, commit, dispatch }, pk) {
         classApi.getClassroom(pk)
             .then((response) => {
                 commit(types.GET_CLASSROOM, response)
+                let not_in_class = true
+                for (let i in response.students) {
+                    if (response.students[i].id === rootState.user.user.id) {
+                        commit(types.USER_IN_CLASSROOM)
+                        not_in_class = false
+                    }
+                }
+                if (not_in_class) {
+                    commit(types.USER_NOT_IN_CLASSROOM)
+                }
             })
             .catch((error) => {
                 commit(types.LOG_ERROR, error)
@@ -151,10 +161,10 @@ const mutations = {
             }
         }
     },
-    [types.USER_IN_CLASSROOM](state, response) {
+    [types.USER_IN_CLASSROOM](state) {
         state.is_in_class = true
     },
-    [types.USER_NOT_IN_CLASSROOM](state, response) {
+    [types.USER_NOT_IN_CLASSROOM](state) {
         state.is_in_class = false
     },
     [types.LOAD_CLASSROOM_MOMENTS](state, response) {

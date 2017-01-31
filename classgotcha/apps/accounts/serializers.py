@@ -2,6 +2,7 @@ from models import Account, Avatar, Group
 from rest_framework import serializers
 from ..tasks.serializers import BasicTaskSerializer
 
+
 # try:
 # 	from ..posts.serializers import MomentSerializer
 # except ImportError:
@@ -63,7 +64,7 @@ class BasicAccountSerializer(serializers.ModelSerializer):
 
 	class Meta:
 		model = Account
-		fields = ('pk', 'avatar', 'username', 'email', 'full_name', 'about_me', 'level')
+		fields = ('pk', 'id', 'avatar', 'username', 'email', 'full_name', 'about_me', 'level')
 
 	def get_full_name(self, obj):
 		return obj.first_name + ' ' + obj.last_name

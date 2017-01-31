@@ -28,10 +28,17 @@
                <div>
                   
                      <h2 class="no-margins">
-                        {{current_classroom.class_short}}  <button @click="addClassroom()" class="btn btn-xm btn-primary ">
+                        {{current_classroom.class_short}}  
+                        <button @click="addClassroom()" class="btn btn-primary" v-show="!user_in_classroom">
                         <i class="fa fa-plus"></i> 
-                        <span class="bold">Add To My Classroom</span>
+                         Add To My Classroom
                         </button>
+
+                       <button @click="addClassroom()" disabled class="btn" v-show="user_in_classroom">
+                        <i class="fa fa-check"></i> 
+                         Enrolled
+                        </button>
+                        
                      </h2>
                      <h4>
                         Section {{current_classroom.class_section}}
@@ -421,9 +428,6 @@
             getClassroomData() {
                 this.$store.dispatch('getClassroom', this.$route.params.classroom_id)
                 this.$store.dispatch('getClassroomMoments', this.$route.params.classroom_id)
-            },
-            vaildUser() {
-                this.$store.dispatch('validateClassroom', this.$route.params.classroom_id)
             },
             postMoment() {
                 const formData = {
