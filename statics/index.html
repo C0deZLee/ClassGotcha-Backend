@@ -50,6 +50,26 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.45/js/bootstrap-datetimepicker.min.js"></script>
 
     <script defer>
+        const SmoothlyMenu = () => {
+            if (!$('body').hasClass('mini-navbar') || $('body').hasClass('body-small')) {
+                // Hide menu in order to smoothly turn on when maximize menu
+                $('#side-menu').hide()
+                // For smoothly turn on menu
+                setTimeout(
+                    function() {
+                        $('#side-menu').fadeIn(400)
+                    }, 200)
+            } else if ($('body').hasClass('fixed-sidebar')) {
+                $('#side-menu').hide()
+                setTimeout(
+                    function() {
+                        $('#side-menu').fadeIn(400)
+                    }, 100)
+            } else {
+                // Remove all inline style from jquery fadeIn function to reset menu state
+                $('#side-menu').removeAttr('style')
+            }
+        }
         // Minimalize menu when screen is less than 768px
         $(window).bind("resize", function() {
             if ($(this).width() < 769) {

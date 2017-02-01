@@ -11,11 +11,8 @@ import default_avatar4x from 'img/default-avatar4x.png'
 // shape: [{ id, quantity }]
 const state = {
     user: {},
-    classrooms: [],
-    chatrooms: [],
     friends: [],
     moments: [],
-    tasks: [],
     login_status: false,
     token: null,
     loaded_user: {}
@@ -49,14 +46,14 @@ const getters = {
     },
     userClassrooms: state => {
         if (state.login_status) {
-            return state.classrooms
+            return state.user.classrooms
         } else {
             return []
         }
     },
     userChatrooms: state => {
         if (state.login_status) {
-            return state.chatrooms
+            return state.user.chatrooms
         } else {
             return []
         }
@@ -105,9 +102,8 @@ const actions = {
                 console.log(response)
                 commit(types.LOGIN_SUCCESS, response)
                 dispatch('getSelf')
-                dispatch('getClassrooms')
-                dispatch('getChatrooms')
                 dispatch('getFriends')
+                dispatch('setSockets')
                 router.push('/')
             })
             .catch((error) => {
@@ -203,9 +199,9 @@ const actions = {
             .then((response) => {
                 commit(types.ADD_CLASSROOM)
                 dispatch('getSelf')
-                dispatch('getClassrooms')
-                dispatch('getChatrooms')
-                dispatch('getTasks')
+                // dispatch('getClassrooms')
+                // dispatch('getChatrooms')
+                // dispatch('getTasks')
             })
             .catch((error) => {
                 commit(types.LOG_ERROR, error)
@@ -215,9 +211,10 @@ const actions = {
         userApi.remClassroom(pk)
             .then((response) => {
                 commit(types.REMOVE_CLASSROOM)
-                dispatch('getClassrooms')
-                dispatch('getChatrooms')
-                dispatch('getTasks')
+                dispatch('getSelf')
+                // dispatch('getClassrooms')
+                // dispatch('getChatrooms')
+                // dispatch('getTasks')
             })
             .catch((error) => {
                 commit(types.LOG_ERROR, error)
@@ -293,7 +290,6 @@ const mutations = {
     },
     [types.LOG_ERROR](state, error) {
         state.error_msg = error
-        console.log(error)
         // TODO, need to handle errors
     },
 
