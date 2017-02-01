@@ -6,6 +6,7 @@ from ..accounts.serializers import BasicAccountSerializer
 class RoomSerializer(serializers.ModelSerializer):
 	latest_message = serializers.ReadOnlyField()
 	accounts = BasicAccountSerializer(many=True)
+	creator = BasicAccountSerializer()
 
 	class Meta:
 		model = Room

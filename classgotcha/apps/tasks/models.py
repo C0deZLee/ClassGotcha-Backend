@@ -5,11 +5,12 @@ from ..classrooms.models import Classroom
 
 
 class Task(models.Model):
-	EVENT, TASK = 0, 1
+	EVENT, TASK, CLASS = 0, 1, 2
 
 	STATUS_CHOICES = (
-		(EVENT, 'event'),
-		(TASK, 'task')
+		(EVENT, 'Event'),
+		(TASK, 'Task'),
+		(CLASS, 'Class')
 		# (HOMEWORK, 'Homework'),  # due_date, repeat
 		# (QUIZ, 'Quiz'),  # assigned to class or only due_date, repeat
 		# (TODO, 'Todo'),  # due_date, repeat
@@ -24,7 +25,7 @@ class Task(models.Model):
 	start = models.DateTimeField(blank=True, null=True)
 	end = models.DateTimeField(blank=True, null=True)
 	due = models.DateTimeField(blank=True, null=True)
-	type = models.IntegerField(default=EVENT, choices=STATUS_CHOICES)
+	type = models.IntegerField(default=TASK, choices=STATUS_CHOICES)
 	repeat = models.CharField(max_length=20, default='')  # MoTuWeThFi
 	repeat_start = models.DateField(null=True)
 	repeat_end = models.DateField(null=True)

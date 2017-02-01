@@ -13,10 +13,10 @@ from rest_framework.decorators import detail_route, list_route, api_view, permis
 from models import Account, Classroom, Semester, Major, Professor
 from ..chat.models import Room
 
-from serializers import BasicClassroomSerializer, ClassroomSerializer
+from serializers import ClassroomSerializer
 from ..posts.serializers import MomentSerializer, Note, NoteSerializer
 from ..tasks.serializers import Task, TaskSerializer
-from ..accounts.serializers import BasicAccountSerializer
+from ..accounts.serializers import BasicAccountSerializer, BasicClassroomSerializer
 
 
 class ClassroomViewSet(viewsets.ViewSet):
@@ -157,11 +157,11 @@ class ClassroomViewSet(viewsets.ViewSet):
 					class_time = cours['time'].split()
 					# create class time
 					time = Task.objects.create(task_name=cours['name'] + ' - ' + cours['section'],
-					                           location=cours['room'])
+					                           location=cours['room'], type=2)
+					# TODO: FIXME: timezone error, wrong time
 					if len(class_time) == 4:
 						time.repeat = class_time[0]
-						time.start = datetime.datetime.strptime(class_time[1], '%I:%M%p') - datetime.timedelta(
-							minutes=1)
+						time.start = datetime.datetime.strptime(class_time[1], '%I:%M%p') - datetime.timedelta(minutes=1)
 						time.end = datetime.datetime.strptime(class_time[3], '%I:%M%p') - datetime.timedelta(minutes=1)
 						time.save()
 					# create classroom

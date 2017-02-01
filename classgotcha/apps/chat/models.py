@@ -11,7 +11,7 @@ class Room(models.Model):
 	read = models.BooleanField(default=True)
 
 	# Relationship
-	accounts = models.ManyToManyField(Account, related_name='rooms')
+	accounts = models.ManyToManyField(Account, related_name='chatrooms')
 	creator = models.ForeignKey(Account, related_name='owned_rooms')
 	classroom = models.ForeignKey('classrooms.Classroom', related_name='chatroom', on_delete=models.CASCADE, null=True)
 	group = models.ForeignKey('accounts.Group', related_name='chatroom', on_delete=models.CASCADE, null=True)
