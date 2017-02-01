@@ -155,15 +155,15 @@ class ClassroomViewSet(viewsets.ViewSet):
 				semester, created = Semester.objects.get_or_create(name="Spring 2017")
 				try:
 					class_time = cours['time'].split()
-					# create class task
-					task = Task.objects.create(task_name=cours['name'] + ' - ' + cours['section'],
+					# create class time
+					time = Task.objects.create(task_name=cours['name'] + ' - ' + cours['section'],
 					                           location=cours['room'])
 					if len(class_time) == 4:
-						task.repeat = class_time[0]
-						task.start = datetime.datetime.strptime(class_time[1], '%I:%M%p') - datetime.timedelta(
+						time.repeat = class_time[0]
+						time.start = datetime.datetime.strptime(class_time[1], '%I:%M%p') - datetime.timedelta(
 							minutes=1)
-						task.end = datetime.datetime.strptime(class_time[3], '%I:%M%p') - datetime.timedelta(minutes=1)
-						task.save()
+						time.end = datetime.datetime.strptime(class_time[3], '%I:%M%p') - datetime.timedelta(minutes=1)
+						time.save()
 					# create classroom
 					classroom, created = Classroom.objects.get_or_create(class_code=cours['number'],
 					                                                     class_number=cours['name'].split()[1],
@@ -172,7 +172,7 @@ class ClassroomViewSet(viewsets.ViewSet):
 					                                                     class_section=cours['section'],
 					                                                     class_credit=cours['unit'],
 					                                                     class_location=cours['room'],
-					                                                     class_time=task, major=major,
+					                                                     class_time=time, major=major,
 					                                                     semester=semester)
 
 					if cours['instructor1'] != 'Staff':
@@ -197,8 +197,6 @@ class ClassroomViewSet(viewsets.ViewSet):
 
 					# save classroom to get pk in db
 					classroom.save()
-					task.classroom = classroom
-					task.save()
 					# create chat room
 					Room.objects.create(creator=Account.objects.get(is_superuser=True),
 					                    name=cours['name'] + ' - ' + cours['section'] + ' Chat Room',

@@ -28,10 +28,17 @@
                <div>
                   
                      <h2 class="no-margins">
-                        {{current_classroom.class_short}}  <button @click="addClassroom()" class="btn btn-xm btn-primary ">
+                        {{current_classroom.class_short}}  
+                        <button @click="addClassroom()" class="btn btn-primary" v-show="!user_in_classroom">
                         <i class="fa fa-plus"></i> 
-                        <span class="bold">Add To My Classroom</span>
+                         Add To My Classroom
                         </button>
+
+                       <button @click="addClassroom()" disabled class="btn" v-show="user_in_classroom">
+                        <i class="fa fa-check"></i> 
+                         Enrolled
+                        </button>
+                        
                      </h2>
                      <h4>
                         Section {{current_classroom.class_section}}
@@ -101,16 +108,17 @@
                <!--<div class="profile-image">
                     <img src="http://www.cse.psu.edu/~buu1/bhuvan-mots.jpg" class="img-circle circle-border m-b-md" alt="profile">
                 </div>-->
-               <h5> Name: <a href="">Professor Name</a><br> Office: 220 IST<br> Email: buu1@psu.edu<br>
+                <div v-for="professor in professors">
+               <p> Name: <a :href="professor_page_url(professor.id)">{{professor.full_name}}</a><br> Office: 220 IST<br> Email: buu1@psu.edu<br>
                   <br>
                   <span class="font-bold">Rating: <i class="fa fa-star text-navy"></i><i class="fa fa-star text-navy"></i><i class="fa fa-star text-navy"></i><i class="fa fa-star text-navy"></i><i class="fa fa-star text-navy"></i> </span>
-               </h5>
-               <ul class="tag-list m-b" style="padding: 0">
-                  <li><a href=""><i class="fa fa-tag"></i> Harsh</a></li>
-                  <li><a href=""><i class="fa fa-tag"></i> Huge Work Load</a></li>
-               </ul>
                </p>
+               <ul class="tag-list m-b" style="padding: 0">
+                  <li><a href=""><i class="fa fa-tag"></i> Awesome</a></li>
+                  <li><a href=""><i class="fa fa-tag"></i> Great Lecturer</a></li>
+               </ul>
                <br>
+               </div>
             </div>
          </div>
          <div class="ibox">
@@ -166,10 +174,9 @@
                                 </div>
                                 <div class="ibox-content" style="padding:10px 10px 15px">
                                     <div class="m-b-10">
-                                     <input type="checkbox" v-model="checked" id="check" name="check" required>
+                                     <input type="checkbox" v-model="question" id="check" name="check" required>
                                     <label for="check"></label> 
-                                    <i class="m-r"></i>Post as a question
-                                    <input type="checkbox" v-model="question" class="" value="question">
+                                    Post as a question
                                     <button @click="postMoment"  data-dismiss="modal" class=" btn btn-sm btn-primary pull-right">Post</button>
                                     </div>
                         </div>         
@@ -374,7 +381,7 @@
         data: function() {
             return {
                 content: '',
-                question: '',
+                question: false,
                 // comment
                 comment_content: '',
                 comment_id: -1,
@@ -422,9 +429,6 @@
                 this.$store.dispatch('getClassroom', this.$route.params.classroom_id)
                 this.$store.dispatch('getClassroomMoments', this.$route.params.classroom_id)
             },
-            vaildUser() {
-                this.$store.dispatch('validateClassroom', this.$route.params.classroom_id)
-            },
             postMoment() {
                 const formData = {
                     content: this.content,
@@ -452,6 +456,9 @@
                     pk: this.$route.params.classroom_id
                 }
                 this.$store.dispatch('postClassroomTask', data)
+            },
+            professor_page_url(pk) {
+                return '/#/professor/id/' + pk + ''
             }
 
 
@@ -469,10 +476,12 @@
             user_avatar() {
                 return this.$store.getters.userAvatar.avatar2x
             },
+            professors() {
+                return this.$store.getters.classroomProfessors
+            },
             user_page_url() {
                 return '/#/classroom/id/' + this.$route.params.classroom_id + '/students'
-            },
-
+            }
 
         },
         created: function() {

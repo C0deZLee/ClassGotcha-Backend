@@ -1,6 +1,7 @@
-from models import Account, Avatar, Group
+from models import Account, Avatar, Group, Professor
 from rest_framework import serializers
 from ..tasks.serializers import BasicTaskSerializer
+
 
 # try:
 # 	from ..posts.serializers import MomentSerializer
@@ -63,7 +64,7 @@ class BasicAccountSerializer(serializers.ModelSerializer):
 
 	class Meta:
 		model = Account
-		fields = ('pk', 'avatar', 'username', 'email', 'full_name', 'about_me', 'level')
+		fields = ('pk', 'id', 'avatar', 'username', 'email', 'full_name', 'about_me', 'level')
 
 	def get_full_name(self, obj):
 		return obj.first_name + ' ' + obj.last_name
@@ -87,3 +88,11 @@ class GroupSerializers(serializers.ModelSerializer):
 	class Meta:
 		model = Group
 		fields = ('group_type', 'members', 'classroom', 'creator')
+
+
+class ProfessorSerializers(serializers.ModelSerializer):
+	full_name = serializers.ReadOnlyField()
+	class Meta:
+		model = Professor
+		fields = '__all__'
+		read_only_fields = ('created',)

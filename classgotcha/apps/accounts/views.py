@@ -212,7 +212,7 @@ class AccountViewSet(viewsets.ViewSet):
 			moment = Moment(content=content, creator=request.user)
 			if classroom_id:
 				moment.classroom_id = classroom_id
-			if question == 'question':
+			if question:
 				moment.solved = False
 			moment.save()
 			return Response(status=status.HTTP_200_OK)
