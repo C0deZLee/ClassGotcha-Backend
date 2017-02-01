@@ -181,10 +181,8 @@ class AccountViewSet(viewsets.ViewSet):
 			classroom = get_object_or_404(classroom_queryset, pk=pk)
 			classroom.students.remove(request.user)
 			classroom.class_time.involved.remove(request.user)
-			classroom.class_room.accounts.remove(request.user)
-			classroom.save()
-			classroom.class_time.save()
-			classroom.chatroom.save()
+			chatroom = get_object_or_404(chatroom_queryset, classroom_id=classroom.pk)
+			chatroom.accounts.remove(request.user)
 			return Response(status=200)
 
 	@staticmethod

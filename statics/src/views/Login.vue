@@ -5,12 +5,12 @@
       <input type="email" v-model="email" class="form-control" placeholder="Email" required>
     </div>
     <div class="form-group">
-      <input type="password" v-model="password" class="form-control" placeholder="Password" required>
+      <input type="password" @keyup.enter="login($event)" v-model="password" class="form-control" placeholder="Password" required>
     
     </div>
                             <p class="text-danger font-bold">{{errorMsg}}</p>
     
-    <button v-on:click="login($event)" class="btn btn-primary block full-width m-b">Login</button>
+    <button @click="login($event)" class="btn btn-primary block full-width m-b">Login</button>
     <a href="#"><small>Forgot password?</small></a>
     
     <p class="text-muted text-center"><small>Do not have an account?</small></p>

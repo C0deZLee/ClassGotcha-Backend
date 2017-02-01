@@ -34,7 +34,7 @@
                          Add To My Classroom
                         </button>
 
-                       <button @click="addClassroom()" disabled class="btn" v-show="user_in_classroom">
+                       <button @click="remClassroom()"  class="btn" v-show="user_in_classroom">
                         <i class="fa fa-check"></i> 
                          Enrolled
                         </button>
@@ -118,6 +118,10 @@
                   <li><a href=""><i class="fa fa-tag"></i> Great Lecturer</a></li>
                </ul>
                <br>
+               <br>
+                 <button class="btn btn-white m-b">
+                     yo
+                  </button>
                </div>
             </div>
          </div>
@@ -347,31 +351,7 @@
       </div>
    </div>
 </template>
-<style>
-    .vertical-alignment-helper {
-        display: table;
-        height: 100%;
-        width: 100%;
-        pointer-events: none;
-    }
-    
-    .vertical-align-center {
-        /* To center vertically */
-        display: table-cell;
-        vertical-align: middle;
-        pointer-events: none;
-    }
-    
-    .modal-content {
-        /* Bootstrap sets the size of the modal in the modal-dialog class, we need to inherit it */
-        width: inherit;
-        height: inherit;
-        /* To center horizontally */
-        margin: 0 auto;
-        pointer-events: all;
-    }
 
-</style>
 <script>
     import { customTime } from 'utils/timeFilter'
 
@@ -417,6 +397,9 @@
 
             addClassroom() {
                 this.$store.dispatch('addClassroom', this.$route.params.classroom_id)
+            },
+            remClassroom() {
+                this.$store.dispatch('remClassroom', this.$route.params.classroom_id)
             },
             addLike(moment) {
                 this.$store.dispatch('addMomentLike', moment.id)

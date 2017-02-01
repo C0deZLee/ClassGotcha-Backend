@@ -94,7 +94,7 @@ export const userApi = {
             .catch((error) => Promise.reject(error))
     },
     remClassroom(pk) {
-        return Vue.http.delete(API_ROOT + 'account/classrooms/' + pk + '/', {}, { headers: { Authorization: 'JWT ' + getCookie('token') } })
+        return Vue.http.delete(API_ROOT + 'account/classrooms/' + pk + '/', { headers: { Authorization: 'JWT ' + getCookie('token') } })
             .then((response) => Promise.resolve(response.data))
             .catch((error) => Promise.reject(error))
     },
@@ -104,7 +104,7 @@ export const userApi = {
             .catch((error) => Promise.reject(error))
     },
     remChatroom(pk) {
-        return Vue.http.delete(API_ROOT + 'account/clatrooms/' + pk + '/', {}, { headers: { Authorization: 'JWT ' + getCookie('token') } })
+        return Vue.http.delete(API_ROOT + 'account/clatrooms/' + pk + '/', { headers: { Authorization: 'JWT ' + getCookie('token') } })
             .then((response) => Promise.resolve(response.data))
             .catch((error) => Promise.reject(error))
     },
@@ -114,7 +114,7 @@ export const userApi = {
             .catch((error) => Promise.reject(error))
     },
     remFriend(pk) {
-        return Vue.http.delete(API_ROOT + 'account/friends/' + pk + '/', {}, { headers: { Authorization: 'JWT ' + getCookie('token') } })
+        return Vue.http.delete(API_ROOT + 'account/friends/' + pk + '/', { headers: { Authorization: 'JWT ' + getCookie('token') } })
             .then((response) => Promise.resolve(response.data))
             .catch((error) => Promise.reject(error))
     },
@@ -125,7 +125,7 @@ export const userApi = {
             .catch((error) => Promise.reject(error))
     },
     delMoment(pk) {
-        return Vue.http.delete(API_ROOT + 'account/moments/' + pk + '/', {}, { headers: { Authorization: 'JWT ' + getCookie('token') } })
+        return Vue.http.delete(API_ROOT + 'account/moments/' + pk + '/', { headers: { Authorization: 'JWT ' + getCookie('token') } })
             .then((response) => Promise.resolve(response.data))
             .catch((error) => Promise.reject(error))
     },
