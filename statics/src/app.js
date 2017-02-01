@@ -28,8 +28,13 @@ export const app = new Vue({
         this.$store.dispatch('tokenVerify', formData)
 
     },
+    // mounted() {
+    //     const chatrooms = this.$store.getters.userChatrooms
+    //     for (let i in chatrooms) {
+    //         this.$store.dispatch('connectSocket', chatrooms[i].id)
+    //     }
+    // },
     router,
     store,
     components: { App }
-    // render: h => h(App)
 })

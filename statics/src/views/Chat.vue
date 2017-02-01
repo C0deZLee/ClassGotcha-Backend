@@ -3,7 +3,7 @@
   <div>
     <div class="row wrapper border-bottom white-bg page-heading">
       <div class="col-lg-10">
-        <h2>{{chatroom.name}}</h2>
+        <h2>{{chatroom_name}}</h2>
         <ol class="breadcrumb">
           <li>
             <a href="/#/">Home</a>
@@ -12,7 +12,7 @@
             <a>Chatrooms</a>
           </li>
           <li class="active">
-            <strong>{{chatroom.name}}</strong>
+            <strong>{{chatroom_name}}</strong>
           </li>
         </ol>
       </div>
@@ -29,7 +29,7 @@
           <div class="row">
             <div class="col-md-10 ">
               <div class="chat-discussion" id="discussion" v-bottom>
-                <div v-for="message in chatroomMessages">
+                <div v-for="message in chatroom_messages">
                   <div class="chat-message" :class="myMessage(message)">
                     <img class="message-avatar" :src="getAvatar(message.send_from)"> 
                     <div class="message">
@@ -99,7 +99,7 @@
                 return this.$store.getters.userID === message.send_from ? 'right' : 'left'
             },
             validateChatroom() {
-                this.$store.dispatch('validateChatroom', this.$route.params.chatroom_id)
+                this.$store.dispatch('validateChatroom', parseInt(this.$route.params.chatroom_id))
                     .then(() => {
                         // chat room doesn't exist or user doesn't belong to chat room, redirect
                         this.$store.dispatch('getChatroom', this.$route.params.chatroom_id)
@@ -160,9 +160,12 @@
             },
         },
         computed: {
-            chatroomMessages() {
+            chatroom_messages() {
                 return this.$store.getters.currentChatroomMessages
             },
+            chatroom_name() {
+                return this.chatroom.name
+            }
         },
         created() {
             this.validateChatroom()

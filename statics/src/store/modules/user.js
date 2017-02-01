@@ -118,6 +118,9 @@ const actions = {
                 if (rootState.route.path === '/login' || rootState.route.path === '/register') {
                     router.push('/')
                 }
+                dispatch('getSelf')
+                dispatch('getFriends')
+                dispatch('setSockets')
             })
             .catch((error) => {
                 if (rootState.route.path !== '/register') {
@@ -130,6 +133,9 @@ const actions = {
         userApi.tokenRefresh(formData)
             .then((response) => {
                 commit(types.REFRESH_SUCCESS, response)
+                dispatch('getSelf')
+                dispatch('getFriends')
+                dispatch('setSockets')
             })
             .catch((error) => {
                 commit(types.LOGIN_FAILED)
@@ -295,13 +301,13 @@ const mutations = {
 
     [types.VERIFY_SUCCESS](state, response) {
         state.token = response.token
-        state.login_status = true
+        // state.login_status = true
     },
 
     [types.REFRESH_SUCCESS](state, response) {
         cookie.setCookie('token', response.token)
         state.token = response.token
-        state.login_status = true
+        // state.login_status = true
     },
 
     // load data

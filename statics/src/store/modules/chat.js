@@ -99,23 +99,17 @@ const mutations = {
         Vue.set(state.chatrooms[response.id], 'chatroom', response)
     },
     [types.SET_SOCKET](state, data) {
-        // console.log('CONNECT_SOCKET to', state.chatrooms[data.pk], data.socket)
-        // Vue.set(state.chatrooms[data.pk], 'chat_socket', data.socket)
-        // state.chatrooms[data.pk]['chat_socket'] = data.socket
+        data.socket.onmessage = (message) => {
+            console.log('received message', message.data)
+            state.chatrooms[data.pk].message_list.push(JSON.parse(message.data))
+        }
         state.sockets[data.pk] = data.socket
-        // state.sockets[data.pk].onmessage = (message) => {
-        //     console.log('received message', message.data)
-        //     state.chatrooms[data.pk].message_list.push(JSON.parse(message.data))
-        // }
     },
     [types.CONNECT_SOCKET](state, pk) {
-        state.sockets[pk].onmessage = (message) => {
-            console.log('received message', message.data)
-            state.chatrooms[pk].message_list.push(JSON.parse(message.data))
-        }
+
     },
     [types.SEND_MESSAGE](state, data) {
-        console.log(state.sockets[data.pk])
+        console.log('sent message', data.message)
         state.sockets[data.pk].send(JSON.stringify(data.message))
     },
     [types.USER_IN_CHATROOM](state, pk) {
