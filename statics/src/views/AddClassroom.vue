@@ -27,7 +27,7 @@
                             
                             <h2>Search Your Class Here</h2>
                             <p>
-                                All clients need to be verified before you can send email and set a project.
+                                Just simply type class name 'MATH 140' or class code '23365'
                             </p>
                             <div class="input-group">
                                 <input type="text" placeholder="ex: 123456 or Math 141 or cmpsc121" @keydown.enter="classroomSearch($event)" v-model="search_token" class="input form-control">

@@ -36,11 +36,12 @@
                                     <div class="media-body">
                                         {{chatroom.name}}
                                         <br>
-                                        
+                                        <div v-if="chatroom.latest_message">
                                        <strong>{{chatroom.latest_message.full_name}}</strong>: {{chatroom.latest_message.message}}
                                         <br>
                                         <br>
                                         <small class="text-muted">{{chatroom.latest_message.created}}</small>
+                                        </div>
                                     </div>
                                 </a>
                             </div>

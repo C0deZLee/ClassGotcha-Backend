@@ -464,7 +464,9 @@
                 console.log(classroom)
                 // classes
                 event_list.push({
-                    title: classroom.class_time.task_name,
+                    currentTimezone: 'UTC',
+                    title: classroom.class_time.task_name + '\n' + classroom.class_time.location,
+
                     start: classroom.class_time.formatted_start_time,
                     end: classroom.class_time.formatted_end_time,
                     dow: classroom.class_time.repeat_list,

@@ -14,7 +14,7 @@
             },
 
             editable: {
-                default () { return true },
+                default () { return false },
             },
 
             selectable: {
@@ -50,6 +50,8 @@
             const self = this
 
             cal.fullCalendar({
+                scrollTime: '07:00:00',
+                // ignoreTimezone: false,
                 header: this.header,
                 defaultView: this.defaultView,
                 editable: this.editable,
