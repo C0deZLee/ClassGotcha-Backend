@@ -161,9 +161,10 @@ class ClassroomViewSet(viewsets.ViewSet):
 					# TODO: FIXME: timezone error, wrong time
 					if len(class_time) == 4:
 						time.repeat = class_time[0]
-						time.start = datetime.datetime.strptime(class_time[1], '%I:%M%p') - datetime.timedelta(minutes=1)
-						time.end = datetime.datetime.strptime(class_time[3], '%I:%M%p') - datetime.timedelta(minutes=1)
+						time.start = datetime.datetime.strptime(class_time[1], '%I:%M%p')
+						time.end = datetime.datetime.strptime(class_time[3], '%I:%M%p')
 						time.save()
+						print time.start, time.end, class_time[1], class_time[3]
 					# create classroom
 					classroom, created = Classroom.objects.get_or_create(class_code=cours['number'],
 					                                                     class_number=cours['name'].split()[1],
@@ -176,7 +177,7 @@ class ClassroomViewSet(viewsets.ViewSet):
 					                                                     semester=semester)
 
 					if cours['instructor1'] != 'Staff':
-						cours['instructor1'].replace(',', '')
+						cours['instructor1'] = cours['instructor1'].replace(',', '')
 						instructor1, created = Professor.objects.get_or_create(
 							first_name=cours['instructor1'].split()[0],
 							last_name=cours['instructor1'].split()[1],
@@ -186,7 +187,7 @@ class ClassroomViewSet(viewsets.ViewSet):
 						pass
 
 					if 'instructor2' in cours and cours['instructor2'] != 'Staff' and cours['instructor2'] != '':
-						cours['instructor2'].replace(',', '')
+						cours['instructor2'] = cours['instructor2'].replace(',', '')
 						instructor2, created = Professor.objects.get_or_create(
 							first_name=cours['instructor2'].split()[0],
 							last_name=cours['instructor2'].split()[1],

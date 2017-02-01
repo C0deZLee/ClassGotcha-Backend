@@ -17,6 +17,9 @@ chatroom_validate = views.ChatRoomViewSet.as_view({
 	'get': 'validate'
 })
 
+chatroom_latest_message = views.ChatRoomViewSet.as_view({
+	'get': 'latest_message'
+})
 urlpatterns = [
 	# url(r"^$", views.rooms, name="rooms"),
 	# url(r"^system_message/$", views.system_message, name="system_message"),
@@ -24,10 +27,10 @@ urlpatterns = [
 	# url(r'^new/$', views.new_room, name='new_room'),
 	# url(r"^(?P<label>[\w-]{,50})/$", views.chat_room, name="room"),
 
-
-	url(r'(?P<pk>[0-9]+)/validate/$', chatroom_validate, name='chatroom-validate'),
-	url(r'(?P<pk>[0-9]+)/users/$', chatroom_users, name='chatroom-users'),
-	url(r'(?P<pk>[0-9]+)/$', chatroom_detail, name='chatroom-detail'),
-	url(r'$', clatroom_create, name='chatroom-create'),
+	url(r'^(?P<pk>[0-9]+)/validate/$', chatroom_validate, name='chatroom-validate'),
+	url(r'^(?P<pk>[0-9]+)/last-message/$', chatroom_latest_message, name='chatroom-latest-message'),
+	url(r'^(?P<pk>[0-9]+)/users/$', chatroom_users, name='chatroom-users'),
+	url(r'^(?P<pk>[0-9]+)/$', chatroom_detail, name='chatroom-detail'),
+	url(r'^$', clatroom_create, name='chatroom-create'),
 
 ]

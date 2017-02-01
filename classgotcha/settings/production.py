@@ -115,6 +115,7 @@ DATABASES = {
 
 }
 
+
 # ------ Password validation ------
 # https://docs.djangoproject.com/en/1.10/ref/settings/#auth-password-validators
 
@@ -139,9 +140,8 @@ AUTHENTICATION_BACKENDS = [
 ]
 
 # ------ Internationalization -------
-
 LANGUAGE_CODE = 'en-us'
-TIME_ZONE = 'America/New_York'
+TIME_ZONE = 'UTC'
 USE_TZ = True
 USE_I18N = False
 USE_L10N = False

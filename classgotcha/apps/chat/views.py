@@ -97,3 +97,8 @@ class ChatRoomViewSet(viewsets.ViewSet):
 			return Response(status=status.HTTP_200_OK)
 		else:
 			return Response(status=status.HTTP_400_BAD_REQUEST)
+
+	def latest_message(self, request, pk):
+		room = get_object_or_404(self.queryset, pk=pk)
+		return room.latest_message
+

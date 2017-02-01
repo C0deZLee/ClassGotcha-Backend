@@ -31,12 +31,12 @@ class Room(models.Model):
 
 	@property
 	def latest_message(self):
-		messages = self.messages.all()
-		if messages:
+		message = self.messages.all().latest('created')
+		if message:
 			latest_message = {
-				'full_name': messages[0].send_from.get_full_name,
-				'message': messages[0].message,
-				'created': messages[0].created.strftime('%b %-d %-I:%M %p')
+				'full_name': message.send_from.get_full_name,
+				'message': message.message,
+				'created': message.created.strftime('%b %-d %-I:%M %p')
 			}
 			return latest_message
 		else:
