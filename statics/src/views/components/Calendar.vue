@@ -51,6 +51,7 @@
 
             cal.fullCalendar({
                 scrollTime: '07:00:00',
+                droppable: true,
                 // ignoreTimezone: false,
                 header: this.header,
                 defaultView: this.defaultView,
@@ -61,6 +62,10 @@
                 timeFormat: 'HH:mm',
                 events: self.events,
                 eventSources: self.eventSources,
+
+                drop() {
+                    $(this).remove()
+                },
 
                 eventRender(event, element) {
                     if (this.sync) {

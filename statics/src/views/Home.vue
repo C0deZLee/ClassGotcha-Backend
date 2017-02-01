@@ -5,15 +5,16 @@
                 <h2>Welcome back! {{username()}}! </h2><br>
                 <p>Here are tasks we recommand you to do today!</p>
               
-                <div id="external-events">
-                        <h5>Drag a event and drop into callendar.</h5>
-                        <div class="external-event lazur-bg ui-draggable ui-draggable-handle" style="position: relative;">Go to shop and buy some products.</div>
-                        <div class="external-event lazur-bg ui-draggable ui-draggable-handle" style="position: relative;">Check the new CI from Corporation.</div>
-                        <div class="external-event lazur-bg ui-draggable ui-draggable-handle" style="position: relative;">Send documents to John.</div>
-                        <div class="external-event lazur-bg ui-draggable ui-draggable-handle" style="position: relative;">Phone to Sandra.</div>
-                        <div class="external-event lazur-bg ui-draggable ui-draggable-handle" style="position: relative;">Chat with Michael.</div>
-                       
+        <div class="ibox-content">
+                    <div id='external-events'>
+                        <p>Drag a event and drop into callendar.</p>
+                        <div class='external-event navy-bg'>Go to shop and buy some products.</div>
+                        <div class='external-event navy-bg'>Check the new CI from Corporation.</div>
+                        <div class='external-event navy-bg'>Send documents to John.</div>
+                        <div class='external-event navy-bg'>Phone to Sandra.</div>
+                        <div class='external-event navy-bg'>Chat with Michael.</div>
                     </div>
+                </div>
                     <br>
                 <p>Here are your tasks today!</p>
                     
@@ -478,6 +479,25 @@
 
             }
             this.events = event_list
+        },
+        mounted() {
+            /* global $:true */
+            $('#external-events div.external-event').each(function() {
+
+                // store data so the calendar knows to render an event upon drop
+                $(this).data('event', {
+                    title: $.trim($(this).text()), // use the element's text as the event title
+                    stick: false // maintain when user navigates (see docs on the renderEvent method)
+                })
+
+                // make the event draggable using jQuery UI
+                $(this).draggable({
+                    zIndex: 10,
+                    revert: true, // will cause the event to go back to its
+                    revertDuration: 0 //  original position after the drag
+                })
+
+            })
         }
     }
 
