@@ -30,11 +30,6 @@ export const app = new Vue({
     },
     router,
     store,
-    render: h => h(App)
+    components: { App }
+    // render: h => h(App)
 })
-
-// export {
-//     app,
-//     router,
-//     store
-// }

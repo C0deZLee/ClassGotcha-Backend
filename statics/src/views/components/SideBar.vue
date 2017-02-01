@@ -85,13 +85,16 @@
                 return this.$store.getters.userFullName
             },
             avatar() {
-                return this.$store.getters.userAvatar.avatar1x
+                if (this.$store.getters.userAvatar)
+                    return this.$store.getters.userAvatar.avatar1x
             },
             username() {
-                return this.$store.getters.me.username
+                if (this.$store.getters.me)
+                    return this.$store.getters.me.username
             },
             classrooms() {
-                return this.$store.getters.userClassrooms
+                if (this.$store.getters.userClassrooms)
+                    return this.$store.getters.userClassrooms
             }
         }
     }

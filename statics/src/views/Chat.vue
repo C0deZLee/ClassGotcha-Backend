@@ -23,7 +23,7 @@
       <div class="ibox chat-view">
         <div class="ibox-title">
           <small class="text-muted">Last message:  {{chatroom.latest_message.created}}</small>
-          <p class="pull-right">{{chatroomUsers.length}} Users Online</p> 
+          <p class="pull-right">{{chatroom.accounts.length}} Users Online</p> 
         </div>
         <div class="ibox-content">
           <div class="row">
@@ -46,7 +46,7 @@
             <div class="col-md-2">
               <div class="chat-users">
                 <div class="users-list">
-                  <div class="chat-user" v-for="user in chatroomUsers">
+                  <div class="chat-user" v-for="user in chatroom.accounts">
                     <img class="chat-avatar" :src="user.avatar.avatar1x" alt="">
                     <div class="chat-user-name">
                       <a>{{user.full_name}}</a>
@@ -87,8 +87,11 @@
             return {
                 message_text: '',
                 errorMsg: '',
-                chatroom: {},
-                chatroomUsers: {}
+                chatroom: {
+                    name: 'Loading',
+                    latest_message: {},
+                    accounts: []
+                },
             }
         },
         methods: {
@@ -97,21 +100,22 @@
             },
             validateChatroom() {
                 this.$store.dispatch('validateChatroom', this.$route.params.chatroom_id)
-                // chat room doesn't exist or user doesn't belong to chat room, redirect
-                if (this.$store.getters.validChatroom) {
-                    this.$store.dispatch('getChatroom', this.$route.params.chatroom_id)
-                    this.$store.dispatch('getChatroomUsers', this.$route.params.chatroom_id)
-                    // after component is created
-                    this.connectSocket()
-                }
-            },
-            connectSocket() {
-                this.$store.dispatch('connectSocket', this.$route.params.chatroom_id)
-                this.reload()
-            },
-            reload() {
-                this.chatroom = this.$store.getters.currentChatroom
-                this.chatroomUsers = this.$store.getters.currentChatroomUsers
+                    .then(() => {
+                        // chat room doesn't exist or user doesn't belong to chat room, redirect
+                        this.$store.dispatch('getChatroom', this.$route.params.chatroom_id)
+                            .then(() => {
+                                this.chatroom = this.$store.getters.currentChatroom
+                                console.log('getChatroom', this.$store.getters.currentChatroom)
+                            })
+                            .catch((error) => {
+                                console.log('failed to load chatroom', error)
+                            })
+                        // after component is created
+                        this.$store.dispatch('connectSocket', this.$route.params.chatroom_id)
+                    }).catch((error) => {
+                        console.log('You are not allowed to enter this chatroom')
+                        throw error
+                    })
             },
             sendMessage(e) {
                 e.preventDefault()
@@ -130,9 +134,9 @@
                 this.message_text = ''
             },
             getAvatar(user_id) {
-                for (let i = 0; i < this.chatroomUsers.length; i++) {
-                    if (this.chatroomUsers[i].pk === user_id)
-                        return this.chatroomUsers[i].avatar.avatar1x
+                for (let i = 0; i < this.chatroom.accounts.length; i++) {
+                    if (this.chatroom.accounts[i].pk === user_id)
+                        return this.chatroom.accounts[i].avatar.avatar1x
                 }
             }
         },
@@ -156,11 +160,9 @@
             },
         },
         computed: {
-
             chatroomMessages() {
                 return this.$store.getters.currentChatroomMessages
             },
-
         },
         created() {
             this.validateChatroom()
