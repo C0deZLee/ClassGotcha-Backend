@@ -210,7 +210,7 @@
                <p>
                   {{moment.content}}
                </p>
-               <img src="img/gallery/3.jpg" class="img-responsive">
+               <img v-if="moment.images" :src="moment.images" class="img-responsive">
                <div class="btn-group">
                   <button @click="addLike(moment)" class="btn btn-white btn-xs"><i class="fa fa-thumbs-up"></i> {{moment.likes}} Like this! </button>
                   <button @click="showCommentBox(moment)" class="btn btn-white btn-xs"><i class="fa fa-comments"></i> Comment</button>
