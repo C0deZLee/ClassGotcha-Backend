@@ -15,7 +15,8 @@ const state = {
     moments: [],
     login_status: false,
     token: null,
-    loaded_user: {}
+    loaded_user: {},
+    uploaded: null
 }
 
 // getters
@@ -246,7 +247,13 @@ const actions = {
                 commit(types.LOG_ERROR, error)
             })
     },
-    postMoment({ rootState, commit, dispatch }, formdata) {
+    postMoment({ rootState, state, commit, dispatch }, formdata) {
+        console.log('postMoment', formdata)
+
+        if (state.uploaded) {
+            formdata['file'] = state.uploaded
+        }
+        console.log('postMoment', formdata)
         userApi.postMoment(formdata)
             .then((response) => {
                 commit(types.POST_MOMENT)
@@ -266,6 +273,12 @@ const actions = {
                 commit(types.LOG_ERROR, error)
             })
     },
+    uploadFile({ commit }, payload) {
+        commit(types.UPLOAD_FILE, payload)
+    },
+    clearFile({ commit }) {
+        commit(types.CLEAR_FILE)
+    }
 }
 
 // mutations
@@ -348,6 +361,12 @@ const mutations = {
     [types.ADD_CLASSROOM](state) {},
     [types.POST_MOMENT](state) {
         // TODO, update only 1 moment
+    },
+    [types.UPLOAD_FILE](state, payload) {
+        state.uploaded = payload
+    },
+    [types.CLEAR_FILE](state, payload) {
+        state.uploaded = null
     },
     // [types.ADD_CLASSROOM_FAILED](state) {},
 

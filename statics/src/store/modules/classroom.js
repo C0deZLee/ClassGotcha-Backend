@@ -51,6 +51,7 @@ const state = {
         updated: '',
     },
     is_in_class: false,
+    moment_img: null,
     moments: [],
     notes: [],
     tasks: [],

@@ -52,6 +52,7 @@ account_moments_pagination = views.AccountViewSet.as_view({
 })
 account_moments = views.AccountViewSet.as_view({
 	'get': 'moments',
+	'put': 'moments',
 	'post': 'moments'
 })
 account_add_moments = views.AccountViewSet.as_view({

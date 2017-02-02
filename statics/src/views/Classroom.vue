@@ -171,10 +171,13 @@
          </div>
       </div>
       <div class="col-lg-5">
-          <div class="ibox float-e-margins" v-show="user_in_classroom">
-                    <div class="ibox-title">
+          <div class="ibox float-e-margins" v-show="user_in_classroom" id="new-moment">
+        <div class="ibox-title">
+                        <div class="input-group">
                       <textarea class="form-control" v-model.lazy="content" placeholder="Wanna say something?"></textarea>
-
+                      <span class="input-group-addon btn btn-primary" @click="showDropzone"> <i class="fa fa-camera"></i> </span>
+                        </div>
+                         <upload v-if="dropzone" ref="dropzone"></upload>
                                 </div>
                                 <div class="ibox-content" style="padding:10px 10px 15px">
                                     <div class="m-b-10">
@@ -354,10 +357,15 @@
 
 <script>
     import { customTime } from 'utils/timeFilter'
+    // import Dropzone from 'vue2-dropzone'
+    import Upload from 'components/UploadImg'
 
     // VUe doesn't provide a method that can run after component load
     export default {
         name: 'Classroom',
+        components: {
+            'upload': Upload,
+        },
         data: function() {
             return {
                 content: '',
@@ -370,7 +378,8 @@
                 add_task_button_class: 'fa fa-plus',
                 task_title: '',
                 task_dscr: '',
-                task_time: ''
+                task_time: '',
+                dropzone: false
             }
         },
         methods: {
@@ -390,6 +399,9 @@
             showCommentBox(moment) {
                 this.comment_content = ''
                 this.comment_id = moment.id
+            },
+            showDropzone() {
+                this.dropzone = !this.dropzone
             },
             formatTime(time) {
                 return customTime(time)
@@ -420,6 +432,8 @@
                 }
                 this.$store.dispatch('postMoment', formData)
                 this.content = ''
+                this.dropzone = false
+
             },
             postComment(e) {
                 e.preventDefault()

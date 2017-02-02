@@ -1,5 +1,7 @@
 // -------COMMON ---------
 export const LOG_ERROR = 'LOG_ERROR'
+export const UPLOAD_FILE = 'UPLOAD_FILE'
+export const CLEAR_FILE = 'CLEAR_FILE'
 
 // ------- USER --------
 export const LOGIN_SUCCESS = 'LOGIN_SUCCESS'

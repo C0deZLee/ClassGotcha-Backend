@@ -10255,3 +10255,10 @@ body.md-skin {
         margin: 0;
     }
 }
+
+
+/* Custom */
+
+textarea {
+    resize: none;
+}
