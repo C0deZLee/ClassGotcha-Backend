@@ -122,14 +122,13 @@ class ClassroomViewSet(viewsets.ViewSet):
 	def tasks(self, request, pk):
 		classroom = get_object_or_404(self.queryset, pk=pk)
 		if request.method == 'GET':
-			serializer = TaskSerializer(classroom.tasks.all(), many=True)
+			serializer = TaskSerializer(classroom.tasks.all().reverse() , many=True)
 			return Response(serializer.data)
 		if request.method == 'POST':
 			request.data['classroom'] = classroom.pk
 			if 'due' in request.data:
 				request.data['due'] = datetime.datetime.fromtimestamp(request.data['due'] / 1000)
 
-			print request.data
 			serializer = TaskSerializer(data=request.data)
 			serializer.is_valid(raise_exception=True)
 			serializer.save()

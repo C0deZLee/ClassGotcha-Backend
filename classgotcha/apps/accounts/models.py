@@ -41,14 +41,13 @@ class AccountManager(BaseUserManager):
 class Professor(models.Model):
 	class Meta:
 		unique_together = (('first_name', 'last_name', 'major'),)
-
 	# Basic
 	first_name = models.CharField(max_length=40)
 	last_name = models.CharField(max_length=40)
 	mid_name = models.CharField(max_length=40, blank=True)
 	email = models.CharField(max_length=50)
+	office = models.CharField(max_length=100, blank=True)
 	major = models.ForeignKey('classrooms.Major')
-	office = models.CharField(max_length=50, blank=True)
 	# Timestamp
 	created = models.DateTimeField(auto_now_add=True)
 

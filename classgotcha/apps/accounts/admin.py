@@ -54,7 +54,7 @@ class ProfessorAdmin(admin.ModelAdmin):
 	list_display = ('first_name', 'last_name', 'department', 'major')
 	fieldsets = (
 		(None, {'fields': ('email', 'first_name', 'last_name')}),
-		('major', {'fields': ('department', 'major')}),
+		('major', {'fields': ('department', 'major', 'office')}),
 		# ('Permissions', {'fields': ('is_professor', 'is_staff', 'is_superuser')}),
 		('Timestamp', {'fields': ('created',)})
 	)
