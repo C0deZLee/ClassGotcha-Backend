@@ -14,10 +14,11 @@ const getters = {}
 
 // actions
 const actions = {
-    solveMoment({ commit, dispatch }, pk) {
+    solveMoment({ rootState, commit, dispatch }, pk) {
         postApi.solve(pk)
             .then((response) => {
                 commit(types.ADD_MOMENT_SOLVE, response)
+                dispatch('getClassroomMoments', rootState.route.params.classroom_id)
             })
             .catch((error) => {
                 commit(types.LOG_ERROR, error)

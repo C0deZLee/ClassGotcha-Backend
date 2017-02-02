@@ -194,6 +194,8 @@
                <ul class="dropdown-menu m-t-xs">
                   <li><a @click="addReport(moment.id)">Report</a></li>
                   <li v-if="moment.creator.id === user_id"><a @click="delMoment(moment.id)">Delete</a></li>
+                  <li v-if="moment.creator.id === user_id && moment.solved === false"><a @click="addSolve(moment.id)">Mark as solved</a></li>
+                  
                </ul>
             </div>
             <div class="social-avatar">

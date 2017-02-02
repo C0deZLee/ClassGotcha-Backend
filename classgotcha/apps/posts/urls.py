@@ -19,7 +19,7 @@ moment_report = views.MomentViewSet.as_view({
 urlpatterns = [
 	url(r'^moment/(?P<pk>[0-9]+)/comment/$', moment_comment, name='moment-comment'),
 	url(r'^moment/(?P<pk>[0-9]+)/like/$', moment_like, name='moment-like'),
-	url(r'^moment/(?P<pk>[0-9]+)/solve/$', moment_detail, name='moment-detail'),
+	url(r'^moment/(?P<pk>[0-9]+)/solve/$', moment_solve, name='moment-detail'),
 	url(r'^moment/(?P<pk>[0-9]+)/report/$', moment_report, name='moment-report'),
 
 	url(r'^moment/(?P<pk>[0-9]+)/$', moment_detail, name='moment-detail'),
