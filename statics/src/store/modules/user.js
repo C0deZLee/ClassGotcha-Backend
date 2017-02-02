@@ -248,26 +248,25 @@ const actions = {
             })
     },
     postMoment({ rootState, state, commit, dispatch }, formdata) {
-        console.log('postMoment', formdata)
-
-        if (state.uploaded) {
+        if (state.uploaded)
             formdata['file'] = state.uploaded
-        }
-        console.log('postMoment', formdata)
-        userApi.postMoment(formdata)
+        return userApi.postMoment(formdata)
             .then((response) => {
                 commit(types.POST_MOMENT)
+                commit(types.CLEAR_FILE)
                 dispatch('getClassroomMoments', rootState.route.params.classroom_id)
+                return Promise.resolve()
             })
             .catch((error) => {
                 commit(types.LOG_ERROR, error)
+                return Promise.reject()
             })
     },
-    delMoment({ commit, dispatch }, pk) {
+    delMoment({ rootState, commit, dispatch }, pk) {
         userApi.delMoment(pk)
             .then((response) => {
                 commit(types.REMOVE_MOMENT)
-                // dispatch('getChatrooms')
+                dispatch('getClassroomMoments', rootState.route.params.classroom_id)
             })
             .catch((error) => {
                 commit(types.LOG_ERROR, error)
@@ -359,9 +358,8 @@ const mutations = {
 
     // post change
     [types.ADD_CLASSROOM](state) {},
-    [types.POST_MOMENT](state) {
-        // TODO, update only 1 moment
-    },
+    [types.POST_MOMENT](state) {},
+    [types.REMOVE_MOMENT](state) {},
     [types.UPLOAD_FILE](state, payload) {
         state.uploaded = payload
     },

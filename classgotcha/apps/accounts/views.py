@@ -193,7 +193,6 @@ class AccountViewSet(viewsets.ViewSet):
 
 	@staticmethod
 	def moments(request, pk=None):
-
 		moment_query_set = request.user.moments.filter(deleted=False)
 		# Only return first 20 moments
 		if request.method == 'GET':
@@ -201,8 +200,6 @@ class AccountViewSet(viewsets.ViewSet):
 			return Response(serializer.data)
 
 		if request.method == 'POST':
-			# TODO: img upload
-			# print request.data
 			content = request.data.get('content', None)
 			classroom_id = request.data.get('classroom_id', None)
 			question = request.data.get('question', None)
@@ -210,7 +207,6 @@ class AccountViewSet(viewsets.ViewSet):
 			# Data missing, return 400
 			if not content and not question:
 				return Response(status=status.HTTP_400_BAD_REQUEST)
-
 			# create new moment
 			moment = Moment(content=content, creator=request.user)
 			if classroom_id:
@@ -229,25 +225,22 @@ class AccountViewSet(viewsets.ViewSet):
 					return Response({'detail': 'invalid image!'}, status=status.HTTP_400_BAD_REQUEST)
 				file_name = str(uuid.uuid4())
 				complete_file_name = "%s.%s" % (file_name, file_extension,)
-				print complete_file_name
 				moment.images = ContentFile(decoded_file, complete_file_name)
 			moment.save()
 			return Response(status=status.HTTP_200_OK)
 
 		if request.method == 'PUT':
-			moment = get_object_or_404(moment_query_set, pk)
+			moment = get_object_or_404(moment_query_set, pk=pk)
 			if moment.solved is False:
 				moment.solved = True
 				moment.save()
 			return Response(status=status.HTTP_200_OK)
 		if request.method == 'DELETE':
-			moment = get_object_or_404(moment_query_set, pk)
+			moment = get_object_or_404(moment_query_set, pk=pk)
 			moment.deleted = True
 			moment.save()
 			return Response(status=status.HTTP_200_OK)
 
-	def moments_file(self, pk=None):
-		pass
 
 	@staticmethod
 	def moments_pagination(request, page=None):

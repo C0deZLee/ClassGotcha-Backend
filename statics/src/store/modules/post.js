@@ -23,6 +23,15 @@ const actions = {
                 commit(types.LOG_ERROR, error)
             })
     },
+    reportMoment({ commit, dispatch }, pk) {
+        postApi.addReport(pk)
+            .then((response) => {
+                commit(types.ADD_MOMENT_REPORT, response)
+            })
+            .catch((error) => {
+                commit(types.LOG_ERROR, error)
+            })
+    },
     postMomentComment({ rootState, state, commit, dispatch }, data) {
         postApi.postComment(data.id, data.formData)
             .then((response) => {
@@ -50,6 +59,7 @@ const actions = {
 const mutations = {
     [types.ADD_MOMENT_SOLVE](state, response) {},
     [types.ADD_MOMENT_LIKE](state, response) {},
+    [types.ADD_MOMENT_REPORT](state, response) {},
 
     [types.POST_MOMENT_COMMENT](state, response) {},
     [types.POST_CLASSROOM_TASK](state, response) {},

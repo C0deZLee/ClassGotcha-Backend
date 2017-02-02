@@ -43,10 +43,10 @@ class MomentViewSet(viewsets.ViewSet):
 			print "no content"
 			return Response(status=status.HTTP_400_BAD_REQUEST)
 
-	def flag(self, request, pk):
+	def report(self, request, pk):
 		moment = get_object_or_404(self.queryset, pk=pk)
 		moment.flagged_users.add(request.user)
-		if moment.is_flagged:
+		if moment.flagged:
 			moment.deleted = True
 		moment.save()
 		return Response(status=status.HTTP_200_OK)

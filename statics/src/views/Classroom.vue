@@ -146,7 +146,7 @@
                   <a v-for="student in current_classroom.students" href=""><img alt="image" class="img-circle" :src="student.avatar.avatar2x"></a>
                </div>
                <p>
-                  <a :href="user_page_url">More..</a>
+                  <a :href="students_page_url">More..</a>
                   <!--<router-link to="/classroom/id/:classroom_id/students">More..</router-link>-->
                </p>
             </div>
@@ -192,7 +192,8 @@
             <div class="pull-right social-action dropdown">
                <button data-toggle="dropdown" class="dropdown-toggle btn-white"> <i class="fa fa-angle-down"></i></button>
                <ul class="dropdown-menu m-t-xs">
-                  <li><a href="#">Report</a></li>
+                  <li><a @click="addReport(moment.id)">Report</a></li>
+                  <li v-if="moment.creator.id === user_id"><a @click="delMoment(moment.id)">Delete</a></li>
                </ul>
             </div>
             <div class="social-avatar">
@@ -200,9 +201,9 @@
                <img alt="image" class="img-circle" :src="moment.creator.avatar.avatar2x">
                </a>
                <div class="media-body">
-                  <a href="#"> {{moment.creator.full_name}} </a>
+                  <a :href="user_page_url(moment.creator.id)"> {{moment.creator.full_name}} </a>
                   <span v-show="moment.solved" class="label label-primary">Solved</span>
-                  <span v-show="moment.solved!==null&&!moment.solved" class="label label-warning">Problem</span>
+                  <span v-show="moment.solved!==null&&!moment.solved" class="label label-warning">Question</span>
                   <small class="text-muted">{{formatTime(moment.created)}}</small>
                </div>
             </div>
@@ -417,8 +418,11 @@
                 this.$store.dispatch('addMomentLike', moment.id)
                 moment.likes += 1
             },
+            addReport(pk) {
+                this.$store.dispatch('reportMoment', pk)
+            },
             addSolve(pk) {
-
+                this.$store.dispatch('solveMoment', pk)
             },
             getClassroomData() {
                 this.$store.dispatch('getClassroom', this.$route.params.classroom_id)
@@ -430,10 +434,14 @@
                     classroom_id: this.$route.params.classroom_id,
                     question: this.question
                 }
-                this.$store.dispatch('postMoment', formData)
-                this.content = ''
-                this.dropzone = false
+                this.$store.dispatch('postMoment', formData).then(() => {
+                    this.content = ''
+                    this.dropzone = false
+                })
 
+            },
+            delMoment(pk) {
+                this.$store.dispatch('delMoment', pk)
             },
             postComment(e) {
                 e.preventDefault()
@@ -455,7 +463,10 @@
                 this.$store.dispatch('postClassroomTask', data)
             },
             professor_page_url(pk) {
-                return '/#/professor/id/' + pk + ''
+                return '/#/professor/id/' + pk
+            },
+            user_page_url(pk) {
+                return '/#/profile/id/' + pk
             }
 
 
@@ -476,8 +487,11 @@
             professors() {
                 return this.$store.getters.classroomProfessors
             },
-            user_page_url() {
+            students_page_url() {
                 return '/#/classroom/id/' + this.$route.params.classroom_id + '/students'
+            },
+            user_id() {
+                return this.$store.getters.userID
             }
 
         },

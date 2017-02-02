@@ -435,7 +435,7 @@
                 event_list.push({
                     currentTimezone: 'UTC',
                     title: classroom.class_time.task_name + '\n' + classroom.class_time.location,
-
+                    editable: false,
                     start: classroom.class_time.formatted_start_time,
                     end: classroom.class_time.formatted_end_time,
                     dow: classroom.class_time.repeat_list,

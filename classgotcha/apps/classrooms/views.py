@@ -115,7 +115,7 @@ class ClassroomViewSet(viewsets.ViewSet):
 
 	def recent_moments(self, request, pk):
 		classroom = get_object_or_404(self.queryset, pk=pk)
-		moments = classroom.moments.all().order_by('-created')[0:20]
+		moments = classroom.moments.filter(deleted=False).order_by('-created')[0:20]
 		serializer = MomentSerializer(moments, many=True)
 		return Response(serializer.data)
 
