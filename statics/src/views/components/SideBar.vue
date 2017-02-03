@@ -21,7 +21,7 @@
                       <img alt="image" class="img-circle" :src="avatar" />
                     </div>
                 </li>
-                <li class="active">
+                <li>
                     <a href="/#/">
                         <i class="fa fa-th-large"></i>
                         <span class="nav-label">Index</span>

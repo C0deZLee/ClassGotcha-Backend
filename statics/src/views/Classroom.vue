@@ -51,7 +51,7 @@
           <tbody>
             <tr>
               <td>
-                <strong>{{professor.full_name}}</strong>  <a class="pull-right" :href="professor_page_url(professor.id)">Detail</a>
+                <strong>{{professor.full_name}}</strong> <a class="m-l" :href="professor_page_url(professor.id)">Detail</a>
               </td>
             </tr>
             <tr>
@@ -65,9 +65,8 @@
               </td>
             </tr>
             <tr>
-                <td>
-                   
-                </td>
+              <td>
+              </td>
             </tr>
           </tbody>
         </table>
@@ -208,9 +207,11 @@
     <div class="col-lg-4 m-b-lg">
       <div id="vertical-timeline" class="vertical-container light-timeline no-margins">
         <div class="vertical-timeline-block">
-          <div class="vertical-timeline-icon navy-bg" v-show="user_in_classroom">
-            <i class="fa fa-star"></i>
-          </div>
+          <a @click="showAddTask" >
+            <div class="vertical-timeline-icon navy-bg" v-show="user_in_classroom">
+              <i class="fa fa-star" ></i>
+            </div>
+          </a>
           <div class="vertical-timeline-content" v-show="user_in_classroom">
             <div class="row">
               <div class="col-md-10">
@@ -220,37 +221,54 @@
                 <a @click="showAddTask"> <span class="label label-primary pull-right"><i :class="add_task_button_class"></span></a>
               </div>
             </div>
-            <div v-if="add_task">
+            <div v-show="add_task">
               <div class="row">
-                <div class="col-md-5">
-                  <input class="form-control m-b" v-model="task_title" placeholder="ex. Homework 1"></input>
+                <div class="col-md-12">
+                  <select class="form-control m-b" v-model="task_type">
+                    <option value="0">--Type--</option>                    
+                    <option value="1">Assignment</option>
+                    <option value="2">Quiz</option>
+                    <option value="3">Exam</option>
+                  </select>
                 </div>
-                <div class="col-md-7">
-                  <!--<span class="vertical-date">
-                    <select class="form-control m-b">
-                       <option >-Type-</option>
-                       <option value="Homework">Homework</option>
-                       <option value="Lab">Homework</option>
-                       <option value="Quiz">Quiz</option>
-                       <option value="Exam">Exam</option>
-                    </select>
-                    </span>-->
+              </div>
+               
+              <div class="row" v-show="task_type!=0">
+                <div class="col-md-12">
+                  <input class="form-control m-b" v-model="task_title" placeholder="eg. Homework 1"></input>
+                </div>
+
+                <div class="col-md-12" v-show="task_type==2 || task_type==3">
+                  <input type="radio" v-model="task_sub_type" value="1" id="in-class" name="a">
+                    <label for="in-class"></label> Take home 
+                    <i class="m-l" ></i>
+                      <input type="radio"  v-model="task_sub_type" value="2" id="take-home" name="a">
+                    <label for="take-home"></label> In class
+                    <i class="m-l" ></i>
+                      <input type="radio" v-model="task_sub_type" value="3" id="other-time" name="a">
+                    <label for="other-time" v-show="task_type==3"></label> <span v-show="task_type==3"> Other Time</span>
+                </div>
+
+                <div class="col-md-12 m-t">
                   <div class="form-group">
                     <div class="input-group date">
-                      <input type="text" placeholder="Time" v-model="task_time" id="datetimepicker" class="form-control" />
+                      <input type="text" v-show="task_sub_type==1" placeholder="Due time?" v-model="task_due_datetime" id="task-due-datetime" class="form-control" />
+                      <input type="text" v-show="task_sub_type==2" placeholder="Which day?" v-model="task_due_date" id="task-due-date" class="form-control" />
+                      <input type="text" v-show="task_sub_type==3" placeholder="Start at?" v-model="task_start" id="task-start" class="form-control" />
+                      <input type="text" v-show="task_sub_type==3" placeholder="End at?" v-model="task_end" id="task-end" class="form-control" />
                       <span class="input-group-addon">
-                      <span class="glyphicon glyphicon-calendar"></span>
+                      <span class="fa fa-calendar"></span>
                     </div>
                   </div>
                 </div>
-              </div>
-              <div class="row">
-                <div class="col-sm-8">
+                <div class="col-md-12" v-show="task_sub_type==3">
+                  <input class="form-control m-b" v-model="task_location" placeholder="Location?"></input>                  
+                </div>  
+                  <div class="col-md-12">
+                  <textarea class="form-control m-b" v-model="task_dscr" placeholder="Describe it in more detail?"></textarea>
                 </div>
-                <div class="col-md-12">
-                  <textarea class="form-control m-b" v-model="task_dscr" placeholder="Homwwork due tomorrow?"></textarea>
-                </div>
               </div>
+ 
               <a @click="postTask()" class="btn btn-sm btn-primary"> Add</a>
             </div>
           </div>
@@ -337,10 +355,16 @@
                 // task
                 add_task: false,
                 add_task_button_class: 'fa fa-plus',
+                task_type: 0, // 1: homework, 2: quiz, 3: exam
+                task_sub_type: 1, // 1: take home, 2: in class, 3: other time
                 task_title: '',
                 task_dscr: '',
-                task_time: '',
-                dropzone: false
+                task_due_datetime: null,
+                task_due_date: null,
+                task_start: null,
+                task_end: null,
+                task_location: '',
+                dropzone: false,
             }
         },
         methods: {
@@ -352,10 +376,6 @@
                 else
                     this.add_task_button_class = 'fa fa-plus'
 
-                /* global $:true */
-                setTimeout(() => {
-                    $('#datetimepicker').datetimepicker()
-                }, 100)
             },
             showCommentBox(moment) {
                 this.comment_content = ''
@@ -415,9 +435,9 @@
             },
             postTask() {
                 /* global Date:true */
-                const task_time = Date.parse(this.task_time)
+                const task_due = Date.parse(this.task_due)
                 const data = {
-                    formData: { description: this.task_dscr, due: task_time, task_name: this.task_title, type: 1 },
+                    formData: { description: this.task_dscr, due: task_due, task_name: this.task_title, type: 1 },
                     pk: this.$route.params.classroom_id
                 }
                 this.$store.dispatch('postClassroomTask', data)
@@ -455,9 +475,25 @@
             }
 
         },
-        created: function() {
+        created() {
             // after component is created, load data
             this.getClassroomData()
+        },
+        mounted() {
+            /* global $:true */
+            // enable all datetime pickers
+            $('#task-due-datetime').datetimepicker().on(
+                'dp.change', () => { this.task_due_datetime = $('#task-due-datetime').val() }
+            )
+            $('#task-due-date').datetimepicker({ format: 'L' }).on(
+                'dp.change', () => { this.task_due_date = $('#task-due-date').val() }
+            )
+            $('#task-start').datetimepicker().on(
+                'dp.change', () => { this.task_start = $('#task-start').val() }
+            )
+            $('#task-end').datetimepicker().on(
+                'dp.change', () => { this.task_end = $('#task-end').val() }
+            )
         },
         watch: {
             // execute getClassroomData if route changes
