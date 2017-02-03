@@ -1,3 +1,4 @@
+from datetime import datetime
 from django.db import models
 
 from ..accounts.models import Account, Group
@@ -32,11 +33,19 @@ class Task(models.Model):
 	location = models.CharField(max_length=50, null=True)
 	# Relationship
 	involved = models.ManyToManyField(Account, related_name='tasks', blank=True)
+	finished = models.ManyToManyField(Account, related_name='finished_tasks', blank=True)
 	classroom = models.ForeignKey(Classroom, blank=True, null=True, related_name='tasks', on_delete=models.CASCADE)
 	group = models.ForeignKey(Group, blank=True, null=True, related_name='tasks', on_delete=models.CASCADE)
 
 	def __unicode__(self):
 		return self.task_name
+
+	@property
+	def expired(self):
+		if self.due:
+			return datetime.utcnow() > self.due
+		if self.repeat_end:
+			return datetime.utcnow() > self.repeat_end
 
 	@property
 	def formatted_start_datetime(self):

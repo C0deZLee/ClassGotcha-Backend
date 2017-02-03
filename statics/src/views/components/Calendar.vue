@@ -14,7 +14,7 @@
             },
 
             editable: {
-                default () { return false },
+                default () { return true },
             },
 
             selectable: {

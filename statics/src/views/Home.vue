@@ -1,5 +1,5 @@
 <template>
-<div>
+<div class="animated fadeInRight">
           <div class="row  border-bottom white-bg dashboard-header">
             <div class="col-sm-3">
                 <h2>Welcome back! {{username()}}! </h2><br>
@@ -16,40 +16,8 @@
                     </div>
                 </div>
                     <br>
-                <p>Here are your tasks today!</p>
-                    
-                      <ul class="list-group clear-list m-t">
-                    <li class="list-group-item fist-item">
-                                        <span class="pull-right">
-                                            10:30 am
-                                        </span>
-                        <span class="label label-success">1</span> Adviser meeting
-                    </li>
-                    <li class="list-group-item">
-                                        <span class="pull-right">
-                                            6:30 am
-                                        </span>
-                        <span class="label label-info">2</span> Attend CS311's help Session
-                    <li class="list-group-item">
-                                        <span class="pull-right">
-                                            08:00 pm
-                                        </span>
-                        <span class="label label-primary">3</span> Art classs drawing due
-                    </li>
-                    <li class="list-group-item">
-                                        <span class="pull-right">
-                                            11:00 pm
-                                        </span>
-                        <span class="label label-default">4</span> Reading material feedback due
-                    </li>
-                    <li class="list-group-item">
-                                        <span class="pull-right">
-                                            12:00 am
-                                        </span>
-                        <span class="label label-primary">5</span> CS465 Homework submission
-                    </li>
-                </ul>
-                <button class="btn btn-primary pull-right">See detail</button>
+          
+                <button class="btn  form-control">See More..</button>
             </div>
             <div class="col-sm-9">
                 <full-calendar :events="events"></full-calendar>
@@ -64,7 +32,7 @@
           <div class="col-lg-4">
               <div class="ibox float-e-margins">
                     <div class="ibox-title">
-                        <h5>Small todo list</h5>
+                        <h5>Your Todo List</h5>
                         <div class="ibox-tools">
                             <a class="collapse-link">
                                 <i class="fa fa-chevron-up"></i>
@@ -467,7 +435,7 @@
                 event_list.push({
                     currentTimezone: 'UTC',
                     title: classroom.class_time.task_name + '\n' + classroom.class_time.location,
-
+                    editable: false,
                     start: classroom.class_time.formatted_start_time,
                     end: classroom.class_time.formatted_end_time,
                     dow: classroom.class_time.repeat_list,

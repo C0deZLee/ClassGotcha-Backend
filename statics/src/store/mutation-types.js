@@ -1,5 +1,7 @@
 // -------COMMON ---------
 export const LOG_ERROR = 'LOG_ERROR'
+export const UPLOAD_FILE = 'UPLOAD_FILE'
+export const CLEAR_FILE = 'CLEAR_FILE'
 
 // ------- USER --------
 export const LOGIN_SUCCESS = 'LOGIN_SUCCESS'
@@ -83,4 +85,5 @@ export const USER_NOT_IN_CHATROOM = 'USER_NOT_IN_CHATROOM'
 
 export const ADD_MOMENT_SOLVE = 'ADD_MOMENT_SOLVE'
 export const ADD_MOMENT_LIKE = 'ADD_MOMENT_LIKE'
+export const ADD_MOMENT_REPORT = 'ADD_MOMENT_REPORT'
 export const POST_MOMENT_COMMENT = 'POST_MOMENT_COMMENT'

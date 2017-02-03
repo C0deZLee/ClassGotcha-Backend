@@ -14,16 +14,26 @@ const getters = {}
 
 // actions
 const actions = {
-    solveMoment({ commit, dispatch }, pk) {
+    solveMoment({ rootState, commit, dispatch }, pk) {
         postApi.solve(pk)
             .then((response) => {
                 commit(types.ADD_MOMENT_SOLVE, response)
+                dispatch('getClassroomMoments', rootState.route.params.classroom_id)
             })
             .catch((error) => {
                 commit(types.LOG_ERROR, error)
             })
     },
-    postMomentComment({ rootState, commit, dispatch }, data) {
+    reportMoment({ commit, dispatch }, pk) {
+        postApi.addReport(pk)
+            .then((response) => {
+                commit(types.ADD_MOMENT_REPORT, response)
+            })
+            .catch((error) => {
+                commit(types.LOG_ERROR, error)
+            })
+    },
+    postMomentComment({ rootState, state, commit, dispatch }, data) {
         postApi.postComment(data.id, data.formData)
             .then((response) => {
                 commit(types.POST_MOMENT_COMMENT, response)
@@ -42,7 +52,7 @@ const actions = {
             .catch((error) => {
                 commit(types.LOG_ERROR, error)
             })
-    },
+    }
 
 }
 
@@ -50,8 +60,11 @@ const actions = {
 const mutations = {
     [types.ADD_MOMENT_SOLVE](state, response) {},
     [types.ADD_MOMENT_LIKE](state, response) {},
+    [types.ADD_MOMENT_REPORT](state, response) {},
+
     [types.POST_MOMENT_COMMENT](state, response) {},
     [types.POST_CLASSROOM_TASK](state, response) {},
+
     [types.LOG_ERROR](state, error) {
         state.error_msg = error
         // TODO, need to handle errors

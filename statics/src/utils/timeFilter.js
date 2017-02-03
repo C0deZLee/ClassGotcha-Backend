@@ -1,7 +1,7 @@
 /** 
  *  Format time
  */
-exports.customTime = item => {
+export const customTime = item => {
     let nowTime = new Date().getTime()
     let minuteTime = 60 * 1000
     let hourTime = 60 * minuteTime
@@ -53,7 +53,11 @@ exports.customTime = item => {
     return descTime
 }
 
-exports.formatDate = time => {
+export const TaskDate = time => {
+
+}
+
+export const formatDate = time => {
     let tmpDate = new Date(time)
     let year = tmpDate.getFullYear()
     let month = tmpDate.getMonth() + 1

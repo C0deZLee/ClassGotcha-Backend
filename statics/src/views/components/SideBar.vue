@@ -39,12 +39,6 @@
                 </li>
                 <li>
                     <a href="/#/me/">
-                        <i class="fa fa-calendar-o"></i>
-                        <span class="nav-label">My Calendar</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="/#/me/">
                         <i class="fa fa-file-text"></i>
                         <span class="nav-label">My Notes</span>
                     </a>

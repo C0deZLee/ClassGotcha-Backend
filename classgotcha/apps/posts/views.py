@@ -22,16 +22,15 @@ class MomentViewSet(viewsets.ViewSet):
 
 	def solve(self, request, pk):
 		# can only change own moments' status
-		if pk != request.user.pk:
-			return Response(status=status.HTTP_403_FORBIDDEN)
 		moment = get_object_or_404(self.queryset, pk=pk)
+		if moment.creator_id != request.user.pk:
+			return Response(status=status.HTTP_403_FORBIDDEN)
 		moment.solved = True
 		moment.save()
 		return Response(status=status.HTTP_200_OK)
 
 	def comment(self, request, pk):
 		moment = get_object_or_404(self.queryset, pk=pk)
-		print moment
 		content = request.data.get('content', None)
 		if content:
 			comment = Comment(content=content, moment=moment, creator=request.user)
@@ -43,10 +42,10 @@ class MomentViewSet(viewsets.ViewSet):
 			print "no content"
 			return Response(status=status.HTTP_400_BAD_REQUEST)
 
-	def flag(self, request, pk):
+	def report(self, request, pk):
 		moment = get_object_or_404(self.queryset, pk=pk)
 		moment.flagged_users.add(request.user)
-		if moment.is_flagged:
+		if moment.flagged:
 			moment.deleted = True
 		moment.save()
 		return Response(status=status.HTTP_200_OK)

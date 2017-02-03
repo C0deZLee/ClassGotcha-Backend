@@ -14,7 +14,7 @@ class MomentAdmin(admin.ModelAdmin):
 	fieldsets = (
 		('Content', {'fields': ('pk', 'content', 'images',)}),
 		('Info', {'fields': ('creator', 'classroom',)}),
-		('Info', {'fields': ('deleted', 'question', 'flagged_num', 'flagged')}),
+		('Info', {'fields': ('deleted', 'solved', 'flagged')}),
 		('Timestamp', {'fields': ('created',)}),
 	)
 	readonly_fields = ('created', 'creator', 'classroom', 'flagged', 'pk')

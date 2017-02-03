@@ -15,7 +15,8 @@ const state = {
     moments: [],
     login_status: false,
     token: null,
-    loaded_user: {}
+    loaded_user: {},
+    uploaded: null
 }
 
 // getters
@@ -246,26 +247,37 @@ const actions = {
                 commit(types.LOG_ERROR, error)
             })
     },
-    postMoment({ rootState, commit, dispatch }, formdata) {
-        userApi.postMoment(formdata)
+    postMoment({ rootState, state, commit, dispatch }, formdata) {
+        if (state.uploaded)
+            formdata['file'] = state.uploaded
+        return userApi.postMoment(formdata)
             .then((response) => {
                 commit(types.POST_MOMENT)
+                commit(types.CLEAR_FILE)
+                dispatch('getClassroomMoments', rootState.route.params.classroom_id)
+                return Promise.resolve()
+            })
+            .catch((error) => {
+                commit(types.LOG_ERROR, error)
+                return Promise.reject()
+            })
+    },
+    delMoment({ rootState, commit, dispatch }, pk) {
+        userApi.delMoment(pk)
+            .then((response) => {
+                commit(types.REMOVE_MOMENT)
                 dispatch('getClassroomMoments', rootState.route.params.classroom_id)
             })
             .catch((error) => {
                 commit(types.LOG_ERROR, error)
             })
     },
-    delMoment({ commit, dispatch }, pk) {
-        userApi.delMoment(pk)
-            .then((response) => {
-                commit(types.REMOVE_MOMENT)
-                // dispatch('getChatrooms')
-            })
-            .catch((error) => {
-                commit(types.LOG_ERROR, error)
-            })
+    uploadFile({ commit }, payload) {
+        commit(types.UPLOAD_FILE, payload)
     },
+    clearFile({ commit }) {
+        commit(types.CLEAR_FILE)
+    }
 }
 
 // mutations
@@ -346,8 +358,13 @@ const mutations = {
 
     // post change
     [types.ADD_CLASSROOM](state) {},
-    [types.POST_MOMENT](state) {
-        // TODO, update only 1 moment
+    [types.POST_MOMENT](state) {},
+    [types.REMOVE_MOMENT](state) {},
+    [types.UPLOAD_FILE](state, payload) {
+        state.uploaded = payload
+    },
+    [types.CLEAR_FILE](state, payload) {
+        state.uploaded = null
     },
     // [types.ADD_CLASSROOM_FAILED](state) {},
 

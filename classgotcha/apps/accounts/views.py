@@ -1,6 +1,3 @@
-import os
-from resizeimage import resizeimage
-from PIL import Image
 
 from django.shortcuts import get_object_or_404
 from django.core.files.base import File
@@ -41,6 +38,10 @@ def account_register(request):
 @permission_classes((IsAuthenticated,))
 @parser_classes((MultiPartParser, FormParser,))
 def account_avatar(request):
+	import os
+	from resizeimage import resizeimage
+	from PIL import Image
+
 	if request.method == 'POST':
 		try:
 			upload = request.FILES['file']
@@ -78,7 +79,7 @@ def account_avatar(request):
 
 class AccountViewSet(viewsets.ViewSet):
 	queryset = Account.objects.exclude(is_staff=1)
-	parser_classes = (FormParser, MultiPartParser, JSONParser)
+	parser_classes = (MultiPartParser, FormParser, JSONParser)
 	permission_classes = (IsAuthenticated,)
 
 	# list_route and detail_route are for auto gen URL
@@ -199,11 +200,11 @@ class AccountViewSet(viewsets.ViewSet):
 			return Response(serializer.data)
 
 		if request.method == 'POST':
-			# TODO: img upload
 			content = request.data.get('content', None)
 			classroom_id = request.data.get('classroom_id', None)
 			question = request.data.get('question', None)
-
+			image = request.data.get('file', None)
+			# Data missing, return 400
 			if not content and not question:
 				return Response(status=status.HTTP_400_BAD_REQUEST)
 			# create new moment
@@ -212,14 +213,34 @@ class AccountViewSet(viewsets.ViewSet):
 				moment.classroom_id = classroom_id
 			if question:
 				moment.solved = False
+			if image:
+				import uuid
+				from django.core.files.base import ContentFile
+				from base64 import b64decode
+				header, image = image.split(';base64,')
+				file_extension = header.split('/')[1]
+				try:
+					decoded_file = b64decode(image)
+				except TypeError:
+					return Response({'detail': 'invalid image!'}, status=status.HTTP_400_BAD_REQUEST)
+				file_name = str(uuid.uuid4())
+				complete_file_name = "%s.%s" % (file_name, file_extension,)
+				moment.images = ContentFile(decoded_file, complete_file_name)
 			moment.save()
 			return Response(status=status.HTTP_200_OK)
 
+		if request.method == 'PUT':
+			moment = get_object_or_404(moment_query_set, pk=pk)
+			if moment.solved is False:
+				moment.solved = True
+				moment.save()
+			return Response(status=status.HTTP_200_OK)
 		if request.method == 'DELETE':
-			moment = get_object_or_404(moment_query_set, pk)
+			moment = get_object_or_404(moment_query_set, pk=pk)
 			moment.deleted = True
 			moment.save()
 			return Response(status=status.HTTP_200_OK)
+
 
 	@staticmethod
 	def moments_pagination(request, page=None):

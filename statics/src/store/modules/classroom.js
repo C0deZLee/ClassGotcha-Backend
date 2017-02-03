@@ -140,6 +140,7 @@ const actions = {
         classApi.postTask(data.pk, data.formData)
             .then((response) => {
                 commit(types.POST_CLASSROOM_TASK, response)
+                dispatch('getClassroom', data.pk)
             })
             .catch((error) => {
                 commit(types.LOG_ERROR, error)

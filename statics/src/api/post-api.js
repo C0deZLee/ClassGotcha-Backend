@@ -22,5 +22,10 @@ export default {
         return Vue.http.post(API_ROOT + 'post/moment/' + pk + '/like/', {}, { headers: { Authorization: 'JWT ' + getCookie('token') } })
             .then((response) => Promise.resolve(response.data))
             .catch((error) => Promise.reject(error))
+    },
+    addReport(pk) {
+        return Vue.http.put(API_ROOT + 'post/moment/' + pk + '/report/', {}, { headers: { Authorization: 'JWT ' + getCookie('token') } })
+            .then((response) => Promise.resolve(response.data))
+            .catch((error) => Promise.reject(error))
     }
 }
