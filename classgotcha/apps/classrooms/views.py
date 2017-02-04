@@ -15,8 +15,9 @@ from ..chat.models import Room
 
 from serializers import ClassroomSerializer
 from ..posts.serializers import MomentSerializer, Note, NoteSerializer
-from ..tasks.serializers import Task, TaskSerializer
+from ..tasks.serializers import Task, TaskSerializer, BasicTaskSerializer
 from ..accounts.serializers import BasicAccountSerializer, BasicClassroomSerializer
+from ..tags.serializers import ClassFolderSerializer, Tag
 
 
 class ClassroomViewSet(viewsets.ViewSet):
@@ -122,13 +123,37 @@ class ClassroomViewSet(viewsets.ViewSet):
 	def tasks(self, request, pk):
 		classroom = get_object_or_404(self.queryset, pk=pk)
 		if request.method == 'GET':
-			serializer = TaskSerializer(classroom.tasks.all().reverse() , many=True)
+			# get all not expired tasks
+			tasks = [obj for obj in classroom.tasks.all() if not obj.expired]
+			print tasks
+			serializer = BasicTaskSerializer(tasks, many=True)
 			return Response(serializer.data)
 		if request.method == 'POST':
-			request.data['classroom'] = classroom.pk
-			if 'due' in request.data:
-				request.data['due'] = datetime.datetime.fromtimestamp(request.data['due'] / 1000)
+			print 'before', request.data
+			due_datetime = request.data.get('due_datetime', None)
+			due_date = request.data.get('due_date', None)
+			start = request.data.get('start', None)
+			end = request.data.get('end', None)
+			# Only have due datetime, it is a homework or take home quiz/exam
+			if due_datetime:
+				request.data['end'] = datetime.datetime.strptime(due_datetime, "%Y-%m-%dT%H:%M:%S")
+				request.date['type'] = 1  # Task
+			# Only have a due date, it is a in class quiz/homework
+			elif due_date:
+				date = datetime.datetime.strptime(due_date, "%Y-%m-%dT%H:%M:%S")
+				start = date.replace(hour=classroom.class_time.start.hour, minute=classroom.class_time.start.minute)
+				end = date.replace(hour=classroom.class_time.end.hour, minute=classroom.class_time.end.minute)
+				request.data['start'] = start
+				request.data['end'] = end
+				request.date['type'] = 0  # Event
 
+			# start datetime and end datetime, this is a non-in-class exam
+			elif start and end:
+				request.data['start'] = datetime.datetime.strptime(start, "%Y-%m-%dT%H:%M:%S")
+				request.data['end'] = datetime.datetime.strptime(end, "%Y-%m-%dT%H:%M:%S")
+				request.date['type'] = 0  # Event
+			else:
+				return Response(status=status.HTTP_400_BAD_REQUEST)
 			serializer = TaskSerializer(data=request.data)
 			serializer.is_valid(raise_exception=True)
 			serializer.save()
@@ -138,6 +163,22 @@ class ClassroomViewSet(viewsets.ViewSet):
 		classroom = get_object_or_404(self.queryset, pk=pk)
 		serializer = BasicAccountSerializer(classroom.students, many=True)
 		return Response(serializer.data)
+
+	def folders(self, request, pk):
+		if request.method == 'GET':
+			classroom = get_object_or_404(self.queryset, pk=pk)
+			folders = classroom.folders.all()
+			serializer = ClassFolderSerializer(folders, many=True)
+			return Response(serializer.data)
+		elif request.method == 'POST':
+			# TODO: for lecture and homework, no children needed,
+			# for notes, we need a subclass,
+			content = request.data.get('content')
+			parent = request.data.get('parent')
+			if content:
+				Tag.objects.get(content=content)
+
+			pass
 
 	# Tools for upload all the courses
 	@staticmethod
@@ -156,7 +197,10 @@ class ClassroomViewSet(viewsets.ViewSet):
 					class_time = cours['time'].split()
 					# create class time
 					time = Task.objects.create(task_name=cours['name'] + ' - ' + cours['section'],
-					                           location=cours['room'], type=2)
+					                           location=cours['room'],
+					                           type=0,  # Event
+					                           category=0  # Class
+					                           )
 					# TODO: FIXME: timezone error, wrong time
 					if len(class_time) == 4:
 						time.repeat = class_time[0]
@@ -182,8 +226,6 @@ class ClassroomViewSet(viewsets.ViewSet):
 							last_name=cours['instructor1'].split()[1],
 							major=major)
 						classroom.professors.add(instructor1)
-					else:
-						pass
 
 					if 'instructor2' in cours and cours['instructor2'] != 'Staff' and cours['instructor2'] != '':
 						cours['instructor2'] = cours['instructor2'].replace(',', '')
@@ -192,8 +234,6 @@ class ClassroomViewSet(viewsets.ViewSet):
 							last_name=cours['instructor2'].split()[1],
 							major=major)
 						classroom.professors.add(instructor2)
-					else:
-						pass
 
 					# save classroom to get pk in db
 					classroom.save()

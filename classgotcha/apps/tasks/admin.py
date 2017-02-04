@@ -10,7 +10,7 @@ class TaskAdmin(admin.ModelAdmin):
 
 	fieldsets = (
 		('Task Info', {'fields': ('task_name', 'description', 'location')}),
-		('Time', {'fields': ('start', 'end', 'due')}),
+		('Time', {'fields': ('start', 'end',)}),
 		('Repeat', {'fields': ('repeat', 'repeat_start', 'repeat_end')}),
 		('Involved', {'fields': ('involved', 'classroom', 'group')}),
 	)

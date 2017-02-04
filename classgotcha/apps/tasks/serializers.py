@@ -28,7 +28,6 @@ class TaskSerializer(serializers.ModelSerializer):
 		task = Task.objects.get(pk=task.pk)
 
 		if task.classroom:
-			print task.classroom
 			for student in task.classroom.students.all():
 				task.involved.add(student)
 			task.save()
@@ -51,19 +50,6 @@ class BasicTaskSerializer(serializers.ModelSerializer):
 		fields = ('formatted_start_time', 'formatted_end_time', 'repeat_start_date',
 		          'repeat_end_date', 'repeat_list', 'task_name', 'type', 'description')
 
-'''
-The serializer for showing tasks in classroom page
-'''
-class ClassroomTaskSerializer(serializers.ModelSerializer):
-	formatted_due_datetime = serializers.ReadOnlyField()
-	repeat_start_date = serializers.ReadOnlyField()
-	repeat_end_date = serializers.ReadOnlyField()
-	repeat_list = serializers.ReadOnlyField()
-
-	class Meta:
-		model = Task
-		fields = ('formatted_due_datetime', 'repeat_start_date',
-		          'repeat_end_date', 'repeat_list', 'task_name', 'type', 'description')
 
 '''
 The serializer for showing class schedule

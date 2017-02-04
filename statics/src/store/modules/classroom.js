@@ -47,7 +47,6 @@ const state = {
         students: [],
         students_count: 0,
         syllabus: null,
-        tasks: [],
         updated: '',
     },
     is_in_class: false,
@@ -73,7 +72,7 @@ const getters = {
     },
     classroomTasks: (state) => {
         if (state.classroom)
-            return state.classroom.tasks
+            return state.tasks
         else
             return []
     },
@@ -101,6 +100,9 @@ const actions = {
         classApi.getClassroom(pk)
             .then((response) => {
                 commit(types.GET_CLASSROOM, response)
+                dispatch('getClassroomMoments', pk)
+                dispatch('getClassroomTasks', pk)
+
                 let not_in_class = true
                 // If user in classroom's student list, commit USER_IN_CLASSROOM
                 for (let i in response.students) {
@@ -140,7 +142,7 @@ const actions = {
         classApi.postTask(data.pk, data.formData)
             .then((response) => {
                 commit(types.POST_CLASSROOM_TASK, response)
-                dispatch('getClassroom', data.pk)
+                dispatch('getClassroomTasks', data.pk)
             })
             .catch((error) => {
                 commit(types.LOG_ERROR, error)
@@ -191,6 +193,9 @@ const mutations = {
                 }
             }
         }
+    },
+    [types.LOAD_CLASSROOM_TASKS](state, response) {
+        state.tasks = response
     },
     [types.POST_CLASSROOM_TASK](state, response) {},
     [types.LOG_ERROR](state, error) {
