@@ -1,6 +1,8 @@
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseUserManager
 from django.db import models
 
+from ..tags.models import Tag
+
 
 class Avatar(models.Model):
 	avatar4x = models.ImageField(upload_to='avatars', null=True, blank=True)
@@ -47,7 +49,9 @@ class Professor(models.Model):
 	mid_name = models.CharField(max_length=40, blank=True)
 	email = models.CharField(max_length=50)
 	office = models.CharField(max_length=100, blank=True)
+	# Relationship
 	major = models.ForeignKey('classrooms.Major')
+	tags = models.ManyToManyField(Tag)
 	# Timestamp
 	created = models.DateTimeField(auto_now_add=True)
 
