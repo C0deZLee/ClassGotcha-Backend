@@ -224,8 +224,7 @@
             <div v-show="add_task">
               <div class="row">
                 <div class="col-md-12">
-                  <select class="form-control m-b" v-model="task_type">
-                    <option value="0">--Type--</option>                    
+                  <select class="form-control m-b" v-model="task_category">
                     <option value="1">Assignment</option>
                     <option value="2">Quiz</option>
                     <option value="3">Exam</option>
@@ -233,46 +232,47 @@
                 </div>
               </div>
                
-              <div class="row" v-show="task_type!=0">
+              <div class="row">
                 <div class="col-md-12">
                   <input class="form-control m-b" v-model="task_title" placeholder="eg. Homework 1"></input>
                 </div>
 
-                <div class="col-md-12" v-show="task_type==2 || task_type==3">
-                  <input type="radio" v-model="task_sub_type" value="1" id="in-class" name="a">
+                <div class="col-md-12" v-show="task_category==2 || task_category==3">
+                  <input type="radio" v-model="task_subcategory" value="1" id="in-class" name="a">
                     <label for="in-class"></label> Take home 
                     <i class="m-l" ></i>
-                      <input type="radio"  v-model="task_sub_type" value="2" id="take-home" name="a">
+                      <input type="radio"  v-model="task_subcategory" value="2" id="take-home" name="a">
                     <label for="take-home"></label> In class
                     <i class="m-l" ></i>
-                      <input type="radio" v-model="task_sub_type" value="3" id="other-time" name="a">
-                    <label for="other-time" v-show="task_type==3"></label> <span v-show="task_type==3"> Other Time</span>
+                      <input type="radio" v-model="task_subcategory" value="3" id="other-time" name="a">
+                    <label for="other-time" v-show="task_category==3"></label> <span v-show="task_category==3"> Other Time</span>
                 </div>
 
                 <div class="col-md-12 m-t">
                   <div class="form-group">
                     <div class="input-group date">
-                      <input type="text" v-show="task_sub_type==1" placeholder="Due time?" v-model="task_due_datetime" id="task-due-datetime" class="form-control" />
-                      <input type="text" v-show="task_sub_type==2" placeholder="Which day?" v-model="task_due_date" id="task-due-date" class="form-control" />
-                      <input type="text" v-show="task_sub_type==3" placeholder="Start at?" v-model="task_start" id="task-start" class="form-control" />
-                      <input type="text" v-show="task_sub_type==3" placeholder="End at?" v-model="task_end" id="task-end" class="form-control" />
+                      <input type="text" v-show="task_subcategory==1" placeholder="Due time?" v-model="task_due_datetime" id="task-due-datetime" class="form-control" />
+                      <input type="text" v-show="task_subcategory==2" placeholder="Which day?" v-model="task_due_date" id="task-due-date" class="form-control" />
+                      <input type="text" v-show="task_subcategory==3" placeholder="Start at?" v-model="task_start" id="task-start" class="form-control" />
+                      <input type="text" v-show="task_subcategory==3" placeholder="End at?" v-model="task_end" id="task-end" class="form-control" />
                       <span class="input-group-addon">
                       <span class="fa fa-calendar"></span>
                     </div>
                   </div>
                 </div>
-                <div class="col-md-12" v-show="task_sub_type==3">
+                <div class="col-md-12" v-show="task_subcategory==3">
                   <input class="form-control m-b" v-model="task_location" placeholder="Location?"></input>                  
                 </div>  
                   <div class="col-md-12">
-                  <textarea class="form-control m-b" v-model="task_dscr" placeholder="Describe it in more detail?"></textarea>
+                  <textarea class="form-control m-b" v-model="task_dscr" placeholder="Describe it in more detail? (optional)"></textarea>
+                  <p v-show="task_errMsg">{{task_errMsg}}</p>
+                  
                 </div>
               </div>
- 
-              <a @click="postTask()" class="btn btn-sm btn-primary"> Add</a>
+              <a @click="postTask($event)" :disabled="invaildTask()" class="btn btn-sm btn-primary">Add</a>
             </div>
           </div>
-          <div v-for="task in current_classroom.tasks" class="vertical-timeline-block">
+          <div v-for="task in tasks" class="vertical-timeline-block">
             <div class="vertical-timeline-icon navy-bg">
               <i class="fa fa-briefcase"></i>
             </div>
@@ -288,10 +288,13 @@
             </div>
           </div>
           <div class="vertical-timeline-block">
+         
             <div class="vertical-timeline-icon yellow-bg">
               <i class="fa fa-file-text"></i>
             </div>
+            
             <div class="vertical-timeline-content">
+              
               <h2>Homework</h2>
               <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's
                 standard dummy text ever since.
@@ -335,7 +338,7 @@
   </div>
 </template>
 <script>
-    import { customTime } from 'utils/timeFilter'
+    import { customTime, toUtcString } from 'utils/timeFilter'
     // import Dropzone from 'vue2-dropzone'
     import Upload from 'components/UploadImg'
 
@@ -347,53 +350,45 @@
         },
         data: function() {
             return {
+                // moment
                 content: '',
                 question: false,
+                dropzone: false,
                 // comment
                 comment_content: '',
                 comment_id: -1,
                 // task
                 add_task: false,
                 add_task_button_class: 'fa fa-plus',
-                task_type: 0, // 1: homework, 2: quiz, 3: exam
-                task_sub_type: 1, // 1: take home, 2: in class, 3: other time
+
+                task_category: 1, // 1: homework, 2: quiz, 3: exam
+                task_subcategory: 1, // 1: take home, 2: in class, 3: other time
+                task_location: '',
                 task_title: '',
                 task_dscr: '',
+
                 task_due_datetime: null,
                 task_due_date: null,
                 task_start: null,
                 task_end: null,
-                task_location: '',
-                dropzone: false,
+
+                task_errMsg: ''
+
             }
         },
         methods: {
-            // UI 
-            showAddTask() {
-                this.add_task = !this.add_task
-                if (this.add_task)
-                    this.add_task_button_class = 'fa fa-minus'
-                else
-                    this.add_task_button_class = 'fa fa-plus'
-
+            // Data Loading
+            getClassroomData() {
+                this.$store.dispatch('getClassroom', this.$route.params.classroom_id)
             },
-            showCommentBox(moment) {
-                this.comment_content = ''
-                this.comment_id = moment.id
-            },
-            showDropzone() {
-                this.dropzone = !this.dropzone
-            },
-            formatTime(time) {
-                return customTime(time)
-            },
-
+            // Classroom Add/Drop
             addClassroom() {
                 this.$store.dispatch('addClassroom', this.$route.params.classroom_id)
             },
             remClassroom() {
                 this.$store.dispatch('remClassroom', this.$route.params.classroom_id)
             },
+            // Moments 
             addLike(moment) {
                 this.$store.dispatch('addMomentLike', moment.id)
                 moment.likes += 1
@@ -403,10 +398,6 @@
             },
             addSolve(pk) {
                 this.$store.dispatch('solveMoment', pk)
-            },
-            getClassroomData() {
-                this.$store.dispatch('getClassroom', this.$route.params.classroom_id)
-                this.$store.dispatch('getClassroomMoments', this.$route.params.classroom_id)
             },
             postMoment() {
                 const formData = {
@@ -433,23 +424,81 @@
                 this.comment_content = ''
                 this.comment_id = -1
             },
+            // Tasks
             postTask() {
-                /* global Date:true */
-                const task_due = Date.parse(this.task_due)
-                const data = {
-                    formData: { description: this.task_dscr, due: task_due, task_name: this.task_title, type: 1 },
-                    pk: this.$route.params.classroom_id
+                if (!this.invaildTask()) {
+                    /* global Date:true */
+                    const data = {
+                        formData: {
+                            task_name: this.task_title,
+                            description: this.task_dscr,
+                            due_datetime: this.task_due_datetime ? toUtcString(new Date(this.task_due_datetime)) : null,
+                            due_date: this.task_due_date ? toUtcString(new Date(this.task_due_date)) : null,
+                            start: this.task_start ? toUtcString(new Date(this.task_start)) : null,
+                            end: this.task_end ? toUtcString(new Date(this.task_end)) : null,
+                            location: this.task_location,
+                            category: parseInt(this.task_category),
+                            classroom: parseInt(this.$route.params.classroom_id)
+                        },
+                        pk: this.$route.params.classroom_id
+                    }
+                    this.$store.dispatch('postClassroomTask', data)
+                    this.clearTask()
+                } else {
+                    this.task_errMsg = 'Did you miss something?'
+                    this.task_due_datetime = null
+                    this.task_due_date = null
+                    this.task_start = null
+                    this.task_end = null
                 }
-                this.$store.dispatch('postClassroomTask', data)
+            },
+            // Utils
+            invaildTask() {
+                if (this.task_title === '')
+                    return true
+                else if (this.task_subcategory === '1' && !this.task_due_datetime)
+                    return true
+                else if (this.task_subcategory === '2' && !this.task_due_date)
+                    return true
+                else if (this.task_subcategory === '3' && !(this.task_start && this.task_end))
+                    return true
+                else
+                    return false
+            },
+            formatTime(time) {
+                return customTime(time)
+            },
+            clearTask() {
+                this.task_due_datetime = null
+                this.task_due_date = null
+                this.task_start = null
+                this.task_end = null
+
+                this.task_subcategory = 1
+                this.task_errMsg = ''
+                this.task_title = ''
+                this.task_dscr = ''
+                this.task_location = ''
             },
             professor_page_url(pk) {
                 return '/#/professor/id/' + pk
             },
             user_page_url(pk) {
                 return '/#/profile/id/' + pk
+            },
+            // UI Switches
+            showAddTask() {
+                this.add_task = !this.add_task
+                if (this.add_task) this.add_task_button_class = 'fa fa-minus'
+                else this.add_task_button_class = 'fa fa-plus'
+            },
+            showCommentBox(moment) {
+                this.comment_content = ''
+                this.comment_id = moment.id
+            },
+            showDropzone() {
+                this.dropzone = !this.dropzone
             }
-
-
         },
         computed: {
             current_classroom() {
@@ -460,6 +509,9 @@
             },
             moments() {
                 return this.$store.getters.classroomMoments
+            },
+            tasks() {
+                return this.$store.getters.classroomTasks
             },
             user_avatar() {
                 return this.$store.getters.userAvatar.avatar2x
@@ -476,7 +528,7 @@
 
         },
         created() {
-            // after component is created, load data
+            // Once the vue instance is created, load data
             this.getClassroomData()
         },
         mounted() {
@@ -497,7 +549,10 @@
         },
         watch: {
             // execute getClassroomData if route changes
-            '$route': 'getClassroomData'
+            '$route': 'getClassroomData',
+            // clear date info if user choosed different task type
+            // 'task_category': 'clearTask',
+            // 'task_subcategory': 'clearTask'
         },
     }
 
