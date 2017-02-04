@@ -53,10 +53,6 @@ export const customTime = item => {
     return descTime
 }
 
-export const TaskDate = time => {
-
-}
-
 export const formatDate = time => {
     let tmpDate = new Date(time)
     let year = tmpDate.getFullYear()
@@ -92,4 +88,35 @@ export const formatDate = time => {
     }
 
     return year + '.' + month + '.' + day + ' ' + hours + ':' + minutes
+}
+
+export const toTimezoneOffsetString = time => {
+    const now = new Date()
+    const tzo = -now.getTimezoneOffset()
+    const dif = tzo >= 0 ? '+' : '-'
+    const pad = num => {
+        var norm = Math.abs(Math.floor(num))
+        return (norm < 10 ? '0' : '') + norm
+    }
+    return time.getFullYear() +
+        '-' + pad(time.getMonth() + 1) +
+        '-' + pad(time.getDate()) +
+        'T' + pad(time.getHours()) +
+        ':' + pad(time.getMinutes()) +
+        ':' + pad(time.getSeconds()) +
+        dif + pad(tzo / 60) +
+        ':' + pad(tzo % 60)
+}
+
+export const toUtcString = time => {
+    const pad = num => {
+        var norm = Math.abs(Math.floor(num))
+        return (norm < 10 ? '0' : '') + norm
+    }
+    return time.getFullYear() +
+        '-' + pad(time.getMonth() + 1) +
+        '-' + pad(time.getDate()) +
+        'T' + pad(time.getHours()) +
+        ':' + pad(time.getMinutes()) +
+        ':' + pad(time.getSeconds())
 }
