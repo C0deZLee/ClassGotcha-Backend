@@ -38,6 +38,7 @@ class NoteSerializer(serializers.ModelSerializer):
 	# tasks = serializers.PrimaryKeyRelatedField(many=True, queryset=Task.objects.all())
 	# groups = serializers.PrimaryKeyRelatedField(many=True, queryset=Group.objects.all())
 	overall_rating = serializers.ReadOnlyField()
+	creator = BasicAccountSerializer()
 
 	class Meta:
 		model = Note

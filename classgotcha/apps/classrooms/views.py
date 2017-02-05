@@ -107,12 +107,12 @@ class ClassroomViewSet(viewsets.ViewSet):
 			return Response(serializer.data)
 
 		elif request.method == 'POST':
-			uploaded_file = read_file(request, file_name=classroom.class_code)
-			tags = request.data.get('tags')
+			title = request.data.get('title', '')
+			uploaded_file = read_file(request, file_name=title)
+			raw_tags = request.data.get('tags')
 			description = request.data.get('description', '')
-			title = request.data.get('title')
 			print request.data
-			if not (uploaded_file and tags and title):
+			if not (uploaded_file and raw_tags and title):
 				return Response(status=status.HTTP_400_BAD_REQUEST)
 
 			new_note = Note.objects.create(file=uploaded_file,
@@ -120,9 +120,15 @@ class ClassroomViewSet(viewsets.ViewSet):
 			                               description=description,
 			                               creator=request.user,
 			                               classroom_id=classroom.pk)
-			for tag_name in json.loads(tags):
+			# Load all tags from string
+			for counter, tag_name in enumerate(json.loads(raw_tags)):
+
 				tag, created = Tag.objects.get_or_create(name=tag_name,
 				                                         is_for=1)  # For Note
+				if counter is 0:
+					# The first tag is "Note", "Lecture", etc, so we use first tag as classroom folders
+					classroom.folders.add(tag)
+
 				new_note.tags.add(tag)
 			return Response(status=status.HTTP_201_CREATED)
 

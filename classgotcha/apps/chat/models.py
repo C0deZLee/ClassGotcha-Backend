@@ -31,7 +31,7 @@ class Room(models.Model):
 
 	@property
 	def latest_message(self):
-		message = self.messages.all().latest('created')
+		message = self.messages.all().order_by('-created').first()
 		if message:
 			latest_message = {
 				'full_name': message.send_from.get_full_name,

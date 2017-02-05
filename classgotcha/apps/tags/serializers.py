@@ -5,7 +5,7 @@ from models import Tag
 class ClassFolderSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = Tag
-		fields = ('content', 'parent', 'children')
+		fields = ('name',)
 
 
-ClassFolderSerializer._declared_fields['children'] = ClassFolderSerializer()
+# ClassFolderSerializer._declared_fields['children'] = ClassFolderSerializer()

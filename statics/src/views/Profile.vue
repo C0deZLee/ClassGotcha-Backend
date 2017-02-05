@@ -5,7 +5,7 @@
         <h2>Profile</h2>
         <ol class="breadcrumb">
           <li>
-            <a href="/#/">Home</a>
+            <router-link to="{name:'home'}">Home</router-link>
           </li>
           <li class="active">
             <strong>Profile</strong>

@@ -29,13 +29,36 @@
                                 
                                 <h5>Folders</h5>
                                 <ul class="folder-list" style="padding: 0">
-                                    <li><a href=""><i class="fa fa-folder"></i> Notes</a></li>
-                                    <li><a href=""><i class="fa fa-folder"></i> Lectures</a></li>
-                                    <li><a href=""><i class="fa fa-folder"></i> Homeworks</a></li>
-                                    <li><a href=""><i class="fa fa-folder"></i> Exams</a></li>
-                                    <li><a href=""><i class="fa fa-folder"></i> Labs</a></li>
-                                    <li><a href=""><i class="fa fa-folder"></i> Others</a></li>
-                                </ul>
+                                             <li>
+                <router-link :to="{name:'classroom_files', params:{classroom_id: current_classroom.id}}"> 
+                  <i class="fa fa-align-justify"></i> All Files
+                </router-link>
+              </li>
+                <li v-show="showFolder('Note')">
+                <router-link:to="{name:'classroom_files', params:{classroom_id: current_classroom.id}, query:{folder:'Notes'}}"> 
+                  <i class="fa fa-certificate"></i> Notes <span class="label label-warning pull-right">16</span> 
+                </router-link>
+              </li>
+              <li v-show="showFolder('Lecture')">
+                <router-link :to="{name:'classroom_files', params:{classroom_id: current_classroom.id}, query:{folder:'Lectures'}}"> 
+                  <i class="fa fa-inbox"></i> Lectures
+                </router-link>
+              </li>
+              <li v-show="showFolder('Lab')">
+                <router-link :to="{name:'classroom_files', params:{classroom_id: current_classroom.id}, query:{folder:'Labs'}}"> 
+                  <i class="fa fa-flask"></i> Labs
+                </router-link>
+              </li>
+              <li v-show="showFolder('Homework')">
+                <router-link :to="{name:'classroom_files', params:{classroom_id: current_classroom.id}, query:{folder:'Homeworks'}}"> 
+                  <i class="fa fa-file-text-o"></i> Homeworks <span class="label label-danger pull-right">2</span>
+                </router-link>
+              </li>
+              <li v-show="showFolder('Exam')">
+                <router-link :to="{name:'classroom_files', params:{classroom_id: current_classroom.id}, query:{folder:'Exams'}}"> 
+                  <i class="fa fa-bolt"></i> Exams
+                </router-link>
+              </li>  </ul>
                               
                                 <div class="hr-line-dashed"></div>
                                 <h5 class="tag-title">Tags</h5>
@@ -58,9 +81,9 @@
                 <div class="col-lg-9 animated fadeInRight">
                     <div class="row">
                         <div class="col-lg-12">
-                            <div class="file-box">
+                            <div class="file-box" v-for="file in current_classroom_notes">
                                 <div class="file">
-                                    <a href="#">
+                                    <a :href="file.file">
                                         <span class="corner"></span>
 
                                         <div class="icon">
@@ -68,11 +91,11 @@
                                         </div>
                                     </a>
                                      <div class="file-name">
-                                           <a href="#"> Document_2014.doc</a>
+                                           <a href="#"> {{file.title}}</a>
                                             <br>
-                                          <small><a>Test User</a></small>
+                                          <small><a>{{file.creator.full_name}}</a></small>
                                             <br>
-                                            <small>Added: Jan 11, 2014</small>
+                                            <small>Added:{{file.created}}</small>
                                         </div>
                                 </div>
                             </div>
@@ -90,6 +113,15 @@
         name: 'Notes',
         components: {
             upload: Upload
+        },
+        methods: {
+            showFolder(name) {
+                for (let i in this.current_classroom.folders) {
+                    if (this.current_classroom.folders[i].name === name)
+                        return true
+                }
+                return false
+            },
         },
         computed: {
             current_classroom() {

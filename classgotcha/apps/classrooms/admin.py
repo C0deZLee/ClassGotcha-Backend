@@ -13,13 +13,13 @@ class ClassroomAdmin(admin.ModelAdmin):
 	list_filter = ('major',)
 	#
 	fieldsets = (
-		('Class Info', {'fields': ('class_code', 'class_name', 'major', 'class_number', 'class_credit')}),
+		('Class Info', {'fields': ('class_code', 'class_name', 'major', 'class_number', 'class_credit', 'folders')}),
 		('Descr', {'fields': ('description', 'syllabus')}),
 		('Time', {'fields': ('semester', ('class_repeat', 'get_class_time'), 'class_time')}),
 		('Enrolled', {'fields': ('professors', ('students', 'students_count'), )}),
 		('Timestamp', {'fields': ('created', 'updated',)}),
 	)
-	readonly_fields = ('professors', 'major', 'created', 'updated', 'class_repeat', 'get_class_time', 'students_count')
+	readonly_fields = ('professors', 'major', 'created', 'updated', 'class_repeat', 'get_class_time', 'students_count', 'folders')
 
 	# search_fields = ('class_code', 'id')
 

@@ -1,9 +1,9 @@
 from models import Classroom, Semester, Major
 from rest_framework import serializers
 
-from ..tasks.serializers import  ClassTimeTaskSerializer
+from ..tasks.serializers import ClassTimeTaskSerializer
 from ..accounts.serializers import BasicAccountSerializer, ProfessorSerializers, SemesterSerializer
-
+from ..tags.serializers import ClassFolderSerializer
 
 class MajorSerializer(serializers.ModelSerializer):
 	class Meta:
@@ -29,6 +29,7 @@ class ClassroomSerializer(serializers.ModelSerializer):
 	# groups = serializers.PrimaryKeyRelatedField(many=True, queryset=Group.objects.all())
 	students_count = serializers.ReadOnlyField()
 	class_short = serializers.ReadOnlyField()
+	folders = ClassFolderSerializer(many=True)
 	semester = SemesterSerializer()
 	major = MajorSerializer()
 	professors = ProfessorSerializers(many=True)

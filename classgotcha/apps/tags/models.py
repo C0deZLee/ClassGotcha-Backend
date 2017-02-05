@@ -15,6 +15,7 @@ class Tag(models.Model):
 	parent = models.ForeignKey('self', related_name='children', null=True)
 	# Timestamp
 	created = models.DateTimeField(auto_now_add=True)
+
 	# Relationship
 	# 1) Professor
 	# 2) Note
@@ -26,7 +27,6 @@ class Tag(models.Model):
 
 	def __unicode__(self):
 		return self.name
-
 
 	# Default:
 	# 1) Lecture

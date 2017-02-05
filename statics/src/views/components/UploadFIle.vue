@@ -30,7 +30,7 @@
               <a class="btn btn-white" @click="chooseCategory('Syllabus')"><i class="fa fa-tag"></i> Syllabus</a>
               <a class="btn btn-white" @click="chooseCategory('Other')"><i class="fa fa-tag"></i> Other</a>
             </div>
-            <div class="dropzone-preview" v-show="step3">
+            <div v-show="step3">
               <p class="m-t">Tell your classmates more about your <strong>{{choice[0]}}</strong>!</p>
                 <div class="form-group">
                   <input v-model="file_title" type="text" class="form-control m-b" :placeholder="file.name">
@@ -40,10 +40,16 @@
               </div>
             </div>
           </div>
+          <div v-show="step4">
+            
+            <h1 class="text-navy text-center"><i class="fa fa-check-circle-o"></i>
+            Upload Successful!</h1>
+            </div>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-white" @click="goBack" v-show="!step1">Back</button>
+          <button type="button" class="btn btn-white" @click="goBack" v-show="!step1&&!step4">Back</button>
           <button type="button" class="btn btn-primary" v-show="step3" @click="uploadFile()" :disabled="!(step3)" >Upload</button>
+          <button type="button" class="btn btn-white" v-show="step4" @click="step1=true;step4=false" data-dismiss="modal">Close</button>
           
         </div>
       </div>
@@ -66,6 +72,7 @@
                 step1: true,
                 step2: false,
                 step3: false,
+                step4: false
             }
         },
         methods: {
@@ -79,7 +86,6 @@
                 this.nextStep()
             },
             removeFile(e) {
-                this.image = ''
                 this.$store.dispatch('clearFile')
                 this.step1 = true
                 this.step2 = false
@@ -100,6 +106,19 @@
                     }
                     console.log('UploadFile.uploadFile', data)
                     this.$store.dispatch('postClassroomNote', data)
+                        .then(() => {
+                            this.step1 = false
+                            this.step2 = false
+                            this.step3 = false
+                            this.step4 = true
+                            this.file = ''
+                            this.file_title = ''
+                            this.file_dscr = ''
+                            this.choice = ''
+                            this.tags = []
+                            this.$store.dispatch('clearFile')
+
+                        })
                 }
             },
             chooseCategory(category) {

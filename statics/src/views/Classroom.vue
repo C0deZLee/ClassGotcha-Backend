@@ -92,15 +92,39 @@
     <div class="col-lg-3">
       <div class="ibox">
         <div class="ibox-content">
-          <h3>Class Notes</h3>
+          <h3>Class Files</h3>
           <ul class="folder-list m-b-md" style="padding: 0">
-            <li class="text-navy"><a :href="'/#/classroom/id/'+current_classroom.id+'/notes/'"> <i class="fa fa-inbox"></i> Notes <span class="label label-warning pull-right">16</span> </a></li>
-            <li><a href="mailbox.html"> <i class="fa fa-envelope-o"></i> Lectures</a></li>
-            <li><a href="mailbox.html"> <i class="fa fa-certificate"></i> Labs</a></li>
-            <li><a href="mailbox.html"> <i class="fa fa-file-text-o"></i> Homeworks <span class="label label-danger pull-right">2</span></a></li>
-            <li><a href="mailbox.html"> <i class="fa fa-trash-o"></i> Exams</a></li>
+             <li>
+                <router-link :to="{name:'classroom_files', params:{classroom_id: current_classroom.id}}"> 
+                  <i class="fa fa-align-justify"></i> All Files
+                </router-link>
+              </li>
+                <li v-show="showFolder('Note')">
+                <router-link :to="{name:'classroom_files', params:{classroom_id: current_classroom.id}, query:{folder:'Notes'}}"> 
+                  <i class="fa fa-certificate"></i> Notes <span class="label label-warning pull-right">16</span> 
+                </router-link>
+              </li>
+              <li v-show="showFolder('Lecture')">
+                <router-link :to="{name:'classroom_files', params:{classroom_id: current_classroom.id}, query:{folder:'Lectures'}}"> 
+                  <i class="fa fa-inbox"></i> Lectures
+                </router-link>
+              </li>
+              <li v-show="showFolder('Lab')">
+                <router-link :to="{name:'classroom_files', params:{classroom_id: current_classroom.id}, query:{folder:'Labs'}}"> 
+                  <i class="fa fa-flask"></i> Labs
+                </router-link>
+              </li>
+              <li v-show="showFolder('Homework')">
+                <router-link :to="{name:'classroom_files', params:{classroom_id: current_classroom.id}, query:{folder:'Homeworks'}}"> 
+                  <i class="fa fa-file-text-o"></i> Homeworks <span class="label label-danger pull-right">2</span>
+                </router-link>
+              </li>
+              <li v-show="showFolder('Exam')">
+                <router-link :to="{name:'classroom_files', params:{classroom_id: current_classroom.id}, query:{folder:'Exams'}}"> 
+                  <i class="fa fa-bolt"></i> Exams
+                </router-link>
+              </li>
           </ul>
-          <a>More...</a>
         </div>
       </div>
       <div class="ibox">
@@ -288,53 +312,6 @@
               </span>
             </div>
           </div>
-
-          <div class="vertical-timeline-block">
-
-            <div class="vertical-timeline-icon yellow-bg">
-              <i class="fa fa-file-text"></i>
-            </div>
-            
-            <div class="vertical-timeline-content">
-              
-              <h2>Homework</h2>
-              <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's
-                standard dummy text ever since.
-              </p>
-              <a href="#" class="btn btn-sm btn-success"> Download document </a>
-              <span class="vertical-date">
-              Tomorrow <br>
-              <small>Apr 11</small>
-              </span>
-            </div>
-          </div>
-          <div class="vertical-timeline-block">
-            <div class="vertical-timeline-icon red-bg">
-              <i class="fa fa-pencil"></i>
-            </div>
-            <div class="vertical-timeline-content">
-              <h2>In-class Quiz</h2>
-              <p>Go to shop and find some products. Lorem Ipsum is simply dummy text of the printing and typesetting industry.
-                Lorem Ipsum has been the industry's. 
-              </p>
-              <a href="#" class="btn btn-sm btn-danger">More Info</a>
-              <span class="vertical-date"> Tomorrow <br><small>Apr 11</small></span>
-            </div>
-          </div>
-          <div class="vertical-timeline-block">
-            <div class="vertical-timeline-icon yellow-bg">
-              <i class="fa fa-file-text"></i>
-            </div>
-            <div class="vertical-timeline-content">
-              <h2>Homework</h2>
-              <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Iusto, optio, dolorum provident rerum aut hic quasi
-                placeat iure tempora laudantium ipsa ad debitis unde? Iste voluptatibus minus veritatis qui ut.
-              </p>
-              <a href="#" class="btn btn-sm btn-success"> Download document </a>
-              <span class="vertical-date"> In 2 days <br><small>Apr 12</small></span>
-            </div>
-          </div>
-        </div>
       </div>
     </div>
   </div>
@@ -466,6 +443,13 @@
                     return true
                 else
                     return false
+            },
+            showFolder(name) {
+                for (let i in this.current_classroom.folders) {
+                    if (this.current_classroom.folders[i].name === name)
+                        return true
+                }
+                return false
             },
             momentTime(time) {
                 return customTime(time)
