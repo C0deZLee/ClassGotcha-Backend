@@ -9,3 +9,8 @@ class ClassFolderSerializer(serializers.ModelSerializer):
 
 
 # ClassFolderSerializer._declared_fields['children'] = ClassFolderSerializer()
+
+class BasicTagSerializer(serializers.ModelSerializer):
+	class Meta:
+		model = Tag
+		fields = ('name',)

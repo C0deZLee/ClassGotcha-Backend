@@ -139,12 +139,14 @@ const actions = {
             })
     },
     getClassroomNotes({ commit, dispatch }, pk) {
-        classApi.getNotes(pk)
+        return classApi.getNotes(pk)
             .then((response) => {
                 commit(types.LOAD_CLASSROOM_NOTES, response)
+                return Promise.resolve()
             })
             .catch((error) => {
                 commit(types.LOG_ERROR, error)
+                return Promise.reject(error)
             })
     },
     postClassroomTask({ commit, dispatch }, data) {
