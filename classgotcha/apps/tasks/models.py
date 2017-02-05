@@ -72,15 +72,12 @@ class Task(models.Model):
 
 	@property
 	def formatted_start_time(self):
-		return self.start.strftime('%H:%M:%S')
+		return self.start.strftime('%I:%M%p')
 
 	@property
 	def formatted_end_time(self):
-		return self.end.strftime('%H:%M:%S')
+		return self.end.strftime('%I:%M%p')
 
-	@property
-	def formatted_due_datetime(self):
-		return self.due.strftime('%Y-%m-%dT%H:%M:%S')
 
 	@property
 	def repeat_list(self):

@@ -124,8 +124,7 @@ class ClassroomViewSet(viewsets.ViewSet):
 		classroom = get_object_or_404(self.queryset, pk=pk)
 		if request.method == 'GET':
 			# get all not expired tasks
-			tasks = [obj for obj in classroom.tasks.all() if not obj.expired]
-			print tasks
+			tasks = [obj for obj in classroom.tasks.all().order_by('end') if not obj.expired]
 			serializer = BasicTaskSerializer(tasks, many=True)
 			return Response(serializer.data)
 		if request.method == 'POST':
@@ -137,7 +136,7 @@ class ClassroomViewSet(viewsets.ViewSet):
 			# Only have due datetime, it is a homework or take home quiz/exam
 			if due_datetime:
 				request.data['end'] = datetime.datetime.strptime(due_datetime, "%Y-%m-%dT%H:%M:%S")
-				request.date['type'] = 1  # Task
+				request.data['type'] = 1  # Task
 			# Only have a due date, it is a in class quiz/homework
 			elif due_date:
 				date = datetime.datetime.strptime(due_date, "%Y-%m-%dT%H:%M:%S")
@@ -145,13 +144,13 @@ class ClassroomViewSet(viewsets.ViewSet):
 				end = date.replace(hour=classroom.class_time.end.hour, minute=classroom.class_time.end.minute)
 				request.data['start'] = start
 				request.data['end'] = end
-				request.date['type'] = 0  # Event
+				request.data['type'] = 0  # Event
 
 			# start datetime and end datetime, this is a non-in-class exam
 			elif start and end:
 				request.data['start'] = datetime.datetime.strptime(start, "%Y-%m-%dT%H:%M:%S")
 				request.data['end'] = datetime.datetime.strptime(end, "%Y-%m-%dT%H:%M:%S")
-				request.date['type'] = 0  # Event
+				request.data['type'] = 0  # Event
 			else:
 				return Response(status=status.HTTP_400_BAD_REQUEST)
 			serializer = TaskSerializer(data=request.data)
@@ -188,20 +187,19 @@ class ClassroomViewSet(viewsets.ViewSet):
 		upload = request.FILES.get('file', False)
 		if upload:
 			upload = request.FILES['file']
-			for course in upload:
-				cours = json.loads(course)
+			course = json.loads(upload)
+			for key, cours in course.iteritems():
 				# print cours['description']
 				major, created = Major.objects.get_or_create(major_short=cours['major'])
 				semester, created = Semester.objects.get_or_create(name="Spring 2017")
 				try:
-					class_time = cours['time'].split()
 					# create class time
 					time = Task.objects.create(task_name=cours['name'] + ' - ' + cours['section'],
 					                           location=cours['room'],
 					                           type=0,  # Event
 					                           category=0  # Class
 					                           )
-					# TODO: FIXME: timezone error, wrong time
+					class_time = cours['time'].split()
 					if len(class_time) == 4:
 						time.repeat = class_time[0]
 						time.start = datetime.datetime.strptime(class_time[1], '%I:%M%p')
@@ -218,21 +216,31 @@ class ClassroomViewSet(viewsets.ViewSet):
 					                                                     class_location=cours['room'],
 					                                                     class_time=time, major=major,
 					                                                     semester=semester)
-
-					if cours['instructor1'] != 'Staff':
-						cours['instructor1'] = cours['instructor1'].replace(',', '')
-						instructor1, created = Professor.objects.get_or_create(
-							first_name=cours['instructor1'].split()[0],
-							last_name=cours['instructor1'].split()[1],
-							major=major)
+					# create professor
+					if 'instructor1' in cours:
+						if 'instructor1_email' in cours:
+							instructor1, created = Professor.objects.get_or_create(
+								first_name=cours['instructor1'].split()[0],
+								last_name=cours['instructor1'].split()[1],
+								major=major, email=cours['instructor1_email'])
+						else:
+							instructor1, created = Professor.objects.get_or_create(
+								first_name=cours['instructor1'].split()[0],
+								last_name=cours['instructor1'].split()[1],
+								major=major)
 						classroom.professors.add(instructor1)
 
-					if 'instructor2' in cours and cours['instructor2'] != 'Staff' and cours['instructor2'] != '':
-						cours['instructor2'] = cours['instructor2'].replace(',', '')
-						instructor2, created = Professor.objects.get_or_create(
-							first_name=cours['instructor2'].split()[0],
-							last_name=cours['instructor2'].split()[1],
-							major=major)
+					if 'instructor2' in cours:
+						if 'instructor2_email' in cours:
+							instructor1, created = Professor.objects.get_or_create(
+								first_name=cours['instructor2'].split()[0],
+								last_name=cours['instructor2'].split()[1],
+								major=major, email=cours['instructor2_email'])
+						else:
+							instructor2, created = Professor.objects.get_or_create(
+								first_name=cours['instructor2'].split()[0],
+								last_name=cours['instructor2'].split()[1],
+								major=major)
 						classroom.professors.add(instructor2)
 
 					# save classroom to get pk in db

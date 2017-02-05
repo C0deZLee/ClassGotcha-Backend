@@ -168,7 +168,7 @@
             <a :href="user_page_url(moment.creator.id)"> {{moment.creator.full_name}} </a>
             <span v-show="moment.solved" class="label label-primary">Solved</span>
             <span v-show="moment.solved!==null&&!moment.solved" class="label label-warning">Question</span>
-            <small class="text-muted">{{formatTime(moment.created)}}</small>
+            <small class="text-muted">{{momentTime(moment.created)}}</small>
           </div>
         </div>
         <div class="social-body">
@@ -188,7 +188,7 @@
             </a>
             <div class="media-body">
               <a href="">{{comment.creator.full_name}}</a> 
-              <small class="text-muted">{{formatTime(comment.created)}}</small>
+              <small class="text-muted">{{momentTime(comment.created)}}</small>
               <br/>
               {{comment.content}}
             </div>
@@ -273,8 +273,9 @@
             </div>
           </div>
           <div v-for="task in tasks" class="vertical-timeline-block">
-            <div class="vertical-timeline-icon navy-bg">
-              <i class="fa fa-briefcase"></i>
+            <!-- 1) Homework 2) Quiz 3) Exam-->            
+            <div class="vertical-timeline-icon" :class="{ 'blue-bg': task.category === 1, 'yellow-bg':task.category === 2, 'red-bg': task.category === 3}">
+              <i class="fa" :class="{ 'fa-file-text': task.category === 1, 'fa-pencil':task.category === 2, ' fa-warning': task.category === 3}"></i>
             </div>
             <div class="vertical-timeline-content">
               <h2>{{task.task_name}}</h2>
@@ -282,13 +283,14 @@
               </p>
               <a href="#" class="btn btn-sm btn-primary"> More info</a>
               <span class="vertical-date">
-              {{task.formatted_due_datetime}} <br>
-              <small>Apr 1</small>
+              {{task.formatted_end_time}} <br>
+              <small>{{taskTime(task.formatted_end_date, 3)}}</small>
               </span>
             </div>
           </div>
+
           <div class="vertical-timeline-block">
-         
+
             <div class="vertical-timeline-icon yellow-bg">
               <i class="fa fa-file-text"></i>
             </div>
@@ -338,7 +340,7 @@
   </div>
 </template>
 <script>
-    import { customTime, toUtcString } from 'utils/timeFilter'
+    import { customTime, toUtcString, formatDate } from 'utils/timeFilter'
     // import Dropzone from 'vue2-dropzone'
     import Upload from 'components/UploadImg'
 
@@ -465,8 +467,11 @@
                 else
                     return false
             },
-            formatTime(time) {
+            momentTime(time) {
                 return customTime(time)
+            },
+            taskTime(time, type) {
+                return formatDate(time, type)
             },
             clearTask() {
                 this.task_due_datetime = null
@@ -486,6 +491,22 @@
             user_page_url(pk) {
                 return '/#/profile/id/' + pk
             },
+            // taskBg(category) {
+            //     if (category === 1) // Homework
+            //         return 'blue-bg'
+            //     else if (category === 2) // Quiz
+            //         return 'yellow-bg'
+            //     else if (category === 3) // Exam
+            //         return 'red-bg'
+            // },
+            // taskIcon(category) {
+            //     if (category === 1) // Homework
+            //         return 'fa fa-file-text'
+            //     else if (category === 2) // Quiz
+            //         return 'fa fa-pencil'
+            //     else if (category === 3) // Exam
+            //         return 'fa fa-list-alt'
+            // },
             // UI Switches
             showAddTask() {
                 this.add_task = !this.add_task
