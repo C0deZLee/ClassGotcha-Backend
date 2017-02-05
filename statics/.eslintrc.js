@@ -30,6 +30,7 @@ module.exports = {
         'quotes': 0,
         'no-trailing-spaces': 0,
         'camelcase': 0,
-        'no-extend-native': 0
+        'no-extend-native': 0,
+        'brace-style': 0
     }
 }

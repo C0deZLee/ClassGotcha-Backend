@@ -63,14 +63,7 @@
                                 <div class="hr-line-dashed"></div>
                                 <h5 class="tag-title">Tags</h5>
                                 <ul class="tag-list" style="padding: 0">
-                                    <li><a href="">Family</a></li>
-                                    <li><a href="">Work</a></li>
-                                    <li><a href="">Home</a></li>
-                                    <li><a href="">Children</a></li>
-                                    <li><a href="">Holidays</a></li>
-                                    <li><a href="">Music</a></li>
-                                    <li><a href="">Photography</a></li>
-                                    <li><a href="">Film</a></li>
+                                    <li v-for="tag in tags"><router-link :to="{name:'classroom_files', params:{classroom_id: current_classroom.id}, query:{tag:tag}}">{{tag}}</router-link></li>
                                 </ul>
                                 <div class="clearfix"></div>
                                 
@@ -113,7 +106,7 @@
         name: 'Notes',
         data() {
             return {
-                files: []
+                files: [],
             }
         },
         components: {
@@ -124,15 +117,32 @@
                 // load current classroom's notes
                 this.$store.dispatch('getClassroomNotes', this.$route.params.classroom_id).then(() => {
                     this.files = []
+                    // filter by folder
                     if (this.$route.query.folder) {
+                        // for every tag in every notes
                         for (let i in this.$store.getters.currentClassroomNotes) {
                             for (let j in this.$store.getters.currentClassroomNotes[i].tags) {
+                                // if tag match current query's folder, add it to files
                                 if (this.$store.getters.currentClassroomNotes[i].tags[j].name === this.$route.query.folder) {
                                     this.files.push(this.$store.getters.currentClassroomNotes[i])
                                 }
                             }
                         }
-                    } else {
+                    }
+                    // filter by tag
+                    else if (this.$route.query.tag) {
+                        // for every tag in every notes
+                        for (let i in this.$store.getters.currentClassroomNotes) {
+                            for (let j in this.$store.getters.currentClassroomNotes[i].tags) {
+                                // if tag match current query's folder, add it to files
+                                if (this.$store.getters.currentClassroomNotes[i].tags[j].name === this.$route.query.tag) {
+                                    this.files.push(this.$store.getters.currentClassroomNotes[i])
+                                }
+                            }
+                        }
+                    }
+                    // if no folder then get all files                    
+                    else {
                         this.files = this.$store.getters.currentClassroomNotes
                     }
                 })
@@ -161,6 +171,33 @@
         computed: {
             current_classroom() {
                 return this.$store.getters.currentClassroom
+            },
+            tags() {
+                let tags = []
+                // for every tag in every notes
+                for (let i in this.$store.getters.currentClassroomNotes) {
+                    for (let j in this.$store.getters.currentClassroomNotes[i].tags) {
+                        // check if current tag is a folder
+                        let is_folder = false
+                        // for current classroom folders
+                        for (let k in this.current_classroom.folders) {
+                            // if current tag is in classroom folders
+                            if ((this.current_classroom.folders[k].name === this.$store.getters.currentClassroomNotes[i].tags[j].name)) {
+                                // is not a tag
+                                is_folder = true
+                            }
+                        }
+                        // if current tag is not folder
+                        if (!is_folder) {
+                            // if tag list not duplicate
+                            if (!tags.includes(this.$store.getters.currentClassroomNotes[i].tags[j].name))
+                                // push tag in
+                                tags.push(this.$store.getters.currentClassroomNotes[i].tags[j].name)
+                        }
+
+                    }
+                }
+                return tags
             }
         },
         created() {
