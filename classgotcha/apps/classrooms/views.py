@@ -15,8 +15,26 @@ from ..chat.models import Room
 
 from serializers import ClassroomSerializer
 from ..posts.serializers import MomentSerializer, Note, NoteSerializer
-from ..tasks.serializers import Task, TaskSerializer
+from ..tasks.serializers import Task, TaskSerializer, BasicTaskSerializer
 from ..accounts.serializers import BasicAccountSerializer, BasicClassroomSerializer
+from ..tags.serializers import ClassFolderSerializer, Tag
+
+
+def read_file(request, file_name=None):
+	uploaded_file = request.FILES.get('file', False)
+	if not uploaded_file:
+		return None
+	name, extension = os.path.splitext(uploaded_file.name)
+
+	if file_name:
+		name = file_name
+	name = name + '_' + uuid.uuid4().hex + extension
+	# with open(name, 'wb+') as temp_file:
+	# 	for chunk in upload.chunks():
+	# 		temp_file.write(chunk)
+	new_file = File(file=uploaded_file, name=name)  # there you go
+
+	return new_file
 
 
 class ClassroomViewSet(viewsets.ViewSet):
@@ -24,21 +42,6 @@ class ClassroomViewSet(viewsets.ViewSet):
 	permission_classes = (IsAuthenticated,)
 
 	'''Can pass a filename as optional variable'''
-
-	def upload(self, request, file_name=None):
-		upload = request.FILES.get('file', False)
-		if not upload:
-			return None
-		name, extension = os.path.splitext(upload.name)
-
-		if file_name:
-			name = file_name
-		name = name + '_' + uuid.uuid4().hex + extension
-		with open(name, 'wb+') as temp_file:
-			for chunk in upload.chunks():
-				temp_file.write(chunk)
-		new_file = File(file=open(name))  # there you go
-		return new_file
 
 	def retrieve(self, request, pk):
 		classroom = get_object_or_404(self.queryset, pk=pk)
@@ -88,7 +91,7 @@ class ClassroomViewSet(viewsets.ViewSet):
 	@parser_classes((MultiPartParser, FormParser,))
 	def syllabus(self, request, pk):
 		classroom = get_object_or_404(self.queryset, pk=pk)
-		new_file = self.upload(request, file_name=classroom.class_code)
+		new_file = read_file(request, file_name=classroom.class_code)
 		if not new_file:
 			return Response(status=status.HTTP_400_BAD_REQUEST)
 
@@ -99,19 +102,29 @@ class ClassroomViewSet(viewsets.ViewSet):
 	@parser_classes((MultiPartParser, FormParser,))
 	def notes(self, request, pk):
 		classroom = get_object_or_404(self.queryset, pk=pk)
-		if request.method == 'POST':
-			new_file = self.upload(request, file_name=classroom.class_code)
-			if not new_file:
-				return Response(status=status.HTTP_400_BAD_REQUEST)
-			new_note = Note(file=new_file)
-			new_note.creator = request.user
-			new_note.classroom = classroom
-			new_note.save()
-			return Response(status=status.HTTP_201_CREATED)
-
 		if request.method == 'GET':
 			serializer = NoteSerializer(classroom.notes, many=True)
 			return Response(serializer.data)
+
+		elif request.method == 'POST':
+			uploaded_file = read_file(request, file_name=classroom.class_code)
+			tags = request.data.get('tags')
+			description = request.data.get('description', '')
+			title = request.data.get('title')
+			print request.data
+			if not (uploaded_file and tags and title):
+				return Response(status=status.HTTP_400_BAD_REQUEST)
+
+			new_note = Note.objects.create(file=uploaded_file,
+			                               title=title,
+			                               description=description,
+			                               creator=request.user,
+			                               classroom_id=classroom.pk)
+			for tag_name in json.loads(tags):
+				tag, created = Tag.objects.get_or_create(name=tag_name,
+				                                         is_for=1)  # For Note
+				new_note.tags.add(tag)
+			return Response(status=status.HTTP_201_CREATED)
 
 	def recent_moments(self, request, pk):
 		classroom = get_object_or_404(self.queryset, pk=pk)
@@ -122,13 +135,36 @@ class ClassroomViewSet(viewsets.ViewSet):
 	def tasks(self, request, pk):
 		classroom = get_object_or_404(self.queryset, pk=pk)
 		if request.method == 'GET':
-			serializer = TaskSerializer(classroom.tasks.all().reverse() , many=True)
+			# get all not expired tasks
+			tasks = [obj for obj in classroom.tasks.all().order_by('end') if not obj.expired]
+			serializer = BasicTaskSerializer(tasks, many=True)
 			return Response(serializer.data)
 		if request.method == 'POST':
-			request.data['classroom'] = classroom.pk
-			if 'due' in request.data:
-				request.data['due'] = datetime.datetime.fromtimestamp(request.data['due'] / 1000)
+			print 'before', request.data
+			due_datetime = request.data.get('due_datetime', None)
+			due_date = request.data.get('due_date', None)
+			start = request.data.get('start', None)
+			end = request.data.get('end', None)
+			# Only have due datetime, it is a homework or take home quiz/exam
+			if due_datetime:
+				request.data['end'] = datetime.datetime.strptime(due_datetime, "%Y-%m-%dT%H:%M:%S")
+				request.data['type'] = 1  # Task
+			# Only have a due date, it is a in class quiz/homework
+			elif due_date:
+				date = datetime.datetime.strptime(due_date, "%Y-%m-%dT%H:%M:%S")
+				start = date.replace(hour=classroom.class_time.start.hour, minute=classroom.class_time.start.minute)
+				end = date.replace(hour=classroom.class_time.end.hour, minute=classroom.class_time.end.minute)
+				request.data['start'] = start
+				request.data['end'] = end
+				request.data['type'] = 0  # Event
 
+			# start datetime and end datetime, this is a non-in-class exam
+			elif start and end:
+				request.data['start'] = datetime.datetime.strptime(start, "%Y-%m-%dT%H:%M:%S")
+				request.data['end'] = datetime.datetime.strptime(end, "%Y-%m-%dT%H:%M:%S")
+				request.data['type'] = 0  # Event
+			else:
+				return Response(status=status.HTTP_400_BAD_REQUEST)
 			serializer = TaskSerializer(data=request.data)
 			serializer.is_valid(raise_exception=True)
 			serializer.save()
@@ -139,6 +175,22 @@ class ClassroomViewSet(viewsets.ViewSet):
 		serializer = BasicAccountSerializer(classroom.students, many=True)
 		return Response(serializer.data)
 
+	def folders(self, request, pk):
+		if request.method == 'GET':
+			classroom = get_object_or_404(self.queryset, pk=pk)
+			folders = classroom.folders.all()
+			serializer = ClassFolderSerializer(folders, many=True)
+			return Response(serializer.data)
+		elif request.method == 'POST':
+			# TODO: for lecture and homework, no children needed,
+			# for notes, we need a subclass,
+			content = request.data.get('content')
+			parent = request.data.get('parent')
+			if content:
+				Tag.objects.get(content=content)
+
+			pass
+
 	# Tools for upload all the courses
 	@staticmethod
 	def upload_all_course_info(request):
@@ -146,18 +198,19 @@ class ClassroomViewSet(viewsets.ViewSet):
 			return Response(status=status.HTTP_403_FORBIDDEN)
 		upload = request.FILES.get('file', False)
 		if upload:
-			upload = request.FILES['file']
-			for course in upload:
-				cours = json.loads(course)
+			course = json.loads(upload)
+			for key, cours in course.iteritems():
 				# print cours['description']
 				major, created = Major.objects.get_or_create(major_short=cours['major'])
 				semester, created = Semester.objects.get_or_create(name="Spring 2017")
 				try:
-					class_time = cours['time'].split()
 					# create class time
 					time = Task.objects.create(task_name=cours['name'] + ' - ' + cours['section'],
-					                           location=cours['room'], type=2)
-					# TODO: FIXME: timezone error, wrong time
+					                           location=cours['room'],
+					                           type=0,  # Event
+					                           category=0  # Class
+					                           )
+					class_time = cours['time'].split()
 					if len(class_time) == 4:
 						time.repeat = class_time[0]
 						time.start = datetime.datetime.strptime(class_time[1], '%I:%M%p')
@@ -174,26 +227,32 @@ class ClassroomViewSet(viewsets.ViewSet):
 					                                                     class_location=cours['room'],
 					                                                     class_time=time, major=major,
 					                                                     semester=semester)
-
-					if cours['instructor1'] != 'Staff':
-						cours['instructor1'] = cours['instructor1'].replace(',', '')
-						instructor1, created = Professor.objects.get_or_create(
-							first_name=cours['instructor1'].split()[0],
-							last_name=cours['instructor1'].split()[1],
-							major=major)
+					# create professor
+					if 'instructor1' in cours:
+						if 'instructor1_email' in cours:
+							instructor1, created = Professor.objects.get_or_create(
+								first_name=cours['instructor1'].split()[0],
+								last_name=cours['instructor1'].split()[1],
+								major=major, email=cours['instructor1_email'])
+						else:
+							instructor1, created = Professor.objects.get_or_create(
+								first_name=cours['instructor1'].split()[0],
+								last_name=cours['instructor1'].split()[1],
+								major=major)
 						classroom.professors.add(instructor1)
-					else:
-						pass
 
-					if 'instructor2' in cours and cours['instructor2'] != 'Staff' and cours['instructor2'] != '':
-						cours['instructor2'] = cours['instructor2'].replace(',', '')
-						instructor2, created = Professor.objects.get_or_create(
-							first_name=cours['instructor2'].split()[0],
-							last_name=cours['instructor2'].split()[1],
-							major=major)
+					if 'instructor2' in cours:
+						if 'instructor2_email' in cours:
+							instructor1, created = Professor.objects.get_or_create(
+								first_name=cours['instructor2'].split()[0],
+								last_name=cours['instructor2'].split()[1],
+								major=major, email=cours['instructor2_email'])
+						else:
+							instructor2, created = Professor.objects.get_or_create(
+								first_name=cours['instructor2'].split()[0],
+								last_name=cours['instructor2'].split()[1],
+								major=major)
 						classroom.professors.add(instructor2)
-					else:
-						pass
 
 					# save classroom to get pk in db
 					classroom.save()

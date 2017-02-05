@@ -1,14 +1,18 @@
-from django.db import models
-
 from ..accounts.models import Account
 from ..classrooms.models import Classroom
 
 from django.db import models
-from django.db.models import Avg
 
 from ..accounts.models import Account
 from ..classrooms.models import Classroom
 from ..tags.models import Tag
+
+EVERYONE, STUDENTS_ONLY, PRIVATE = 0, 1, 2
+PERMISSION_CHOICE = (
+	(EVERYONE, 'Everyone'),
+	(STUDENTS_ONLY, 'Student_only'),
+	(PRIVATE, 'Private')
+)
 
 
 def generate_filename(self, filename):
@@ -21,6 +25,7 @@ class Note(models.Model):
 	title = models.CharField(max_length=100)
 	description = models.TextField(blank=True, null=True)
 	file = models.FileField(upload_to=generate_filename)
+	permission = models.IntegerField(default=EVERYONE, choices=PERMISSION_CHOICE)
 
 	# Relations
 	creator = models.ForeignKey(Account, related_name='notes')
@@ -35,7 +40,7 @@ class Note(models.Model):
 
 	@property
 	def overall_rating(self):
-		return self.rating.all().aggregate(Avg('num'))['num__avg']
+		return self.rating.all().aggregate(models.Avg('num'))['num__avg']
 
 	def __unicode__(self):
 		return self.title
@@ -54,6 +59,8 @@ class Moment(models.Model):
 	images = models.FileField(upload_to=generate_filename)
 	deleted = models.BooleanField(default=False)
 	solved = models.NullBooleanField()
+	permission = models.IntegerField(default=EVERYONE, choices=PERMISSION_CHOICE)
+
 	# Relationship
 	creator = models.ForeignKey(Account, on_delete=models.CASCADE, related_name='moments', null=True, blank=True)
 	flagged_users = models.ManyToManyField(Account)
@@ -80,6 +87,7 @@ class Post(models.Model):
 	title = models.CharField(max_length=100)
 	content = models.TextField()
 	flagged_num = models.IntegerField(default=0)
+	permission = models.IntegerField(default=EVERYONE, choices=PERMISSION_CHOICE)
 
 	# Relations
 	creator = models.ForeignKey(Account, on_delete=models.CASCADE, related_name='posts', null=True, blank=True)

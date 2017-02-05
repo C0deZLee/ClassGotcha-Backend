@@ -47,7 +47,6 @@ const state = {
         students: [],
         students_count: 0,
         syllabus: null,
-        tasks: [],
         updated: '',
     },
     is_in_class: false,
@@ -72,10 +71,10 @@ const getters = {
         return state.moments
     },
     classroomTasks: (state) => {
-        if (state.classroom)
-            return state.classroom.tasks
-        else
-            return []
+        return state.tasks
+    },
+    currentClassroomNotes: (state) => {
+        return state.notes
     },
     classroomProfessors: (state) => {
         if (state.classroom)
@@ -101,6 +100,9 @@ const actions = {
         classApi.getClassroom(pk)
             .then((response) => {
                 commit(types.GET_CLASSROOM, response)
+                dispatch('getClassroomMoments', pk)
+                dispatch('getClassroomTasks', pk)
+
                 let not_in_class = true
                 // If user in classroom's student list, commit USER_IN_CLASSROOM
                 for (let i in response.students) {
@@ -136,16 +138,38 @@ const actions = {
                 commit(types.LOG_ERROR, error)
             })
     },
-    postClassroomTask({ commit, dispatch }, data) {
-        classApi.postTask(data.pk, data.formData)
+    getClassroomNotes({ commit, dispatch }, pk) {
+        classApi.getNotes(pk)
             .then((response) => {
-                commit(types.POST_CLASSROOM_TASK, response)
-                dispatch('getClassroom', data.pk)
+                commit(types.LOAD_CLASSROOM_NOTES, response)
             })
             .catch((error) => {
                 commit(types.LOG_ERROR, error)
             })
     },
+    postClassroomTask({ commit, dispatch }, data) {
+        classApi.postTask(data.pk, data.formData)
+            .then((response) => {
+                commit(types.POST_CLASSROOM_TASK, response)
+                dispatch('getClassroomTasks', data.pk)
+            })
+            .catch((error) => {
+                commit(types.LOG_ERROR, error)
+            })
+    },
+    postClassroomNote({ commit, dispatch }, data) {
+        console.log('store.module.classroom.postClassroomNote', data)
+        return classApi.postNote(data.pk, data.formData)
+            .then((response) => {
+                commit(types.POST_CLASSROOM_TASK, response)
+                dispatch('getClassroomNotes', data.pk)
+                return Promise.resolve()
+            })
+            .catch((error) => {
+                commit(types.LOG_ERROR, error)
+                return Promise.reject(error)
+            })
+    }
 }
 
 // mutations
@@ -192,10 +216,17 @@ const mutations = {
             }
         }
     },
+    [types.LOAD_CLASSROOM_TASKS](state, response) {
+        state.tasks = response
+    },
     [types.POST_CLASSROOM_TASK](state, response) {},
+    [types.LOAD_CLASSROOM_NOTES](state, response) {
+        state.notes = response
+    },
+    [types.POST_CLASSROOM_NOTE](state, response) {},
+
     [types.LOG_ERROR](state, error) {
         state.error_msg = error
-        console.log(error)
         // TODO, need to handle errors
     },
 }

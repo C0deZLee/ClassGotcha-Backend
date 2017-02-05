@@ -11,7 +11,6 @@ import Classroom from 'views/Classroom'
 import ClassroomStudents from 'views/ClassroomStudents'
 import Register from 'views/Register'
 import Login from 'views/Login'
-import Upload from 'views/Upload'
 import Profile from 'views/Profile'
 import Chat from 'views/Chat'
 import Notes from 'views/Notes'
@@ -61,9 +60,6 @@ export default new Router({
         }, {
             path: '/',
             component: Home
-        }, {
-            path: '/upload',
-            component: Upload
         }, {
             path: '/chatroom/id/:chatroom_id',
             component: Chat

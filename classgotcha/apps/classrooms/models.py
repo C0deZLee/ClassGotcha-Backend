@@ -1,8 +1,7 @@
-from time import gmtime, strftime
-
 from django.db import models
 
 from ..accounts.models import Account, Professor
+from ..tags.models import Tag
 
 
 class Major(models.Model):
@@ -56,7 +55,8 @@ class Classroom(models.Model):
 	major = models.ForeignKey(Major)
 	students = models.ManyToManyField(Account, related_name='classrooms', blank=True)
 	semester = models.ForeignKey(Semester)
-
+	# Use tag to implement folders
+	folders = models.ManyToManyField(Tag)
 	# Relatives
 	# 1) notes
 	# 2) tasks

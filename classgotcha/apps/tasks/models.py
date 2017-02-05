@@ -1,4 +1,4 @@
-from datetime import datetime
+from django.utils import timezone
 from django.db import models
 
 from ..accounts.models import Account, Group
@@ -6,31 +6,38 @@ from ..classrooms.models import Classroom
 
 
 class Task(models.Model):
-	EVENT, TASK, CLASS = 0, 1, 2
+	CLASS, HOMEWORK, QUIZ, EXAM, TODO, GROUP_MEETING = 0, 1, 2, 3, 4, 5
+	EVENT, TASK = 0, 1
 
-	STATUS_CHOICES = (
-		(EVENT, 'Event'),
-		(TASK, 'Task'),
-		(CLASS, 'Class')
-		# (HOMEWORK, 'Homework'),  # due_date, repeat
-		# (QUIZ, 'Quiz'),  # assigned to class or only due_date, repeat
-		# (TODO, 'Todo'),  # due_date, repeat
-		# (GROUP_MEETING, 'Group Meeting'),  # start, end, repeat
-		# (EXAM, 'Exam'),  # start, end
-		# (CLASS, 'Class'),  # start, end, repeat
-
+	CATEGORY_CHOICES = (
+		(CLASS, 'Class'),
+		(HOMEWORK, 'Homework'),  # due_date, repeat
+		(QUIZ, 'Quiz'),  # assigned to class or only due_date, repeat
+		(EXAM, 'Exam'),  # start, end
+		(TODO, 'Todo'),  # due_date, repeat
+		(GROUP_MEETING, 'Group Meeting'),  # start, end, repeat
 	)
 
+	TYPE_CHOICES = (
+		(EVENT, 'Event'),
+		(TASK, 'Task')
+	)
+
+	# Details
 	task_name = models.CharField(max_length=50)
 	description = models.CharField(max_length=500, null=True, blank=True)  # task_description
+	category = models.IntegerField(default=TASK, choices=CATEGORY_CHOICES)
+	type = models.IntegerField(default=TASK, choices=TYPE_CHOICES)
+	location = models.CharField(max_length=50, null=True, blank=True)
+
+	# Time
 	start = models.DateTimeField(blank=True, null=True)
-	end = models.DateTimeField(blank=True, null=True)
-	due = models.DateTimeField(blank=True, null=True)
-	type = models.IntegerField(default=TASK, choices=STATUS_CHOICES)
+	end = models.DateTimeField(blank=True, null=True) # the end equals to due
+	# due = models.DateTimeField(blank=True, null=True)
 	repeat = models.CharField(max_length=20, default='')  # MoTuWeThFi
 	repeat_start = models.DateField(null=True)
 	repeat_end = models.DateField(null=True)
-	location = models.CharField(max_length=50, null=True)
+
 	# Relationship
 	involved = models.ManyToManyField(Account, related_name='tasks', blank=True)
 	finished = models.ManyToManyField(Account, related_name='finished_tasks', blank=True)
@@ -42,10 +49,10 @@ class Task(models.Model):
 
 	@property
 	def expired(self):
-		if self.due:
-			return datetime.utcnow() > self.due
+		if self.end:
+			return timezone.now() > self.end
 		if self.repeat_end:
-			return datetime.utcnow() > self.repeat_end
+			return timezone.now() > self.repeat_end
 
 	@property
 	def formatted_start_datetime(self):
@@ -65,15 +72,12 @@ class Task(models.Model):
 
 	@property
 	def formatted_start_time(self):
-		return self.start.strftime('%H:%M:%S')
+		return self.start.strftime('%I:%M%p')
 
 	@property
 	def formatted_end_time(self):
-		return self.end.strftime('%H:%M:%S')
+		return self.end.strftime('%I:%M%p')
 
-	@property
-	def formatted_due_datetime(self):
-		return self.due.strftime('%Y-%m-%dT%H:%M:%S')
 
 	@property
 	def repeat_list(self):

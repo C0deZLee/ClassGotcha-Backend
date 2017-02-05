@@ -25,8 +25,9 @@
                 <div class="contact-box center-version">
 
                     <a :href="profileUrl(student)">
+                        <h2 class="m-b-xs">{{student.full_name}}</h2>
+                        
                         <img alt="image" class="img-circle" :src="student.avatar.avatar2x">
-                        <h3 class="m-b-xs"><strong>{{student.full_name}}</strong></h3>
 
                         <div class="font-bold">@{{student.username}}</div>
                         <address class="m-t-md">
