@@ -16,11 +16,11 @@
               <input type="file" @change="onFileChange">
             </div>
           </div>
-          <div class="dropzone-preview" v-if="file&&(step2||step3)">
+          <div class="dropzone-preview" v-show="file&&(step2||step3)">
             <!--<img :src="image" />-->
             <p>Uploaded: <strong>{{file.name}} </strong>  <a class="m-l" @click="removeFile">Remove</a></p>
             <div v-if="step2">
-              <p>Choose a category: </p>
+              <p>Choose a category for your file </p>
               <a class="btn btn-primary" @click="chooseCategory('Note')"><i class="fa fa-tag"></i> Note</a>
               <a class="btn btn-white" @click="chooseCategory('Lecture')"><i class="fa fa-tag"></i> Lecture</a>
               <a class="btn btn-white" @click="chooseCategory('Homework')"><i class="fa fa-tag"></i> Homework</a>
@@ -30,25 +30,20 @@
               <a class="btn btn-white" @click="chooseCategory('Syllabus')"><i class="fa fa-tag"></i> Syllabus</a>
               <a class="btn btn-white" @click="chooseCategory('Other')"><i class="fa fa-tag"></i> Other</a>
             </div>
-            <div class="dropzone-preview" v-if="step3">
-                <div v-show="choice!=='Note'">
-              And this is for:
-              <h3><strong>{{choice}}</strong> <input type="number" placeholder="Put a number here" v-model="count"></h3>
-              </div>
-              <div v-show="choice =='Note'">
-              Choose a tag for this note:
-              <h3><strong>Chapter</strong> <input type="number" placeholder="Put a number here" v-model="note_count1"></h3>
-              <h3><strong>Lecture</strong> <input type="number" placeholder="Put a number here" v-model="note_count2"></h3>
-              <h3><input type="checkbox" v-model="note_checked" id="check" name="check" required>
-                 <label for="check"></label> 
-                 <i class="m-r"></i>Cumulative</h3>
+            <div class="dropzone-preview" v-show="step3">
+              <p class="m-t">Tell your classmates more about your <strong>{{choice[0]}}</strong>!</p>
+                <div class="form-group">
+                  <input v-model="file_title" type="text" class="form-control m-b" :placeholder="file.name">
+             
+                  <textarea v-model="file_dscr" type="email" class="form-control m-b" placeholder="Describe it in detail (optional)"></textarea>
+                  <input-tag :tags="tags" :on-change="tagManager"></input-tag>
               </div>
             </div>
           </div>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-white" @click="goBack">Back</button>
-          <button type="button" class="btn btn-primary" v-show="step3" :disabled="!(count||note_count1||note_count2||note_checked)" >Upload</button>
+          <button type="button" class="btn btn-white" @click="goBack" v-show="!step1">Back</button>
+          <button type="button" class="btn btn-primary" v-show="step3" @click="uploadFile()" :disabled="!(step3)" >Upload</button>
           
         </div>
       </div>
@@ -56,15 +51,18 @@
   </div>
 </template>
 <script>
+    import InputTag from 'vue-input-tag'
     export default {
+        components: { 'input-tag': InputTag },
         data() {
             return {
+                // file
                 file: '',
+                file_title: '',
+                file_dscr: '',
                 choice: '',
-                count: '',
-                note_count1: '',
-                note_count2: '',
-                note_checked: false,
+                tags: [],
+                // step
                 step1: true,
                 step2: false,
                 step3: false,
@@ -77,7 +75,7 @@
                 console.log(files)
                 this.file = files[0]
                 this.$store.dispatch('uploadFile', files[0])
-                // this.createFile(files[0])
+                this.file_title = this.file.name.split('.')[0]
                 this.nextStep()
             },
             removeFile(e) {
@@ -87,10 +85,32 @@
                 this.step2 = false
                 this.step3 = false
             },
-            chooseCategory(cate) {
-                if (!cate) return
-                this.choice = cate
+            uploadFile() {
+                if (this.step3 && this.file && this.file_title) {
+                    /* global FormData:true */
+                    let formData = new FormData()
+                    formData.append('file', this.file)
+                    formData.append('description', this.file_dscr)
+                    formData.append('title', this.file_title)
+                    formData.append('tags', JSON.stringify(this.tags))
+
+                    const data = {
+                        pk: this.$route.params.classroom_id,
+                        formData: formData
+                    }
+                    console.log('UploadFile.uploadFile', data)
+                    this.$store.dispatch('postClassroomNote', data)
+                }
+            },
+            chooseCategory(category) {
+                if (!category) return
+                this.choice = category
+                this.tags.push(category)
                 this.nextStep()
+            },
+            tagManager() {
+                if (this.tags.length === 0)
+                    this.tags.push(this.choice)
             },
             goBack() {
                 if (this.step2) {
@@ -99,10 +119,6 @@
                 } else if (this.step3) {
                     this.step2 = true
                     this.step3 = false
-                    this.count = ''
-                    this.note_count1 = ''
-                    this.note_count2 = ''
-                    this.note_checked = false
                 }
             },
             nextStep() {
@@ -113,6 +129,14 @@
                     this.step3 = true
                     this.step2 = false
                 }
+            }
+        },
+        computed: {
+            current_classroom() {
+                return this.$store.getters.currentClassroom
+            },
+            current_classroom_id() {
+                return this.$route.params.classroom_id
             }
         }
     }

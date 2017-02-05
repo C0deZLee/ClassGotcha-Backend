@@ -20,26 +20,28 @@ from ..accounts.serializers import BasicAccountSerializer, BasicClassroomSeriali
 from ..tags.serializers import ClassFolderSerializer, Tag
 
 
+def read_file(request, file_name=None):
+	uploaded_file = request.FILES.get('file', False)
+	if not uploaded_file:
+		return None
+	name, extension = os.path.splitext(uploaded_file.name)
+
+	if file_name:
+		name = file_name
+	name = name + '_' + uuid.uuid4().hex + extension
+	# with open(name, 'wb+') as temp_file:
+	# 	for chunk in upload.chunks():
+	# 		temp_file.write(chunk)
+	new_file = File(file=uploaded_file, name=name)  # there you go
+
+	return new_file
+
+
 class ClassroomViewSet(viewsets.ViewSet):
 	queryset = Classroom.objects.all()
 	permission_classes = (IsAuthenticated,)
 
 	'''Can pass a filename as optional variable'''
-
-	def upload(self, request, file_name=None):
-		upload = request.FILES.get('file', False)
-		if not upload:
-			return None
-		name, extension = os.path.splitext(upload.name)
-
-		if file_name:
-			name = file_name
-		name = name + '_' + uuid.uuid4().hex + extension
-		with open(name, 'wb+') as temp_file:
-			for chunk in upload.chunks():
-				temp_file.write(chunk)
-		new_file = File(file=open(name))  # there you go
-		return new_file
 
 	def retrieve(self, request, pk):
 		classroom = get_object_or_404(self.queryset, pk=pk)
@@ -89,7 +91,7 @@ class ClassroomViewSet(viewsets.ViewSet):
 	@parser_classes((MultiPartParser, FormParser,))
 	def syllabus(self, request, pk):
 		classroom = get_object_or_404(self.queryset, pk=pk)
-		new_file = self.upload(request, file_name=classroom.class_code)
+		new_file = read_file(request, file_name=classroom.class_code)
 		if not new_file:
 			return Response(status=status.HTTP_400_BAD_REQUEST)
 
@@ -100,19 +102,29 @@ class ClassroomViewSet(viewsets.ViewSet):
 	@parser_classes((MultiPartParser, FormParser,))
 	def notes(self, request, pk):
 		classroom = get_object_or_404(self.queryset, pk=pk)
-		if request.method == 'POST':
-			new_file = self.upload(request, file_name=classroom.class_code)
-			if not new_file:
-				return Response(status=status.HTTP_400_BAD_REQUEST)
-			new_note = Note(file=new_file)
-			new_note.creator = request.user
-			new_note.classroom = classroom
-			new_note.save()
-			return Response(status=status.HTTP_201_CREATED)
-
 		if request.method == 'GET':
 			serializer = NoteSerializer(classroom.notes, many=True)
 			return Response(serializer.data)
+
+		elif request.method == 'POST':
+			uploaded_file = read_file(request, file_name=classroom.class_code)
+			tags = request.data.get('tags')
+			description = request.data.get('description', '')
+			title = request.data.get('title')
+			print request.data
+			if not (uploaded_file and tags and title):
+				return Response(status=status.HTTP_400_BAD_REQUEST)
+
+			new_note = Note.objects.create(file=uploaded_file,
+			                               title=title,
+			                               description=description,
+			                               creator=request.user,
+			                               classroom_id=classroom.pk)
+			for tag_name in json.loads(tags):
+				tag, created = Tag.objects.get_or_create(name=tag_name,
+				                                         is_for=1)  # For Note
+				new_note.tags.add(tag)
+			return Response(status=status.HTTP_201_CREATED)
 
 	def recent_moments(self, request, pk):
 		classroom = get_object_or_404(self.queryset, pk=pk)
@@ -186,7 +198,6 @@ class ClassroomViewSet(viewsets.ViewSet):
 			return Response(status=status.HTTP_403_FORBIDDEN)
 		upload = request.FILES.get('file', False)
 		if upload:
-			upload = request.FILES['file']
 			course = json.loads(upload)
 			for key, cours in course.iteritems():
 				# print cours['description']

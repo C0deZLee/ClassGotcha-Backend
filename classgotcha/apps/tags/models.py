@@ -9,21 +9,23 @@ class Tag(models.Model):
 	)
 	# Lectures, Labs, Notes, Homework, Quizzes, Exams,
 	# Basic
-	content = models.CharField(max_length=200, unique=True)
-	type = models.IntegerField(default=NOTE, choices=TYPE_CHOICE)
+	name = models.CharField(max_length=200, unique=True)
+	is_for = models.IntegerField(default=NOTE, choices=TYPE_CHOICE)
+	# Relationship
+	parent = models.ForeignKey('self', related_name='children', null=True)
 	# Timestamp
 	created = models.DateTimeField(auto_now_add=True)
-
 	# Relationship
 	# 1) Professor
 	# 2) Note
+	# 3) Children
 
 	@property
 	def root(self):
 		return self.parent is None
 
 	def __unicode__(self):
-		return self.content
+		return self.name
 
 
 	# Default:

@@ -94,7 +94,7 @@
         <div class="ibox-content">
           <h3>Class Notes</h3>
           <ul class="folder-list m-b-md" style="padding: 0">
-            <li class="text-navy"><a href="/#/classroom/id/demo/notes/"> <i class="fa fa-inbox"></i> Notes <span class="label label-warning pull-right">16</span> </a></li>
+            <li class="text-navy"><a :href="'/#/classroom/id/'+current_classroom.id+'/notes/'"> <i class="fa fa-inbox"></i> Notes <span class="label label-warning pull-right">16</span> </a></li>
             <li><a href="mailbox.html"> <i class="fa fa-envelope-o"></i> Lectures</a></li>
             <li><a href="mailbox.html"> <i class="fa fa-certificate"></i> Labs</a></li>
             <li><a href="mailbox.html"> <i class="fa fa-file-text-o"></i> Homeworks <span class="label label-danger pull-right">2</span></a></li>

@@ -2,16 +2,16 @@
     <div>
     <div class="row wrapper border-bottom white-bg page-heading">
                 <div class="col-lg-9">
-                    <h2>File Manager</h2>
+                    <h2>Notes</h2>
                     <ol class="breadcrumb">
                         <li>
-                            <a href="index.html">Home</a>
+                            <a href="#">Home</a>
                         </li>
                         <li>
-                            App Views
+                           <a :href="'/#/classroom/id/' + current_classroom.id">{{current_classroom.class_short}}</a>
                         </li>
                         <li class="active">
-                            <strong>File Manager</strong>
+                            <strong>Notes</strong>
                         </li>
                     </ol>
                 </div>
@@ -87,8 +87,26 @@
 <script>
     import Upload from 'components/UploadFile'
     export default {
+        name: 'Notes',
         components: {
             upload: Upload
+        },
+        computed: {
+            current_classroom() {
+                return this.$store.getters.currentClassroom
+            },
+            current_classroom_notes() {
+                return this.$store.getters.currentClassroomNotes
+            }
+        },
+        created() {
+            console.log('Notes created')
+            // load current classroom's notes
+            this.$store.dispatch('getClassroomNotes', this.$route.params.classroom_id)
+            // if classroom not loaded or id doesn't match
+            if (!this.$store.getters.currentClassroom.id || this.$route.params.classroom_id !== this.$store.getters.currentClassroom.id)
+                // load current classroom
+                this.$store.dispatch('getClassroom', this.$route.params.classroom_id)
         }
     }
 

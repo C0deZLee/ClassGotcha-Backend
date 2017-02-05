@@ -46,7 +46,7 @@ export default {
     },
     // post changes
     postNote(pk, formData) {
-        return Vue.http.post(API_ROOT + 'classroom/' + pk + '/notes/', formData, { headers: { Authorization: 'JWT ' + getCookie('token') } })
+        return Vue.http.post(API_ROOT + 'classroom/' + pk + '/notes/', formData, { emulateJSON: true, headers: { Authorization: 'JWT ' + getCookie('token') } })
             .then((response) => Promise.resolve(response.data))
             .catch((error) => Promise.reject(error))
     },
