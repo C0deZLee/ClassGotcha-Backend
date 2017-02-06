@@ -193,10 +193,10 @@ class AccountViewSet(viewsets.ViewSet):
 
 	@staticmethod
 	def moments(request, pk=None):
-		moment_query_set = request.user.moments.filter(deleted=False)
+		moment_query_set = request.user.moments.filter(deleted=False).order_by('-created')
 		# Only return first 20 moments
 		if request.method == 'GET':
-			serializer = MomentSerializer(moment_query_set.reverse()[0:20], many=True)
+			serializer = MomentSerializer(moment_query_set[0:20], many=True)
 			return Response(serializer.data)
 
 		if request.method == 'POST':
