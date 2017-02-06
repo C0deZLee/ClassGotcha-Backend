@@ -65,12 +65,15 @@ class BasicTaskSerializer(serializers.ModelSerializer):
 		          'category',
 		          'location',
 		          'start',
-		          'end')
+		          'end',
+		          'id')
 
 
 '''
 The serializer for showing class schedule
 '''
+
+
 class ClassTimeTaskSerializer(serializers.ModelSerializer):
 	formatted_start_time = serializers.ReadOnlyField()
 	formatted_end_time = serializers.ReadOnlyField()
@@ -81,4 +84,4 @@ class ClassTimeTaskSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = Task
 		fields = ('formatted_start_time', 'formatted_end_time', 'repeat_start_date',
-		          'repeat_end_date', 'repeat_list', 'task_name', 'type', 'location')
+		          'repeat_end_date', 'repeat_list', 'task_name', 'location', 'repeat')

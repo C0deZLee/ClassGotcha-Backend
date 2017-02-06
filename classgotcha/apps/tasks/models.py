@@ -1,4 +1,5 @@
 from django.utils import timezone
+from datetime import datetime, timedelta
 from django.db import models
 
 from ..accounts.models import Account, Group
@@ -50,9 +51,10 @@ class Task(models.Model):
 	@property
 	def expired(self):
 		if self.end:
-			return timezone.now() > self.end
+			print timezone.now(), self.end
+			return timezone.now() - timedelta(hours=5) > self.end
 		if self.repeat_end:
-			return timezone.now() > self.repeat_end
+			return timezone.now() - timedelta(hours=5) > self.repeat_end
 
 	@property
 	def formatted_start_datetime(self):
@@ -72,11 +74,11 @@ class Task(models.Model):
 
 	@property
 	def formatted_start_time(self):
-		return self.start.strftime('%I:%M%p')
+		return self.start.strftime('%H:%M:%S')
 
 	@property
 	def formatted_end_time(self):
-		return self.end.strftime('%I:%M%p')
+		return self.end.strftime('%H:%M:%S')
 
 
 	@property
