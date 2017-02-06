@@ -2,13 +2,13 @@
 <div class="animated fadeInRight">
           <div class="row  border-bottom white-bg dashboard-header">
             <div class="col-sm-3">
-                <h2>Welcome back! {{username()}}! </h2><br>
+                <h2>Welcome back! {{username}}! </h2><br>
                 <p>Here are tasks we recommand you to do today!</p>
               
         <div class="ibox-content">
                     <div id='external-events'>
                         <p>Drag a event and drop into callendar.</p>
-                        <div class='external-event navy-bg'>Go to shop and buy some products.</div>
+                        <div class='external-event red-bg'>Go to shop and buy some products.</div>
                         <div class='external-event navy-bg'>Check the new CI from Corporation.</div>
                         <div class='external-event navy-bg'>Send documents to John.</div>
                         <div class='external-event navy-bg'>Phone to Sandra.</div>
@@ -407,7 +407,6 @@
 <script>
     import Calendar from 'components/Calendar'
 
-    import * as cookie from '../utils/cookie'
     export default {
         name: 'Home',
         data() {
@@ -418,33 +417,43 @@
         components: {
             'full-calendar': Calendar
         },
-        methods: {
-            token() {
-                return cookie.getCookie('token')
-            },
+        computed: {
             username() {
                 return this.$store.getters.userFullName
             }
         },
         created() {
             let event_list = []
-            for (let counter in this.$store.getters.userClassrooms) {
-                const classroom = this.$store.getters.userClassrooms[counter]
-                console.log(classroom)
-                // classes
-                event_list.push({
-                    currentTimezone: 'UTC',
-                    title: classroom.class_time.task_name + '\n' + classroom.class_time.location,
-                    editable: false,
-                    start: classroom.class_time.formatted_start_time,
-                    end: classroom.class_time.formatted_end_time,
-                    dow: classroom.class_time.repeat_list,
-                    repeat: [{
-                        start: classroom.semester.formatted_start_date,
-                        end: classroom.semester.formatted_end_date
-                    }]
-                })
+            for (let i in this.$store.getters.userTasks) {
+                const task = this.$store.getters.userTasks[i]
+                console.log(task.category)
 
+                // classes
+                if (task.category === 0) {
+                    event_list.push({
+                        id: task.id,
+                        title: task.task_name + '\n' + task.location,
+                        editable: false,
+                        start: task.formatted_start_time,
+                        end: task.formatted_end_time,
+                        dow: task.repeat_list,
+                        repeat: [{
+                            start: task.formatted_start_date,
+                            end: task.formatted_end_date
+                        }]
+                    })
+                }
+                // homework
+                else if (task.category === 1) {
+                    event_list.push({
+                        id: task.id,
+                        title: task.task_name,
+                        editable: false,
+                        start: task.end,
+                        end: task.end,
+                        eventColor: '#378006'
+                    })
+                }
             }
             this.events = event_list
         },
@@ -457,7 +466,6 @@
                     title: $.trim($(this).text()), // use the element's text as the event title
                     stick: false // maintain when user navigates (see docs on the renderEvent method)
                 })
-
                 // make the event draggable using jQuery UI
                 $(this).draggable({
                     zIndex: 10,

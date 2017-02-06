@@ -1,24 +1,6 @@
 <template>
   <div class="page animated fadeInRight">
-  <!--<div class="row wrapper border-bottom white-bg page-heading">
-    <div class="col-lg-10">
-      <h2>{{current_classroom.class_short}} 
-       
-      </h2>
-      <ol class="breadcrumb">
-        <li>
-          <a href="/">Home</a>
-        </li>
-        <li>
-          <a>Classrooms</a>
-        </li>
-        <li class="active">
-          <strong>{{current_classroom.class_short}}</strong>
-        </li>
-      </ol>
-    </div>
-    </div>-->
-  <div class="wrapper wrapper-content">
+  <div>
     <div class="row m-b-lg m-t-lg">
       <div class="col-md-6">
         <div class="profile-image">
@@ -51,17 +33,25 @@
           <tbody>
             <tr>
               <td>
-                <strong>{{professor.full_name}}</strong> <a class="m-l" :href="professor_page_url(professor.id)">Detail</a>
-              </td>
+               professor: 
+             </td>
+             <td>
+               <strong>{{professor.full_name}} <router-link :to="{name:'professor', params:{professor_id:professor.id}}" class="m-l" >Detail</router-link></strong> 
+           
+             </td>
             </tr>
             <tr>
               <td>
-                email: <strong>{{professor.email}}</strong>
+                email:
               </td>
+              <td>  <strong>{{professor.email}}</strong></td>
             </tr>
             <tr>
               <td>
-                office: <strong>{{professor.office}}</strong>
+                office:
+              </td>
+              <td>
+                 <strong class="pull-right">{{professor.office}}</strong>
               </td>
             </tr>
             <tr>
@@ -73,9 +63,9 @@
       </div>
     </div>
     <p>
-      Semester Progcess
+      Semester Process
     </p>
-    <div class="progress progress-mini">
+    <div class="progress  m-b">
       <div style="width: 25%" class="progress-bar progress-bar-primary">
       </div>
       <div style="width: 1%" class="progress-bar progress-bar-danger">
@@ -307,8 +297,8 @@
               </p>
               <a href="#" class="btn btn-sm btn-primary"> More info</a>
               <span class="vertical-date">
-              {{task.formatted_end_time}} <br>
-              <small>{{taskTime(task.formatted_end_date, 3)}}</small>
+              {{taskTime(task, 1)}} <br>
+              <small>{{taskTime(task, 2)}}</small>
               </span>
             </div>
           </div>
@@ -317,7 +307,7 @@
   </div>
 </template>
 <script>
-    import { customTime, toUtcString, formatDate } from 'utils/timeFilter'
+    import { toUtcString } from 'utils/timeFilter'
     // import Dropzone from 'vue2-dropzone'
     import Upload from 'components/UploadImg'
 
@@ -452,10 +442,24 @@
                 return false
             },
             momentTime(time) {
-                return customTime(time)
+                /* global moment:true */
+                return moment(time).fromNow()
             },
-            taskTime(time, type) {
-                return formatDate(time, type)
+            taskTime(task, type) {
+                if (type === 1) {
+                    if (task.start) {
+                        return moment.utc(task.start).format('LT')
+                    } else {
+                        return moment.utc(task.end).format('LT')
+                    }
+                } else if (type === 2) {
+                    if (task.start) {
+                        return moment.utc(task.start).format('MMM D')
+                    } else {
+                        return moment.utc(task.end).format('MMM D')
+                    }
+                }
+
             },
             clearTask() {
                 this.task_due_datetime = null
@@ -475,22 +479,6 @@
             user_page_url(pk) {
                 return '/#/profile/id/' + pk
             },
-            // taskBg(category) {
-            //     if (category === 1) // Homework
-            //         return 'blue-bg'
-            //     else if (category === 2) // Quiz
-            //         return 'yellow-bg'
-            //     else if (category === 3) // Exam
-            //         return 'red-bg'
-            // },
-            // taskIcon(category) {
-            //     if (category === 1) // Homework
-            //         return 'fa fa-file-text'
-            //     else if (category === 2) // Quiz
-            //         return 'fa fa-pencil'
-            //     else if (category === 3) // Exam
-            //         return 'fa fa-list-alt'
-            // },
             // UI Switches
             showAddTask() {
                 this.add_task = !this.add_task

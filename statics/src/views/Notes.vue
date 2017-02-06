@@ -160,7 +160,7 @@
             },
             formatTime(time) {
                 /* global moment:true */
-                return moment(time).format('ll')
+                return moment.utc(time).format('ll')
             },
             folderFilter() {
                 if (!this.$route.query.folders) {
