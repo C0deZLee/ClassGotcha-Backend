@@ -88,12 +88,14 @@ const getters = {
 // actions
 const actions = {
     classroomSearch({ commit, dispatch }, formData) {
-        classApi.search(formData)
+        return classApi.search(formData)
             .then((response) => {
                 commit(types.SEARCH_CLASSROOMS, response)
+                return Promise.resolve()
             })
             .catch((error) => {
                 commit(types.LOG_ERROR, error)
+                return Promise.reject()
             })
     },
     getClassroom({ rootState, commit, dispatch }, pk) {
@@ -132,6 +134,7 @@ const actions = {
     getClassroomTasks({ commit, dispatch }, pk) {
         classApi.getTasks(pk)
             .then((response) => {
+                console.log('getClassroomTasks', response, pk)
                 commit(types.LOAD_CLASSROOM_TASKS, response)
             })
             .catch((error) => {
@@ -139,12 +142,14 @@ const actions = {
             })
     },
     getClassroomNotes({ commit, dispatch }, pk) {
-        classApi.getNotes(pk)
+        return classApi.getNotes(pk)
             .then((response) => {
                 commit(types.LOAD_CLASSROOM_NOTES, response)
+                return Promise.resolve()
             })
             .catch((error) => {
                 commit(types.LOG_ERROR, error)
+                return Promise.reject(error)
             })
     },
     postClassroomTask({ commit, dispatch }, data) {

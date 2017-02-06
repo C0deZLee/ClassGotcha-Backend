@@ -1,5 +1,6 @@
 from models import Moment, Comment, Post, Note
 from ..accounts.serializers import BasicAccountSerializer
+from ..tags.serializers import BasicTagSerializer
 from rest_framework import serializers
 
 
@@ -39,6 +40,7 @@ class NoteSerializer(serializers.ModelSerializer):
 	# groups = serializers.PrimaryKeyRelatedField(many=True, queryset=Group.objects.all())
 	overall_rating = serializers.ReadOnlyField()
 	creator = BasicAccountSerializer()
+	tags = BasicTagSerializer(many=True)
 
 	class Meta:
 		model = Note

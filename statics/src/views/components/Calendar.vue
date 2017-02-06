@@ -1,9 +1,64 @@
 <template>
-    <div ref:"calendar" id="calendar"></div>
+<div>
+
+    <div ref="calendar" id="calendar" ></div>
+    <div class="modal inmodal fade" id="event-detail" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+                    <h4 class="modal-title"><i class="fa fa-clock-o"></i> Event Detail</h4>
+                </div>
+                <div class="modal-body">
+                 <div class="form-group">
+                     <label>Event Name</label>
+                  <input type="text" class="form-control" placeholder="Title" v-model="event.task_name" :disabled="event.category===0">
+              </div>
+              <div class="form-group">
+                  <label>Start</label>
+                  <input  type="text" class="form-control" v-model="event.formatted_start_time" placeholder="Start" :disabled="event.category===0">
+              </div>
+              <div class="form-group">
+                  <label>End</label>
+                  <input type="text" class="form-control" v-model="event.formatted_end_time" placeholder="End" :disabled="event.category===0">
+              </div>
+              <div class="form-group">
+                  <label>Location</label>
+                  <input type="text" class="form-control" placeholder="Location" v-model="event.location"   :disabled="event.category===0">
+              </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-white" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary">Save changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
 </template>
 
 <script>
     export default {
+        data() {
+            return {
+                event: {
+                    type: 0, // Event
+                    formatted_start_time: '',
+                    formatted_start_date: '',
+                    formatted_end_date: '',
+                    end: '',
+                    category: 0, // Class
+                    formatted_end_time: '',
+                    description: '',
+                    id: '',
+                    location: '',
+                    repeat_list: [],
+                    start: '',
+                    task_name: '',
+                }
+            }
+        },
         props: {
             events: {
                 default () { return [] },
@@ -62,6 +117,7 @@
                 timeFormat: 'HH:mm',
                 events: self.events,
                 eventSources: self.eventSources,
+                nowIndicator: true,
 
                 drop() {
                     $(this).remove()
@@ -80,6 +136,11 @@
                 },
 
                 eventClick(event) {
+                    for (let i in self.userTasks) {
+                        if (self.userTasks[i].id === event.id)
+                            self.event = self.userTasks[i]
+                    }
+                    $('#event-detail').modal('show')
                     $(self.$el).trigger('event-selected', event)
                 },
 
@@ -109,7 +170,11 @@
                 },
             }
         },
-
+        computed: {
+            userTasks() {
+                return this.$store.getters.userTasks
+            }
+        },
         events: {
             'remove-event' (event) {
                 $(this.$el).fullCalendar('removeEvents', event.id)
@@ -142,6 +207,19 @@
 
 <style>
     /* FULLCALENDAR */
+    
+    .fc-time-grid .fc-slats td {
+        height: 2em;
+        border-bottom: 0;
+    }
+    
+    .fc-ltr .fc-time-grid .fc-event-container {
+        margin: 0 2px;
+    }
+    
+    .fc-event {
+        border-radius: 1px
+    }
     
     .fc-state-default {
         background-color: #ffffff;

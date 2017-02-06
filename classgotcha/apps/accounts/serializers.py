@@ -4,6 +4,7 @@ from models import Account, Avatar, Group, Professor
 from ..chat.models import Room
 from ..classrooms.models import Semester, Classroom
 from ..tasks.serializers import BasicTaskSerializer, ClassTimeTaskSerializer
+from ..tags.serializers import ClassFolderSerializer
 
 
 # Due to the cross dependency, i have to move SemesterSerializer and BasicClassroomSerializer here
@@ -16,18 +17,6 @@ class SemesterSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = Semester
 		fields = ('name', 'formatted_start_date', 'formatted_end_date')
-
-
-class BasicClassroomSerializer(serializers.ModelSerializer):
-	students_count = serializers.ReadOnlyField()
-	class_short = serializers.ReadOnlyField()
-	class_time = ClassTimeTaskSerializer()
-	semester = SemesterSerializer()
-
-	class Meta:
-		model = Classroom
-		fields = ('id', 'class_code', 'class_short', 'students_count',
-		          'class_section', 'description', 'class_time', 'semester')
 
 
 class AvatarSerializer(serializers.ModelSerializer):
@@ -57,6 +46,29 @@ class RoomSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = Room
 		fields = '__all__'
+
+
+class ProfessorSerializers(serializers.ModelSerializer):
+	full_name = serializers.ReadOnlyField()
+
+	class Meta:
+		model = Professor
+		fields = '__all__'
+		read_only_fields = ('created',)
+
+
+class BasicClassroomSerializer(serializers.ModelSerializer):
+	students_count = serializers.ReadOnlyField()
+	class_short = serializers.ReadOnlyField()
+	class_time = ClassTimeTaskSerializer()
+	semester = SemesterSerializer()
+	professors = ProfessorSerializers(many=True)
+	folders = ClassFolderSerializer(many=True)
+
+	class Meta:
+		model = Classroom
+		fields = ('id', 'class_code', 'class_short', 'students_count',
+		          'class_section', 'description', 'class_time', 'semester', 'professors', 'folders')
 
 
 class AccountSerializer(serializers.ModelSerializer):
@@ -98,12 +110,3 @@ class GroupSerializers(serializers.ModelSerializer):
 	class Meta:
 		model = Group
 		fields = ('group_type', 'members', 'classroom', 'creator')
-
-
-class ProfessorSerializers(serializers.ModelSerializer):
-	full_name = serializers.ReadOnlyField()
-
-	class Meta:
-		model = Professor
-		fields = '__all__'
-		read_only_fields = ('created',)

@@ -207,8 +207,9 @@ class ClassroomViewSet(viewsets.ViewSet):
 		if not request.user.is_superuser:
 			return Response(status=status.HTTP_403_FORBIDDEN)
 		upload = request.FILES.get('file', False)
+		temp_file = open(upload.temporary_file_path())
 		if upload:
-			course = json.loads(upload)
+			course = json.load(temp_file)
 			for key, cours in course.iteritems():
 				# print cours['description']
 				major, created = Major.objects.get_or_create(major_short=cours['major'])
@@ -271,7 +272,7 @@ class ClassroomViewSet(viewsets.ViewSet):
 					                    name=cours['name'] + ' - ' + cours['section'] + ' Chat Room',
 					                    classroom=classroom)
 				except IntegrityError:
-					raise
+					print IntegrityError
 			return Response(status=status.HTTP_201_CREATED)
 		else:
 			return Response(status=status.HTTP_400_BAD_REQUEST)
