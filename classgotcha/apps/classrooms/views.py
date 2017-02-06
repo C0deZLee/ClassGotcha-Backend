@@ -133,12 +133,11 @@ class ClassroomViewSet(viewsets.ViewSet):
 			return Response(status=status.HTTP_201_CREATED)
 
 	def recent_moments(self, request, pk):
-		classroom = get_object_or_404(self.queryset, pk=pk)
 		page = request.data.get('page')
 		if not page:
 			page = 0
 		classroom = get_object_or_404(self.queryset, pk = pk)
-		moments = classrooms.moments.filter(deleted = False).order_by('-created')[(page-1)*20:page*20]
+		moments = classroom.moments.filter(deleted = False).order_by('-created')[(page-1)*20:page*20]
 		serializer = MomentSerializer(moments,many = True)
 		return Response(serializer.data)
 
