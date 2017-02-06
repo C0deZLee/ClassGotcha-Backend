@@ -27,6 +27,7 @@ const mutations = {
         state.chat.valid = false
         state.chat.current_chatroom_pk = null
         state.chat.error_msg = null
+        state.chat.sockets = {}
         state.classroom.search_results = []
         state.classroom.classroom = {}
         state.classroom.is_in_class = false

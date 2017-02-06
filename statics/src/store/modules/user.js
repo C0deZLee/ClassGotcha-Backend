@@ -87,10 +87,6 @@ const actions = {
             .then((response) => {
                 commit(types.REGSITER_SUCCESS, response)
                 dispatch('getSelf')
-                // getClassrooms()
-                // getChatrooms()
-                // getFriends()
-                // getTasks()
             })
             .catch((error) => {
                 commit(types.REGSITER_FAILED, error)
@@ -156,24 +152,24 @@ const actions = {
                 commit(types.LOG_ERROR, error)
             })
     },
-    getClassrooms({ commit }) {
-        userApi.getClassrooms()
-            .then((response) => {
-                commit(types.LOAD_CLASSROOMS, response)
-            })
-            .catch((error) => {
-                commit(types.LOG_ERROR, error)
-            })
-    },
-    getChatrooms({ commit }) {
-        userApi.getChatrooms()
-            .then((response) => {
-                commit(types.LOAD_CHATROOMS, response)
-            })
-            .catch((error) => {
-                commit(types.LOG_ERROR, error)
-            })
-    },
+    // getClassrooms({ commit }) {
+    //     userApi.getClassrooms()
+    //         .then((response) => {
+    //             commit(types.LOAD_CLASSROOMS, response)
+    //         })
+    //         .catch((error) => {
+    //             commit(types.LOG_ERROR, error)
+    //         })
+    // },
+    // getChatrooms({ commit }) {
+    //     userApi.getChatrooms()
+    //         .then((response) => {
+    //             commit(types.LOAD_CHATROOMS, response)
+    //         })
+    //         .catch((error) => {
+    //             commit(types.LOG_ERROR, error)
+    //         })
+    // },
     getFriends({ commit }) {
         userApi.getFriends()
             .then((response) => {
@@ -183,15 +179,15 @@ const actions = {
                 commit(types.LOG_ERROR, error)
             })
     },
-    getTasks({ commit }) {
-        userApi.getTasks()
-            .then((response) => {
-                commit(types.LOAD_TASKS, response)
-            })
-            .catch((error) => {
-                commit(types.LOG_ERROR, error)
-            })
-    },
+    // getTasks({ commit }) {
+    //     userApi.getTasks()
+    //         .then((response) => {
+    //             commit(types.LOAD_TASKS, response)
+    //         })
+    //         .catch((error) => {
+    //             commit(types.LOG_ERROR, error)
+    //         })
+    // },
     getUser({ commit }, pk) {
         userApi.getUser(pk)
             .then((response) => {
@@ -206,9 +202,7 @@ const actions = {
             .then((response) => {
                 commit(types.ADD_CLASSROOM)
                 dispatch('getSelf')
-                // dispatch('getClassrooms')
-                // dispatch('getChatrooms')
-                // dispatch('getTasks')
+                dispatch('setSockets')
             })
             .catch((error) => {
                 commit(types.LOG_ERROR, error)
@@ -219,9 +213,7 @@ const actions = {
             .then((response) => {
                 commit(types.REMOVE_CLASSROOM)
                 dispatch('getSelf')
-                // dispatch('getClassrooms')
-                // dispatch('getChatrooms')
-                // dispatch('getTasks')
+                dispatch('setSockets')
             })
             .catch((error) => {
                 commit(types.LOG_ERROR, error)

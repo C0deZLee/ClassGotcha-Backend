@@ -10,7 +10,6 @@ const state = {
         // pk : {
         //   chatroom: {},
         //   message_list: [],
-        //   users: [],
         // }
     },
     sockets: {
@@ -49,7 +48,7 @@ const actions = {
             return chatApi.getChatroom(pk)
                 .then((response) => {
                     commit(types.GET_CHATROOM, response)
-                    return Promise.resolve()
+                    return Promise.resolve(response)
                 })
                 .catch((error) => {
                     commit(types.LOG_ERROR, error)
@@ -70,16 +69,11 @@ const actions = {
     },
 
     setSockets({ rootState, state, commit, dispatch }) {
+        commit(types.CLEAR_SOCKET)
         for (let i in rootState.user.user.chatrooms) {
             const pk = rootState.user.user.chatrooms[i].id
             let socket = chatApi.connectSocket(pk)
             commit(types.SET_SOCKET, { socket: socket, pk: pk })
-        }
-    },
-
-    connectSocket({ state, commit, dispatch }, pk) {
-        if (state.sockets[pk]) {
-            commit(types.CONNECT_SOCKET, pk)
         }
     },
     sendMessage({ state, commit, dispatch }, data) {
@@ -98,15 +92,15 @@ const mutations = {
         }
         Vue.set(state.chatrooms[response.id], 'chatroom', response)
     },
+    [types.CLEAR_SOCKET](state) {
+        state.sockets = {}
+    },
     [types.SET_SOCKET](state, data) {
         data.socket.onmessage = (message) => {
             console.log('received message', message.data)
             state.chatrooms[data.pk].message_list.push(JSON.parse(message.data))
         }
         state.sockets[data.pk] = data.socket
-    },
-    [types.CONNECT_SOCKET](state, pk) {
-
     },
     [types.SEND_MESSAGE](state, data) {
         console.log('sent message', data.message)

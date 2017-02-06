@@ -3,7 +3,7 @@
   <div>
     <div class="row wrapper border-bottom white-bg page-heading">
       <div class="col-lg-10">
-        <h2>{{chatroom_name}}</h2>
+        <h2>{{chatroom.name}}</h2>
         <ol class="breadcrumb">
           <li>
             <a href="/#/">Home</a>
@@ -12,7 +12,7 @@
             <a>Chatrooms</a>
           </li>
           <li class="active">
-            <strong>{{chatroom_name}}</strong>
+            <strong>{{chatroom.name}}</strong>
           </li>
         </ol>
       </div>
@@ -31,9 +31,11 @@
               <div class="chat-discussion" id="discussion" v-bottom>
                 <div v-for="message in chatroom_messages">
                   <div class="chat-message" :class="myMessage(message)">
-                    <img class="message-avatar" :src="getAvatar(message.send_from)"> 
+                      
+                    <img v-if="messageAvatar(message.send_from)" class="message-avatar" :src="messageAvatar(message.send_from)"> 
+                    <avatar v-else class="message-avatar" :size="42" :username="message.username"></avatar>
                     <div class="message">
-                      <a class="message-author" href=""> {{message.username}} </a>
+                      <a class="<message-autho></message-autho>r" href=""> {{message.username}} </a>
                       <span class="message-date"> {{message.created}} </span>
                       <span class="message-content text-left">
                       {{message.message}}
@@ -47,10 +49,13 @@
               <div class="chat-users">
                 <div class="users-list">
                   <div class="chat-user" v-for="user in chatroom.accounts">
-                    <img class="chat-avatar" :src="user.avatar.avatar1x" alt="">
+                     
+                    <img v-if="user.avatar" class="chat-avatar" :src="user.avatar.avatar1x">
+                    <avatar v-if="user&&!user.avatar"  class="chat-avatar" :size="42" :username="user.full_name"></avatar>
+                    
                     <div class="chat-user-name">
                       <a>{{user.full_name}}</a>
-                        <span class="label  label-warning">Level {{user.level}}</span>
+                        <span class="m-l label label-warning">Level {{user.level}}</span>
                     </div>
                   </div>
                 </div>
@@ -81,40 +86,40 @@
   </div>
 </template>
 <script>
+    import Avatar from 'vue-avatar'
     export default {
         name: 'Chat',
+        components: {
+            'avatar': Avatar.Avatar
+        },
         data: function() {
             return {
                 message_text: '',
                 errorMsg: '',
-                chatroom: {
-                    name: 'Loading',
-                    latest_message: {},
-                    accounts: []
-                },
             }
         },
         methods: {
             myMessage(message) {
                 return this.$store.getters.userID === message.send_from ? 'right' : 'left'
             },
+            messageAvatar(send_from) {
+                for (let i in this.chatroom.accounts) {
+                    if (this.chatroom.accounts[i].pk === send_from && this.chatroom.accounts[i].avatar)
+                        return this.chatroom.accounts[i].avatar.avatar1x
+                }
+                return false
+
+            },
             validateChatroom() {
-                this.$store.dispatch('validateChatroom', parseInt(this.$route.params.chatroom_id))
-                    .then(() => {
-                        // chat room doesn't exist or user doesn't belong to chat room, redirect
-                        this.$store.dispatch('getChatroom', this.$route.params.chatroom_id)
-                            .then(() => {
-                                this.chatroom = this.$store.getters.currentChatroom
-                                console.log('getChatroom', this.$store.getters.currentChatroom)
-                            })
+                this.$store.dispatch('getChatroom', this.$route.params.chatroom_id)
+                    .then((response) => {
+                        this.chatroom = response
+                        console.log(response)
+                        this.$store.dispatch('validateChatroom', parseInt(this.$route.params.chatroom_id))
                             .catch((error) => {
-                                console.log('failed to load chatroom', error)
+                                this.$route.push('#')
+                                throw error
                             })
-                        // after component is created
-                        this.$store.dispatch('connectSocket', this.$route.params.chatroom_id)
-                    }).catch((error) => {
-                        console.log('You are not allowed to enter this chatroom')
-                        throw error
                     })
             },
             sendMessage(e) {
@@ -133,12 +138,6 @@
                 this.$store.dispatch('sendMessage', data)
                 this.message_text = ''
             },
-            getAvatar(user_id) {
-                for (let i = 0; i < this.chatroom.accounts.length; i++) {
-                    if (this.chatroom.accounts[i].pk === user_id)
-                        return this.chatroom.accounts[i].avatar.avatar1x
-                }
-            }
         },
         directives: {
             bottom: {
@@ -163,8 +162,8 @@
             chatroom_messages() {
                 return this.$store.getters.currentChatroomMessages
             },
-            chatroom_name() {
-                return this.chatroom.name
+            chatroom() {
+                return this.$store.getters.currentChatroom
             }
         },
         created() {
