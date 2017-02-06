@@ -5,6 +5,7 @@ from ..tasks.serializers import ClassTimeTaskSerializer
 from ..accounts.serializers import BasicAccountSerializer, ProfessorSerializers, SemesterSerializer
 from ..tags.serializers import ClassFolderSerializer
 
+
 class MajorSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = Major
@@ -16,11 +17,12 @@ class BasicClassroomSerializer(serializers.ModelSerializer):
 	class_short = serializers.ReadOnlyField()
 	class_time = ClassTimeTaskSerializer()
 	semester = SemesterSerializer()
+	professors = ProfessorSerializers(many=True)
 
 	class Meta:
 		model = Classroom
 		fields = ('id', 'class_code', 'class_short', 'students_count',
-		          'class_section', 'description', 'class_time', 'semester')
+		          'class_section', 'description', 'class_time', 'semester','professors')
 
 
 class ClassroomSerializer(serializers.ModelSerializer):
