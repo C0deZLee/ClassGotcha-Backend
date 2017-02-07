@@ -14,7 +14,9 @@ class RoomSerializer(serializers.ModelSerializer):
 
 
 class MessageSerializer(serializers.ModelSerializer):
+	send_from = BasicAccountSerializer
+
 	class Meta:
 		model = Message
 		fields = '__all__'
-		read_only_fields = 'created'
+		read_only_fields = ('created',)

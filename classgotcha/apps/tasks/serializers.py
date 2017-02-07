@@ -1,5 +1,14 @@
 from models import Task
 from rest_framework import serializers
+from ..classrooms.models import Classroom
+
+
+class TaskClassroomSerializer(serializers.ModelSerializer):
+	class_short = serializers.ReadOnlyField()
+
+	class Meta:
+		model = Classroom
+		fields = ('id', 'class_short',)
 
 
 class TaskSerializer(serializers.ModelSerializer):
@@ -49,6 +58,8 @@ class BasicTaskSerializer(serializers.ModelSerializer):
 	repeat_start_date = serializers.ReadOnlyField()
 	repeat_end_date = serializers.ReadOnlyField()
 	repeat_list = serializers.ReadOnlyField()
+	classroom = TaskClassroomSerializer()
+	expired = serializers.ReadOnlyField()
 
 	class Meta:
 		model = Task
@@ -66,7 +77,9 @@ class BasicTaskSerializer(serializers.ModelSerializer):
 		          'location',
 		          'start',
 		          'end',
-		          'id')
+		          'id',
+		          'classroom',
+		          'expired')
 
 
 '''

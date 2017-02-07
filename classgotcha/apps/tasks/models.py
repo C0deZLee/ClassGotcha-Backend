@@ -51,7 +51,6 @@ class Task(models.Model):
 	@property
 	def expired(self):
 		if self.end:
-			print timezone.now(), self.end
 			return timezone.now() - timedelta(hours=5) > self.end
 		if self.repeat_end:
 			return timezone.now() - timedelta(hours=5) > self.repeat_end

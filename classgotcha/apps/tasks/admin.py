@@ -4,12 +4,12 @@ from models import Task
 
 
 class TaskAdmin(admin.ModelAdmin):
-	list_display = ('pk', 'task_name', 'type', 'classroom')
+	list_display = ('pk', 'task_name', 'type', 'category', 'classroom')
 
-	list_filter = ('type',)
+	list_filter = ('type', 'category')
 
 	fieldsets = (
-		('Task Info', {'fields': ('task_name', 'description', 'location')}),
+		('Task Info', {'fields': ('task_name', 'description', 'location', 'category', 'type')}),
 		('Time', {'fields': ('start', 'end',)}),
 		('Repeat', {'fields': ('repeat', 'repeat_start', 'repeat_end')}),
 		('Involved', {'fields': ('involved', 'classroom', 'group')}),

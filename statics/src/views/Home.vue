@@ -8,11 +8,7 @@
         <div class="ibox-content">
                     <div id='external-events'>
                         <p>Drag a event and drop into callendar.</p>
-                        <div class='external-event red-bg'>Go to shop and buy some products.</div>
-                        <div class='external-event navy-bg'>Check the new CI from Corporation.</div>
-                        <div class='external-event navy-bg'>Send documents to John.</div>
-                        <div class='external-event navy-bg'>Phone to Sandra.</div>
-                        <div class='external-event navy-bg'>Chat with Michael.</div>
+                        <div v-for="event in user.tasks" v-if="event.category!==0&&!event.expired" class="external-event" :class="eventTaskBg(event)">{{event.task_name}} of {{event.classroom.class_short}} </div>
                     </div>
                 </div>
                     <br>
@@ -20,7 +16,7 @@
                 <button class="btn  form-control">See More..</button>
             </div>
             <div class="col-sm-9">
-                <full-calendar :events="events"></full-calendar>
+                <full-calendar :eventSources="event_sources"></full-calendar>
             </div>
           </div>
 
@@ -411,26 +407,58 @@
         name: 'Home',
         data() {
             return {
-                events: []
+                event_sources: []
             }
         },
         components: {
             'full-calendar': Calendar
         },
+        methods: {
+            eventTaskBg(event) {
+                // Homewrok
+                if (event.category === 1) {
+                    return 'bg-info'
+                }
+                // Quiz
+                else if (event.category === 2) {
+                    return 'bg-warning'
+                }
+                // Exam
+                else if (event.category === 3) {
+                    return 'bg-danger'
+                }
+            }
+        },
         computed: {
             username() {
                 return this.$store.getters.userFullName
+            },
+            user() {
+                return this.$store.getters.me
             }
         },
         created() {
-            let event_list = []
+            let event_sources_list = [
+                // {
+                // events: {}
+                // color: ''
+                // }
+            ]
+            let event_list0 = []
+            let event_list1 = []
+            let event_list2 = []
+            let event_list3 = []
+            const event_color0 = '#1ab394'
+            const event_color1 = '#23c6c8'
+            const event_color2 = '#f8ac59'
+            const event_color3 = '#ed5565'
             for (let i in this.$store.getters.userTasks) {
                 const task = this.$store.getters.userTasks[i]
                 console.log(task.category)
-
+                /* global moment:true */
                 // classes
                 if (task.category === 0) {
-                    event_list.push({
+                    event_list0.push({
                         id: task.id,
                         title: task.task_name + '\n' + task.location,
                         editable: false,
@@ -445,22 +473,45 @@
                 }
                 // homework
                 else if (task.category === 1) {
-                    event_list.push({
+                    event_list1.push({
                         id: task.id,
-                        title: task.task_name,
+                        title: task.task_name + ' DUE',
                         editable: false,
                         start: task.end,
-                        end: task.end,
-                        eventColor: '#378006'
+                        end: moment.utc(task.end).add(0.5, 'hours').format(),
+                    })
+                }
+                // quiz
+                else if (task.category === 2) {
+                    event_list2.push({
+                        id: task.id,
+                        title: task.type === 1 ? task.task_name + ' DUE' : task.task_name,
+                        editable: false,
+                        start: (task.start ? task.start : task.end),
+                        end: (task.start ? task.end : moment.utc(task.end).add(0.5, 'hours').format()),
+                    })
+                }
+                // exam
+                else if (task.category === 3) {
+                    event_list3.push({
+                        id: task.id,
+                        title: (task.location ? task.task_name + '\n' + task.location : task.task_name),
+                        editable: false,
+                        start: (task.start ? task.start : task.end),
+                        end: (task.start ? task.end : moment.utc(task.end).add(0.5, 'hours').format()),
+
                     })
                 }
             }
-            this.events = event_list
+            event_sources_list.push({ events: event_list0, color: event_color0 })
+            event_sources_list.push({ events: event_list1, color: event_color1 })
+            event_sources_list.push({ events: event_list2, color: event_color2 })
+            event_sources_list.push({ events: event_list3, color: event_color3 })
+            this.event_sources = event_sources_list
         },
         mounted() {
             /* global $:true */
             $('#external-events div.external-event').each(function() {
-
                 // store data so the calendar knows to render an event upon drop
                 $(this).data('event', {
                     title: $.trim($(this).text()), // use the element's text as the event title

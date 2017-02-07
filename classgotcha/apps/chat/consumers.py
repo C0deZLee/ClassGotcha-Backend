@@ -4,7 +4,8 @@ from django.core.exceptions import ObjectDoesNotExist
 
 from channels import Group
 from channels.sessions import channel_session
-from classgotcha.apps.chat.models import Room, Message, Account
+from models import Room, Message
+from serializers import MessageSerializer
 
 # from classgotcha.apps.chat.scripts.Conversation import run, Backendhandler
 
@@ -91,9 +92,10 @@ def ws_receive(message):
 
 		m = Message.objects.create(username=data['username'], message=data['message'],
 		                           room=room, send_from_id=data['send_from'])
+		serializer = MessageSerializer(m).data
 
-		print "send\n", m
-		Group('chat-' + str(pk), channel_layer=message.channel_layer).send({'text': json.dumps(m.as_dict())})
+		print "send\n", serializer
+		Group('chat-' + str(pk), channel_layer=message.channel_layer).send({'text': json.dumps(serializer)})
 
 	# ------------------------- IBM -----------------------
 	# user_name = data.get('username', 'robot')

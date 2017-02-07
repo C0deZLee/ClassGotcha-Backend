@@ -1,6 +1,6 @@
 <template><div>
        <div class="text-center m-t">
-              <h2 class="logo-name">Class </h2> <h2 class="logo-name">Gotcha</h2>
+              <h3 class="logo-name">ClassGotcha</h3>
           </div>
   <div class="middle-box text-center loginscreen">
 

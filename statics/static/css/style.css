@@ -5626,9 +5626,9 @@ body.mini-navbar.fixed-sidebar .logo-element {
 
 .logo-name {
     color: #e6e6e6;
-    font-size: 180px;
+    font-size: 100px;
     font-weight: 800;
-    letter-spacing: -10px;
+    letter-spacing: -8px;
     margin-bottom: 0;
 }
 

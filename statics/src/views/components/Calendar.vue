@@ -105,7 +105,7 @@
             const self = this
 
             cal.fullCalendar({
-                scrollTime: '07:00:00',
+                scrollTime: '07:30:00',
                 droppable: true,
                 // ignoreTimezone: false,
                 header: this.header,
