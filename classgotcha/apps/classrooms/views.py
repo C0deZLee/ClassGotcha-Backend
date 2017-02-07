@@ -136,9 +136,9 @@ class ClassroomViewSet(viewsets.ViewSet):
 		page = request.data.get('page')
 		if not page:
 			page = 0
-		classroom = get_object_or_404(self.queryset, pk = pk)
-		moments = classroom.moments.filter(deleted = False).order_by('-created')[(page-1)*20:page*20]
-		serializer = MomentSerializer(moments,many = True)
+		classroom = get_object_or_404(self.queryset, pk=pk)
+		moments = classroom.moments.filter(deleted=False).order_by('-created')[page * 20:page+1 * 20]
+		serializer = MomentSerializer(moments, many=True)
 		return Response(serializer.data)
 
 	def tasks(self, request, pk):
@@ -149,7 +149,6 @@ class ClassroomViewSet(viewsets.ViewSet):
 			serializer = BasicTaskSerializer(tasks, many=True)
 			return Response(serializer.data)
 		if request.method == 'POST':
-			print 'before', request.data
 			due_datetime = request.data.get('due_datetime', None)
 			due_date = request.data.get('due_date', None)
 			start = request.data.get('start', None)
