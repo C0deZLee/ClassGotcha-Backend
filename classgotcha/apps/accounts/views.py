@@ -1,3 +1,4 @@
+from  datetime import datetime
 
 from django.shortcuts import get_object_or_404
 from django.core.files.base import File
@@ -43,9 +44,8 @@ def account_avatar(request):
 	from PIL import Image
 
 	if request.method == 'POST':
-		try:
-			upload = request.FILES['file']
-		except:
+		upload = request.FILES.get('file', False)
+		if not upload:
 			return Response(status=status.HTTP_400_BAD_REQUEST)
 		filename, file_extension = os.path.splitext(upload.name)
 
@@ -182,6 +182,8 @@ class AccountViewSet(viewsets.ViewSet):
 			classroom = get_object_or_404(classroom_queryset, pk=pk)
 			classroom.students.remove(request.user)
 			classroom.class_time.involved.remove(request.user)
+			for task in classroom.tasks.all():
+				task.involved.remove(request.user)
 			chatroom = get_object_or_404(chatroom_queryset, classroom_id=classroom.pk)
 			chatroom.accounts.remove(request.user)
 			return Response(status=200)
@@ -241,17 +243,6 @@ class AccountViewSet(viewsets.ViewSet):
 			moment.save()
 			return Response(status=status.HTTP_200_OK)
 
-
-	@staticmethod
-	def moments_pagination(request, page=None):
-		# TODO: can optimize here
-		if not page:
-			page = 0
-		else:
-			page = int(page)
-		serializer = MomentSerializer(request.user.moments.all().reverse()[page:page + 5], many=True)
-		return Response(serializer.data)
-
 	@staticmethod
 	def rooms(request, pk=None):
 		room_query_set = request.user.rooms.all()
@@ -270,9 +261,27 @@ class AccountViewSet(viewsets.ViewSet):
 			return Response(status=status.HTTP_200_OK)
 
 	@staticmethod
-	def tasks(request):
-		serializer = TaskSerializer(request.user.tasks.all(), many=True)
-		return Response(serializer.data)
+	def tasks(request, pk=None):
+		task_queryset = request.user.tasks.all()
+		if request.method == 'GET':
+			serializer = TaskSerializer(task_queryset, many=True)
+			return Response(serializer.data)
+		elif request.method == 'POST':
+			serializer = TaskSerializer(data=request.data)
+			serializer.is_valid(raise_exception=True)
+			serializer.save()
+			return Response(status=status.HTTP_201_CREATED)
+		elif request.method == 'PUT':
+			task = get_object_or_404(task_queryset, pk=pk)
+			task.involved.remove(request.user)
+			task.finished.add(request.user)
+			return Response(status=status.HTTP_200_OK)
+		elif request.method == 'DELETE':
+			task = get_object_or_404(task_queryset, pk=pk)
+			task.involved.remove(request.user)
+			if task.involved.length == 0:
+				task.delete()
+			return Response(status=status.HTTP_200_OK)
 
 	@staticmethod
 	def free_time(request):
@@ -319,12 +328,10 @@ class AccountViewSet(viewsets.ViewSet):
 		# TODO: show latest activity related to me
 		# include moments, comments, notes my classmates and friends posted
 		classrooms = Classroom.objects.filter(students__pk=request.user.pk)
-		
-		moments = Moment.objects.filter(classroom__in = classrooms).filter(deleted=False).order_by('-created')[0:20]
-		serializer = MomentSerializer(moments,many = True)
-		return Response(serializer.data)
 
-		
+		moments = Moment.objects.filter(classroom__in=classrooms).filter(deleted=False).order_by('-created')[0:20]
+		serializer = MomentSerializer(moments, many=True)
+		return Response(serializer.data)
 
 
 class GroupViewSet(viewsets.ViewSet):
