@@ -157,7 +157,6 @@ class AccountViewSet(viewsets.ViewSet):
 			was_friend.save()
 			return Response(status=200)
 
-	# TODO: FIXME, 403 forbidden front enf, post man 500
 	@staticmethod
 	def classrooms(request, pk=None):
 		classroom_queryset = Classroom.objects.all()
@@ -170,20 +169,28 @@ class AccountViewSet(viewsets.ViewSet):
 
 		if request.method == 'POST':
 			classroom = get_object_or_404(classroom_queryset, pk=pk)
-			if request.user in classroom.students.all():
-				return Response({'detail': 'student already in classroom'}, status=status.HTTP_403_FORBIDDEN)
+			# add user to classroom student list
 			classroom.students.add(request.user)
+			# add class time to user task list
 			classroom.class_time.involved.add(request.user)
+			# add classroom tasks from user task list
+			for task in classroom.tasks.all():
+				task.involved.add(request.user)
+			# add user to classroom chatroom
 			chatroom = get_object_or_404(chatroom_queryset, classroom_id=classroom.pk)
 			chatroom.accounts.add(request.user)
 			return Response(status=200)
 
 		if request.method == 'DELETE':
 			classroom = get_object_or_404(classroom_queryset, pk=pk)
+			# remove user from classroom student list
 			classroom.students.remove(request.user)
+			# remove classroom time form user task list
 			classroom.class_time.involved.remove(request.user)
+			# remove classroom tasks from user task list
 			for task in classroom.tasks.all():
 				task.involved.remove(request.user)
+			# remove user from classroom chatroom
 			chatroom = get_object_or_404(chatroom_queryset, classroom_id=classroom.pk)
 			chatroom.accounts.remove(request.user)
 			return Response(status=200)
