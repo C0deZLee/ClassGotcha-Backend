@@ -36,7 +36,7 @@ class AccountAdmin(UserAdmin):
 
 
 class AvatarAdmin(admin.ModelAdmin):
-	list_display = ('id', 'avatar4x')
+	list_display = ('id', 'avatar2x')
 
 
 class GroupAdmin(admin.ModelAdmin):

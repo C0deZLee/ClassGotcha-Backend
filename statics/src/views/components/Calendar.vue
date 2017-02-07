@@ -118,6 +118,7 @@
                 events: self.events,
                 eventSources: self.eventSources,
                 nowIndicator: true,
+                height: this.windowHeight,
 
                 drop() {
                     $(this).remove()
@@ -173,6 +174,9 @@
         computed: {
             userTasks() {
                 return this.$store.getters.userTasks
+            },
+            windowHeight() {
+                return window.innerHeight - 100
             }
         },
         events: {
@@ -209,7 +213,7 @@
     /* FULLCALENDAR */
     
     .fc-time-grid .fc-slats td {
-        height: 2em;
+        height: 2.5em;
         border-bottom: 0;
     }
     

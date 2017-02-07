@@ -4,7 +4,8 @@
             <ul side-navigation class="nav metismenu" id="side-menu">
                 <li class="nav-header">
                     <div class="dropdown profile-element"> <span>
-                             <img alt="image" class="img-circle" :src="avatar" />
+                    <img v-if="avatar" alt="image" class="img-circle" :src="avatar" />
+                    <avatar v-else class="img-circle" :size="42" :username="fullName"></avatar>
                              </span>
                         <a data-toggle="dropdown" class="dropdown-toggle">
                             <span class="clear"> <span class="block m-t-xs"> <strong class="font-bold">{{fullName}}</strong>
@@ -18,7 +19,8 @@
                         </ul>
                     </div>
                     <div class="logo-element">
-                      <img alt="image" class="img-circle" :src="avatar" />
+                    <img v-if="avatar" class="img-circle" :src="avatar"/>
+                    <avatar v-else class="m-l" :size="42" :username="fullName"></avatar>
                     </div>
                 </li>
                 <li>
@@ -67,8 +69,13 @@
 </template>
 
 <script>
+    import Avatar from 'vue-avatar'
+
     export default {
         name: 'sidebar',
+        components: {
+            'avatar': Avatar.Avatar
+        },
         methods: {
             classroomUrl(id) {
                 return '/#/classroom/id/' + id
@@ -81,6 +88,7 @@
             avatar() {
                 if (this.$store.getters.userAvatar)
                     return this.$store.getters.userAvatar.avatar1x
+                else return ''
             },
             username() {
                 if (this.$store.getters.me)

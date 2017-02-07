@@ -14,10 +14,7 @@
               <i class="fa fa-plus"></i> 
               Add To My Classroom
               </button>
-              <button @click="remClassroom()"  class="btn" v-show="user_in_classroom">
-              <i class="fa fa-check"></i> 
-              Enrolled
-              </button>
+              <a class="text-primary" @click="remClassroom()"><i class="fa fa-sign-out"></i> </a>
             </h2>
             <h4>
               Section {{current_classroom.class_section}}

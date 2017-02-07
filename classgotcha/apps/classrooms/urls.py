@@ -38,6 +38,10 @@ classroom_admin_upload = views.ClassroomViewSet.as_view({
 	'post': 'upload_all_course_info'
 })
 
+majors_all = views.MajorViewSet.as_view({
+	'get': 'list'
+})
+
 urlpatterns = [
 	url(r'^(?P<pk>[0-9]+)/notes/$', classroom_notes, name='classroom-notes'),
 	url(r'^(?P<pk>[0-9]+)/tasks/$', classroom_tasks, name='classroom-tasks'),
@@ -46,6 +50,7 @@ urlpatterns = [
 	url(r'^(?P<pk>[0-9]+)/validate/$', classroom_validate, name='classroom-check'),
 	url(r'^(?P<pk>[0-9]+)/$', classroom_detail, name='classroom-detail'),
 	url(r'^search/$', classroom_search, name='classroom-search'),
+	url(r'^majors/$', majors_all, name='major_list'),
 	url(r'^upload/$', classroom_admin_upload, name='classroom_admin_upload'),
 ]
 

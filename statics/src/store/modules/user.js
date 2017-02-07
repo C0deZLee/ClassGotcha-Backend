@@ -3,10 +3,6 @@ import router from '../../router'
 import * as cookie from '../../utils/cookie'
 import * as types from '../mutation-types'
 
-import default_avatar1x from 'img/default-avatar1x.png'
-import default_avatar2x from 'img/default-avatar2x.png'
-import default_avatar4x from 'img/default-avatar4x.png'
-
 // initial state
 // shape: [{ id, quantity }]
 const state = {
@@ -147,6 +143,15 @@ const actions = {
         userApi.getSelf()
             .then((response) => {
                 commit(types.LOAD_SELF, response)
+            })
+            .catch((error) => {
+                commit(types.LOG_ERROR, error)
+            })
+    },
+    updateSelf({ commit }, formData) {
+        userApi.updateSelf(formData)
+            .then(() => {
+                commit(types.UPDATE_SELF)
             })
             .catch((error) => {
                 commit(types.LOG_ERROR, error)
@@ -317,13 +322,6 @@ const mutations = {
     // load data
     [types.LOAD_SELF](state, response) {
         state.user = response
-        if (!state.user.avatar) {
-            state.user.avatar = {
-                avatar1x: default_avatar1x,
-                avatar2x: default_avatar2x,
-                avatar4x: default_avatar4x
-            }
-        }
     },
     [types.LOAD_CLASSROOMS](state, response) {
         state.classrooms = response
@@ -339,19 +337,15 @@ const mutations = {
     },
     [types.LOAD_USER](state, response) {
         state.loaded_user = response
-        if (!state.user.avatar) {
-            state.user.avatar = {
-                avatar1x: default_avatar1x,
-                avatar2x: default_avatar2x,
-                avatar4x: default_avatar4x
-            }
-        }
     },
 
     // post change
     [types.ADD_CLASSROOM](state) {},
     [types.POST_MOMENT](state) {},
     [types.REMOVE_MOMENT](state) {},
+    [types.UPDATE_SELF](state) {},
+
+
     [types.UPLOAD_FILE](state, payload) {
         state.uploaded = payload
     },

@@ -76,13 +76,8 @@ export const userApi = {
     },
 
     // update changes
-    updateUser(pk, formData) {
-        return Vue.http.post(API_ROOT + 'account/update/' + pk + '/', formData, { headers: { Authorization: 'JWT ' + getCookie('token') } })
-            .then((response) => Promise.resolve(response.data))
-            .catch((error) => Promise.reject(error))
-    },
-    updateAvatar(pk, formData) {
-        return Vue.http.post(API_ROOT + 'account/update/' + pk + '/', formData, { headers: { Authorization: 'JWT ' + getCookie('token') } })
+    updateSelf(formData) {
+        return Vue.http.put(API_ROOT + 'account/me/', formData, { headers: { Authorization: 'JWT ' + getCookie('token') } })
             .then((response) => Promise.resolve(response.data))
             .catch((error) => Promise.reject(error))
     },

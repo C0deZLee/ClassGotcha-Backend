@@ -2,12 +2,18 @@ from rest_framework import serializers
 
 from models import Account, Avatar, Group, Professor
 from ..chat.models import Room
-from ..classrooms.models import Semester, Classroom
+from ..classrooms.models import Semester, Classroom, Major
 from ..tasks.serializers import BasicTaskSerializer, ClassTimeTaskSerializer
 from ..tags.serializers import ClassFolderSerializer
 
 
-# Due to the cross dependency, i have to move SemesterSerializer and BasicClassroomSerializer here
+# Due to the cross dependency,
+# I have to move SemesterSerializer, MajorSerializer and BasicClassroomSerializer here
+
+class MajorSerializer(serializers.ModelSerializer):
+	class Meta:
+		model = Major
+		fields = '__all__'
 
 
 class SemesterSerializer(serializers.ModelSerializer):
@@ -28,14 +34,11 @@ class AvatarSerializer(serializers.ModelSerializer):
 
 class BasicAccountSerializer(serializers.ModelSerializer):
 	avatar = AvatarSerializer(required=False)
-	full_name = serializers.SerializerMethodField()
+	full_name = serializers.ReadOnlyField()
 
 	class Meta:
 		model = Account
 		fields = ('pk', 'id', 'avatar', 'username', 'email', 'full_name', 'about_me', 'level')
-
-	def get_full_name(self, obj):
-		return obj.first_name + ' ' + obj.last_name
 
 
 class RoomSerializer(serializers.ModelSerializer):
@@ -73,23 +76,17 @@ class BasicClassroomSerializer(serializers.ModelSerializer):
 
 class AccountSerializer(serializers.ModelSerializer):
 	classrooms = BasicClassroomSerializer(many=True)
+	is_professor = serializers.ReadOnlyField()
+	full_name = serializers.ReadOnlyField()
 	chatrooms = RoomSerializer(many=True)
 	tasks = BasicTaskSerializer(many=True)
 	avatar = AvatarSerializer(required=False)
-	is_professor = serializers.SerializerMethodField()
-	full_name = serializers.SerializerMethodField()
 
 	class Meta:
 		model = Account
 		exclude = ('user_permissions', 'groups', 'is_superuser', 'is_staff',
 		           'is_active', 'password', 'avatar')
 		read_only_fields = ('created', 'updated',)
-
-	def get_is_professor(self, obj):
-		return obj.is_professor
-
-	def get_full_name(self, obj):
-		return obj.get_full_name
 
 
 class AuthAccountSerializer(serializers.ModelSerializer):

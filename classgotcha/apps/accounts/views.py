@@ -53,22 +53,17 @@ def account_avatar(request):
 			for chunk in upload.chunks():
 				avatar.write(chunk)
 			with Image.open(avatar) as image:
-				image4x = resizeimage.resize_cover(image, [512, 512])
 				image2x = resizeimage.resize_cover(image, [128, 128])
 				image1x = resizeimage.resize_cover(image, [48, 48])
-				img4x_name = str(request.user.id) + '.4x' + file_extension
 				img2x_name = str(request.user.id) + '.2x' + file_extension
 				img1x_name = str(request.user.id) + '.1x' + file_extension
-				image4x.save(img4x_name, image.format)
 				image2x.save(img2x_name, image.format)
 				image1x.save(img1x_name, image.format)
 
-		img4x = open(img4x_name)
 		img2x = open(img2x_name)
 		img1x = open(img1x_name)
 
-		new_avatar = Avatar(avatar4x=File(file=img4x), avatar2x=File(file=img2x), avatar1x=File(file=img1x))
-		new_avatar.save()
+		new_avatar = Avatar.objects.create(avatar2x=File(file=img2x), avatar1x=File(file=img1x))
 		request.user.avatar = new_avatar
 		request.user.save()
 		return Response({'data': 'success'}, status=status.HTTP_200_OK)
@@ -85,27 +80,25 @@ class AccountViewSet(viewsets.ViewSet):
 	# list_route and detail_route are for auto gen URL
 	@staticmethod
 	def me(request):
-		serializer = AccountSerializer(request.user)
-		return Response(serializer.data)
+		if request.method == 'GET':
+			serializer = AccountSerializer(request.user)
+			return Response(serializer.data)
+		elif request.method == 'PUT':
+
+			for (key, value) in request.data.items():
+				if key in ['username', 'first_name', 'mid_name', 'last_name', 'gender', 'birthday', 'school_year',
+				           'major']:
+					if key == 'major':
+						request.user.major_id = value
+					else:
+						setattr(request.user, key, value)
+				request.user.save()
+			return Response(status=status.HTTP_200_OK)
 
 	def retrieve(self, request, pk):
 		user = get_object_or_404(self.queryset, pk=pk)
 		serializer = AccountSerializer(user)
 		return Response(serializer.data)
-
-	def update(self, request, pk):
-		if request.user.is_admin or request.user.id == int(pk):
-			user = get_object_or_404(self.queryset, pk=pk)
-			# apply every key, value pair to this user instance
-			for (key, value) in request.data.items():
-				if key in ['username', 'first_name', 'mid_name', 'last_name', 'gender', 'birthday', 'school_year',
-				           'major']:
-					setattr(user, key, value)
-			user.save()
-			serializer = AccountSerializer(user)
-			return Response(serializer.data, status=status.HTTP_200_OK)
-		else:
-			return Response(status=status.HTTP_403_FORBIDDEN)
 
 	def destroy(self, request, pk=None):
 		if request.user.is_admin or request.user.pk == int(pk):

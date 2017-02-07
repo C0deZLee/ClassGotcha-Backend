@@ -5,15 +5,15 @@ from django.shortcuts import get_object_or_404
 from django.db import IntegrityError
 
 from rest_framework import viewsets, status
-from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly, AllowAny  # , IsStaff
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.parsers import FormParser, MultiPartParser
-from rest_framework.decorators import detail_route, list_route, api_view, permission_classes, parser_classes
+from rest_framework.decorators import parser_classes
 
 from models import Account, Classroom, Semester, Major, Professor
 from ..chat.models import Room
 
-from serializers import ClassroomSerializer
+from serializers import ClassroomSerializer, MajorSerializer
 from ..posts.serializers import MomentSerializer, Note, NoteSerializer
 from ..tasks.serializers import Task, TaskSerializer, BasicTaskSerializer
 from ..accounts.serializers import BasicAccountSerializer, BasicClassroomSerializer
@@ -137,7 +137,7 @@ class ClassroomViewSet(viewsets.ViewSet):
 		if not page:
 			page = 0
 		classroom = get_object_or_404(self.queryset, pk=pk)
-		moments = classroom.moments.filter(deleted=False).order_by('-created')[page * 20:page+1 * 20]
+		moments = classroom.moments.filter(deleted=False).order_by('-created')[page * 20:page + 1 * 20]
 		serializer = MomentSerializer(moments, many=True)
 		return Response(serializer.data)
 
@@ -274,3 +274,12 @@ class ClassroomViewSet(viewsets.ViewSet):
 			return Response(status=status.HTTP_201_CREATED)
 		else:
 			return Response(status=status.HTTP_400_BAD_REQUEST)
+
+
+class MajorViewSet(viewsets.ViewSet):
+	queryset = Major.objects.all().order_by('major_short')
+	permission_classes = (IsAuthenticated,)
+
+	def list(self, request):
+		serializer = MajorSerializer(self.queryset, many=True)
+		return Response(serializer.data)

@@ -53,6 +53,7 @@ const state = {
     moments: [],
     notes: [],
     tasks: [],
+    majors: [],
     error_msg: ''
 }
 
@@ -60,6 +61,9 @@ const state = {
 const getters = {
     classSearchResults: (state) => {
         return state.search_results
+    },
+    majors: (state) => {
+        return state.majors
     },
     currentClassroom: (state) => {
         return state.classroom
@@ -91,6 +95,17 @@ const actions = {
         return classApi.search(formData)
             .then((response) => {
                 commit(types.SEARCH_CLASSROOMS, response)
+                return Promise.resolve()
+            })
+            .catch((error) => {
+                commit(types.LOG_ERROR, error)
+                return Promise.reject()
+            })
+    },
+    getMajors({ commit, dispatch }) {
+        return classApi.getMajors()
+            .then((response) => {
+                commit(types.LOAD_CLASSROOM_MAJORS, response)
                 return Promise.resolve()
             })
             .catch((error) => {
@@ -181,6 +196,9 @@ const actions = {
 const mutations = {
     [types.SEARCH_CLASSROOMS](state, response) {
         state.search_results = response
+    },
+    [types.LOAD_CLASSROOM_MAJORS](state, response) {
+        state.majors = response
     },
     [types.GET_CLASSROOM](state, response) {
         state.classroom = response

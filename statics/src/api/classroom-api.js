@@ -33,6 +33,11 @@ export default {
             .then((response) => Promise.resolve(response.data))
             .catch((error) => Promise.reject(error))
     },
+    getMajors() {
+        return Vue.http.get(API_ROOT + 'classroom/majors/', { headers: { Authorization: 'JWT ' + getCookie('token') } })
+            .then((response) => Promise.resolve(response.data))
+            .catch((error) => Promise.reject(error))
+    },
     validate(pk) {
         return Vue.http.get(API_ROOT + 'classroom/' + pk + '/validate/', { headers: { Authorization: 'JWT ' + getCookie('token') } })
             .then((response) => Promise.resolve(response.data))

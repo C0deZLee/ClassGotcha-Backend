@@ -5,7 +5,6 @@ from ..tags.models import Tag
 
 
 class Avatar(models.Model):
-	avatar4x = models.ImageField(upload_to='avatars', null=True, blank=True)
 	avatar2x = models.ImageField(upload_to='avatars', null=True, blank=True)
 	avatar1x = models.ImageField(upload_to='avatars', null=True, blank=True)
 	created = models.DateTimeField(auto_now_add=True)
@@ -119,7 +118,7 @@ class Account(AbstractBaseUser, PermissionsMixin):
 		return self.username
 
 	@property
-	def get_full_name(self):
+	def full_name(self):
 		return '%s %s' % (self.first_name, self.last_name)
 
 	def get_short_name(self):

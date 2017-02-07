@@ -34,7 +34,7 @@ class Room(models.Model):
 		message = self.messages.all().order_by('-created').first()
 		if message:
 			latest_message = {
-				'full_name': message.send_from.get_full_name,
+				'full_name': message.send_from.full_name,
 				'message': message.message,
 				'created': message.created.strftime('%b %-d %-I:%M %p')
 			}

@@ -1,4 +1,4 @@
-from models import Task
+from models import Task, Account
 from rest_framework import serializers
 from ..classrooms.models import Classroom
 
@@ -25,12 +25,10 @@ class TaskSerializer(serializers.ModelSerializer):
 		fields = '__all__'
 
 	def create(self, validated_data):
-		# don't change here
-		if 'involved' in validated_data and validated_data['involved'] == []:
-			del validated_data['involved']
-
-		# {'classroom': 4545, u'type': 1, u'description': u'hw1', u'task_name': u'hw1',
-		# u'due': datetime.datetime(2017, 1, 30, 15, 24)}
+		# if no involved
+		# if 'involved' in validated_data and validated_data['involved'] == []:
+		# TODO: deal with involved later on
+		del validated_data['involved']
 
 		# create a empty instance first so we have pk and can add m2m relations
 		task = Task.objects.create()
@@ -40,13 +38,10 @@ class TaskSerializer(serializers.ModelSerializer):
 		task = Task.objects.get(pk=task.pk)
 
 		if task.classroom:
-			for student in task.classroom.students.all():
-				task.involved.add(student)
-			task.save()
+			task.involved.add(*task.classroom.students.all())
 		elif task.group:
-			for member in task.group.members.all():
-				task.involved.add(member)
-			task.save()
+			task.involved.add(*task.group.members.all())
+
 		return task
 
 
