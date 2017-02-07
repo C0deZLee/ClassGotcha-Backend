@@ -193,10 +193,10 @@ class AccountViewSet(viewsets.ViewSet):
 
 	@staticmethod
 	def moments(request, pk=None):
-		moment_query_set = request.user.moments.filter(deleted=False)
+		moment_query_set = request.user.moments.filter(deleted=False).order_by('-created')
 		# Only return first 20 moments
 		if request.method == 'GET':
-			serializer = MomentSerializer(moment_query_set.reverse()[0:20], many=True)
+			serializer = MomentSerializer(moment_query_set[0:20], many=True)
 			return Response(serializer.data)
 
 		if request.method == 'POST':
@@ -310,15 +310,21 @@ class AccountViewSet(viewsets.ViewSet):
 
 		return Response({'freetime': free_time_dict}, status=status.HTTP_200_OK)
 
-	def recent_activity(self, request):
-		# TODO: show recent activity in profile page
-		# include posted moments, comments, notes
-		pass
+	# def recent_activity(self, request):
+	# 	# TODO: show recent activity in profile page
+	# 	# include posted moments, comments, notes
+	# 	pass
 
 	def home_page_activity(self, request):
 		# TODO: show latest activity related to me
 		# include moments, comments, notes my classmates and friends posted
-		pass
+		classrooms = Classroom.objects.filter(students__pk=request.user.pk)
+		
+		moments = Moment.objects.filter(classroom__in = classrooms).filter(deleted=False).order_by('-created')[0:20]
+		serializer = MomentSerializer(moments,many = True)
+		return Response(serializer.data)
+
+		
 
 
 class GroupViewSet(viewsets.ViewSet):
