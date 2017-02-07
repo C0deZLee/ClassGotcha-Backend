@@ -76,9 +76,13 @@ export default new Router({
             component: Page403,
             name: '403'
         }, {
+            path: '/profile/me',
+            component: Profile,
+            name: 'me'
+        }, {
             path: '/profile/id/:user_id',
             component: Profile,
-            name: 'user'
+            name: 'userDetail'
         }, {
             path: '/professor/id/:professor_id',
             component: Professor,

@@ -27,7 +27,8 @@
                     <a :href="profileUrl(student)">
                         <h2 class="m-b-xs">{{student.full_name}}</h2>
                         
-                        <img alt="image" class="img-circle" :src="student.avatar.avatar2x">
+                        <img v-if="student.avatar" alt="image" class="img-circle" :src="student.avatar.avatar1x">
+                        <avatar v-else :size="42" :username="student.full_name"></avatar>
 
                         <div class="font-bold">@{{student.username}}</div>
                         <address class="m-t-md">
@@ -49,8 +50,13 @@
 </template>
 
 <script>
+    import Avatar from 'vue-avatar'
+
     export default {
         name: 'ClassroomStudent',
+        components: {
+            'avatar': Avatar.Avatar
+        },
         methods: {
             profileUrl(student) {
                 return '/#/profile/id/' + student.pk

@@ -3,10 +3,6 @@ import classApi from '../../api/classroom-api'
 // import * as cookie from '../../utils/cookie'
 import * as types from '../mutation-types'
 
-import default_avatar1x from 'img/default-avatar1x.png'
-import default_avatar2x from 'img/default-avatar2x.png'
-import default_avatar4x from 'img/default-avatar4x.png'
-
 // initial state
 const state = {
     search_results: [],
@@ -202,15 +198,6 @@ const mutations = {
     },
     [types.GET_CLASSROOM](state, response) {
         state.classroom = response
-        for (let i in state.classroom.students) {
-            if (!state.classroom.students[i].avatar) {
-                state.classroom.students[i].avatar = {
-                    avatar1x: default_avatar1x,
-                    avatar2x: default_avatar2x,
-                    avatar4x: default_avatar4x
-                }
-            }
-        }
     },
     [types.USER_IN_CLASSROOM](state) {
         state.is_in_class = true
@@ -220,24 +207,6 @@ const mutations = {
     },
     [types.LOAD_CLASSROOM_MOMENTS](state, response) {
         state.moments = response
-        for (let i in state.moments) {
-            if (!state.moments[i].creator.avatar) {
-                state.moments[i].creator.avatar = {
-                    avatar1x: default_avatar1x,
-                    avatar2x: default_avatar2x,
-                    avatar4x: default_avatar4x
-                }
-            }
-            for (let j in state.moments[i].comments) {
-                if (!state.moments[i].comments[j].creator.avatar) {
-                    state.moments[i].comments[j].creator.avatar = {
-                        avatar1x: default_avatar1x,
-                        avatar2x: default_avatar2x,
-                        avatar4x: default_avatar4x
-                    }
-                }
-            }
-        }
     },
     [types.LOAD_CLASSROOM_TASKS](state, response) {
         state.tasks = response
