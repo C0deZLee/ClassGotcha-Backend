@@ -1,25 +1,60 @@
 <template>
-    <div class="animated fadeInDown">
-      <p>Create account to see it in action.</p>
-            <div class="row">
+      <div class="animated fadeInDown">
+    <div class="row">
+            <div class="col-md-6 text-white hidden-xs">
+                <h2 class="font-bold">Welcome to ClassGotcha</h2>
+
+                <p>
+                    Perfectly designed and precisely prepared admin theme with over 50 pages with extra new web app views.
+                </p>
+
+                <p>
+                    Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s.
+                </p>
+
+                <p>
+                    When an unknown printer took a galley of type and scrambled it to make a type specimen book.
+                </p>
+
+                <p>
+                    <small>It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.</small>
+                </p>
+
+            </div>
+            <div class="col-md-6">
+                <div class="ibox-content">
+
+                       <div class="row">
+                                 <h1 class="text-center"> Register</h1>
+
                 <div class="form-group col-md-6">
+                                                <span class="help-block m-b-none">Fisrt Name</span>
+
                   <input v-model="first_name" type="text" class="form-control" name="first_name" placeholder="First Name" required>
                   <p class="text-danger font-bold">{{firstMsg}}</p>
               </div>
                             <div class="form-group col-md-6">
+                                                <span class="help-block m-b-none">Last Name</span>
+                                
                   <input v-model="last_name" type="text" class="form-control" name="last_name" placeholder="Last Name" required>
                       <p class="text-danger font-bold">{{lastMsg}}</p>
               </div>
             </div>
               <div class="form-group">
+                                                <span class="help-block m-b-none">Username</span>
+                  
                   <input v-model="username" type="text" class="form-control" name="username" placeholder="Username" required>
                       <p class="text-danger font-bold">{{usernameMsg}}</p>
               </div>
               <div class="form-group">
+                                                <span class="help-block m-b-none">Email</span>
+                  
                   <input v-model="email" type="email" class="form-control" name="email" placeholder="Email" required>
                       <p class="text-danger font-bold">{{emailMsg}}</p>
               </div>
               <div class="form-group">
+                                                <span class="help-block m-b-none">Password</span>
+                  
                   <input v-model="password" type="password" class="form-control" name="password" placeholder="Password" required>
                       <p class="text-danger font-bold">{{passwordMsg}}</p>
               </div>
@@ -32,7 +67,11 @@
 
               <p class="text-muted text-center"><small>Already have an account?</small></p>
               <router-link class="btn btn-sm btn-white btn-block" :to="{ name: 'login'}">Login</router-link>
+
+                </div>
+            </div>
         </div>
+  </div>
 </template>
 
 <script>
