@@ -27,7 +27,7 @@
         </div>
         <div class="ibox-content">
           <div class="row">
-            <div class="col-md-10 ">
+            <div class="col-md-10 col-sm-12">
               <div class="chat-discussion" id="discussion" v-bottom>
                 <div v-for="message in chatroom_messages">
                   <div class="chat-message" :class="myMessage(message)">
@@ -46,8 +46,8 @@
               </div>
             </div>
             <div class="col-md-2">
-              <div class="chat-users">
-                <div class="users-list">
+              <div class="chat-users hidden-sm hidden-xs">
+                <div class="users-list  " >
                   <div class="chat-user" v-for="user in chatroom.accounts">
                      
                     <img v-if="user.avatar" class="chat-avatar" :src="user.avatar.avatar1x">
@@ -146,21 +146,21 @@
         },
         directives: {
             bottom: {
-                update: (el) => {
-                    el.scrollTop = el.scrollHeight
-                },
+                // update: (el) => {
+                //     el.scrollTop = el.scrollHeight
+                // },
                 inserted: (el) => {
                     el.scrollTop = el.scrollHeight
                 },
-                bind: (el) => {
-                    el.scrollTop = el.scrollHeight
-                },
+                // bind: (el) => {
+                //     el.scrollTop = el.scrollHeight
+                // },
                 componentUpdated: (el) => {
                     el.scrollTop = el.scrollHeight
                 },
-                unbind: (el) => {
-                    el.scrollTop = el.scrollHeight
-                },
+                // unbind: (el) => {
+                //     el.scrollTop = el.scrollHeight
+                // },
             },
         },
         computed: {

@@ -294,6 +294,15 @@ const actions = {
                 console.log(error)
             })
     },
+    remFriend({ commit }, pk) {
+        userApi.remFriend(pk)
+            .then(() => {
+                commit(types.REMOVE_FRIEND)
+            })
+            .catch((error) => {
+                console.log(error)
+            })
+    },
     acceptFriend({ commit }, pk) {
         return userApi.acceptFriend(pk)
             .then(() => {

@@ -454,7 +454,6 @@
             const event_color3 = '#ed5565'
             for (let i in this.$store.getters.userTasks) {
                 const task = this.$store.getters.userTasks[i]
-                console.log(task.category)
                 /* global moment:true */
                 // classes
                 if (task.category === 0) {

@@ -30,11 +30,11 @@
                            <strong>{{friend.full_name}}</strong> sent you a friend request<br>
                            <small class="btn-group pull-right">
                               <a class="btn btn-xs btn-primary" @click="acceptFriend(friend.id)">
-                                  <i class="fa fa-user-plus"></i> + Add Friend
+                                  <i class="fa fa-user-plus"></i> Accept
                               </a>
-                              <router-link  class="btn btn-xs btn-white" :to="{name:'userDetail', params:{user_id:friend.id}}">
-                                  <i class="fa fa-user"></i> Profile 
-                              </router-link>
+                              <a  class="btn btn-xs btn-white" @click="denyFriend(friend.id)">
+                                  <i class="fa fa-user"></i> Ignore 
+                              </a>
                            </small>
                         </div>
                   <li class="divider"></li>
@@ -58,6 +58,11 @@
             acceptFriend(pk) {
                 this.$store.dispatch('acceptFriend', pk).then(() => {
                     this.$store.dispatch('getFriends')
+                    this.$store.dispatch('getPendingFriends')
+                })
+            },
+            denyFriend(pk) {
+                this.$store.dispatch('remFriend', pk).then(() => {
                     this.$store.dispatch('getPendingFriends')
                 })
             }

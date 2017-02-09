@@ -10,11 +10,11 @@
           <div>
             <h2 class="no-margins">
               {{current_classroom.class_short}}  
-              <button @click="addClassroom()" class="btn btn-primary" v-show="!user_in_classroom">
+              <button @click="addClassroom()" class="btn btn-primary" v-if="!user_in_classroom">
               <i class="fa fa-plus"></i> 
               Add To My Classroom
               </button>
-              <a class="text-primary" @click="remClassroom()"><i class="fa fa-sign-out"></i> </a>
+              <a v-else class="text-primary" title="Quit this classroom" @click="remClassroom()"><i class="fa fa-sign-out"></i> </a>
             </h2>
             <h4>
               Section {{current_classroom.class_section}}

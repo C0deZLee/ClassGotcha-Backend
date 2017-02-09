@@ -15,7 +15,7 @@
             <div id="tab-1" class="tab-pane active">
                <div class="sidebar-title">
                   <h3> <i class="fa fa-comments-o"></i> Recent Chats</h3>
-                  <small><i class="fa fa-tim"></i> You have new message.</small>
+                  <small><i class="fa fa-tim"></i> You have 0 new message.</small>
                </div>
                <div>
                   <div v-for="chatroom in chatrooms" class="sidebar-message" >
@@ -149,6 +149,9 @@
         computed: {
             chatrooms() {
                 return this.$store.getters.userChatrooms
+            },
+            friends() {
+                return this.$store.getters.userFriends
             }
         },
         methods: {

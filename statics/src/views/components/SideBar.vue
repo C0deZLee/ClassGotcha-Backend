@@ -11,9 +11,8 @@
                             <span class="clear"> <span class="block m-t-xs"> <strong class="font-bold">{{fullName}}</strong>
                              </span> <span class="text-muted text-xs block">@{{username}} <b class="caret"></b></span> </span> </a>
                         <ul class="dropdown-menu animated fadeInRight m-t-xs">
-                            <li><a href="/#/profile/id/me">Profile</a></li>
-                         
-                            <li><a href="mailbox.html">Mailbox</a></li>
+                            <li><a href="/#/profile/me">Profile</a></li>
+                        
                             <li class="divider"></li>
                                <li> <a v-on:click="$store.dispatch('logout')"><i class="fa fa-sign-out"></i> Log out</a></li>
                         </ul>
