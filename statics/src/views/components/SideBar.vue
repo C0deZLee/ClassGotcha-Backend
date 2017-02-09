@@ -24,44 +24,44 @@
                     </div>
                 </li>
                 <li>
-                    <a href="/#/">
+                    <router-link :to="{name: 'home'}">
                         <i class="fa fa-th-large"></i>
-                        <span class="nav-label">Index</span>
-                    </a>
+                        <span class="nav-label">Home</span>
+                    </router-link>
                 </li>
 
                 <li>
-                    <a href="/#/classroom"><i class="fa fa-book"></i> <span class="nav-label">Classroom</span><span class="fa arrow"></span></a>
+                    <a><i class="fa fa-book"></i> <span class="nav-label">Classroom</span><span class="fa arrow"></span></a>
                     <ul class="nav nav-second-level">
-                        <li><a href="/#/classroom/add">+ Add New</a></li>
+                        <li><router-link :to="{name:'addClassroom'}">+ Add New</router-link></li>
                         <li v-for="classroom in classrooms">
-                            <a :href="classroomUrl(classroom.id)">{{classroom.class_short}}</a>
+                            <router-link :to="{name: 'classroom', params:{classroom_id:classroom.id}}">{{classroom.class_short}}</router-link>
                         </li>
                     </ul>
                 </li>
                 <li>
-                    <a href="/#/me/">
+                    <router-link :to="{name: 'myNotes'}">
                         <i class="fa fa-file-text"></i>
                         <span class="nav-label">My Notes</span>
-                    </a>
+                    </router-link>
                 </li>
                    <li>
-                    <a href="/#/me/">
+                    <router-link :to="{name:'myGroups'}">
                         <i class="fa fa-users"></i>
                         <span class="nav-label">My Groups</span>
-                    </a>
+                    </router-link>
                 </li>   
                 <li>
-                    <a href="/#/profile/id/me/">
+                    <router-link :to="{name:'profile'}">
                         <i class="fa fa-user"></i>
                         <span class="nav-label">Profile</span>
-                    </a>
+                    </router-link>
                 </li>
                 <li>
-                    <a href="/#/settings/">
-                        <i class="fa fa-gear"></i>
-                        <span class="nav-label">Settings</span>
-                    </a>
+                    <router-link :to="{name:'forum'}" href="/#/settings/">
+                        <i class="fa fa-comments"></i>
+                        <span class="nav-label">User Forum</span>
+                    </router-link>
                 </li>
             </ul>   
         </div>
@@ -88,7 +88,7 @@
             avatar() {
                 if (this.$store.getters.userAvatar)
                     return this.$store.getters.userAvatar.avatar1x
-                else return ''
+                else return null
             },
             username() {
                 if (this.$store.getters.me)

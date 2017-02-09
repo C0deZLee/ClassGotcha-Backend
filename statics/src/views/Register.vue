@@ -62,6 +62,7 @@
                  <input type="checkbox" v-model="checked" id="check" name="check" required>
                  <label for="check"></label> 
                  <i class="m-r"></i>Agree the terms and policy 
+                <p class="text-danger font-bold">{{policyMsg}}</p>
              </div> 
               <button @click="getToken($event)" class="btn btn-primary block full-width m-b">Register</button>
 
@@ -89,7 +90,8 @@
                 emailMsg: '',
                 passwordMsg: '',
                 lastMsg: '',
-                firstMsg: ''
+                firstMsg: '',
+                policyMsg: '',
             }
         },
         methods: {
@@ -104,8 +106,8 @@
                     username: this.username.replace(/%20/g, ''),
                     email: this.email.replace(/%20/g, ''),
                     password: this.password,
-                    first_name: this.first_name.replace(/%20/g, ''),
-                    last_name: this.last_name.replace(/%20/g, ''),
+                    first_name: this.first_name,
+                    last_name: this.last_name,
                 }
 
                 if (!formData.first_name)
@@ -118,10 +120,12 @@
                     this.emailMsg = 'This field is required'
                 else if (!formData.password)
                     this.passwordMsg = 'This field is required'
+                else if (!this.checked)
+                    this.policyMsg = 'This field is required'
                 else if (this.checked)
-                    this.$store.dispatch('register', formData).catch((error) => {
+                    this.$store.dispatch('register', formData)
+                    .catch((error) => {
                         for (let e in error.data) {
-                            console.log(e, error.data[e][0])
                             if (e === 'email') {
                                 this.emailMsg = error.data[e][0]
                             } else if (e === 'username') {

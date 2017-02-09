@@ -18,7 +18,7 @@
             <div class="col-lg-3">
                <h2>My Name Card</h2>
                <div class="contact-box">
-                  <a href="profile.html">
+                  <a>
                      <div class="col-sm-4">
                         <div class="text-center">
                            <img v-if="user.avatar" alt="image" class="img-circle m-t-xs img-responsive" :src="user.avatar.avatar2x">
@@ -31,7 +31,8 @@
                            <span class="label label-warning">Level {{user.level}}</span>
                         </h3>
                         <address>
-                           <strong>Major:</strong> {{user.major}}<br>
+                           <strong>Major:</strong> {{majorByID(user.major)}}<br>
+                           <strong>Class:</strong> {{user.school_year}}<br>
                            <strong>About Me</strong><br>
                            {{user.about_me}}
                         </address>
@@ -474,7 +475,6 @@
         components: {
             'upload-avatar': Upload,
             'avatar': Avatar.Avatar
-
         },
         data: () => {
             return {
@@ -532,7 +532,13 @@
                     this.change_avatar_button_message = 'Cancel'
                 else
                     this.change_avatar_button_message = 'Change avatar'
-
+            },
+            majorByID(id) {
+                for (let i in this.majors) {
+                    if (this.majors[i].id === id)
+                        return this.majors[i].major_short
+                }
+                return ''
             },
             cropImg(img_data) {
                 this.img_data = img_data

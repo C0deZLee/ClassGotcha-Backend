@@ -103,32 +103,32 @@
                               <strong>Class Files</strong>
                               <ul class="folder-list m-t" style="padding: 0">
                                  <li>
-                                    <router-link :to="{name:'classroom_files', params:{classroom_id: selected_classroom.id}}"> 
+                                    <router-link :to="{name:'classroomNotes', params:{classroom_id: selected_classroom.id}}"> 
                                        <i class="fa fa-align-justify"></i> All Files
                                     </router-link>
                                  </li>
                                  <li v-show="showFolder('Note')">
-                                    <router-link :to="{name:'classroom_files', params:{classroom_id: selected_classroom.id}, query:{folder:'Note'}}"> 
+                                    <router-link :to="{name:'classroomNotes', params:{classroom_id: selected_classroom.id}, query:{folder:'Note'}}"> 
                                        <i class="fa fa-certificate"></i> Notes <span class="label label-warning pull-right">16</span> 
                                     </router-link>
                                  </li>
                                  <li v-show="showFolder('Lecture')">
-                                    <router-link :to="{name:'classroom_files', params:{classroom_id: selected_classroom.id}, query:{folder:'Lecture'}}"> 
+                                    <router-link :to="{name:'classroomNotes', params:{classroom_id: selected_classroom.id}, query:{folder:'Lecture'}}"> 
                                        <i class="fa fa-inbox"></i> Lectures
                                     </router-link>
                                  </li>
                                  <li v-show="showFolder('Lab')">
-                                    <router-link :to="{name:'classroom_files', params:{classroom_id: selected_classroom.id}, query:{folder:'Lab'}}"> 
+                                    <router-link :to="{name:'classroomNotes', params:{classroom_id: selected_classroom.id}, query:{folder:'Lab'}}"> 
                                        <i class="fa fa-flask"></i> Labs
                                     </router-link>
                                  </li>
                                  <li v-show="showFolder('Homework')">
-                                    <router-link :to="{name:'classroom_files', params:{classroom_id: selected_classroom.id}, query:{folder:'Homework'}}"> 
+                                    <router-link :to="{name:'classroomNotes', params:{classroom_id: selected_classroom.id}, query:{folder:'Homework'}}"> 
                                        <i class="fa fa-file-text-o"></i> Homeworks <span class="label label-danger pull-right">2</span>
                                     </router-link>
                                  </li>
                                  <li v-show="showFolder('Exam')">
-                                    <router-link :to="{name:'classroom_files', params:{classroom_id: selected_classroom.id}, query:{folder:'Exam'}}"> 
+                                    <router-link :to="{name:'classroomNotes', params:{classroom_id: selected_classroom.id}, query:{folder:'Exam'}}"> 
                                        <i class="fa fa-bolt"></i> Exams
                                     </router-link>
                                  </li>

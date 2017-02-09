@@ -34,7 +34,6 @@
              </td>
              <td>
                <strong>{{professor.full_name}} <router-link :to="{name:'professor', params:{professor_id:professor.id}}" class="m-l" >Detail</router-link></strong> 
-           
              </td>
             </tr>
             <tr>
@@ -82,32 +81,32 @@
           <h3>Class Files</h3>
           <ul class="folder-list m-b-md" style="padding: 0">
              <li>
-                <router-link :to="{name:'classroom_files', params:{classroom_id: current_classroom.id}}"> 
+                <router-link :to="{name:'classroomNotes', params:{classroom_id: current_classroom.id}}"> 
                   <i class="fa fa-align-justify"></i> All Files
                 </router-link>
               </li>
                 <li v-show="showFolder('Note')">
-                <router-link :to="{name:'classroom_files', params:{classroom_id: current_classroom.id}, query:{folder:'Note'}}"> 
+                <router-link :to="{name:'classroomNotes', params:{classroom_id: current_classroom.id}, query:{folder:'Note'}}"> 
                   <i class="fa fa-certificate"></i> Notes <span class="label label-warning pull-right">16</span> 
                 </router-link>
               </li>
               <li v-show="showFolder('Lecture')">
-                <router-link :to="{name:'classroom_files', params:{classroom_id: current_classroom.id}, query:{folder:'Lecture'}}"> 
+                <router-link :to="{name:'classroomNotes', params:{classroom_id: current_classroom.id}, query:{folder:'Lecture'}}"> 
                   <i class="fa fa-inbox"></i> Lectures
                 </router-link>
               </li>
               <li v-show="showFolder('Lab')">
-                <router-link :to="{name:'classroom_files', params:{classroom_id: current_classroom.id}, query:{folder:'Lab'}}"> 
+                <router-link :to="{name:'classroomNotes', params:{classroom_id: current_classroom.id}, query:{folder:'Lab'}}"> 
                   <i class="fa fa-flask"></i> Labs
                 </router-link>
               </li>
               <li v-show="showFolder('Homework')">
-                <router-link :to="{name:'classroom_files', params:{classroom_id: current_classroom.id}, query:{folder:'Homework'}}"> 
+                <router-link :to="{name:'classroomNotes', params:{classroom_id: current_classroom.id}, query:{folder:'Homework'}}"> 
                   <i class="fa fa-file-text-o"></i> Homeworks <span class="label label-danger pull-right">2</span>
                 </router-link>
               </li>
               <li v-show="showFolder('Exam')">
-                <router-link :to="{name:'classroom_files', params:{classroom_id: current_classroom.id}, query:{folder:'Exam'}}"> 
+                <router-link :to="{name:'classroomNotes', params:{classroom_id: current_classroom.id}, query:{folder:'Exam'}}"> 
                   <i class="fa fa-bolt"></i> Exams
                 </router-link>
               </li>
@@ -117,15 +116,14 @@
       <div class="ibox">
         <div class="ibox-content">
           <h3>Your Classmates</h3>
-          <div class="user-friends">
-            <a v-if="index!=20" v-for="(student, index) in current_classroom.students">
+          <div class="user-friends row">
+            <a v-if="index!=18" class="col-sm-2" v-for="(student, index) in current_classroom.students">
               <img alt="image" class="img-circle" v-if="student.avatar" :src="student.avatar.avatar1x">
             <avatar v-else :size="42" :username="student.full_name"></avatar>
-              
               </a>
           </div>
           <p>
-            <a :href="students_page_url">More..</a>
+            <a :href="students_page_url" class="m-t">More..</a>
           </p>
         </div>
       </div>
@@ -481,12 +479,6 @@
                 this.task_title = ''
                 this.task_dscr = ''
                 this.task_location = ''
-            },
-            professor_page_url(pk) {
-                return '/#/professor/id/' + pk
-            },
-            user_page_url(pk) {
-                return '/#/profile/id/' + pk
             },
             // UI Switches
             showAddTask() {
