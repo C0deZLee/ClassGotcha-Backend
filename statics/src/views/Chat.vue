@@ -1,6 +1,6 @@
 <template>
-  <div>
-  <div>
+<spinner v-if="!loaded"></spinner>
+  <div v-else>
     <div class="row wrapper border-bottom white-bg page-heading">
       <div class="col-lg-10">
         <h2>{{chatroom.name}}</h2>
@@ -87,13 +87,16 @@
 </template>
 <script>
     import Avatar from 'vue-avatar'
+    import Spinner from 'components/Spinner'
     export default {
         name: 'Chat',
         components: {
-            'avatar': Avatar.Avatar
+            'avatar': Avatar.Avatar,
+            'spinner': Spinner
         },
         data: function() {
             return {
+                loaded: false,
                 message_text: '',
                 errorMsg: '',
             }
@@ -114,10 +117,12 @@
                 this.$store.dispatch('getChatroom', this.$route.params.chatroom_id)
                     .then((response) => {
                         this.chatroom = response
-                        console.log(response)
                         this.$store.dispatch('validateChatroom', parseInt(this.$route.params.chatroom_id))
+                            .then(() => {
+                                this.loaded = true
+                            })
                             .catch((error) => {
-                                this.$route.push('#')
+                                this.$route.push({ name: 'home' })
                                 throw error
                             })
                     })
