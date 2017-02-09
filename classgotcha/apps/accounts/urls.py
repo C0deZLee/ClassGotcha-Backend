@@ -17,7 +17,12 @@ account_friends = views.AccountViewSet.as_view({
 
 account_add_friends = views.AccountViewSet.as_view({
 	'post': 'friends',
+	'put': 'friends',
 	'delete': 'friends'
+})
+
+account_pending_friends = views.AccountViewSet.as_view({
+	'get': 'pending_friends'
 })
 
 account_me = views.AccountViewSet.as_view({
@@ -66,17 +71,18 @@ account_freetime = views.AccountViewSet.as_view({
 })
 
 urlpatterns = [
-	url(r'^friends/(?P<pk>[0-9]+)/$', account_add_friends, name='add_friend'),
-	url(r'^moments/(?P<pk>[0-9]+)/$', account_add_moments, name='moment-add'),
-	url(r'^classrooms/(?P<pk>[0-9]+)/$', account_add_classrooms, name='add_classroom'),
-	url(r'^chatrooms/(?P<pk>[0-9]+)/$', account_add_chatrooms, name='add_chatroom'),
+	url(r'^friends/(?P<pk>[0-9]+)/$', account_add_friends, name='add-friend'),
+	url(r'^moments/(?P<pk>[0-9]+)/$', account_add_moments, name='add-moment'),
+	url(r'^classrooms/(?P<pk>[0-9]+)/$', account_add_classrooms, name='add-classroom'),
+	url(r'^chatrooms/(?P<pk>[0-9]+)/$', account_add_chatrooms, name='add-chatroom'),
 
 	url(r'^(?P<pk>[0-9]+)/$', account_detail, name='user-detail'),
 
-	url(r'^avatar/$', views.account_avatar, name='avatar'),
+	url(r'^avatar/$', views.account_avatar, name='user-avatar'),
 	url(r'^classrooms/$', account_classrooms, name='user-classrooms'),
 	url(r'^chatrooms/$', account_chatrooms, name='user-chatrooms'),
-	url(r'^friends/$', account_friends, name='friends'),
+	url(r'^friends/$', account_friends, name='uer-friends'),
+	url(r'^pending-friends/$', account_pending_friends, name='user-pending-friends'),
 	url(r'^login/$', obtain_jwt_token),
 	url(r'^login-refresh/$', refresh_jwt_token),
 	url(r'^login-verify/$', verify_jwt_token),
@@ -86,5 +92,6 @@ urlpatterns = [
 	url(r'^moments/$', account_moments, name='user-moments'),
 	url(r'^tasks/$', account_tasks, name='user_tasks'),
 	url(r'^freetime/$', account_freetime, name='freetime'),
+
 	url(r'^me/$', account_me, name='me'),
 ]

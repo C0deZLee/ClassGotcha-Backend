@@ -64,6 +64,11 @@ export const userApi = {
             .then((response) => Promise.resolve(response.data))
             .catch((error) => Promise.reject(error))
     },
+    getPendingFriends() {
+        return Vue.http.get(API_ROOT + 'account/pending-friends/', { headers: { Authorization: 'JWT ' + getCookie('token') } })
+            .then((response) => Promise.resolve(response.data))
+            .catch((error) => Promise.reject(error))
+    },
     getTasks() {
         return Vue.http.get(API_ROOT + 'account/tasks/', { headers: { Authorization: 'JWT ' + getCookie('token') } })
             .then((response) => Promise.resolve(response.data))
@@ -105,6 +110,11 @@ export const userApi = {
     },
     addFriend(pk) {
         return Vue.http.post(API_ROOT + 'account/friends/' + pk + '/', {}, { headers: { Authorization: 'JWT ' + getCookie('token') } })
+            .then((response) => Promise.resolve(response.data))
+            .catch((error) => Promise.reject(error))
+    },
+    acceptFriend(pk) {
+        return Vue.http.put(API_ROOT + 'account/friends/' + pk + '/', {}, { headers: { Authorization: 'JWT ' + getCookie('token') } })
             .then((response) => Promise.resolve(response.data))
             .catch((error) => Promise.reject(error))
     },

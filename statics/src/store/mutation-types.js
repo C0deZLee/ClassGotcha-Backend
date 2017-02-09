@@ -31,7 +31,9 @@ export const ADD_CLASSROOM = 'ADD_CLASSROOM'
 export const REMOVE_CLASSROOM = 'REMOVE_CLASSROOM'
 
 export const LOAD_FRIENDS = 'LOAD_FRIENDS'
+export const LOAD_PENDING_FRIENDS = 'LOAD_PENDING_FRIENDS'
 export const ADD_FRIEND = 'ADD_FRIEND'
+export const ACCEPT_FRIEND = 'ACCEPT_FRIEND'
 export const REMOVE_FRIEND = 'REMOVE_FRIEND'
 
 export const LOAD_TASKS = 'LOAD_TASKS'
@@ -72,9 +74,6 @@ export const JOIN_CLASSROOM = 'JOIN_CLASSROOM'
 export const JOIN_CLASSROOM_FAILED = 'JOIN_CLASSROOM_FAILED'
 export const QUIT_CLASSROOM = 'QUIT_CLASSROOM'
 
-
-
-
 // ----- Chatroom --------
 export const GET_CHATROOM = 'GET_CHATROOM'
 
@@ -88,7 +87,6 @@ export const USER_IN_CHATROOM = 'USER_IN_CHATROOM'
 export const USER_NOT_IN_CHATROOM = 'USER_NOT_IN_CHATROOM'
 
 // ----- posts -------
-
 export const ADD_MOMENT_SOLVE = 'ADD_MOMENT_SOLVE'
 export const ADD_MOMENT_LIKE = 'ADD_MOMENT_LIKE'
 export const ADD_MOMENT_REPORT = 'ADD_MOMENT_REPORT'

@@ -8,6 +8,7 @@ import * as types from '../mutation-types'
 const state = {
     user: {},
     friends: [],
+    pending_friends: [],
     moments: [],
     login_status: false,
     token: null,
@@ -69,6 +70,12 @@ const getters = {
             return []
         }
     },
+    userFriends: state => {
+        return state.friends
+    },
+    userPendingFriends: state => {
+        return state.pending_friends
+    },
     loadedUser: state => {
         return state.loaded_user
     }
@@ -78,7 +85,6 @@ const getters = {
 // actions
 const actions = {
     register({ commit, dispatch }, formData) {
-        console.log('register', formData)
         return userApi.register(formData)
             .then((response) => {
                 commit(types.REGSITER_SUCCESS, response)
@@ -140,12 +146,14 @@ const actions = {
         commit(types.LOGOUT)
     },
     getSelf({ commit }) {
-        userApi.getSelf()
+        return userApi.getSelf()
             .then((response) => {
                 commit(types.LOAD_SELF, response)
+                return Promise.resolve()
             })
             .catch((error) => {
                 commit(types.LOG_ERROR, error)
+                return Promise.reject(error)
             })
     },
     updateSelf({ commit }, formData) {
@@ -183,7 +191,15 @@ const actions = {
             .catch((error) => {
                 commit(types.LOG_ERROR, error)
             })
+        userApi.getPendingFriends()
+            .then((response) => {
+                commit(types.LOAD_PENDING_FRIENDS, response)
+            })
+            .catch((error) => {
+                commit(types.LOG_ERROR, error)
+            })
     },
+
     // getTasks({ commit }) {
     //     userApi.getTasks()
     //         .then((response) => {
@@ -269,6 +285,26 @@ const actions = {
                 commit(types.LOG_ERROR, error)
             })
     },
+    addFriend({ commit }, pk) {
+        userApi.addFriend(pk)
+            .then(() => {
+                commit(types.ADD_FRIEND)
+            })
+            .catch((error) => {
+                console.log(error)
+            })
+    },
+    acceptFriend({ commit }, pk) {
+        return userApi.acceptFriend(pk)
+            .then(() => {
+                commit(types.ACCEPT_FRIEND)
+                return Promise.resolve()
+            })
+            .catch((error) => {
+                console.log(error)
+                return Promise.reject(error)
+            })
+    },
     uploadFile({ commit }, payload) {
         commit(types.UPLOAD_FILE, payload)
     },
@@ -332,6 +368,10 @@ const mutations = {
     [types.LOAD_FRIENDS](state, response) {
         state.friends = response
     },
+    [types.LOAD_PENDING_FRIENDS](state, response) {
+        state.pending_friends = response
+    },
+
     [types.LOAD_TASKS](state, response) {
         state.tasks = response
     },
@@ -345,6 +385,9 @@ const mutations = {
     [types.REMOVE_MOMENT](state) {},
     [types.UPDATE_SELF](state) {},
 
+    [types.ACCEPT_FRIEND](state) {},
+    [types.ADD_FRIEND](state) {},
+    [types.REMOVE_FRIEND](state) {},
 
     [types.UPLOAD_FILE](state, payload) {
         state.uploaded = payload

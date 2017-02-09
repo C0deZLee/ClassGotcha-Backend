@@ -127,36 +127,56 @@ class AccountViewSet(viewsets.ViewSet):
 		if request.method == 'GET':
 			serializer = BasicAccountSerializer(request.user.friends, many=True)
 			return Response(serializer.data)
-
+		# send friend request
 		if request.method == 'POST':
 			if request.user.pk is int(pk):  # cant add yourself as your friend
 				return Response({'detail': 'cant add yourself as your friend'}, status=status.HTTP_403_FORBIDDEN)
 			else:
 				new_friend = get_object_or_404(self.queryset, pk=pk)
 				if new_friend in request.user.friends.all():
-					return Response({'detail': 'friend already in list'}, status=status.HTTP_403_FORBIDDEN)
-				request.user.friends.add(new_friend)
-				request.user.save()
-				new_friend.friends.add(request.user)
-				new_friend.save()
+					return Response({'detail': 'Already friended'}, status=status.HTTP_403_FORBIDDEN)
 
+				if request.user in new_friend.pending_friends.all():
+					return Response({'detail': 'Already sent the request'}, status=status.HTTP_403_FORBIDDEN)
+
+				new_friend.pending_friends.add(request.user)
+				return Response(status=200)
+
+		# accept friend request
+		if request.method == 'PUT':
+			if request.user.pk is int(pk):  # cant add yourself as your friend
+				return Response({'detail': 'cant add yourself as your friend'}, status=status.HTTP_403_FORBIDDEN)
+			else:
+				new_friend = get_object_or_404(self.queryset, pk=pk)
+				if new_friend not in request.user.pending_friends.all():
+					return Response({'detail': 'No friend request found'}, status=status.HTTP_403_FORBIDDEN)
+
+				request.user.friends.add(new_friend)
+				request.user.pending_friends.remove(new_friend)
+				new_friend.friends.add(request.user)
 				return Response(status=200)
 
 		if request.method == 'DELETE':
-			was_friend = get_object_or_404(self.queryset, pk=pk)
-			request.user.friends.remove(was_friend)
+			nomore_friend = get_object_or_404(self.queryset, pk=pk)
+			# remove from user friend list
+			request.user.friends.remove(nomore_friend)
 			request.user.save()
-			was_friend.friends.remove(request.user)
-			was_friend.save()
+			# if in pending friend list, remove from user pending friend list
+			request.user.pending_friends.remove(nomore_friend)
+			nomore_friend.friends.remove(request.user)
+			nomore_friend.save()
 			return Response(status=200)
+
+	def pending_friends(self, request):
+		serializer = BasicAccountSerializer(request.user.pending_friends, many=True)
+		return Response(serializer.data)
 
 	@staticmethod
 	def classrooms(request, pk=None):
 		classroom_queryset = Classroom.objects.all()
-		chatroom_queryset = Room.objects.all()
 
 		if request.method == 'GET':
-			classrooms = Classroom.objects.filter(students__pk=request.user.pk)
+			classrooms = Classroom.objects.filter(students__pk=request.user.pk).order_by('major')
 			serializer = BasicClassroomSerializer(classrooms, many=True)
 			return Response(serializer.data)
 
@@ -165,13 +185,14 @@ class AccountViewSet(viewsets.ViewSet):
 			# add user to classroom student list
 			classroom.students.add(request.user)
 			# add class time to user task list
-			classroom.class_time.involved.add(request.user)
+			classroom.class_time.involved.add(request.usersour)
 			# add classroom tasks from user task list
 			for task in classroom.tasks.all():
 				task.involved.add(request.user)
 			# add user to classroom chatroom
-			chatroom = get_object_or_404(chatroom_queryset, classroom_id=classroom.pk)
-			chatroom.accounts.add(request.user)
+			classroom.chatroom.get().accounts.add(request.user)
+			# chatroom = get_object_or_404(chatroom_queryset, classroom_id=classroom.pk)
+			# chatroom.accounts.add(request.user)
 			return Response(status=200)
 
 		if request.method == 'DELETE':
@@ -184,8 +205,7 @@ class AccountViewSet(viewsets.ViewSet):
 			for task in classroom.tasks.all():
 				task.involved.remove(request.user)
 			# remove user from classroom chatroom
-			chatroom = get_object_or_404(chatroom_queryset, classroom_id=classroom.pk)
-			chatroom.accounts.remove(request.user)
+			classroom.chatroom.get().accounts.remove(request.user)
 			return Response(status=200)
 
 	@staticmethod
@@ -318,11 +338,6 @@ class AccountViewSet(viewsets.ViewSet):
 			free_dict_list = complement(intervals, first=0, last=24)
 
 		return Response({'freetime': free_time_dict}, status=status.HTTP_200_OK)
-
-	# def recent_activity(self, request):
-	# 	# TODO: show recent activity in profile page
-	# 	# include posted moments, comments, notes
-	# 	pass
 
 	def home_page_activity(self, request):
 		# TODO: show latest activity related to me

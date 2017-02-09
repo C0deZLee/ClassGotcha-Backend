@@ -17,6 +17,7 @@ import Notes from 'views/Notes'
 import Page404 from 'views/404'
 import Page403 from 'views/403'
 import Professor from 'views/Professor'
+import UserDetail from 'views/UserDetail'
 
 Vue.use(Router)
 Vue.use(Resource)
@@ -43,7 +44,7 @@ export default new Router({
         children: [{
             path: '/classroom/add',
             component: AddClassroom,
-            name: 'classroom_add'
+            name: 'addClassroom'
         }, {
             path: '/classroom/id/:classroom_id',
             //  access anywhere in the vm with this.$route.params.classroom_id
@@ -53,12 +54,12 @@ export default new Router({
             path: '/classroom/id/:classroom_id/files',
             //  access anywhere in the vm with this.$route.params.classroom_id
             component: Notes,
-            name: 'classroom_files'
+            name: 'classroomNotes'
         }, {
             path: '/classroom/id/:classroom_id/students',
             //  access anywhere in the vm with this.$route.params.classroom_id
             component: ClassroomStudents,
-            name: 'classroom_students'
+            name: 'classroomStudents'
         }, {
             path: '/',
             component: Home,
@@ -78,15 +79,24 @@ export default new Router({
         }, {
             path: '/profile/me',
             component: Profile,
-            name: 'me'
+            name: 'profile'
         }, {
             path: '/profile/id/:user_id',
-            component: Profile,
+            component: UserDetail,
             name: 'userDetail'
         }, {
             path: '/professor/id/:professor_id',
             component: Professor,
             name: 'professor'
+        }, {
+            path: '/mynotes',
+            name: 'myNotes'
+        }, {
+            path: '/mygroups',
+            name: 'myGroups'
+        }, {
+            path: '/forum',
+            name: 'forum'
         }]
     }]
 })
