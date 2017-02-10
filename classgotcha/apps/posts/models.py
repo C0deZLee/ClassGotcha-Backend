@@ -88,7 +88,7 @@ class Post(models.Model):
 	content = models.TextField()
 	flagged_num = models.IntegerField(default=0)
 	permission = models.IntegerField(default=EVERYONE, choices=PERMISSION_CHOICE)
-
+	vote = models.IntegerField(default=0)
 	# Relations
 	creator = models.ForeignKey(Account, on_delete=models.CASCADE, related_name='posts', null=True, blank=True)
 	# Timestamp
