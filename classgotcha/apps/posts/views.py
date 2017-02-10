@@ -54,7 +54,7 @@ class MomentViewSet(viewsets.ViewSet):
 
 
 class PostViewSet(viewsets.ViewSet):
-	queryset = Post.objects.all().order_by('vote')
+	queryset = Post.objects.all()
 	serializer_class = PostSerializer
 	permission_classes = (permissions.IsAuthenticated,)
 
@@ -64,8 +64,7 @@ class PostViewSet(viewsets.ViewSet):
 		return Response(serializer.data)
 
 	def list(self, request):
-		serializer = BasicPostSerializer(Post.objects.all().order_by('-vote'), many=True)
-		print serializer.data
+		serializer = BasicPostSerializer(sorted(Post.objects.all(), key=lambda p: p.vote, reverse=True), many=True)
 		return Response(serializer.data)
 
 	def create(self, request):
@@ -88,10 +87,17 @@ class PostViewSet(viewsets.ViewSet):
 
 	def vote(self, request, pk):
 		vote = request.data.get('vote')
-		if vote:
+		if vote == 1:
 			post = get_object_or_404(self.queryset, pk=pk)
-			post.vote = post.vote + vote
-			post.save()
+			post.up_voted_user.add(request.user)
+			if request.user in post.down_voted_user.all():
+				post.down_voted_user.remove(request.user)
+			return Response(status=status.HTTP_200_OK)
+		elif vote == -1:
+			post = get_object_or_404(self.queryset, pk=pk)
+			post.down_voted_user.add(request.user)
+			if request.user in post.up_voted_user.all():
+				post.up_voted_user.remove(request.user)
 			return Response(status=status.HTTP_200_OK)
 		else:
 			return Response(status=status.HTTP_400_BAD_REQUEST)

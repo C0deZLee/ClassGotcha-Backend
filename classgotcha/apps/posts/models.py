@@ -88,8 +88,10 @@ class Post(models.Model):
 	content = models.TextField()
 	flagged_num = models.IntegerField(default=0)
 	permission = models.IntegerField(default=EVERYONE, choices=PERMISSION_CHOICE)
-	vote = models.IntegerField(default=0)
+	up_voted_user = models.ManyToManyField(Account, related_name='post_up_vote')
+	down_voted_user = models.ManyToManyField(Account, related_name='post_down_vote')
 	# Relations
+	tags = models.ManyToManyField(Tag, related_name='posts')
 	creator = models.ForeignKey(Account, on_delete=models.CASCADE, related_name='posts', null=True, blank=True)
 	# Timestamp
 	created = models.DateTimeField(auto_now_add=True)
@@ -97,6 +99,9 @@ class Post(models.Model):
 
 	# Relatives
 	# 1) comments
+	@property
+	def vote(self):
+		return self.up_voted_user.count() - self.down_voted_user.count()
 
 	@property
 	def flagged(self):

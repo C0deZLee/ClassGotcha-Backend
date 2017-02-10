@@ -29,18 +29,22 @@ class MomentSerializer(serializers.ModelSerializer):
 class PostSerializer(serializers.ModelSerializer):
 	comments = CommentSerializer(required=False, many=True)
 	creator = BasicAccountSerializer(required=False)
+	vote = serializers.ReadOnlyField()
+	tags = BasicTagSerializer(many=True)
+
 	class Meta:
 		model = Post
 		fields = '__all__'
 
 
 class BasicPostSerializer(serializers.ModelSerializer):
-	comments = CommentSerializer(required=False, many=True)
 	creator = BasicAccountSerializer(required=False)
+	vote = serializers.ReadOnlyField()
+	tags = BasicTagSerializer(many=True)
 
 	class Meta:
 		model = Post
-		fields = ('id', 'title', 'comments', 'creator', 'created', 'vote')
+		fields = ('id', 'title', 'comments', 'creator', 'created', 'vote', 'tags')
 
 # from ..groups.models import Group
 # from ..tasks.models import Task
@@ -53,12 +57,7 @@ class NoteSerializer(serializers.ModelSerializer):
 	creator = BasicAccountSerializer()
 	tags = BasicTagSerializer(many=True)
 
+
 	class Meta:
 		model = Note
 		fields = '__all__'
-
-#
-# class BasicClassroomSerializer(serializers.ModelSerializer):
-# 	class Meta:
-# 		model = Classroom
-# 		exclude = ('students', 'updated', 'syllabus')
