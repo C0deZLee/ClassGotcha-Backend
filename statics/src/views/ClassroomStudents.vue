@@ -21,7 +21,7 @@
             </div>
         <div class="wrapper wrapper-content animated fadeInRight">
         <div class="row">
-            <div class="col-lg-3 col-sm-3" v-for="student in currentClassroom.students">
+            <div class="col-lg-3 col-md-6 col-sm-12" v-for="student in currentClassroom.students">
                 <div class="contact-box">
                     <router-link :to="{name:'userDetail', params:{user_id:student.id}}">
                     
@@ -35,7 +35,7 @@
                      </div>
                         </router-link>
                      
-                   <div class="col-sm-8">
+                   <div class="col-sm-8 ">
                         <h3><strong>{{student.full_name}}</strong> 
                         
                            <span class="label label-warning">Level {{student.level}}</span>

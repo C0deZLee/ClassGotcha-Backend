@@ -2,7 +2,7 @@
       <div class="animated fadeInDown">
     <div class="row">
             <div class="col-md-6 text-white hidden-xs">
-                <h2 class="font-bold">Welcome to ClassGotcha</h2>
+                <h2 class="font-bold">Welcome to ClassGotcha <span class="label label-primary">Beta</span></h2>
 
                 <p>
                     Perfectly designed and precisely prepared admin theme with over 50 pages with extra new web app views.

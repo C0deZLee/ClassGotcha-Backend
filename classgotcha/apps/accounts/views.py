@@ -191,8 +191,6 @@ class AccountViewSet(viewsets.ViewSet):
 				task.involved.add(request.user)
 			# add user to classroom chatroom
 			classroom.chatroom.get().accounts.add(request.user)
-			# chatroom = get_object_or_404(chatroom_queryset, classroom_id=classroom.pk)
-			# chatroom.accounts.add(request.user)
 			return Response(status=200)
 
 		if request.method == 'DELETE':

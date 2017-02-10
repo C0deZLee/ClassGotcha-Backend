@@ -1,105 +1,102 @@
 <template>
-    <div>
-    <div class="row wrapper border-bottom white-bg page-heading">
-                <div class="col-lg-9">
-                    <h2>Notes</h2>
-                    <ol class="breadcrumb">
-                        <li>
-                            <a href="#">Home</a>
-                        </li>
-                        <li>
-                           <a :href="'/#/classroom/id/' + current_classroom.id">{{current_classroom.class_short}}</a>
-                        </li>
-                        <li class="active">
-                            <strong>Notes</strong>
-                        </li>
-                    </ol>
-                </div>
+   <div>
+      <div class="row wrapper border-bottom white-bg page-heading">
+         <div class="col-lg-9">
+            <h2>Notes</h2>
+            <ol class="breadcrumb">
+               <li>
+                  <a href="#">Home</a>
+               </li>
+               <li>
+                  <a :href="'/#/classroom/id/' + current_classroom.id">{{current_classroom.class_short}}</a>
+               </li>
+               <li class="active">
+                  <strong>Notes</strong>
+               </li>
+            </ol>
+         </div>
+      </div>
+      <div class="wrapper wrapper-content">
+         <div class="row">
+            <div class="col-lg-3">
+               <div class="ibox float-e-margins">
+                  <div class="ibox-content">
+                     <div class="file-manager">
+                        <button class="btn btn-primary btn-block" data-toggle="modal" data-target="#upload">Upload Files</button>
+                        <upload id="upload"></upload>
+                        <div class="hr-line-dashed"></div>
+                        <h5>Folders</h5>
+                        <ul class="folder-list" style="padding: 0">
+                           <li>
+                              <router-link :to="{name:'classroomNotes', params:{classroom_id: current_classroom.id}}"> 
+                                 <i class="fa fa-align-justify"></i> All Files
+                              </router-link>
+                           </li>
+                           <li v-show="showFolder('Note')">
+                              <router-link :to="{name:'classroomNotes', params:{classroom_id: current_classroom.id}, query:{folder:'Note'}}"> 
+                                 <i class="fa fa-certificate"></i> Notes <span class="label label-warning pull-right">16</span> 
+                              </router-link>
+                           </li>
+                           <li v-show="showFolder('Lecture')">
+                              <router-link :to="{name:'classroomNotes', params:{classroom_id: current_classroom.id}, query:{folder:'Lecture'}}"> 
+                                 <i class="fa fa-inbox"></i> Lectures
+                              </router-link>
+                           </li>
+                           <li v-show="showFolder('Lab')">
+                              <router-link :to="{name:'classroomNotes', params:{classroom_id: current_classroom.id}, query:{folder:'Lab'}}"> 
+                                 <i class="fa fa-flask"></i> Labs
+                              </router-link>
+                           </li>
+                           <li v-show="showFolder('Homework')">
+                              <router-link :to="{name:'classroomNotes', params:{classroom_id: current_classroom.id}, query:{folder:'Homework'}}"> 
+                                 <i class="fa fa-file-text-o"></i> Homeworks <span class="label label-danger pull-right">2</span>
+                              </router-link>
+                           </li>
+                           <li v-show="showFolder('Exam')">
+                              <router-link :to="{name:'classroomNotes', params:{classroom_id: current_classroom.id}, query:{folder:'Exam'}}"> 
+                                 <i class="fa fa-bolt"></i> Exams
+                              </router-link>
+                           </li>
+                        </ul>
+                        <div class="hr-line-dashed"></div>
+                        <h5 class="tag-title">Tags</h5>
+                        <ul class="tag-list" style="padding: 0">
+                           <li v-for="tag in tags">
+                              <router-link :to="{name:'classroomNotes', params:{classroom_id: current_classroom.id}, query:{tag:tag}}">{{tag}}</router-link>
+                           </li>
+                        </ul>
+                        <div class="clearfix"></div>
+                     </div>
+                  </div>
+               </div>
             </div>
-            <div class="wrapper wrapper-content">
-            <div class="row">
-                <div class="col-lg-3">
-                    <div class="ibox float-e-margins">
-                        <div class="ibox-content">
-                            <div class="file-manager">
-                                
-                                <button class="btn btn-primary btn-block" data-toggle="modal" data-target="#upload">Upload Files</button>
-                                <upload id="upload"></upload>
-                                  <div class="hr-line-dashed"></div>
-                                
-                                <h5>Folders</h5>
-                                <ul class="folder-list" style="padding: 0">
-                                             <li>
-                <router-link :to="{name:'classroomNotes', params:{classroom_id: current_classroom.id}}"> 
-                  <i class="fa fa-align-justify"></i> All Files
-                </router-link>
-              </li>
-                <li v-show="showFolder('Note')">
-                <router-link :to="{name:'classroomNotes', params:{classroom_id: current_classroom.id}, query:{folder:'Note'}}"> 
-                  <i class="fa fa-certificate"></i> Notes <span class="label label-warning pull-right">16</span> 
-                </router-link>
-              </li>
-              <li v-show="showFolder('Lecture')">
-                <router-link :to="{name:'classroomNotes', params:{classroom_id: current_classroom.id}, query:{folder:'Lecture'}}"> 
-                  <i class="fa fa-inbox"></i> Lectures
-                </router-link>
-              </li>
-              <li v-show="showFolder('Lab')">
-                <router-link :to="{name:'classroomNotes', params:{classroom_id: current_classroom.id}, query:{folder:'Lab'}}"> 
-                  <i class="fa fa-flask"></i> Labs
-                </router-link>
-              </li>
-              <li v-show="showFolder('Homework')">
-                <router-link :to="{name:'classroomNotes', params:{classroom_id: current_classroom.id}, query:{folder:'Homework'}}"> 
-                  <i class="fa fa-file-text-o"></i> Homeworks <span class="label label-danger pull-right">2</span>
-                </router-link>
-              </li>
-              <li v-show="showFolder('Exam')">
-                <router-link :to="{name:'classroomNotes', params:{classroom_id: current_classroom.id}, query:{folder:'Exam'}}"> 
-                  <i class="fa fa-bolt"></i> Exams
-                </router-link>
-              </li>  </ul>
-                              
-                                <div class="hr-line-dashed"></div>
-                                <h5 class="tag-title">Tags</h5>
-                                <ul class="tag-list" style="padding: 0">
-                                    <li v-for="tag in tags"><router-link :to="{name:'classroomNotes', params:{classroom_id: current_classroom.id}, query:{tag:tag}}">{{tag}}</router-link></li>
-                                </ul>
-                                <div class="clearfix"></div>
-                                
-                            </div>
+            <div class="col-lg-9 animated fadeInRight">
+               <div class="row">
+                  <div class="col-lg-12">
+                     <div class="file-box" v-for="file in files">
+                        <div class="file">
+                           <a :href="file.file">
+                              <span class="corner"></span>
+                              <div class="icon">
+                                 <i class="fa fa-file-pdf-o"></i>
+                              </div>
+                           </a>
+                           <div class="file-name">
+                              <a href="#"> {{file.title}}</a>
+                              <br>
+                              <small><a>{{file.creator.full_name}}</a></small>
+                              <br>
+                              <small>Added: {{formatTime(file.created)}}</small>
+                           </div>
                         </div>
-                    </div>
-                </div>
-                <div class="col-lg-9 animated fadeInRight">
-                    <div class="row">
-                        <div class="col-lg-12">
-                            <div class="file-box" v-for="file in files">
-                                <div class="file">
-                                    <a :href="file.file">
-                                        <span class="corner"></span>
-
-                                        <div class="icon">
-                                            <i class="fa fa-file-pdf-o"></i>
-                                        </div>
-                                    </a>
-                                     <div class="file-name">
-                                           <a href="#"> {{file.title}}</a>
-                                            <br>
-                                          <small><a>{{file.creator.full_name}}</a></small>
-                                            <br>
-                                            <small>Added: {{formatTime(file.created)}}</small>
-                                        </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    </div>
-                </div>
-                </div>
-</div>
+                     </div>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </div>
+   </div>
 </template>
-
 <script>
     import Upload from 'components/UploadFile'
     export default {

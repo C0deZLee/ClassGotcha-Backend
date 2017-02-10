@@ -324,7 +324,7 @@
             'upload': Upload,
             'avatar': Avatar.Avatar
         },
-        data: function() {
+        data() {
             return {
                 // moment
                 content: '',

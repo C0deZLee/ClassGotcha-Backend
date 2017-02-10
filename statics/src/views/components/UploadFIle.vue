@@ -35,7 +35,7 @@
                 <div class="form-group">
                   <input v-model="file_title" type="text" class="form-control m-b" :placeholder="file.name">
              
-                  <textarea v-model="file_dscr" type="email" class="form-control m-b" placeholder="Describe it in detail (optional)"></textarea>
+                  <textarea v-model="file_dscr" type="text" class="form-control m-b" placeholder="Describe it in detail (optional)"></textarea>
                   <input-tag :tags="tags" :on-change="tagManager"></input-tag>
               </div>
             </div>
