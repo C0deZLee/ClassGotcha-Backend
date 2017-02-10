@@ -54,11 +54,11 @@
                <div class="faq-item" v-for="post in posts">
                   <div class="row">
                      <div class="vote-actions m-l">
-                        <a href="#">
+                        <a @click="upVote(post.id)">
                         <i class="fa fa-chevron-up"> </i>
                         </a>
                         <div>{{post.vote}}</div>
-                        <a href="#">
+                        <a @click="downVote(post.id)">
                         <i class="fa fa-chevron-down"> </i>
                         </a>
                      </div>
@@ -101,6 +101,24 @@
                     title: this.post_title,
                     content: this.post_content
                 })
+            },
+            upVote(id) {
+                const data = {
+                    id: id,
+                    formData: {
+                        vote: 1
+                    }
+                }
+                this.$store.dispatch('addPostVote', data)
+            },
+            downVote(id) {
+                const data = {
+                    id: id,
+                    formData: {
+                        vote: -1
+                    }
+                }
+                this.$store.dispatch('addPostVote', data)
             }
         },
         computed: {

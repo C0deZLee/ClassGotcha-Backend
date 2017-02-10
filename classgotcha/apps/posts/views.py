@@ -64,7 +64,7 @@ class PostViewSet(viewsets.ViewSet):
 		return Response(serializer.data)
 
 	def list(self, request):
-		serializer = BasicPostSerializer(Post.objects.all().order_by('vote'), many=True)
+		serializer = BasicPostSerializer(Post.objects.all().order_by('-vote'), many=True)
 		print serializer.data
 		return Response(serializer.data)
 
@@ -88,7 +88,10 @@ class PostViewSet(viewsets.ViewSet):
 
 	def vote(self, request, pk):
 		vote = request.data.get('vote')
-		post = get_object_or_404(self.queryset, pk=pk)
-		post.vote = post.vote + vote
-		post.save()
-		return Response(status=status.HTTP_200_OK)
+		if vote:
+			post = get_object_or_404(self.queryset, pk=pk)
+			post.vote = post.vote + vote
+			post.save()
+			return Response(status=status.HTTP_200_OK)
+		else:
+			return Response(status=status.HTTP_400_BAD_REQUEST)
