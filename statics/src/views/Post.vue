@@ -37,7 +37,7 @@
                                 <div class="media-body">
                                     {{currentPost.content}}
                                     <br><br>
-                                    Created By: {{currentPost.created}}
+                                    Created By: <strong>{{formatTime(currentPost.created)}}</strong>
                                                          <hr>
                      <div class="row">
                         <div class="col-md-6">
@@ -60,7 +60,7 @@
                                 <div class="media-body">
                                     {{comment.content}}
                                     <br><br>
-                                    Created By: {{comment.created}}
+                                    {{formatTime(comment.created)}}
                                 </div>
                             </div>
                               <div class="media">
@@ -106,6 +106,10 @@
                     formData: { content: this.comment_content }
                 }
                 this.$store.dispatch('postPostComment', data)
+            },
+            formatTime(time) {
+                /* global moment:true */
+                return moment.utc(time).add(-5, 'hours').format('lll')
             }
         },
         computed: {

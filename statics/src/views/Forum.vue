@@ -20,7 +20,7 @@
                <div class="ibox-content m-b-sm border-bottom">
                   <div class="text-center p-lg">
                      <h2>Welcome to User Forum of ClassGotcha <span class="label label-primary">Beta</span></h2>
-                     <span>Here you can report bug, give us suggestions or contribute new ideas</span>
+                     <span>Here you can report bugs, give us suggestions or contribute new ideas</span>
                      <br>
                      <button type="button" data-toggle="modal" data-target="#newpost" class="btn btn-primary btn-sm m-t">
                      <i class="fa fa-plus"></i> <span class="bold">Add Post</span>

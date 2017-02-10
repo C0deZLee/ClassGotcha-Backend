@@ -102,7 +102,7 @@
               </li>
               <li v-show="showFolder('Homework')">
                 <router-link :to="{name:'classroomNotes', params:{classroom_id: current_classroom.id}, query:{folder:'Homework'}}"> 
-                  <i class="fa fa-file-text-o"></i> Homeworks <span class="label label-danger pull-right">2</span>
+                  <i class="fa fa-file-text-o"></i> Homeworks <span class="label label-plain pull-right">2</span>
                 </router-link>
               </li>
               <li v-show="showFolder('Exam')">

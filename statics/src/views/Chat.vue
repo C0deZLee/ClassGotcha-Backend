@@ -23,7 +23,7 @@
       <div class="ibox chat-view">
         <div class="ibox-title">
           <small class="text-muted">Last message:  {{chatroom.latest_message.created}}</small>
-          <p class="pull-right">{{chatroom.accounts.length}} Users Online</p> 
+          <p class="pull-right">{{chatroom.accounts.length}} Users In Chatroom</p> 
         </div>
         <div class="ibox-content">
           <div class="row">
