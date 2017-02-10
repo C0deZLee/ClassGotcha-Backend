@@ -98,7 +98,7 @@ const actions = {
         postApi.postPostComment(data.id, data.formData)
             .then((response) => {
                 commit(types.POST_MOMENT_COMMENT, response)
-                dispatch('getPost', data.pk)
+                dispatch('getPost', data.id)
             })
             .catch((error) => {
                 commit(types.LOG_ERROR, error)
