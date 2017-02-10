@@ -54,7 +54,7 @@ class MomentViewSet(viewsets.ViewSet):
 
 
 class PostViewSet(viewsets.ViewSet):
-	queryset = Post.objects.all()
+	queryset = Post.objects.all().order_by('vote')
 	serializer_class = PostSerializer
 	permission_classes = (permissions.IsAuthenticated,)
 
@@ -64,7 +64,8 @@ class PostViewSet(viewsets.ViewSet):
 		return Response(serializer.data)
 
 	def list(self, request):
-		serializer = BasicPostSerializer(self.queryset, many=True)
+		serializer = BasicPostSerializer(Post.objects.all().order_by('vote'), many=True)
+		print serializer.data
 		return Response(serializer.data)
 
 	def create(self, request):
