@@ -57,8 +57,8 @@
                     </router-link>
                 </li>
                 <li>
-                    <router-link :to="{name:'forum'}" href="/#/settings/">
-                        <i class="fa fa-comments"></i>
+                    <router-link :to="{name:'forum'}">
+                        <i class="fa fa-question-circle"></i>
                         <span class="nav-label">User Forum</span>
                     </router-link>
                 </li>

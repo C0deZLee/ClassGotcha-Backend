@@ -18,6 +18,9 @@ import Page404 from 'views/404'
 import Page403 from 'views/403'
 import Professor from 'views/Professor'
 import UserDetail from 'views/UserDetail'
+import Forum from 'views/Forum'
+import Groups from 'views/Groups'
+import Post from 'views/Post'
 
 Vue.use(Router)
 Vue.use(Resource)
@@ -93,9 +96,15 @@ export default new Router({
             name: 'myNotes'
         }, {
             path: '/mygroups',
+            component: Groups,
             name: 'myGroups'
         }, {
+            path: '/forum/:post_id',
+            component: Post,
+            name: 'post'
+        }, {
             path: '/forum',
+            component: Forum,
             name: 'forum'
         }]
     }]
