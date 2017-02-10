@@ -26,9 +26,9 @@ class TaskSerializer(serializers.ModelSerializer):
 
 	def create(self, validated_data):
 		# if no involved
-		# if 'involved' in validated_data and validated_data['involved'] == []:
-		# TODO: deal with involved later on
-		del validated_data['involved']
+		if 'involved' in validated_data and validated_data['involved'] == []:
+			# TODO: deal with involved later on
+			del validated_data['involved']
 
 		# create a empty instance first so we have pk and can add m2m relations
 		task = Task.objects.create()
