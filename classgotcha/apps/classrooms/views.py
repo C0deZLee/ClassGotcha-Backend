@@ -14,7 +14,7 @@ from models import Account, Classroom, Semester, Major, Professor
 from ..chat.models import Room
 
 from serializers import ClassroomSerializer, MajorSerializer
-from ..posts.serializers import MomentSerializer, Note, NoteSerializer
+from ..posts.serializers import MomentSerializer, Note, NoteSerializer, Moment
 from ..tasks.serializers import Task, TaskSerializer, BasicTaskSerializer
 from ..accounts.serializers import BasicAccountSerializer, BasicClassroomSerializer
 from ..tags.serializers import ClassFolderSerializer, Tag
@@ -122,14 +122,16 @@ class ClassroomViewSet(viewsets.ViewSet):
 			                               classroom_id=classroom.pk)
 			# Load all tags from string
 			for counter, tag_name in enumerate(json.loads(raw_tags)):
-
-				tag, created = Tag.objects.get_or_create(name=tag_name,
-				                                         is_for=1)  # For Note
+				tag, created = Tag.objects.get_or_create(name=tag_name, is_for=1)  # For Note
+				# The first tag is "Note", "Lecture", etc, so we use first tag as classroom folders
 				if counter is 0:
-					# The first tag is "Note", "Lecture", etc, so we use first tag as classroom folders
 					classroom.folders.add(tag)
-
 				new_note.tags.add(tag)
+			Moment.objects.create(
+				content='I just uploaded a new note \"' + title + '\" to the classroom, check it out!',
+				creator=request.user,
+				classroom=classroom)
+
 			return Response(status=status.HTTP_201_CREATED)
 
 	def recent_moments(self, request, pk):
@@ -161,7 +163,14 @@ class ClassroomViewSet(viewsets.ViewSet):
 			serializer = TaskSerializer(data=request.data)
 			serializer.is_valid(raise_exception=True)
 			serializer.save()
+
+			Moment.objects.create(
+				content='I just added a new task \"' + request.data.get('task_name', '') + '\" to the classroom, check it out!',
+				creator=request.user,
+				classroom=classroom)
+
 			return Response(status=status.HTTP_201_CREATED)
+
 		elif request.method == 'PUT':
 			task_pk = request.data.get('task_pk')
 			if task_pk:
@@ -170,6 +179,11 @@ class ClassroomViewSet(viewsets.ViewSet):
 					if key in ['task_name', 'description', 'start', 'end', 'location', 'category', 'repeat']:
 						setattr(task, key, value)
 				task.save()
+
+				Moment.objects.create(
+					content='I just modified the task \"' + request.data.get('task_name', '') + '\" to the classroom, check it out!',
+					creator=request.user,
+					classroom=classroom)
 				return Response(status=status.HTTP_200_OK)
 			else:
 				return Response(status=status.HTTP_400_BAD_REQUEST)

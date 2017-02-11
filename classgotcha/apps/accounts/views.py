@@ -217,8 +217,7 @@ class AccountViewSet(viewsets.ViewSet):
 		if request.method == 'GET':
 			serializer = MomentSerializer(moment_query_set[0:20], many=True)
 			return Response(serializer.data)
-
-		if request.method == 'POST':
+		elif request.method == 'POST':
 			content = request.data.get('content', None)
 			classroom_id = request.data.get('classroom_id', None)
 			question = request.data.get('question', None)
@@ -247,14 +246,13 @@ class AccountViewSet(viewsets.ViewSet):
 				moment.images = ContentFile(decoded_file, complete_file_name)
 			moment.save()
 			return Response(status=status.HTTP_200_OK)
-
-		if request.method == 'PUT':
+		elif request.method == 'PUT':
 			moment = get_object_or_404(moment_query_set, pk=pk)
 			if moment.solved is False:
 				moment.solved = True
 				moment.save()
 			return Response(status=status.HTTP_200_OK)
-		if request.method == 'DELETE':
+		elif request.method == 'DELETE':
 			moment = get_object_or_404(moment_query_set, pk=pk)
 			moment.deleted = True
 			moment.save()
