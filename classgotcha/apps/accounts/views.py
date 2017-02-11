@@ -84,7 +84,6 @@ class AccountViewSet(viewsets.ViewSet):
 			serializer = AccountSerializer(request.user)
 			return Response(serializer.data)
 		elif request.method == 'PUT':
-
 			for (key, value) in request.data.items():
 				if key in ['username', 'first_name', 'mid_name', 'last_name', 'gender', 'birthday', 'school_year',
 				           'major']:

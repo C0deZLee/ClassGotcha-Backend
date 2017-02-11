@@ -145,10 +145,10 @@ class ClassroomViewSet(viewsets.ViewSet):
 		classroom = get_object_or_404(self.queryset, pk=pk)
 		if request.method == 'GET':
 			# get all not expired tasks
-			tasks = [obj for obj in classroom.tasks.all().order_by('end') if not obj.expired]
-			serializer = BasicTaskSerializer(tasks, many=True)
+			# tasks = [obj for obj in  if not obj.expired]
+			serializer = BasicTaskSerializer(classroom.tasks.all().order_by('end'), many=True)
 			return Response(serializer.data)
-		if request.method == 'POST':
+		elif request.method == 'POST':
 			start = request.data.get('start', None)
 			end = request.data.get('end', None)
 			if start and end:
@@ -162,6 +162,26 @@ class ClassroomViewSet(viewsets.ViewSet):
 			serializer.is_valid(raise_exception=True)
 			serializer.save()
 			return Response(status=status.HTTP_201_CREATED)
+		elif request.method == 'PUT':
+			task_pk = request.data.get('task_pk')
+			if task_pk:
+				task = get_object_or_404(classroom.tasks.all(), pk=task_pk)
+				for (key, value) in request.data.items():
+					if key in ['task_name', 'description', 'start', 'end', 'location', 'category', 'repeat']:
+						setattr(task, key, value)
+				task.save()
+				return Response(status=status.HTTP_200_OK)
+			else:
+				return Response(status=status.HTTP_400_BAD_REQUEST)
+
+		elif request.method == 'DELETE':
+			task_pk = request.data.get('task_pk')
+			if task_pk:
+				task = get_object_or_404(classroom.tasks.all(), pk=task_pk)
+				task.remove()
+				return Response(status=status.HTTP_200_OK)
+			else:
+				return Response(status=status.HTTP_400_BAD_REQUEST)
 
 	def students(self, request, pk):
 		classroom = get_object_or_404(self.queryset, pk=pk)

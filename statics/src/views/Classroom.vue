@@ -254,7 +254,7 @@
               <h2>{{task.task_name}}</h2>
               <p>{{task.description}}
               </p>
-              <a href="#" class="btn btn-sm btn-primary"> More info</a>
+              <a href="#" v-if="user_in_classroom" class="btn btn-sm btn-white">Edit</a>
               <span class="vertical-date">
               {{taskTime(task, 1)}} <br>
               <small>{{taskTime(task, 2)}}</small>

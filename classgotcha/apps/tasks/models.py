@@ -34,7 +34,7 @@ class Task(models.Model):
 
 	# Time
 	start = models.DateTimeField(blank=True, null=True)
-	end = models.DateTimeField(blank=True, null=True) # the end equals to due
+	end = models.DateTimeField(blank=True, null=True)  # the end equals to due
 	# due = models.DateTimeField(blank=True, null=True)
 	repeat = models.CharField(max_length=20, blank=True)  # MoTuWeThFi
 	repeat_start = models.DateField(null=True)
@@ -51,10 +51,13 @@ class Task(models.Model):
 
 	@property
 	def expired(self):
-		if self.end:
-			return timezone.now() - timedelta(hours=5) > self.end
+		# TODO: FIXME! delete this in production env!!!!!!
+		if self.repeat:
+			return True
 		if self.repeat_end:
 			return timezone.now() - timedelta(hours=5) > self.repeat_end
+		if self.end:
+			return timezone.now() - timedelta(hours=5) > self.end
 
 	@property
 	def formatted_start_datetime(self):
@@ -79,7 +82,6 @@ class Task(models.Model):
 	@property
 	def formatted_end_time(self):
 		return self.end.strftime('%H:%M:%S')
-
 
 	@property
 	def repeat_list(self):

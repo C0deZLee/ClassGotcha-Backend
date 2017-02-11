@@ -46,28 +46,30 @@
                            </div>
                         </div>
                      </div>
+
                      <div class="col-md-12" v-show="task_subcategory==3">
                          <span>Location</span>
                         <input class="form-control m-b" v-model="task_location" placeholder="eg. Willard Building 123"></input>                  
+                     </div>
+                                              <div class="col-md-12 m-b">
+                         <span>Repeat Every</span>
+                         <br>
+                         <div class="btn-group">
+                                    <button class="btn btn-white btn-sm" :class="task_repeat.includes('Sa')? 'active':''" @click="addTaskRepeat('Sa')">Sa</button>
+                                    <button class="btn btn-white btn-sm" :class="task_repeat.includes('Fr')? 'active':''" @click="addTaskRepeat('Fr')">Fr</button>
+                                    <button class="btn btn-white btn-sm" :class="task_repeat.includes('Th')? 'active':''" @click="addTaskRepeat('Th')">Th</button>
+                                    <button class="btn btn-white btn-sm" :class="task_repeat.includes('We')? 'active':''" @click="addTaskRepeat('We')">We</button>    
+                                    <button class="btn btn-white btn-sm" :class="task_repeat.includes('Tu')? 'active':''" @click="addTaskRepeat('Tu')">Tu</button>
+                                    <button class="btn btn-white btn-sm" :class="task_repeat.includes('Mo')? 'active':''" @click="addTaskRepeat('Mo')">Mo</button>
+                                    <button class="btn btn-white btn-sm" :class="task_repeat.includes('Su')? 'active':''" @click="addTaskRepeat('Su')">Su</button>                                    
+                                </div>
                      </div>
                      <div class="col-md-12">
                          <span>Description</span>                         
                         <textarea class="form-control m-b" v-model="task_dscr" placeholder="Describe it in more detail? (optional)"></textarea>
                      </div>
-                     <p class="text-center"><a @click="show_more=!show_more"> <i class="fa fa-angle-double-down"></i> More Options </a></p>
-                     <div class="col-md-12" v-show="show_more">
-                         <span>Repeat Every</span>
-                         <br>
-                         <div class="btn-group">
-                                    <button class="btn btn-white btn-sm" :class="task_repeat.includes('Sa')? 'active':''"  @click="addTaskRepeat('Sa')">Sa</button>
-                                    <button class="btn btn-white btn-sm" :class="task_repeat.includes('Fr')? 'active':''"  @click="addTaskRepeat('Fr')">Fr</button>
-                                    <button class="btn btn-white btn-sm" :class="task_repeat.includes('Th')? 'active':''"  @click="addTaskRepeat('Th')">Th</button>
-                                    <button class="btn btn-white btn-sm" :class="task_repeat.includes('We')? 'active':''"  @click="addTaskRepeat('We')">We</button>    
-                                    <button class="btn btn-white btn-sm" :class="task_repeat.includes('Tu')? 'active':''"  @click="addTaskRepeat('Tu')">Tu</button>
-                                    <button class="btn btn-white btn-sm" :class="task_repeat.includes('Mo')? 'active':''"  @click="addTaskRepeat('Mo')">Mo</button>
-                                    <button class="btn btn-white btn-sm" :class="task_repeat.includes('Su')? 'active':''" @click="addTaskRepeat('Su')">Su</button>                                    
-                                </div>
-                     </div>
+                     <!--<p class="text-center"><a @click="show_more=!show_more"> <i class="fa fa-angle-double-down"></i> More Options </a></p>-->
+                 
                      <!--<div class="col-md-12 m-t" v-show="show_more">
                          <span>Add or Upload Related File</span>
                          
@@ -77,7 +79,7 @@
              
             </div>
             <div class="modal-footer">
-                  <a @click="postTask($event)" :disabled="invaildTask" class="btn btn-sm btn-primary">Add To Classroom</a>
+                  <a @click="postTask($event)" :disabled="invaild_task" class="btn btn-sm btn-primary">Add To Classroom</a>
                
             </div>
          </div>
@@ -110,12 +112,12 @@
             postTask() {
                 /* global Date:true, moment:true */
 
-                if (!this.invaildTask) {
+                if (!this.invaild_task) {
                     let start = ''
                     let end = ''
                     if (this.task_due_date) {
-                        start = moment(this.task_due_date, 'MM/DD/YYYY').format('YYYY-MM-DD') + 'T' + this.currentClassroom.class_time.formatted_start_time
-                        end = moment(this.task_due_date, 'MM/DD/YYYY').format('YYYY-MM-DD') + 'T' + this.currentClassroom.class_time.formatted_end_time
+                        start = moment(this.task_due_date, 'MM/DD/YYYY').format('YYYY-MM-DD') + 'T' + this.currnet_classroom.class_time.formatted_start_time
+                        end = moment(this.task_due_date, 'MM/DD/YYYY').format('YYYY-MM-DD') + 'T' + this.currnet_classroom.class_time.formatted_end_time
                     } else if (this.task_due_datetime) {
                         end = moment(this.task_due_datetime, 'MM/DD/YYYY hh:mm A').format('YYYY-MM-DDTHH:mm:ss')
                     } else if (this.task_start && this.task_end) {
@@ -133,9 +135,14 @@
                             location: this.task_location,
                             category: parseInt(this.task_category),
                             classroom: parseInt(this.$route.params.classroom_id),
-                            repeat: this.task_repeat
                         },
                         pk: this.$route.params.classroom_id
+                    }
+                    if (this.task_repeat) {
+                        data.formData.repeat = this.task_repeat
+                        data.formData.repeat_start = this.currnet_classroom.semester.formatted_start_date
+                        data.formData.repeat_end = this.currnet_classroom.semester.formatted_end_date
+                        console.log('repeat', data)
                     }
                     this.$store.dispatch('postClassroomTask', data)
                     this.clearTask()
@@ -161,6 +168,7 @@
 
                 this.task_subcategory = 1
                 this.task_errMsg = ''
+                this.task_repeat = ''
                 this.task_title = ''
                 this.task_dscr = ''
                 this.task_location = ''
@@ -174,10 +182,10 @@
 
         },
         computed: {
-            currentClassroom() {
+            currnet_classroom() {
                 return this.$store.getters.currentClassroom
             },
-            invaildTask() {
+            invaild_task() {
                 if (this.task_title === '')
                     return true
                 else if (this.task_subcategory === '1' && !this.task_due_datetime)

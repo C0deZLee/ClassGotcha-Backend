@@ -71,7 +71,29 @@ const getters = {
         return state.moments
     },
     classroomTasks: (state) => {
-        return state.tasks
+        let tasks = []
+        for (let i in state.tasks) {
+            if (state.tasks[i].repeat_list.length) {
+                const repeat_list = state.tasks[i].repeat_list
+                for (let j in repeat_list) {
+                    // http://momentjs.com/docs/#/get-set/day/
+                    /* global moment:true */
+                    const date = moment().day(repeat_list[j] + 7).format('YYYY-MM-DDT')
+                    if (state.tasks[i].start)
+                        state.tasks[i].start = date + moment.utc(state.tasks[i].start).format('HH:mm:ss')
+                    state.tasks[i].end = date + moment.utc(state.tasks[i].end).format('HH:mm:ss')
+                    tasks.push(state.tasks[i])
+                }
+                // moment().diff(date_time, 'seconds')}
+            } else if (!state.tasks[i].expired) {
+                tasks.push(state.tasks[i])
+            }
+        }
+        // js sort method
+        tasks.sort((a, b) => {
+            return new Date(a.end) - new Date(b.end)
+        })
+        return tasks
     },
     currentClassroomNotes: (state) => {
         return state.notes
