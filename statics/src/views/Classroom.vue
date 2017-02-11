@@ -225,10 +225,10 @@
         </div>
       </div>
     </div>
-    <div class="col-lg-4 m-b-lg">
+    <div class="col-lg-4">
       <div id="vertical-timeline" class="vertical-container light-timeline no-margins">
         <div class="vertical-timeline-block">
-          <a @click="showAddTask" >
+          <a data-toggle="modal" data-target="#add-task">
             <div class="vertical-timeline-icon navy-bg" v-show="user_in_classroom">
               <i class="fa fa-star" ></i>
             </div>
@@ -239,59 +239,11 @@
                 <h2>Add a new task to classroom?</h2>
               </div>
               <div class="col-md-2">
-                <a @click="showAddTask"> <span class="label label-primary pull-right"><i :class="add_task_button_class"></span></a>
+               <a data-toggle="modal" data-target="#add-task" class=" btn btn-primary"><i class="fa fa-plus"></a>
+                <task></task>
               </div>
             </div>
-            <div v-show="add_task">
-              <div class="row">
-                <div class="col-md-12">
-                  <select class="form-control m-b" v-model="task_category">
-                    <option value="1">Assignment</option>
-                    <option value="2">Quiz</option>
-                    <option value="3">Exam</option>
-                  </select>
-                </div>
-              </div>
-               
-              <div class="row">
-                <div class="col-md-12">
-                  <input class="form-control m-b" v-model="task_title" placeholder="eg. Homework 1"></input>
-                </div>
-
-                <div class="col-md-12" v-show="task_category==2 || task_category==3">
-                  <input type="radio" v-model="task_subcategory" value="1" id="in-class" name="a">
-                    <label for="in-class"></label> Take home 
-                    <i class="m-l" ></i>
-                      <input type="radio"  v-model="task_subcategory" value="2" id="take-home" name="a">
-                    <label for="take-home"></label> In class
-                    <i class="m-l" ></i>
-                      <input type="radio" v-model="task_subcategory" value="3" id="other-time" name="a">
-                    <label for="other-time" v-show="task_category==3"></label> <span v-show="task_category==3"> Other Time</span>
-                </div>
-
-                <div class="col-md-12 m-t">
-                  <div class="form-group">
-                    <div class="input-group date">
-                      <input type="text" v-show="task_subcategory==1" placeholder="Due time?" v-model="task_due_datetime" id="task-due-datetime" class="form-control" />
-                      <input type="text" v-show="task_subcategory==2" placeholder="Which day?" v-model="task_due_date" id="task-due-date" class="form-control" />
-                      <input type="text" v-show="task_subcategory==3" placeholder="Start at?" v-model="task_start" id="task-start" class="form-control" />
-                      <input type="text" v-show="task_subcategory==3" placeholder="End at?" v-model="task_end" id="task-end" class="form-control" />
-                      <span class="input-group-addon">
-                      <span class="fa fa-calendar"></span>
-                    </div>
-                  </div>
-                </div>
-                <div class="col-md-12" v-show="task_subcategory==3">
-                  <input class="form-control m-b" v-model="task_location" placeholder="Location?"></input>                  
-                </div>  
-                  <div class="col-md-12">
-                  <textarea class="form-control m-b" v-model="task_dscr" placeholder="Describe it in more detail? (optional)"></textarea>
-                  <p v-show="task_errMsg">{{task_errMsg}}</p>
-                  
-                </div>
-              </div>
-              <a @click="postTask($event)" :disabled="invaildTask()" class="btn btn-sm btn-primary">Add</a>
-            </div>
+  
           </div>
           <div v-for="task in tasks" class="vertical-timeline-block">
             <!-- 1) Homework 2) Quiz 3) Exam-->            
@@ -314,7 +266,7 @@
   </div>
 </template>
 <script>
-    import { toUtcString } from 'utils/timeFilter'
+    import ClassroomTask from 'components/ClassroomTask'
     import Upload from 'components/UploadImg'
     import Avatar from 'vue-avatar'
     // VUe doesn't provide a method that can run after component load
@@ -322,6 +274,7 @@
         name: 'Classroom',
         components: {
             'upload': Upload,
+            'task': ClassroomTask,
             'avatar': Avatar.Avatar
         },
         data() {
@@ -333,23 +286,6 @@
                 // comment
                 comment_content: '',
                 comment_id: -1,
-                // task
-                add_task: false,
-                add_task_button_class: 'fa fa-plus',
-
-                task_category: 1, // 1: homework, 2: quiz, 3: exam
-                task_subcategory: 1, // 1: take home, 2: in class, 3: other time
-                task_location: '',
-                task_title: '',
-                task_dscr: '',
-
-                task_due_datetime: null,
-                task_due_date: null,
-                task_start: null,
-                task_end: null,
-
-                task_errMsg: ''
-
             }
         },
         methods: {
@@ -401,46 +337,8 @@
                 this.comment_id = -1
             },
             // Tasks
-            postTask() {
-                if (!this.invaildTask()) {
-                    /* global Date:true */
-                    const data = {
-                        formData: {
-                            task_name: this.task_title,
-                            description: this.task_dscr,
-                            due_datetime: this.task_due_datetime ? toUtcString(new Date(this.task_due_datetime)) : null,
-                            due_date: this.task_due_date ? toUtcString(new Date(this.task_due_date)) : null,
-                            start: this.task_start ? toUtcString(new Date(this.task_start)) : null,
-                            end: this.task_end ? toUtcString(new Date(this.task_end)) : null,
-                            location: this.task_location,
-                            category: parseInt(this.task_category),
-                            classroom: parseInt(this.$route.params.classroom_id)
-                        },
-                        pk: this.$route.params.classroom_id
-                    }
-                    this.$store.dispatch('postClassroomTask', data)
-                    this.clearTask()
-                } else {
-                    this.task_errMsg = 'Did you miss something?'
-                    this.task_due_datetime = null
-                    this.task_due_date = null
-                    this.task_start = null
-                    this.task_end = null
-                }
-            },
+
             // Utils
-            invaildTask() {
-                if (this.task_title === '')
-                    return true
-                else if (this.task_subcategory === '1' && !this.task_due_datetime)
-                    return true
-                else if (this.task_subcategory === '2' && !this.task_due_date)
-                    return true
-                else if (this.task_subcategory === '3' && !(this.task_start && this.task_end))
-                    return true
-                else
-                    return false
-            },
             showFolder(name) {
                 for (let i in this.current_classroom.folders) {
                     if (this.current_classroom.folders[i].name === name)
@@ -468,23 +366,14 @@
                 }
 
             },
-            clearTask() {
-                this.task_due_datetime = null
-                this.task_due_date = null
-                this.task_start = null
-                this.task_end = null
-
-                this.task_subcategory = 1
-                this.task_errMsg = ''
-                this.task_title = ''
-                this.task_dscr = ''
-                this.task_location = ''
-            },
             // UI Switches
             showAddTask() {
+                /* global $:true */
                 this.add_task = !this.add_task
                 if (this.add_task) this.add_task_button_class = 'fa fa-minus'
                 else this.add_task_button_class = 'fa fa-plus'
+                $('#add-task').modal('show')
+
             },
             showCommentBox(moment) {
                 this.comment_content = ''
@@ -527,22 +416,6 @@
         created() {
             // Once the vue instance is created, load data
             this.getClassroomData()
-        },
-        mounted() {
-            /* global $:true */
-            // enable all datetime pickers
-            $('#task-due-datetime').datetimepicker().on(
-                'dp.change', () => { this.task_due_datetime = $('#task-due-datetime').val() }
-            )
-            $('#task-due-date').datetimepicker({ format: 'L' }).on(
-                'dp.change', () => { this.task_due_date = $('#task-due-date').val() }
-            )
-            $('#task-start').datetimepicker().on(
-                'dp.change', () => { this.task_start = $('#task-start').val() }
-            )
-            $('#task-end').datetimepicker().on(
-                'dp.change', () => { this.task_end = $('#task-end').val() }
-            )
         },
         watch: {
             // execute getClassroomData if route changes

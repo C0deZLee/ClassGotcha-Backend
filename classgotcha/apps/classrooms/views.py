@@ -149,28 +149,13 @@ class ClassroomViewSet(viewsets.ViewSet):
 			serializer = BasicTaskSerializer(tasks, many=True)
 			return Response(serializer.data)
 		if request.method == 'POST':
-			due_datetime = request.data.get('due_datetime', None)
-			due_date = request.data.get('due_date', None)
 			start = request.data.get('start', None)
 			end = request.data.get('end', None)
-			# Only have due datetime, it is a homework or take home quiz/exam
-			if due_datetime:
-				request.data['end'] = datetime.datetime.strptime(due_datetime, "%Y-%m-%dT%H:%M:%S")
-				request.data['type'] = 1  # Task
-			# Only have a due date, it is a in class quiz/homework
-			elif due_date:
-				date = datetime.datetime.strptime(due_date, "%Y-%m-%dT%H:%M:%S")
-				start = date.replace(hour=classroom.class_time.start.hour, minute=classroom.class_time.start.minute)
-				end = date.replace(hour=classroom.class_time.end.hour, minute=classroom.class_time.end.minute)
-				request.data['start'] = start
-				request.data['end'] = end
-				request.data['type'] = 0  # Event
-
-			# start datetime and end datetime, this is a non-in-class exam
-			elif start and end:
-				request.data['start'] = datetime.datetime.strptime(start, "%Y-%m-%dT%H:%M:%S")
-				request.data['end'] = datetime.datetime.strptime(end, "%Y-%m-%dT%H:%M:%S")
-				request.data['type'] = 0  # Event
+			if start and end:
+				request.data['type'] = 0  # event
+			elif end:
+				del request.data['start']
+				request.data['type'] = 1  # task
 			else:
 				return Response(status=status.HTTP_400_BAD_REQUEST)
 			serializer = TaskSerializer(data=request.data)

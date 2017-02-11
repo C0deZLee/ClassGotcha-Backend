@@ -7,7 +7,7 @@ from ..classrooms.models import Classroom
 
 
 class Task(models.Model):
-	CLASS, HOMEWORK, QUIZ, EXAM, TODO, GROUP_MEETING = 0, 1, 2, 3, 4, 5
+	CLASS, HOMEWORK, QUIZ, EXAM, TODO, GROUP_MEETING, OTHER = 0, 1, 2, 3, 4, 5, 6
 	EVENT, TASK = 0, 1
 
 	CATEGORY_CHOICES = (
@@ -17,6 +17,7 @@ class Task(models.Model):
 		(EXAM, 'Exam'),  # start, end
 		(TODO, 'Todo'),  # due_date, repeat
 		(GROUP_MEETING, 'Group Meeting'),  # start, end, repeat
+		(OTHER, 'Other')
 	)
 
 	TYPE_CHOICES = (
@@ -35,7 +36,7 @@ class Task(models.Model):
 	start = models.DateTimeField(blank=True, null=True)
 	end = models.DateTimeField(blank=True, null=True) # the end equals to due
 	# due = models.DateTimeField(blank=True, null=True)
-	repeat = models.CharField(max_length=20, default='')  # MoTuWeThFi
+	repeat = models.CharField(max_length=20, blank=True)  # MoTuWeThFi
 	repeat_start = models.DateField(null=True)
 	repeat_end = models.DateField(null=True)
 

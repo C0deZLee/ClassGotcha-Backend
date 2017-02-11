@@ -8,7 +8,7 @@
                   <a href="#">Home</a>
                </li>
                <li>
-                  <a :href="'/#/classroom/id/' + current_classroom.id">{{current_classroom.class_short}}</a>
+                  <router-link :to="{name:'classroom', params:{classroom_id:current_classroom.id}}">{{current_classroom.class_short}}</router-link>
                </li>
                <li class="active">
                   <strong>Notes</strong>

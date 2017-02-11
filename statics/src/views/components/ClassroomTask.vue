@@ -1,0 +1,214 @@
+<template>
+   <div class="modal inmodal fade" id="add-task" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
+      <div class="modal-dialog">
+         <div class="modal-content">
+            <div class="modal-header">
+               <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+               <h4 class="modal-title"><i class="fa fa-tasks"></i> Task Detail</h4>
+            </div>
+            <div class="modal-body">
+                  <div class="row">
+                     <div class="col-md-12">
+                          <span>Task Type</span>
+                        <select class="form-control m-b" v-model="task_category">
+                           <option value="1">Assignment</option>
+                           <option value="2">Quiz</option>
+                           <option value="3">Exam</option>
+                           <option value="6">Other</option>
+                        </select>
+                     </div>
+                  </div>
+                  <div class="row">
+                     <div class="col-md-12">
+                         <span>Title</span>
+                        <input class="form-control m-b" v-model="task_title" placeholder="eg. Homework 1"></input>
+                     </div>
+                     <div class="col-md-12" >
+                        <input type="radio" v-model="task_subcategory" value="1" id="in-class" name="a">
+                        <label for="in-class"></label> Take home 
+                        <i class="m-l" ></i>
+                        <input type="radio"  v-model="task_subcategory" value="2" id="take-home" name="a">
+                        <label for="take-home"></label> In class
+                        <i class="m-l" ></i>
+                        <input type="radio" v-model="task_subcategory" value="3" id="other-time" name="a">
+                        <label for="other-time"></label> <span> Other Time</span>
+                     </div>
+                     <div class="col-md-12 m-t">
+                        <div class="form-group">
+                         <span>Time</span>
+                           <div class="input-group date">
+                              <input type="text" v-show="task_subcategory==1" placeholder="Due time?" v-model="task_due_datetime" id="task-due-datetime" class="form-control" />
+                              <input type="text" v-show="task_subcategory==2" placeholder="Which day?" v-model="task_due_date" id="task-due-date" class="form-control" />
+                              <input type="text" v-show="task_subcategory==3" placeholder="Start at?" v-model="task_start" id="task-start" class="form-control" />
+                              <input type="text" v-show="task_subcategory==3" placeholder="End at?" v-model="task_end" id="task-end" class="form-control" />
+                              <span class="input-group-addon">
+                              <span class="fa fa-calendar"></span>
+                           </div>
+                        </div>
+                     </div>
+                     <div class="col-md-12" v-show="task_subcategory==3">
+                         <span>Location</span>
+                        <input class="form-control m-b" v-model="task_location" placeholder="eg. Willard Building 123"></input>                  
+                     </div>
+                     <div class="col-md-12">
+                         <span>Description</span>                         
+                        <textarea class="form-control m-b" v-model="task_dscr" placeholder="Describe it in more detail? (optional)"></textarea>
+                     </div>
+                     <p class="text-center"><a @click="show_more=!show_more"> <i class="fa fa-angle-double-down"></i> More Options </a></p>
+                     <div class="col-md-12" v-show="show_more">
+                         <span>Repeat Every</span>
+                         <br>
+                         <div class="btn-group">
+                                    <button class="btn btn-white btn-sm" :class="task_repeat.includes('Sa')? 'active':''"  @click="addTaskRepeat('Sa')">Sa</button>
+                                    <button class="btn btn-white btn-sm" :class="task_repeat.includes('Fr')? 'active':''"  @click="addTaskRepeat('Fr')">Fr</button>
+                                    <button class="btn btn-white btn-sm" :class="task_repeat.includes('Th')? 'active':''"  @click="addTaskRepeat('Th')">Th</button>
+                                    <button class="btn btn-white btn-sm" :class="task_repeat.includes('We')? 'active':''"  @click="addTaskRepeat('We')">We</button>    
+                                    <button class="btn btn-white btn-sm" :class="task_repeat.includes('Tu')? 'active':''"  @click="addTaskRepeat('Tu')">Tu</button>
+                                    <button class="btn btn-white btn-sm" :class="task_repeat.includes('Mo')? 'active':''"  @click="addTaskRepeat('Mo')">Mo</button>
+                                    <button class="btn btn-white btn-sm" :class="task_repeat.includes('Su')? 'active':''" @click="addTaskRepeat('Su')">Su</button>                                    
+                                </div>
+                     </div>
+                     <!--<div class="col-md-12 m-t" v-show="show_more">
+                         <span>Add or Upload Related File</span>
+                         
+                     </div>-->
+                  </div>
+                        <p v-show="task_errMsg">{{task_errMsg}}</p>                     
+             
+            </div>
+            <div class="modal-footer">
+                  <a @click="postTask($event)" :disabled="invaildTask" class="btn btn-sm btn-primary">Add To Classroom</a>
+               
+            </div>
+         </div>
+      </div>
+   </div>
+</template>
+<script>
+    // import { toUtcString } from 'utils/timeFilter'
+    export default {
+        name: 'ClassroomTask',
+        data() {
+            return {
+                show_more: false,
+
+                task_category: '1', // 1: homework, 2: quiz, 3: exam, 6:other
+                task_subcategory: '1', // 1: take home, 2: in class, 3: other time
+                task_location: '',
+                task_title: '',
+                task_dscr: '',
+                task_repeat: '',
+
+                task_due_datetime: null,
+                task_due_date: null,
+                task_start: null,
+                task_end: null,
+                task_errMsg: ''
+            }
+        },
+        methods: {
+            postTask() {
+                /* global Date:true, moment:true */
+
+                if (!this.invaildTask) {
+                    let start = ''
+                    let end = ''
+                    if (this.task_due_date) {
+                        start = moment(this.task_due_date, 'MM/DD/YYYY').format('YYYY-MM-DD') + 'T' + this.currentClassroom.class_time.formatted_start_time
+                        end = moment(this.task_due_date, 'MM/DD/YYYY').format('YYYY-MM-DD') + 'T' + this.currentClassroom.class_time.formatted_end_time
+                    } else if (this.task_due_datetime) {
+                        end = moment(this.task_due_datetime, 'MM/DD/YYYY hh:mm A').format('YYYY-MM-DDTHH:mm:ss')
+                    } else if (this.task_start && this.task_end) {
+                        start = moment(this.task_start, 'MM/DD/YYYY hh:mm A').format('YYYY-MM-DDTHH:mm:ss')
+                        end = moment(this.task_end, 'MM/DD/YYYY hh:mm A').format('YYYY-MM-DDTHH:mm:ss')
+                    }
+
+                    console.log(start, end)
+                    const data = {
+                        formData: {
+                            task_name: this.task_title,
+                            description: this.task_dscr,
+                            start: start,
+                            end: end,
+                            location: this.task_location,
+                            category: parseInt(this.task_category),
+                            classroom: parseInt(this.$route.params.classroom_id),
+                            repeat: this.task_repeat
+                        },
+                        pk: this.$route.params.classroom_id
+                    }
+                    this.$store.dispatch('postClassroomTask', data)
+                    this.clearTask()
+                } else {
+                    this.task_errMsg = 'Did you miss something?'
+                    this.task_due_datetime = null
+                    this.task_due_date = null
+                    this.task_start = null
+                    this.task_end = null
+                }
+            },
+            addTaskRepeat(day) {
+                if (this.task_repeat.includes(day))
+                    this.task_repeat = this.task_repeat.replace(day, '')
+                else
+                    this.task_repeat = this.task_repeat + day
+            },
+            clearTask() {
+                this.task_due_datetime = null
+                this.task_due_date = null
+                this.task_start = null
+                this.task_end = null
+
+                this.task_subcategory = 1
+                this.task_errMsg = ''
+                this.task_title = ''
+                this.task_dscr = ''
+                this.task_location = ''
+            },
+            clearTime() {
+                this.task_due_datetime = null
+                this.task_due_date = null
+                this.task_start = null
+                this.task_end = null
+            }
+
+        },
+        computed: {
+            currentClassroom() {
+                return this.$store.getters.currentClassroom
+            },
+            invaildTask() {
+                if (this.task_title === '')
+                    return true
+                else if (this.task_subcategory === '1' && !this.task_due_datetime)
+                    return true
+                else if (this.task_subcategory === '2' && !this.task_due_date)
+                    return true
+                else if (this.task_subcategory === '3' && !(this.task_start && this.task_end))
+                    return true
+                else
+                    return false
+            },
+        },
+        mounted() {
+            /* global $:true */
+            // enable all datetime pickers
+            $('#task-due-datetime').datetimepicker().on(
+                'dp.change', () => { this.task_due_datetime = $('#task-due-datetime').val() }
+            )
+            $('#task-due-date').datetimepicker({ format: 'L' }).on(
+                'dp.change', () => { this.task_due_date = $('#task-due-date').val() }
+            )
+            $('#task-start').datetimepicker().on(
+                'dp.change', () => { this.task_start = $('#task-start').val() }
+            )
+            $('#task-end').datetimepicker().on(
+                'dp.change', () => { this.task_end = $('#task-end').val() }
+            )
+        },
+        watch: {
+            task_subcategory: 'clearTime'
+        }
+    }
+
+</script>

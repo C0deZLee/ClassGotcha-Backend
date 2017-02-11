@@ -3,7 +3,7 @@
 
     <div ref="calendar" id="calendar" ></div>
     <div class="modal inmodal fade" id="event-detail" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
-        <div class="modal-dialog modal-sm">
+        <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
@@ -15,15 +15,24 @@
                   <input type="text" class="form-control" placeholder="Title" v-model="event.task_name" :disabled="event.category===0">
               </div>
               <div class="form-group">
+                  <label>Location</label>
+                  <input type="text" class="form-control" placeholder="Location" v-model="event.location"   :disabled="event.category===0">
+              </div>
+              <div class="form-group">
+                  <div class="row">
+                      <div class="col-md-6">
                   <label>Start</label>
                   <input  type="text" class="form-control" v-model="event.formatted_start_time" placeholder="Start" :disabled="event.category===0">
-              </div>
-              <div class="form-group">
+                      </div>
+                      <div class="col-md-6">
+                      
                   <label>End</label>
                   <input type="text" class="form-control" v-model="event.formatted_end_time" placeholder="End" :disabled="event.category===0">
+                      </div>
+                  </div>
               </div>
               <div class="form-group">
-                  <label>Location</label>
+                   <label>Repeat</label>
                   <input type="text" class="form-control" placeholder="Location" v-model="event.location"   :disabled="event.category===0">
               </div>
                 </div>
@@ -85,7 +94,7 @@
                     return {
                         left: 'prev,next today',
                         center: 'title',
-                        right: 'month,agendaWeek,agendaDay'
+                        right: 'month,agendaWeek,agendaDay,listWeek'
                     }
                 },
             },
@@ -113,15 +122,16 @@
                 editable: this.editable,
                 selectable: this.selectable,
                 selectHelper: this.selectHelper,
-                aspectRatio: 2,
+                aspectRatio: 1.3,
                 timeFormat: 'HH:mm',
                 events: self.events,
                 eventSources: self.eventSources,
                 nowIndicator: true,
-                height: this.windowHeight,
+                unselectAuto: false,
 
                 drop() {
                     $(this).remove()
+                    $('#event-detail').modal('show')
                 },
 
                 eventRender(event, element) {
@@ -129,7 +139,9 @@
                         self.events = cal.fullCalendar('clientEvents')
                     }
                 },
-
+                // eventAfterRender(event, element) {
+                //     $('#event-detail').modal('show')
+                // },
                 eventDestroy(event) {
                     if (this.sync) {
                         self.events = cal.fullCalendar('clientEvents')
@@ -147,12 +159,17 @@
 
                 eventDrop(event) {
                     $(self.$el).trigger('event-drop', event)
-                },
+                    $('#event-detail').modal('show')
 
+                },
                 eventResize(event) {
                     $(self.$el).trigger('event-resize', event)
-                },
+                    $('#event-detail').modal('show')
 
+                },
+                eventDragStop(event) {
+                    $('#event-detail').modal('show')
+                },
                 select(start, end, jsEvent) {
                     $(self.$el).trigger('event-created', {
                         start,
