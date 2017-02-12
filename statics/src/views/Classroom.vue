@@ -123,7 +123,7 @@
               </a>
           </div>
           <p>
-            <a :href="students_page_url" class="m-t">More..</a>
+            <router-link :to="{name:'classroomStudents', params:{classroom_id:$route.params.classroom_id}}" class="m-t">More..</router-link>
           </p>
         </div>
       </div>
@@ -226,43 +226,7 @@
       </div>
     </div>
     <div class="col-lg-4">
-      <div id="vertical-timeline" class="vertical-container light-timeline no-margins">
-        <div class="vertical-timeline-block">
-          <a data-toggle="modal" data-target="#add-task">
-            <div class="vertical-timeline-icon navy-bg" v-show="user_in_classroom">
-              <i class="fa fa-star" ></i>
-            </div>
-          </a>
-          <div class="vertical-timeline-content" v-show="user_in_classroom">
-            <div class="row">
-              <div class="col-md-10">
-                <h2>Add a new task to classroom?</h2>
-              </div>
-              <div class="col-md-2">
-               <a data-toggle="modal" data-target="#add-task" class=" btn btn-primary"><i class="fa fa-plus"></a>
-                <task></task>
-              </div>
-            </div>
-  
-          </div>
-          <div v-for="task in tasks" class="vertical-timeline-block">
-            <!-- 1) Homework 2) Quiz 3) Exam-->            
-            <div class="vertical-timeline-icon" :class="{ 'blue-bg': task.category === 1, 'yellow-bg':task.category === 2, 'red-bg': task.category === 3}">
-              <i class="fa" :class="{ 'fa-file-text': task.category === 1, 'fa-pencil':task.category === 2, ' fa-warning': task.category === 3}"></i>
-            </div>
-            <div class="vertical-timeline-content">
-              <h2>{{task.task_name}}</h2>
-              <p>{{task.description}}
-              </p>
-              <a href="#" v-if="user_in_classroom" class="btn btn-sm btn-white">Edit</a>
-              <span class="vertical-date">
-              {{taskTime(task, 1)}} <br>
-              <small>{{taskTime(task, 2)}}</small>
-              </span>
-            </div>
-          </div>
-      </div>
-    </div>
+        <task></task>
   </div>
 </template>
 <script>
@@ -350,22 +314,6 @@
                 /* global moment:true */
                 return moment(time).fromNow()
             },
-            taskTime(task, type) {
-                if (type === 1) {
-                    if (task.start) {
-                        return moment.utc(task.start).format('LT')
-                    } else {
-                        return moment.utc(task.end).format('LT')
-                    }
-                } else if (type === 2) {
-                    if (task.start) {
-                        return moment.utc(task.start).format('MMM D')
-                    } else {
-                        return moment.utc(task.end).format('MMM D')
-                    }
-                }
-
-            },
             // UI Switches
             showAddTask() {
                 /* global $:true */
@@ -393,9 +341,6 @@
             moments() {
                 return this.$store.getters.classroomMoments
             },
-            tasks() {
-                return this.$store.getters.classroomTasks
-            },
             user_avatar() {
                 return this.$store.getters.userAvatar
             },
@@ -404,9 +349,6 @@
             },
             professors() {
                 return this.$store.getters.classroomProfessors
-            },
-            students_page_url() {
-                return '/#/classroom/id/' + this.$route.params.classroom_id + '/students'
             },
             user_id() {
                 return this.$store.getters.userID

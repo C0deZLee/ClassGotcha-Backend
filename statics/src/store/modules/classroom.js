@@ -84,7 +84,6 @@ const getters = {
                     state.tasks[i].end = date + moment.utc(state.tasks[i].end).format('HH:mm:ss')
                     tasks.push(state.tasks[i])
                 }
-                // moment().diff(date_time, 'seconds')}
             } else if (!state.tasks[i].expired) {
                 tasks.push(state.tasks[i])
             }
@@ -167,7 +166,6 @@ const actions = {
     getClassroomTasks({ commit, dispatch }, pk) {
         classApi.getTasks(pk)
             .then((response) => {
-                console.log('getClassroomTasks', response, pk)
                 commit(types.LOAD_CLASSROOM_TASKS, response)
             })
             .catch((error) => {

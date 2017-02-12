@@ -449,8 +449,8 @@
             let event_list2 = []
             let event_list3 = []
             const event_color0 = '#1ab394'
-            const event_color1 = '#23c6c8'
-            const event_color2 = '#f8ac59'
+            const event_color1 = '#f8ac59'
+            const event_color2 = '#ed5565'
             const event_color3 = '#ed5565'
             for (let i in this.$store.getters.userTasks) {
                 const task = this.$store.getters.userTasks[i]

@@ -159,11 +159,6 @@
                 /* global moment:true */
                 return moment.utc(time).format('ll')
             },
-            folderFilter() {
-                if (!this.$route.query.folders) {
-
-                }
-            }
         },
         computed: {
             current_classroom() {

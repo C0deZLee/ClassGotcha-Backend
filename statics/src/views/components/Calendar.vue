@@ -310,15 +310,15 @@
     .fc-agenda .fc-event-time,
     .fc-event a {
         padding: 4px 6px;
-        background-color: #1ab394;
+        background-color: #23c6c8;
         /* background color */
-        border-color: #1ab394;
+        border-color: #23c6c8;
         /* border color */
     }
     
     .fc-event {
         border: 0px;
-        border-left: 5px solid #1ab394;
+        border-left: 5px solid #23c6c8;
     }
     
     .fc-event-time,
