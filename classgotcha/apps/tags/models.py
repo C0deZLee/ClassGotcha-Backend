@@ -2,10 +2,14 @@ from django.db import models
 
 
 class Tag(models.Model):
-	NOTE, PROFESSOR = 0, 1
+	class Meta:
+		unique_together = (('name', 'is_for'),)
+
+	NOTE, PROFESSOR, CALENDAR = 0, 1, 2
 	TYPE_CHOICE = (
 		(NOTE, 'File'),
 		(PROFESSOR, 'Professor'),
+		(CALENDAR, 'Calendar'),
 	)
 	# Lectures, Labs, Notes, Homework, Quizzes, Exams,
 	# Basic
@@ -39,8 +43,3 @@ class Tag(models.Model):
 	# 6.2) Lecture
 	# 6.3) Date
 
-	# step 1: upload file
-	# step 2: choose category
-	# step 2.1: choose root category
-	# step 2.2: choose child category
-	# step 3: upload

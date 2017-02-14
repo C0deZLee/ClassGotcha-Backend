@@ -42,6 +42,7 @@ class AccountManager(BaseUserManager):
 class Professor(models.Model):
 	class Meta:
 		unique_together = (('first_name', 'last_name', 'major'),)
+
 	# Basic
 	first_name = models.CharField(max_length=40)
 	last_name = models.CharField(max_length=40)
@@ -53,6 +54,10 @@ class Professor(models.Model):
 	tags = models.ManyToManyField(Tag)
 	# Timestamp
 	created = models.DateTimeField(auto_now_add=True)
+
+	# Relationship
+	# 1) comments
+	# 2) rates
 
 	def __unicode__(self):
 		return '%s %s' % (self.first_name, self.last_name)

@@ -223,6 +223,7 @@ class ClassroomViewSet(viewsets.ViewSet):
 	def upload_all_course_info(request):
 		if not request.user.is_superuser:
 			return Response(status=status.HTTP_403_FORBIDDEN)
+
 		upload = request.FILES.get('file', False)
 		temp_file = open(upload.temporary_file_path())
 		if upload:

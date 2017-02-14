@@ -94,4 +94,7 @@ urlpatterns = [
 	url(r'^freetime/$', account_freetime, name='freetime'),
 
 	url(r'^me/$', account_me, name='me'),
+
+	# url(r'^professor/(?P<pk>[0-9]+)/comment/$', account_me, name='me'),
+
 ]
