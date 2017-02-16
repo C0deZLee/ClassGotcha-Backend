@@ -47,11 +47,18 @@ class Note(models.Model):
 
 
 class Rate(models.Model):
+	# Basic
+	num = models.IntegerField()
 	# Relations
 	creator = models.ForeignKey(Account)
-	num = models.IntegerField()
-	note = models.ForeignKey(Note, on_delete=models.CASCADE, related_name='rates')
-	professor = models.ForeignKey(Professor, on_delete=models.CASCADE, related_name='rates')
+	note = models.ForeignKey(Note, on_delete=models.CASCADE, related_name='rates', null=True)
+	professor = models.ForeignKey(Professor, on_delete=models.CASCADE, related_name='rates', null=True)
+
+	# Relations
+	# 1) comment
+
+	def __unicode__(self):
+		return self.num
 
 
 class Moment(models.Model):
@@ -121,6 +128,7 @@ class Comment(models.Model):
 	moment = models.ForeignKey(Moment, on_delete=models.CASCADE, related_name='comments', null=True)
 	note = models.ForeignKey(Note, on_delete=models.CASCADE, related_name='comments', null=True)
 	professor = models.ForeignKey(Professor, on_delete=models.CASCADE, related_name='comments', null=True)
+	rate = models.OneToOneField(Rate, related_name='comment', null=True)
 	# Timestamp
 	created = models.DateTimeField(auto_now_add=True)
 	updated = models.DateTimeField(auto_now=True)

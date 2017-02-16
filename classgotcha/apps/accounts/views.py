@@ -10,13 +10,15 @@ from rest_framework.parsers import FormParser, MultiPartParser, JSONParser
 from rest_framework.decorators import api_view, permission_classes, parser_classes
 from rest_framework.permissions import IsAuthenticated, AllowAny
 
-from serializers import AccountSerializer, BasicAccountSerializer, AuthAccountSerializer, AvatarSerializer
 from ..classrooms.serializers import Classroom, BasicClassroomSerializer
-from ..posts.serializers import Moment, MomentSerializer, NoteSerializer
-from ..chat.serializers import RoomSerializer, Room
+from ..posts.serializers import Moment, MomentSerializer, NoteSerializer, Comment, CommentSerializer
+from ..chat.serializers import RoomSerializer
 from ..tasks.serializers import TaskSerializer
 
-from models import Account, Avatar
+from ..posts.models import Rate
+from models import Account, Avatar, Professor
+from serializers import AccountSerializer, BasicAccountSerializer, AuthAccountSerializer, AvatarSerializer, \
+	ProfessorSerializer
 
 from script import group, complement
 
@@ -77,23 +79,6 @@ class AccountViewSet(viewsets.ViewSet):
 	parser_classes = (MultiPartParser, FormParser, JSONParser)
 	permission_classes = (IsAuthenticated,)
 
-	# list_route and detail_route are for auto gen URL
-	@staticmethod
-	def me(request):
-		if request.method == 'GET':
-			serializer = AccountSerializer(request.user)
-			return Response(serializer.data)
-		elif request.method == 'PUT':
-			for (key, value) in request.data.items():
-				if key in ['username', 'first_name', 'mid_name', 'last_name', 'gender', 'birthday', 'school_year',
-				           'major']:
-					if key == 'major':
-						request.user.major_id = value
-					else:
-						setattr(request.user, key, value)
-				request.user.save()
-			return Response(status=status.HTTP_200_OK)
-
 	def retrieve(self, request, pk):
 		user = get_object_or_404(self.queryset, pk=pk)
 		serializer = AccountSerializer(user)
@@ -104,21 +89,6 @@ class AccountViewSet(viewsets.ViewSet):
 			user = get_object_or_404(self.queryset, pk=pk)
 			user.delete()
 			return Response(status=status.HTTP_200_OK)
-		else:
-			return Response(status=status.HTTP_403_FORBIDDEN)
-
-	# verify past password
-	@staticmethod
-	def reset_password(self, request, pk=None):
-		if request.user.is_admin or request.user.pk == int(pk):
-			if not request.data['old-password']:
-				return Response(status=status.HTTP_400_BAD_REQUEST)
-			try:
-				request.user.set_password(request.data['password'])
-				request.user.save()
-				return Response(status=200)
-			except:
-				return Response(status=status.HTTP_400_BAD_REQUEST)
 		else:
 			return Response(status=status.HTTP_403_FORBIDDEN)
 
@@ -166,7 +136,38 @@ class AccountViewSet(viewsets.ViewSet):
 			nomore_friend.save()
 			return Response(status=200)
 
-	def pending_friends(self, request):
+	@staticmethod
+	def me(request):
+		if request.method == 'GET':
+			serializer = AccountSerializer(request.user)
+			return Response(serializer.data)
+		elif request.method == 'PUT':
+			for (key, value) in request.data.items():
+				if key in ['username', 'first_name', 'mid_name', 'last_name', 'gender', 'birthday', 'school_year',
+				           'major']:
+					if key == 'major':
+						request.user.major_id = value
+					else:
+						setattr(request.user, key, value)
+				request.user.save()
+			return Response(status=status.HTTP_200_OK)
+
+	@staticmethod
+	def reset_password(request, pk=None):
+		if request.user.is_admin or request.user.pk == int(pk):
+			if not request.data['old-password']:
+				return Response(status=status.HTTP_400_BAD_REQUEST)
+			try:
+				request.user.set_password(request.data['password'])
+				request.user.save()
+				return Response(status=200)
+			except:
+				return Response(status=status.HTTP_400_BAD_REQUEST)
+		else:
+			return Response(status=status.HTTP_403_FORBIDDEN)
+
+	@staticmethod
+	def pending_friends(request):
 		serializer = BasicAccountSerializer(request.user.pending_friends, many=True)
 		return Response(serializer.data)
 
@@ -334,7 +335,8 @@ class AccountViewSet(viewsets.ViewSet):
 
 		return Response({'freetime': free_time_dict}, status=status.HTTP_200_OK)
 
-	def home_page_activity(self, request):
+	@staticmethod
+	def home_page_activity(request):
 		# TODO: show latest activity related to me
 		# include moments, comments, notes my classmates and friends posted
 		classrooms = Classroom.objects.filter(students__pk=request.user.pk)
@@ -342,6 +344,53 @@ class AccountViewSet(viewsets.ViewSet):
 		moments = Moment.objects.filter(classroom__in=classrooms).filter(deleted=False).order_by('-created')[0:20]
 		serializer = MomentSerializer(moments, many=True)
 		return Response(serializer.data)
+
+
+class ProfessorViewSet(viewsets.ViewSet):
+	queryset = Professor.objects.all()
+	parser_classes = (MultiPartParser, FormParser, JSONParser)
+	permission_classes = (IsAuthenticated,)
+
+	def retrieve(self, request, pk):
+		professor = get_object_or_404(self.queryset, pk=pk)
+		serializer = ProfessorSerializer(professor)
+		return Response(serializer.data)
+
+	def update(self, request, pk):
+		professor = get_object_or_404(self.queryset, pk=pk)
+		for (key, value) in request.data.items():
+			if key in ['first_name', 'last_name', 'email', 'office', 'major']:
+				if key is 'major':
+					setattr(professor, 'major_id', value)
+				else:
+					setattr(professor, key, value)
+		return Response(status=status.HTTP_200_OK)
+
+	def comments(self, request, pk):
+		if request.method == 'GET':
+			professor = get_object_or_404(self.queryset, pk=pk)
+			comments = professor.comments.all()
+			return Response(CommentSerializer(comments, many=True).data)
+		elif request.method == 'POST':
+			content = request.data.get('content')
+			num = request.data.get('num')
+			if content and num:
+				professor = get_object_or_404(self.queryset, pk=pk)
+				comment = Comment.objects.create(content=content)
+				rate = Rate.objects.create(num=num)
+				rate.professor = professor
+				rate.creator = request.user
+				rate.save()
+				comment.professor = professor
+				comment.creator = request.user
+				comment.rate = rate
+				comment.save()
+				return Response(status=status.HTTP_201_CREATED)
+			else:
+				return Response(status=status.HTTP_400_BAD_REQUEST)
+
+	def classrooms(self, request, pk):
+		pass
 
 
 class GroupViewSet(viewsets.ViewSet):

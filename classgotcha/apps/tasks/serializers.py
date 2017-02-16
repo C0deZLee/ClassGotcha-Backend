@@ -19,7 +19,7 @@ class TaskSerializer(serializers.ModelSerializer):
 	repeat_start_date = serializers.ReadOnlyField()
 	repeat_end_date = serializers.ReadOnlyField()
 	repeat_list = serializers.ReadOnlyField()
-	classroom = TaskClassroomSerializer()
+	classroom = TaskClassroomSerializer(required=False)
 
 	class Meta:
 		model = Task
