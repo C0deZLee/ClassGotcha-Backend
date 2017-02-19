@@ -99,7 +99,10 @@ CORS_ORIGIN_WHITELIST = (
     'google.com',
     'localhost:4000',
     'localhost:4004',
-    '127.0.0.1:9000'
+    '127.0.0.1:9000',
+    'classgotcha-frontend-us-standard-20170218.s3-website-us-east-1.amazonaws.com',
+    'www.classgotcha.com'
+    'classgotcha.com'
 )
 CORS_ALLOW_HEADERS = (
     'accept',
