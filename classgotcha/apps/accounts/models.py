@@ -130,7 +130,7 @@ class Account(AbstractBaseUser, PermissionsMixin):
 		return self.username
 
 	@property
-	def full_name(self):
+	def get_full_name(self):
 		return '%s %s' % (self.first_name, self.last_name)
 
 	def get_short_name(self):
