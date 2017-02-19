@@ -13,7 +13,7 @@ from rest_framework.decorators import parser_classes
 from models import Account, Classroom, Semester, Major, Professor
 from ..chat.models import Room
 
-from serializers import ClassroomSerializer, MajorSerializer
+from serializers import ClassroomSerializer, MajorSerializer, OfficeHourSerializer
 from ..posts.serializers import MomentSerializer, Note, NoteSerializer, Moment
 from ..tasks.serializers import Task, TaskSerializer, BasicTaskSerializer
 from ..accounts.serializers import BasicAccountSerializer, BasicClassroomSerializer
@@ -160,12 +160,14 @@ class ClassroomViewSet(viewsets.ViewSet):
 				request.data['type'] = 1  # task
 			else:
 				return Response(status=status.HTTP_400_BAD_REQUEST)
+
 			serializer = TaskSerializer(data=request.data)
 			serializer.is_valid(raise_exception=True)
 			serializer.save()
 
 			Moment.objects.create(
-				content='I just added a new task \"' + request.data.get('task_name', '') + '\" to the classroom, check it out!',
+				content='I just added a new task \"' + request.data.get('task_name',
+				                                                        '') + '\" to the classroom, check it out!',
 				creator=request.user,
 				classroom=classroom)
 
@@ -181,7 +183,8 @@ class ClassroomViewSet(viewsets.ViewSet):
 				task.save()
 
 				Moment.objects.create(
-					content='I just modified the task \"' + request.data.get('task_name', '') + '\" to the classroom, check it out!',
+					content='I just modified the task \"' + request.data.get('task_name',
+					                                                         '') + '\" to the classroom, check it out!',
 					creator=request.user,
 					classroom=classroom)
 				return Response(status=status.HTTP_200_OK)
@@ -218,11 +221,20 @@ class ClassroomViewSet(viewsets.ViewSet):
 
 			pass
 
+	def office_hours(self, request, pk):
+		if request.method == 'GET':
+			classroom = get_object_or_404(self.queryset, pk=pk)
+			return Response(OfficeHourSerializer(classroom.office_hours).data)
+		elif request.method == 'POST':
+			# TODO
+			pass
+
 	# Tools for upload all the courses
 	@staticmethod
 	def upload_all_course_info(request):
 		if not request.user.is_superuser:
 			return Response(status=status.HTTP_403_FORBIDDEN)
+
 		upload = request.FILES.get('file', False)
 		temp_file = open(upload.temporary_file_path())
 		if upload:

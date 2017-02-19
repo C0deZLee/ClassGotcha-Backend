@@ -1,174 +1,305 @@
 <template>
-<div>
-
-    <div ref="calendar" id="calendar" ></div>
-    <div class="modal inmodal fade" id="event-detail" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
-                    <h4 class="modal-title"><i class="fa fa-clock-o"></i> Event Detail</h4>
-                </div>
-                <div class="modal-body">
-                 <div class="form-group">
-                     <label>Event Name</label>
-                  <input type="text" class="form-control" placeholder="Title" v-model="event.task_name" :disabled="event.category===0">
-              </div>
-              <div class="form-group">
-                  <label>Location</label>
-                  <input type="text" class="form-control" placeholder="Location" v-model="event.location"   :disabled="event.category===0">
-              </div>
-              <div class="form-group">
-                  <div class="row">
-                      <div class="col-md-6">
-                  <label>Start</label>
-                  <input  type="text" class="form-control" v-model="event.formatted_start_time" placeholder="Start" :disabled="event.category===0">
-                      </div>
-                      <div class="col-md-6">
-                      
-                  <label>End</label>
-                  <input type="text" class="form-control" v-model="event.formatted_end_time" placeholder="End" :disabled="event.category===0">
-                      </div>
-                  </div>
-              </div>
-              <div class="form-group">
-                   <label>Repeat</label>
-                  <input type="text" class="form-control" placeholder="Location" v-model="event.location"   :disabled="event.category===0">
-              </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-white" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary">Save changes</button>
-                </div>
+   <div>
+      <div class="row  border-bottom white-bg dashboard-header">
+         <div class="col-sm-3">
+            <h2>Recommended Tasks</h2>
+            <div class="ibox-content">
+               <div id="external-events" v-show="!show_event_detail">
+                  <p>Drag a event and drop into callendar.</p>
+                  <div v-for="event in user_recommened_tasks" class="external-event" :class="eventTaskBg(event)">{{event.task_name}} </div>
+               </div>
             </div>
-        </div>
-    </div>
-
-</div>
+            <br>
+            <button class="btn form-control" v-show="show_event_detail" @click="show_event_detail=false">Go back to recommended tasks</button>
+            <div class="modal-body">
+                <div v-show="show_event_detail">
+               <div class="form-group">
+                  <label>Event Name</label>
+                  <input type="text" class="form-control" placeholder="Title" v-model="event.task_name" :disabled="event.category!==7">
+               </div>
+               <div class="form-group">
+                  <div class="row">
+                     <div class="col-md-6">
+                        <label>Start</label>
+                        <input  type="text" class="form-control" v-model="event.formatted_start_time" placeholder="Start" :disabled="event.category!==7">
+                     </div>
+                     <div class="col-md-6">
+                        <label>End</label>
+                        <input type="text" class="form-control" v-model="event.formatted_end_time" placeholder="End" :disabled="event.category!==7">
+                     </div>
+                  </div>
+               </div>
+               <div class="form-group">
+                  <label>Category</label>
+                  <input type="text" class="form-control" placeholder="Category" :value="categoryName(event.category)" :disabled="event.category!==7">
+               </div>
+               <div class="form-group"  v-if="event.classroom" >
+                  <label>Classroom</label>
+                  <input type="text" class="form-control" placeholder="Classroom" v-model="event.classroom.class_short" :disabled="event.category!==7">
+               </div>
+               <div class="form-group" v-if="event.group">
+                  <label>Group</label>
+                  <input type="text" class="form-control" placeholder="Group" v-model="event.group"   :disabled="event.category!==7">
+               </div>
+               <div class="form-group">
+                  <label>Location</label>
+                  <input type="text" class="form-control" placeholder="Location" v-model="event.location"   :disabled="event.category!==7">
+               </div>
+               <div class="form-group">
+                  <label>Repeat</label>
+                  <input type="text" class="form-control" placeholder="Repeat" v-model="event.repeat"   :disabled="event.category!==7">
+               </div>
+            </div>
+            </div>
+         </div>
+         <div class="col-sm-9">
+            <div ref="calendar" id="calendar" ></div>
+         </div>
+      </div>
+      <div class="modal inmodal fade" id="event-detail" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
+         <div class="modal-dialog">
+            <div class="modal-content">
+               <div class="modal-header">
+                  <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+                  <h4 class="modal-title"><i class="fa fa-clock-o"></i> Event Detail</h4>
+               </div>
+            </div>
+            <div class="modal-footer">
+               <button type="button" class="btn btn-white" data-dismiss="modal">Close</button>
+               <button type="button" class="btn btn-primary">Save changes</button>
+            </div>
+         </div>
+      </div>
+   </div>
+   </div>
 </template>
-
 <script>
     export default {
         data() {
             return {
+                // event
+                // selected event
                 event: {
-                    type: 0, // Event
-                    formatted_start_time: '',
-                    formatted_start_date: '',
-                    formatted_end_date: '',
-                    end: '',
-                    category: 0, // Class
-                    formatted_end_time: '',
-                    description: '',
-                    id: '',
-                    location: '',
-                    repeat_list: [],
-                    start: '',
-                    task_name: '',
-                }
+                    // type: 0, // Event
+                    // formatted_start_time: '',
+                    // formatted_start_date: '',
+                    // formatted_end_date: '',
+                    // end: '',
+                    // category: 7, // Other
+                    // formatted_end_time: '',
+                    // description: '',
+                    // id: '',
+                    // location: '',
+                    // repeat_list: [],
+                    // start: '',
+                    // task_name: '',
+                },
+                created_event: {},
+                // for fullcalendar
+                events: [],
+                event_sources: [],
+                // category dictionary
+                category_choices: {
+                    0: { name: 'Class' },
+                    1: { name: 'Homework' },
+                    2: { name: 'Quiz' },
+                    3: { name: 'Exam' },
+                    4: { name: 'Todo' },
+                    5: { name: 'Group Meeting' },
+                    6: { name: 'Other' }
+                },
+                // calendar settings
+                calendar_header: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'month,agendaWeek,agendaDay,listWeek'
+                },
+                sync: false,
+                // UI triggers
+                show_event_detail: false
             }
         },
-        props: {
-            events: {
-                default () { return [] },
+        methods: {
+            categoryName(id) {
+                if (this.category_choices[id])
+                    return this.category_choices[id].name
+                else return null
             },
-
-            eventSources: {
-                default () { return [] },
+            eventTaskBg(event) {
+                // Homewrok
+                if (event.category === 1) {
+                    return 'bg-warning'
+                }
+                // Quiz
+                else if (event.category === 2) {
+                    return 'bg-danger'
+                }
+                // Exam
+                else if (event.category === 3) {
+                    return 'bg-danger'
+                }
             },
-
-            editable: {
-                default () { return true },
-            },
-
-            selectable: {
-                default () { return true },
-            },
-
-            selectHelper: {
-                default () { return true },
-            },
-
-            header: {
-                default () {
-                    return {
-                        left: 'prev,next today',
-                        center: 'title',
-                        right: 'month,agendaWeek,agendaDay,listWeek'
+            createEvents() {
+                let event_sources_list = [
+                    // {
+                    // events: []
+                    // color: ''
+                    // }
+                ]
+                let event_list0 = []
+                let event_list1 = []
+                let event_list2 = []
+                let event_list3 = []
+                const event_color0 = '#1ab394'
+                const event_color1 = '#f8ac59'
+                const event_color2 = '#ed5565'
+                const event_color3 = '#ed5565'
+                for (let i in this.user_tasks) {
+                    const task = this.user_tasks[i]
+                    /* global moment:true */
+                    // classes
+                    if (task.category === 0) {
+                        event_list0.push({
+                            id: task.id,
+                            title: task.task_name + '\n' + task.location,
+                            editable: false,
+                            start: task.formatted_start_time,
+                            end: task.formatted_end_time,
+                            dow: task.repeat_list,
+                            repeat: [{
+                                start: task.formatted_start_date,
+                                end: task.formatted_end_date
+                            }]
+                        })
                     }
-                },
-            },
+                    // homework
+                    else if (task.category === 1) {
+                        event_list1.push({
+                            id: task.id,
+                            title: task.task_name,
+                            editable: false,
+                            start: task.end,
+                            end: moment.utc(task.end).add(0.5, 'hours').format(),
+                        })
+                    }
+                    // quiz
+                    else if (task.category === 2) {
+                        event_list2.push({
+                            id: task.id,
+                            title: task.task_name,
+                            editable: false,
+                            start: (task.start ? task.start : task.end),
+                            end: (task.start ? task.end : moment.utc(task.end).add(0.5, 'hours').format()),
+                        })
+                    }
+                    // exam
+                    else if (task.category === 3) {
+                        event_list3.push({
+                            id: task.id,
+                            title: (task.location ? task.task_name + '\n' + task.location : task.task_name),
+                            editable: false,
+                            start: (task.start ? task.start : task.end),
+                            end: (task.start ? task.end : moment.utc(task.end).add(0.5, 'hours').format()),
 
-            defaultView: { default () { return 'agendaWeek' }, },
-
-            sync: {
-                default () { return false }
+                        })
+                    }
+                }
+                event_sources_list.push({ events: event_list0, color: event_color0 })
+                event_sources_list.push({ events: event_list1, color: event_color1 })
+                event_sources_list.push({ events: event_list2, color: event_color2 })
+                event_sources_list.push({ events: event_list3, color: event_color3 })
+                this.event_sources = event_sources_list
             },
+            createExternalEvents() {
+                /* global $:true */
+                $('#external-events div.external-event').each(function() {
+                    // store data so the calendar knows to render an event upon drop
+                    $(this).data('event', {
+                        title: $.trim($(this).text()), // use the element's text as the event title
+                        stick: true // maintain when user navigates (see docs on the renderEvent method)
+                    })
+                    // make the event draggable using jQuery UI
+                    $(this).draggable({
+                        zIndex: 10,
+                        revert: true, // will cause the event to go back to its
+                        revertDuration: 0 //  original position after the drag
+                    })
+
+                })
+            }
         },
-
+        computed: {
+            user() {
+                return this.$store.getters.me
+            },
+            user_tasks() {
+                return this.$store.getters.userTasks
+            },
+            user_recommened_tasks() {
+                return this.$store.getters.userRecommendedTasks
+            },
+            windowHeight() {
+                return window.innerHeight - 100
+            }
+        },
+        created() {
+            this.createEvents()
+        },
         mounted() {
             /*
             global $:true
             */
-            const cal = $(this.$el)
+            const cal = $('#calendar')
             const self = this
 
             cal.fullCalendar({
                 scrollTime: '07:30:00',
                 droppable: true,
                 // ignoreTimezone: false,
-                header: this.header,
-                defaultView: this.defaultView,
-                editable: this.editable,
-                selectable: this.selectable,
-                selectHelper: this.selectHelper,
+                header: this.calendar_header,
+                defaultView: 'agendaWeek',
+                editable: true,
+                selectable: true,
+                selectHelper: true,
                 aspectRatio: 1.3,
                 timeFormat: 'HH:mm',
                 events: self.events,
-                eventSources: self.eventSources,
+                eventSources: self.event_sources,
                 nowIndicator: true,
                 unselectAuto: false,
-
-                drop() {
-                    $(this).remove()
-                    $('#event-detail').modal('show')
-                },
 
                 eventRender(event, element) {
                     if (this.sync) {
                         self.events = cal.fullCalendar('clientEvents')
                     }
                 },
-                // eventAfterRender(event, element) {
-                //     $('#event-detail').modal('show')
-                // },
                 eventDestroy(event) {
                     if (this.sync) {
                         self.events = cal.fullCalendar('clientEvents')
                     }
                 },
-
                 eventClick(event) {
-                    for (let i in self.userTasks) {
-                        if (self.userTasks[i].id === event.id)
-                            self.event = self.userTasks[i]
+                    for (let i in self.user_tasks) {
+                        if (self.user_tasks[i].id === event.id)
+                            self.event = self.user_tasks[i]
                     }
-                    $('#event-detail').modal('show')
+                    // $('#event-detail').modal('show')
+                    self.show_event_detail = true
                     $(self.$el).trigger('event-selected', event)
-                },
-
-                eventDrop(event) {
-                    $(self.$el).trigger('event-drop', event)
-                    $('#event-detail').modal('show')
-
                 },
                 eventResize(event) {
                     $(self.$el).trigger('event-resize', event)
-                    $('#event-detail').modal('show')
+                    self.event = event
+                    // $('#event-detail').modal('show')
+                    self.show_event_detail = true
 
                 },
-                eventDragStop(event) {
-                    $('#event-detail').modal('show')
+                eventReceive(event) {
+                    $(this).remove()
+                    // $('#event-detail').modal('show')
+                    self.event = event
+                    self.show_event_detail = true
+
                 },
                 select(start, end, jsEvent) {
                     $(self.$el).trigger('event-created', {
@@ -178,22 +309,14 @@
                     })
                 },
             })
+            this.createExternalEvents()
         },
-
         watch: {
             events: {
                 deep: true,
                 handler(val) {
                     $(this.$el).fullCalendar('rerenderEvents')
                 },
-            }
-        },
-        computed: {
-            userTasks() {
-                return this.$store.getters.userTasks
-            },
-            windowHeight() {
-                return window.innerHeight - 100
             }
         },
         events: {
@@ -224,8 +347,6 @@
     }
 
 </script>
-
-
 <style>
     /* FULLCALENDAR */
     

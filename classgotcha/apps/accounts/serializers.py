@@ -2,7 +2,7 @@ from rest_framework import serializers
 
 from models import Account, Avatar, Group, Professor
 from ..chat.models import Room
-from ..classrooms.models import Semester, Classroom, Major
+from ..classrooms.models import Semester, Classroom, Major, OfficeHour
 from ..tasks.serializers import BasicTaskSerializer, ClassTimeTaskSerializer
 from ..tags.serializers import ClassFolderSerializer
 
@@ -10,12 +10,14 @@ from ..tags.serializers import ClassFolderSerializer
 # Due to the cross dependency,
 # I have to move SemesterSerializer, MajorSerializer and BasicClassroomSerializer here
 
+# WARN: Duplicate
 class MajorSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = Major
 		fields = '__all__'
 
 
+# WARN: Duplicate
 class SemesterSerializer(serializers.ModelSerializer):
 	formatted_start_date = serializers.ReadOnlyField()
 	formatted_end_date = serializers.ReadOnlyField()
@@ -32,6 +34,49 @@ class AvatarSerializer(serializers.ModelSerializer):
 		read_only_fields = ('created',)
 
 
+class BasicProfessorSerializer(serializers.ModelSerializer):
+	class Meta:
+		model = Professor
+		fields = '__all__'
+		read_only_fields = ('created',)
+
+
+# WARN: Duplicate
+class BasicClassroomSerializer(serializers.ModelSerializer):
+	students_count = serializers.ReadOnlyField()
+	class_short = serializers.ReadOnlyField()
+	class_time = ClassTimeTaskSerializer()
+	semester = SemesterSerializer()
+	professors = BasicProfessorSerializer(many=True)
+	folders = ClassFolderSerializer(many=True)
+
+	class Meta:
+		model = Classroom
+		fields = ('id', 'class_code', 'class_short', 'students_count',
+		          'class_section', 'description', 'class_time', 'semester', 'professors', 'folders')
+
+
+class ProfessorOfficeHourSerializer(serializers.ModelSerializer):
+	classroom = BasicClassroomSerializer()
+	time = ClassTimeTaskSerializer()
+
+	class Meta:
+		model = OfficeHour
+		fields = ('classroom', 'time')
+
+
+class ProfessorSerializer(serializers.ModelSerializer):
+	full_name = serializers.ReadOnlyField()
+	classrooms = BasicClassroomSerializer(many=True)
+	office_hours = ProfessorOfficeHourSerializer(many=True)
+	avg_rate = serializers.ReadOnlyField()
+
+	class Meta:
+		model = Professor
+		fields = '__all__'
+		read_only_fields = ('created',)
+
+
 class BasicAccountSerializer(serializers.ModelSerializer):
 	avatar = AvatarSerializer(required=False)
 	full_name = serializers.ReadOnlyField()
@@ -41,6 +86,7 @@ class BasicAccountSerializer(serializers.ModelSerializer):
 		fields = ('pk', 'id', 'avatar', 'username', 'email', 'full_name', 'about_me', 'level')
 
 
+# WARN: Duplicate
 class RoomSerializer(serializers.ModelSerializer):
 	latest_message = serializers.ReadOnlyField()
 	accounts = BasicAccountSerializer(many=True)
@@ -49,29 +95,6 @@ class RoomSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = Room
 		fields = '__all__'
-
-
-class ProfessorSerializers(serializers.ModelSerializer):
-	full_name = serializers.ReadOnlyField()
-
-	class Meta:
-		model = Professor
-		fields = '__all__'
-		read_only_fields = ('created',)
-
-
-class BasicClassroomSerializer(serializers.ModelSerializer):
-	students_count = serializers.ReadOnlyField()
-	class_short = serializers.ReadOnlyField()
-	class_time = ClassTimeTaskSerializer()
-	semester = SemesterSerializer()
-	professors = ProfessorSerializers(many=True)
-	folders = ClassFolderSerializer(many=True)
-
-	class Meta:
-		model = Classroom
-		fields = ('id', 'class_code', 'class_short', 'students_count',
-		          'class_section', 'description', 'class_time', 'semester', 'professors', 'folders')
 
 
 class AccountSerializer(serializers.ModelSerializer):

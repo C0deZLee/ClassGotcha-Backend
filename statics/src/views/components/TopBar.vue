@@ -5,7 +5,7 @@
             <a class="navbar-minimalize minimalize-styl-2 btn btn-primary " ><i class="fa fa-bars"></i> </a>
             <div role="search" class="navbar-form-custom">
                <div class="form-group">
-                  <input type="text" placeholder="Search for something..." class="form-control" name="top-search" id="top-search">
+                  <input type="text" placeholder="" class="form-control" name="top-search" id="top-search">
                </div>
             </div>
          </div>
@@ -70,7 +70,10 @@
         computed: {
             pending_friends() {
                 return this.$store.getters.userPendingFriends
-            }
+            },
+            username() {
+                return this.$store.getters.userFullName
+            },
         }
     }
 

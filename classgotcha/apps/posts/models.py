@@ -1,4 +1,4 @@
-from ..accounts.models import Account
+from ..accounts.models import Account, Professor
 from ..classrooms.models import Classroom
 
 from django.db import models
@@ -47,10 +47,18 @@ class Note(models.Model):
 
 
 class Rate(models.Model):
+	# Basic
+	num = models.IntegerField()
 	# Relations
 	creator = models.ForeignKey(Account)
-	num = models.IntegerField()
-	note = models.ForeignKey(Note, on_delete=models.CASCADE, related_name='rating')
+	note = models.ForeignKey(Note, on_delete=models.CASCADE, related_name='rates', null=True)
+	professor = models.ForeignKey(Professor, on_delete=models.CASCADE, related_name='rates', null=True)
+
+	# Relations
+	# 1) comment
+
+	def __unicode__(self):
+		return self.num
 
 
 class Moment(models.Model):
@@ -115,10 +123,12 @@ class Comment(models.Model):
 	# Basic
 	content = models.CharField(max_length=200)
 	# relations
-	creator = models.ForeignKey(Account, on_delete=models.CASCADE, related_name='comments', null=True, blank=True)
-	post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='comments', null=True, blank=True)
-	moment = models.ForeignKey(Moment, on_delete=models.CASCADE, related_name='comments', null=True, blank=True)
-	note = models.ForeignKey(Note, on_delete=models.CASCADE, related_name='comments', null=True, blank=True)
+	creator = models.ForeignKey(Account, on_delete=models.CASCADE, related_name='comments', null=True)
+	post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='comments', null=True)
+	moment = models.ForeignKey(Moment, on_delete=models.CASCADE, related_name='comments', null=True)
+	note = models.ForeignKey(Note, on_delete=models.CASCADE, related_name='comments', null=True)
+	professor = models.ForeignKey(Professor, on_delete=models.CASCADE, related_name='comments', null=True)
+	rate = models.OneToOneField(Rate, related_name='comment', null=True)
 	# Timestamp
 	created = models.DateTimeField(auto_now_add=True)
 	updated = models.DateTimeField(auto_now=True)

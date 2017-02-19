@@ -10,47 +10,49 @@ const state = {
     friends: [],
     pending_friends: [],
     moments: [],
+    tasks: [],
     login_status: false,
     token: null,
     loaded_user: {},
-    uploaded: null
+    uploaded: null,
 }
 
 // getters
 const getters = {
     login_status: state => state.login_status,
     me: state => {
-        if (state.login_status)
+        if (state.user && state.login_status)
             return state.user
+        else return {}
     },
     userID: state => {
-        if (state.login_status) {
+        if (state.user && state.login_status) {
             return state.user.id
-        }
+        } else return {}
     },
     userFullName: state => {
-        if (state.login_status) {
+        if (state.user && state.login_status) {
             return state.user.full_name
         } else {
-            return 'None'
+            return ''
         }
     },
     userAvatar: state => {
-        if (state.login_status) {
+        if (state.user && state.login_status) {
             return state.user.avatar
         } else {
-            return 'None'
+            return ''
         }
     },
     userClassrooms: state => {
-        if (state.login_status) {
+        if (state.user && state.login_status) {
             return state.user.classrooms
         } else {
             return []
         }
     },
     userChatrooms: state => {
-        if (state.login_status) {
+        if (state.user && state.login_status) {
             return state.user.chatrooms
         } else {
             return []
@@ -65,10 +67,46 @@ const getters = {
     },
     userTasks: state => {
         if (state.login_status) {
-            return state.user.tasks
+            return state.tasks
         } else {
             return []
         }
+    },
+    userRecommendedTasks: (state, getters) => {
+        let tasks = []
+        for (let i in getters.userTasks) {
+            if (!getters.userTasks[i].expired) {
+                const task = getters.userTasks[i]
+                /* global moment:true */
+                if (task.category === 1) { // Homework
+                    task.task_name = 'Do ' + task.task_name + ' of ' + task.classroom.class_short
+                    const today = moment.utc().startOf('day')
+                    const due_date = moment.utc(task.end)
+                    const from_now_in_days = Math.round(moment.duration(due_date - today).asDays())
+                    if (from_now_in_days >= 0 && from_now_in_days <= 7) {
+                        tasks.push(task)
+                    }
+                } else if (task.category === 2) { // Quiz
+                    task.task_name = 'Prepare ' + task.task_name + ' of ' + task.classroom.class_short
+                    const today = moment.utc().startOf('day')
+                    const due_date = moment.utc(task.end)
+                    const from_now_in_days = Math.round(moment.duration(due_date - today).asDays())
+                    if (from_now_in_days >= 0 && from_now_in_days <= 7) {
+                        tasks.push(task)
+                    }
+                } else if (task.category === 3) { // Exam
+                    task.task_name = 'Prepare ' + task.task_name + ' of ' + task.classroom.class_short
+                    const today = moment.utc().startOf('day')
+                    const due_date = moment.utc(task.end)
+                    const from_now_in_days = Math.round(moment.duration(due_date - today).asDays())
+                    if (from_now_in_days >= 0 && from_now_in_days <= 10) {
+                        tasks.push(task)
+                    }
+                }
+
+            }
+        }
+        return tasks
     },
     userFriends: state => {
         return state.friends
@@ -101,6 +139,7 @@ const actions = {
                 console.log(response)
                 commit(types.LOGIN_SUCCESS, response)
                 dispatch('getSelf')
+                dispatch('getTasks')
                 dispatch('getFriends')
                 dispatch('setSockets')
                 router.push('/')
@@ -118,6 +157,8 @@ const actions = {
                     router.push('/')
                 }
                 dispatch('getSelf')
+                dispatch('getTasks')
+
                 dispatch('getFriends')
                 dispatch('setSockets')
             })
@@ -133,6 +174,8 @@ const actions = {
             .then((response) => {
                 commit(types.REFRESH_SUCCESS, response)
                 dispatch('getSelf')
+                dispatch('getTasks')
+
                 dispatch('getFriends')
                 dispatch('setSockets')
             })
@@ -200,15 +243,15 @@ const actions = {
             })
     },
 
-    // getTasks({ commit }) {
-    //     userApi.getTasks()
-    //         .then((response) => {
-    //             commit(types.LOAD_TASKS, response)
-    //         })
-    //         .catch((error) => {
-    //             commit(types.LOG_ERROR, error)
-    //         })
-    // },
+    getTasks({ commit }) {
+        userApi.getTasks()
+            .then((response) => {
+                commit(types.LOAD_TASKS, response)
+            })
+            .catch((error) => {
+                commit(types.LOG_ERROR, error)
+            })
+    },
     getUser({ commit }, pk) {
         userApi.getUser(pk)
             .then((response) => {
@@ -223,6 +266,7 @@ const actions = {
             .then((response) => {
                 commit(types.ADD_CLASSROOM)
                 dispatch('getSelf')
+                dispatch('getTasks')
                 dispatch('setSockets')
             })
             .catch((error) => {
@@ -234,6 +278,7 @@ const actions = {
             .then((response) => {
                 commit(types.REMOVE_CLASSROOM)
                 dispatch('getSelf')
+                dispatch('getTasks')
                 dispatch('setSockets')
             })
             .catch((error) => {
@@ -310,7 +355,7 @@ const actions = {
                 return Promise.resolve()
             })
             .catch((error) => {
-                console.log(error)
+                // console.log(error)
                 return Promise.reject(error)
             })
     },

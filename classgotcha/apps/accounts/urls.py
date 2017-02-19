@@ -70,6 +70,16 @@ account_freetime = views.AccountViewSet.as_view({
 	'get': 'freetime'
 })
 
+professor_detail = views.ProfessorViewSet.as_view({
+	'get': 'retrieve',
+	'put': 'update'
+})
+
+professor_comments = views.ProfessorViewSet.as_view({
+	'get': 'comments',
+	'post': 'comments'
+})
+
 urlpatterns = [
 	url(r'^friends/(?P<pk>[0-9]+)/$', account_add_friends, name='add-friend'),
 	url(r'^moments/(?P<pk>[0-9]+)/$', account_add_moments, name='add-moment'),
@@ -87,11 +97,15 @@ urlpatterns = [
 	url(r'^login-refresh/$', refresh_jwt_token),
 	url(r'^login-verify/$', verify_jwt_token),
 	url(r'^register/$', views.account_register, name='register'),
-	url(r'^reset/$', account_reset_password, name='reset_pass'),
+	url(r'^reset/$', account_reset_password, name='reset-pass'),
 	url(r'^notes/$', account_notes, name='user-notes'),
 	url(r'^moments/$', account_moments, name='user-moments'),
-	url(r'^tasks/$', account_tasks, name='user_tasks'),
+	url(r'^tasks/$', account_tasks, name='user-tasks'),
 	url(r'^freetime/$', account_freetime, name='freetime'),
 
 	url(r'^me/$', account_me, name='me'),
+
+	url(r'^professor/(?P<pk>[0-9]+)/$', professor_detail, name='professor-detail'),
+	url(r'^professor/(?P<pk>[0-9]+)/comment/$', professor_comments, name='professor-comments'),
+
 ]

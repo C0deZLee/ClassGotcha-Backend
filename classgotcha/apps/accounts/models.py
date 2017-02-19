@@ -1,7 +1,8 @@
-from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseUserManager
 from django.db import models
+from django.db.models import Avg
 
 from ..tags.models import Tag
+from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseUserManager
 
 
 class Avatar(models.Model):
@@ -42,6 +43,7 @@ class AccountManager(BaseUserManager):
 class Professor(models.Model):
 	class Meta:
 		unique_together = (('first_name', 'last_name', 'major'),)
+
 	# Basic
 	first_name = models.CharField(max_length=40)
 	last_name = models.CharField(max_length=40)
@@ -54,6 +56,12 @@ class Professor(models.Model):
 	# Timestamp
 	created = models.DateTimeField(auto_now_add=True)
 
+	# Relationship
+	# 1) comments
+	# 2) rates
+	# 3) classrooms
+	# 4) office_hours
+
 	def __unicode__(self):
 		return '%s %s' % (self.first_name, self.last_name)
 
@@ -64,6 +72,10 @@ class Professor(models.Model):
 	@property
 	def full_name(self):
 		return self.first_name + ' ' + self.last_name
+
+	@property
+	def avg_rate(self):
+		return self.rates.all().aggregate(Avg('num'))
 
 
 class Account(AbstractBaseUser, PermissionsMixin):

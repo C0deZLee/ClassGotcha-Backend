@@ -7,7 +7,7 @@ from ..classrooms.models import Classroom
 
 
 class Task(models.Model):
-	CLASS, HOMEWORK, QUIZ, EXAM, TODO, GROUP_MEETING, OTHER = 0, 1, 2, 3, 4, 5, 6
+	CLASS, HOMEWORK, QUIZ, EXAM, TODO, GROUP_MEETING, OTHER, OFFICE_HOUR = 0, 1, 2, 3, 4, 5, 6, 7
 	EVENT, TASK = 0, 1
 
 	CATEGORY_CHOICES = (
@@ -17,7 +17,8 @@ class Task(models.Model):
 		(EXAM, 'Exam'),  # start, end
 		(TODO, 'Todo'),  # due_date, repeat
 		(GROUP_MEETING, 'Group Meeting'),  # start, end, repeat
-		(OTHER, 'Other')
+		(OTHER, 'Other'),
+		(OFFICE_HOUR, 'Office Hour')
 	)
 
 	TYPE_CHOICES = (
@@ -29,13 +30,13 @@ class Task(models.Model):
 	task_name = models.CharField(max_length=50)
 	description = models.CharField(max_length=500, null=True, blank=True)  # task_description
 	category = models.IntegerField(default=TASK, choices=CATEGORY_CHOICES)
+	# = models.ForeignKey('tags.Tag')
 	type = models.IntegerField(default=TASK, choices=TYPE_CHOICES)
 	location = models.CharField(max_length=50, null=True, blank=True)
 
 	# Time
 	start = models.DateTimeField(blank=True, null=True)
 	end = models.DateTimeField(blank=True, null=True)  # the end equals to due
-	# due = models.DateTimeField(blank=True, null=True)
 	repeat = models.CharField(max_length=20, blank=True)  # MoTuWeThFi
 	repeat_start = models.DateField(null=True)
 	repeat_end = models.DateField(null=True)
@@ -53,7 +54,7 @@ class Task(models.Model):
 	def expired(self):
 		# TODO: FIXME! delete this in production env!!!!!!
 		if self.repeat:
-			return True
+			return False
 		if self.repeat_end:
 			return timezone.now() - timedelta(hours=5) > self.repeat_end
 		if self.end:

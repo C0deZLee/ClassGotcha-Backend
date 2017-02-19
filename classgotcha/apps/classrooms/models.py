@@ -50,18 +50,19 @@ class Classroom(models.Model):
 	created = models.DateField(auto_now_add=True)
 	updated = models.DateTimeField(auto_now=True)
 	# Relations
-	class_time = models.ForeignKey('tasks.Task', related_name='classtime', blank=True)
-	professors = models.ManyToManyField(Professor, related_name='teaches', blank=True)
+	class_time = models.ForeignKey('tasks.Task', related_name='classtime', null=True)
+	professors = models.ManyToManyField(Professor, related_name='classrooms', null=True)
 	major = models.ForeignKey(Major)
-	students = models.ManyToManyField(Account, related_name='classrooms', blank=True)
+	students = models.ManyToManyField(Account, related_name='classrooms', null=True)
 	semester = models.ForeignKey(Semester)
-	# Use tag to implement folders
-	folders = models.ManyToManyField(Tag)
+	folders = models.ManyToManyField(Tag) 	# Use tag to implement folders
+
 	# Relatives
 	# 1) notes
 	# 2) tasks
 	# 3) groups
 	# 4) chatroom
+	# 5) office_hours
 
 	def __unicode__(self):
 		return self.major.major_short + ' ' + self.class_number
@@ -81,3 +82,10 @@ class Classroom(models.Model):
 	@property
 	def get_class_time(self):
 		return self.class_time.start.strftime("%H:%M:%S") + self.class_time.end.strftime(" - %H:%M:%S")
+
+
+class OfficeHour(models.Model):
+	professor = models.ForeignKey('accounts.Professor', related_name='office_hours')
+	classroom = models.ForeignKey(Classroom, related_name='office_hours')
+	time = models.ForeignKey('tasks.Task', related_name='office_hour')
+
