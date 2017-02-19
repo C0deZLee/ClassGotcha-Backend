@@ -23,7 +23,7 @@ with open(os.path.join(PROJECT_APP_ROOT, 'settings/secret.txt')) as f:
 
 DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['127.0.0.1','localhost','54.91.146.112']
 
 SITE_ID = 1
 
@@ -161,3 +161,29 @@ AWS_ACCESS_KEY_ID = 'AKIAIC72HESTHUCZQHLQ'
 AWS_SECRET_ACCESS_KEY = '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'
 # Amazon Web Services storage bucket name, as a string.
 AWS_STORAGE_BUCKET_NAME = 'classgotcha-us-standard-20161024'
+
+# ----- Cross Origin Header -----
+# CORS_ORIGIN_ALLOW_ALL = True
+CORS_ORIGIN_WHITELIST = (
+    'google.com',
+    'localhost:4000',
+    'localhost:4004',
+    '127.0.0.1:9000',
+    'classgotcha-frontend-us-standard-20170218.s3-website-us-east-1.amazonaws.com',
+    'www.classgotcha.com',
+    'classgotcha.com'
+)
+CORS_ALLOW_HEADERS = (
+    'accept',
+    'accept-encoding',
+    'authorization',
+    'content-type',
+    'dnt',
+    'origin',
+    'user-agent',
+    'x-csrftoken',
+    'x-requested-with',
+    'cache-control',
+    'HTTP_X_XSRF_TOKEN',
+
+)

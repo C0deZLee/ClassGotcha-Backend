@@ -1,9 +1,9 @@
 export const API_ROOT = (process.env.NODE_ENV === 'production') ?
-    'http://api.classgotcha.com/' :
+    'http://54.91.146.112/' :
     'http://localhost:8000/'
 
 export const WS_ROOT = (process.env.NODE_ENV === 'production') ?
-    'ws://ws.classgotcha.com/' :
+    'ws://54.91.146.112/' :
     'ws://localhost:8000/'
 
 export const COOKIE_DOMAIN = (process.env.NODE_ENV === 'production') ?

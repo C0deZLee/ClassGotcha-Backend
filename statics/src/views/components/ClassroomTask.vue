@@ -88,6 +88,7 @@
                         <span>Repeat Every</span>
                         <br>
                         <div class="btn-group">
+                            <!--TODO: FIXME-->
                            <button class="btn btn-white btn-sm" :class="task_repeat.includes('Sa')? 'active':''" @click="addTaskRepeat('Sa')">Sa</button>
                            <button class="btn btn-white btn-sm" :class="task_repeat.includes('Fr')? 'active':''" @click="addTaskRepeat('Fr')">Fr</button>
                            <button class="btn btn-white btn-sm" :class="task_repeat.includes('Th')? 'active':''" @click="addTaskRepeat('Th')">Th</button>
@@ -159,14 +160,14 @@
                      <div class="col-md-12 m-b">
                         <span>Repeat Every</span>
                         <br>
-                        <div class="btn-group">
-                           <!--<button class="btn btn-white btn-sm" :class="chosen_task.repeat.includes('Sa')? 'active':''" @click="addTaskRepeat('Sa')">Sa</button>
+                        <div class="btn-group" >
+                           <button class="btn btn-white btn-sm" :class="chosen_task.repeat.includes('Sa')? 'active':''" @click="addTaskRepeat('Sa')">Sa</button>
                            <button class="btn btn-white btn-sm" :class="chosen_task.repeat.includes('Fr')? 'active':''" @click="addTaskRepeat('Fr')">Fr</button>
                            <button class="btn btn-white btn-sm" :class="chosen_task.repeat.includes('Th')? 'active':''" @click="addTaskRepeat('Th')">Th</button>
                            <button class="btn btn-white btn-sm" :class="chosen_task.repeat.includes('We')? 'active':''" @click="addTaskRepeat('We')">We</button>    
                            <button class="btn btn-white btn-sm" :class="chosen_task.repeat.includes('Tu')? 'active':''" @click="addTaskRepeat('Tu')">Tu</button>
                            <button class="btn btn-white btn-sm" :class="chosen_task.repeat.includes('Mo')? 'active':''" @click="addTaskRepeat('Mo')">Mo</button>
-                           <button class="btn btn-white btn-sm" :class="chosen_task.repeat.includes('Su')? 'active':''" @click="addTaskRepeat('Su')">Su</button>                                    -->
+                           <button class="btn btn-white btn-sm" :class="chosen_task.repeat.includes('Su')? 'active':''" @click="addTaskRepeat('Su')">Su</button>                                    
                         </div>
                      </div>
                      <div class="col-md-12">
@@ -210,7 +211,9 @@
                 task_end: null,
                 task_errMsg: '',
 
-                chosen_task: {}
+                chosen_task: {
+                    repeat: ''
+                }
             }
         },
         methods: {
@@ -238,7 +241,7 @@
                             end: end,
                             location: this.task_location,
                             category: parseInt(this.task_category),
-                            classroom: parseInt(this.$route.params.classroom_id),
+                            classroom_id: parseInt(this.$route.params.classroom_id),
                         },
                         pk: this.$route.params.classroom_id
                     }

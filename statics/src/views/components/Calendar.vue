@@ -3,29 +3,52 @@
       <div class="row  border-bottom white-bg dashboard-header">
          <div class="col-sm-3">
             <h2>Recommended Tasks</h2>
-            <div class="ibox-content">
-               <div id="external-events" v-show="!show_event_detail">
+            <div class="ibox-content" v-show="!show_event_detail">
+               <div id="external-events">
                   <p>Drag a event and drop into callendar.</p>
-                  <div v-for="event in user_recommened_tasks" class="external-event" :class="eventTaskBg(event)">{{event.task_name}} </div>
+                  <div v-for="recommened_task in user_recommened_tasks" class="external-event" :class="eventTaskBg(recommened_task)">{{recommened_task.task_name}} </div>
                </div>
             </div>
             <br>
-            <button class="btn form-control" v-show="show_event_detail" @click="show_event_detail=false">Go back to recommended tasks</button>
-            <div class="modal-body">
-                <div v-show="show_event_detail">
+            <button class="btn form-control m-b" v-show="show_event_detail ||create_new_event" @click="show_event_detail=false; create_new_event=false;">Go back to recommended tasks</button>
+            <div v-show="show_event_detail">
                <div class="form-group">
                   <label>Event Name</label>
-                  <input type="text" class="form-control" placeholder="Title" v-model="event.task_name" :disabled="event.category!==7">
+                  <input type="text" class="form-control" placeholder="Title" v-model="event.task_name" disabled>
                </div>
-               <div class="form-group">
-                  <div class="row">
+               <div class="form-group" v-show="event.start&&event.end">
+                  <div class="row" v-if="event.repeat">
                      <div class="col-md-6">
                         <label>Start</label>
-                        <input  type="text" class="form-control" v-model="event.formatted_start_time" placeholder="Start" :disabled="event.category!==7">
+                        <input type="text" class="form-control" :value="event.formatted_start_time" placeholder="Start" disabled>
                      </div>
                      <div class="col-md-6">
                         <label>End</label>
-                        <input type="text" class="form-control" v-model="event.formatted_end_time" placeholder="End" :disabled="event.category!==7">
+                        <input type="text" class="form-control" :value="event.formatted_end_time" placeholder="End" disabled>
+                     </div>
+                  </div>
+                  <div class="row" v-else>
+                    <div class="col-md-12">
+                        <label>Start</label>
+                        <input type="text" class="form-control m-b" :value="formatTime(event.formatted_start_datetime)" placeholder="Start" disabled>
+                     </div>
+                     <div class="col-md-12">
+                        <label>End</label>
+                        <input type="text" class="form-control" :value="formatTime(event.formatted_end_datetime)" placeholder="End" disabled>
+                     </div>
+                  </div>
+               </div>
+               <div class="form-group" v-show="(!event.start)&&event.end">
+                  <div class="row" v-if="event.repeat">
+                     <div class="col-md-12">
+                        <label>Due</label>
+                        <input type="text" class="form-control" :value="event.formatted_end_time" placeholder="End" disabled>
+                     </div>
+                  </div>
+                  <div class="row" v-else>
+                     <div class="col-md-12">
+                        <label>Due</label>
+                        <input type="text" class="form-control" :value="formatTime(event.formatted_end_datetime)" placeholder="End" disabled>
                      </div>
                   </div>
                </div>
@@ -35,21 +58,82 @@
                </div>
                <div class="form-group"  v-if="event.classroom" >
                   <label>Classroom</label>
-                  <input type="text" class="form-control" placeholder="Classroom" v-model="event.classroom.class_short" :disabled="event.category!==7">
+                  <input type="text" class="form-control" placeholder="Classroom" :value="event.classroom.class_short" :disabled="event.category!==7">
                </div>
                <div class="form-group" v-if="event.group">
                   <label>Group</label>
-                  <input type="text" class="form-control" placeholder="Group" v-model="event.group"   :disabled="event.category!==7">
+                  <input type="text" class="form-control" placeholder="Group" :value="event.group"   :disabled="event.category!==7">
                </div>
-               <div class="form-group">
+               <div class="form-group" v-show="event.location">
                   <label>Location</label>
-                  <input type="text" class="form-control" placeholder="Location" v-model="event.location"   :disabled="event.category!==7">
+                  <input type="text" class="form-control" placeholder="Location" :value="event.location"   :disabled="event.category!==7">
                </div>
-               <div class="form-group">
-                  <label>Repeat</label>
-                  <input type="text" class="form-control" placeholder="Repeat" v-model="event.repeat"   :disabled="event.category!==7">
+               <div class="form-group" v-if="event.repeat">
+                  <label>Repeat</label><br>
+                  <div class="btn-group" >
+                     <button class="btn btn-white btn-sm" :class="event.repeat.includes('Su')? 'active':''" @click="addTaskRepeat('Su')">Su</button>    
+                     <button class="btn btn-white btn-sm" :class="event.repeat.includes('Mo')? 'active':''" @click="addTaskRepeat('Mo')">Mo</button>
+                     <button class="btn btn-white btn-sm" :class="event.repeat.includes('Tu')? 'active':''" @click="addTaskRepeat('Tu')">Tu</button>
+                     <button class="btn btn-white btn-sm" :class="event.repeat.includes('We')? 'active':''" @click="addTaskRepeat('We')">We</button>    
+                     <button class="btn btn-white btn-sm" :class="event.repeat.includes('Th')? 'active':''" @click="addTaskRepeat('Th')">Th</button>
+                     <button class="btn btn-white btn-sm" :class="event.repeat.includes('Fr')? 'active':''" @click="addTaskRepeat('Fr')">Fr</button>                      
+                     <button class="btn btn-white btn-sm" :class="event.repeat.includes('Sa')? 'active':''" @click="addTaskRepeat('Sa')">Sa</button>
+                  </div>
                </div>
             </div>
+            <div v-show="create_new_event">
+               <div class="form-group">
+                  <label>Event Name</label>
+                  <input type="text" class="form-control" placeholder="Title" v-model="event.task_name">
+               </div>
+               <div class="form-group">
+                  <div class="row">
+                     <div class="col-md-6">
+                        <label>Start date</label>
+                        <input type="text" class="form-control" v-model="new_event.start_date" placeholder="Start">
+                     </div>
+                     <div class="col-md-6">
+                        <label>Start time</label>
+                        <input type="text" class="form-control" v-model="new_event.start_time" placeholder="Start">
+                     </div>
+                     <div class="col-md-6">
+                        <label>End date</label>
+                        <input type="text" class="form-control" v-model="new_event.end_date" placeholder="End">
+                     </div>
+                    <div class="col-md-6">
+                        <label>End time</label>
+                        <input type="text" class="form-control" v-model="new_event.end_time" placeholder="End">
+                     </div>
+                  </div>
+               </div>
+               <div class="form-group">
+                  <label>Category</label>
+                  <input type="text" class="form-control" placeholder="Category" :value="categoryName(event.category)">
+               </div>
+               <div class="form-group"  v-if="event.classroom" >
+                  <label>Classroom</label>
+                  <input type="text" class="form-control" placeholder="Classroom" :value="event.classroom.class_short">
+               </div>
+               <div class="form-group" v-if="event.group">
+                  <label>Group</label>
+                  <input type="text" class="form-control" placeholder="Group" :value="event.group">
+               </div>
+               <div class="form-group" v-show="event.location">
+                  <label>Location</label>
+                  <input type="text" class="form-control" placeholder="Location" :value="event.location">
+               </div>
+               <div class="form-group" v-if="event.repeat">
+                  <label>Repeat</label><br>
+                  <div class="btn-group" >
+                     <button class="btn btn-white btn-sm" :class="event.repeat.includes('Sa')? 'active':''" @click="addTaskRepeat('Sa')">Sa</button>
+                     <button class="btn btn-white btn-sm" :class="event.repeat.includes('Fr')? 'active':''" @click="addTaskRepeat('Fr')">Fr</button>
+                     <button class="btn btn-white btn-sm" :class="event.repeat.includes('Th')? 'active':''" @click="addTaskRepeat('Th')">Th</button>
+                     <button class="btn btn-white btn-sm" :class="event.repeat.includes('We')? 'active':''" @click="addTaskRepeat('We')">We</button>    
+                     <button class="btn btn-white btn-sm" :class="event.repeat.includes('Tu')? 'active':''" @click="addTaskRepeat('Tu')">Tu</button>
+                     <button class="btn btn-white btn-sm" :class="event.repeat.includes('Mo')? 'active':''" @click="addTaskRepeat('Mo')">Mo</button>
+                     <button class="btn btn-white btn-sm" :class="event.repeat.includes('Su')? 'active':''" @click="addTaskRepeat('Su')">Su</button>    
+                  </div>
+               </div>
             </div>
          </div>
          <div class="col-sm-9">
@@ -84,7 +168,6 @@
                     // formatted_start_time: '',
                     // formatted_start_date: '',
                     // formatted_end_date: '',
-                    // end: '',
                     // category: 7, // Other
                     // formatted_end_time: '',
                     // description: '',
@@ -94,7 +177,21 @@
                     // start: '',
                     // task_name: '',
                 },
-                created_event: {},
+                new_event: {
+                    task_name: '',
+                    type: 0, // Event
+                    start_time: '',
+                    end_time: '',
+                    start_date: '',
+                    end_date: '',
+                    category: 7, // Other
+                    description: '',
+                    id: '',
+                    location: '',
+                    repeat_list: [],
+                    start: '',
+                },
+                // created_event: {},
                 // for fullcalendar
                 events: [],
                 event_sources: [],
@@ -116,29 +213,12 @@
                 },
                 sync: false,
                 // UI triggers
-                show_event_detail: false
+                show_event_detail: false,
+                create_new_event: false
+
             }
         },
         methods: {
-            categoryName(id) {
-                if (this.category_choices[id])
-                    return this.category_choices[id].name
-                else return null
-            },
-            eventTaskBg(event) {
-                // Homewrok
-                if (event.category === 1) {
-                    return 'bg-warning'
-                }
-                // Quiz
-                else if (event.category === 2) {
-                    return 'bg-danger'
-                }
-                // Exam
-                else if (event.category === 3) {
-                    return 'bg-danger'
-                }
-            },
             createEvents() {
                 let event_sources_list = [
                     // {
@@ -146,14 +226,16 @@
                     // color: ''
                     // }
                 ]
-                let event_list0 = []
-                let event_list1 = []
-                let event_list2 = []
-                let event_list3 = []
+                let event_list0 = [] // classes
+                let event_list1 = [] // homework
+                let event_list2 = [] // quiz
+                let event_list3 = [] // exam
+                let event_list7 = [] // other
                 const event_color0 = '#1ab394'
                 const event_color1 = '#f8ac59'
                 const event_color2 = '#ed5565'
                 const event_color3 = '#ed5565'
+                const event_color7 = '#3a87ad'
                 for (let i in this.user_tasks) {
                     const task = this.user_tasks[i]
                     /* global moment:true */
@@ -174,13 +256,21 @@
                     }
                     // homework
                     else if (task.category === 1) {
-                        event_list1.push({
+                        let homework = {
                             id: task.id,
                             title: task.task_name,
                             editable: false,
-                            start: task.end,
-                            end: moment.utc(task.end).add(0.5, 'hours').format(),
-                        })
+                            start: moment.utc(task.end).add(-0.5, 'hours').format(),
+                            end: task.end,
+                        }
+                        if (task.repeat_list.length) {
+                            homework.dow = task.repeat_list
+                            homework.start = task.formatted_start_time // moment.utc(task.formatted_start_time).add(-0.5, 'hours').format()
+                            homework.end = task.formatted_start_time
+                            console.log(homework)
+                        }
+                        event_list1.push(homework)
+
                     }
                     // quiz
                     else if (task.category === 2) {
@@ -202,12 +292,18 @@
                             end: (task.start ? task.end : moment.utc(task.end).add(0.5, 'hours').format()),
 
                         })
+                    } else if (task.category === 7) {
+                        event_list7.push({
+                            id: task.id
+                        })
                     }
                 }
                 event_sources_list.push({ events: event_list0, color: event_color0 })
                 event_sources_list.push({ events: event_list1, color: event_color1 })
                 event_sources_list.push({ events: event_list2, color: event_color2 })
                 event_sources_list.push({ events: event_list3, color: event_color3 })
+                event_sources_list.push({ events: event_list7, color: event_color7 })
+
                 this.event_sources = event_sources_list
             },
             createExternalEvents() {
@@ -222,11 +318,44 @@
                     $(this).draggable({
                         zIndex: 10,
                         revert: true, // will cause the event to go back to its
-                        revertDuration: 0 //  original position after the drag
+                        revertDuration: 1 //  original position after the drag
                     })
 
                 })
-            }
+            },
+            // data formatter
+            formatTime(time) {
+                /* global moment: true */
+                return moment.utc(time).format('l LT')
+            },
+            // look up method
+            categoryName(id) {
+                if (this.category_choices[id])
+                    return this.category_choices[id].name
+                else return null
+            },
+            // data control
+            addTaskRepeat(day) {
+                if (this.event.repeat.includes(day))
+                    this.event.repea = this.event.repea.replace(day, '')
+                else
+                    this.event.repea = this.event.repea + day
+            },
+            // UI control
+            eventTaskBg(event) {
+                // Homewrok
+                if (event.category === 1) {
+                    return 'bg-warning'
+                }
+                // Quiz
+                else if (event.category === 2) {
+                    return 'bg-danger'
+                }
+                // Exam
+                else if (event.category === 3) {
+                    return 'bg-danger'
+                }
+            },
         },
         computed: {
             user() {
@@ -246,9 +375,7 @@
             this.createEvents()
         },
         mounted() {
-            /*
-            global $:true
-            */
+            /* global $:true */
             const cal = $('#calendar')
             const self = this
 
@@ -290,16 +417,13 @@
                 eventResize(event) {
                     $(self.$el).trigger('event-resize', event)
                     self.event = event
-                    // $('#event-detail').modal('show')
                     self.show_event_detail = true
-
                 },
                 eventReceive(event) {
                     $(this).remove()
-                    // $('#event-detail').modal('show')
+                    console.log(event)
                     self.event = event
                     self.show_event_detail = true
-
                 },
                 select(start, end, jsEvent) {
                     $(self.$el).trigger('event-created', {
