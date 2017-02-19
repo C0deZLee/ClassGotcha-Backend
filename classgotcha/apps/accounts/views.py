@@ -41,31 +41,30 @@ def account_register(request):
 @permission_classes((IsAuthenticated,))
 @parser_classes((MultiPartParser, FormParser,))
 def account_avatar(request):
-	import os
-	from resizeimage import resizeimage
-	from PIL import Image
-
 	if request.method == 'POST':
+		from StringIO import StringIO
+		from django.core.files.uploadedfile import InMemoryUploadedFile
+		from resizeimage import resizeimage
+		from PIL import Image
 		upload = request.FILES.get('file', False)
 		if not upload:
 			return Response(status=status.HTTP_400_BAD_REQUEST)
-		filename, file_extension = os.path.splitext(upload.name)
+		filename, file_extension = upload.name.split('.')
+		with Image.open(upload) as image:
+			image2x = resizeimage.resize_cover(image, [128, 128])
+			image1x = resizeimage.resize_cover(image, [48, 48])
+			img2x_name = str(request.user.id) + '.2x' + file_extension
+			img1x_name = str(request.user.id) + '.1x' + file_extension
+			img2x_io = StringIO()
+			img1x_io = StringIO()
+			image2x.save(img2x_io, image.format)
+			image1x.save(img1x_io, image.format)
+			image2x_file = InMemoryUploadedFile(img2x_io, None, img2x_name, 'image/' + image.format,
+			                                    img2x_io.len, None)
+			image1x_file = InMemoryUploadedFile(img1x_io, None, img1x_name, 'image/' + image.format,
+			                                    img1x_io.len, None)
 
-		with open(filename, 'wb+') as avatar:
-			for chunk in upload.chunks():
-				avatar.write(chunk)
-			with Image.open(avatar) as image:
-				image2x = resizeimage.resize_cover(image, [128, 128])
-				image1x = resizeimage.resize_cover(image, [48, 48])
-				img2x_name = str(request.user.id) + '.2x' + file_extension
-				img1x_name = str(request.user.id) + '.1x' + file_extension
-				image2x.save(img2x_name, image.format)
-				image1x.save(img1x_name, image.format)
-
-		img2x = open(img2x_name)
-		img1x = open(img1x_name)
-
-		new_avatar = Avatar.objects.create(avatar2x=File(file=img2x), avatar1x=File(file=img1x))
+		new_avatar = Avatar.objects.create(avatar2x=image2x_file, avatar1x=image1x_file)
 		request.user.avatar = new_avatar
 		request.user.save()
 		return Response({'data': 'success'}, status=status.HTTP_200_OK)

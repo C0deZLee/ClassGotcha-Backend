@@ -29,9 +29,6 @@ def read_file(request, file_name=None):
 	if file_name:
 		name = file_name
 	name = name + '_' + uuid.uuid4().hex + extension
-	# with open(name, 'wb+') as temp_file:
-	# 	for chunk in upload.chunks():
-	# 		temp_file.write(chunk)
 	new_file = File(file=uploaded_file, name=name)  # there you go
 
 	return new_file
