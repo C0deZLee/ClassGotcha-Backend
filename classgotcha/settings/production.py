@@ -168,7 +168,8 @@ CORS_ORIGIN_WHITELIST = (
     'google.com',
     'localhost:4000',
     'localhost:4004',
-    '127.0.0.1:9000'
+    '127.0.0.1:9000',
+    'http://classgotcha-frontend-us-standard-20170218.s3-website-us-east-1.amazonaws.com/'
 )
 CORS_ALLOW_HEADERS = (
     'accept',
@@ -182,5 +183,5 @@ CORS_ALLOW_HEADERS = (
     'x-requested-with',
     'cache-control',
     'HTTP_X_XSRF_TOKEN',
-    'http://classgotcha-frontend-us-standard-20170218.s3-website-us-east-1.amazonaws.com/'
+
 )
