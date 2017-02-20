@@ -23,7 +23,7 @@ with open(os.path.join(PROJECT_APP_ROOT, 'settings/secret.txt')) as f:
 
 DEBUG = False
 
-ALLOWED_HOSTS = ['127.0.0.1','localhost','54.91.146.112']
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '54.91.146.112']
 
 SITE_ID = 1
 
@@ -86,7 +86,6 @@ CHANNEL_LAYERS = {
 }
 
 # ------ Templates ------
-
 TEMPLATES = [
 	{
 		'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -108,6 +107,13 @@ TEMPLATES = [
 	},
 ]
 
+# ------ Account customization ------
+ACCOUNT_USER_DISPLAY = lambda user: user.email
+ACCOUNT_EMAIL_UNIQUE = True
+ACCOUNT_EMAIL_CONFIRMATION_REQUIRED = True
+
+TEST_RUNNER = "lib.tests.MyTestDiscoverRunner"
+
 # ------ Database ------
 # https://docs.djangoproject.com/en/1.10/ref/settings/#databases
 
@@ -115,29 +121,32 @@ DATABASES = {
 
 }
 
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
 
 # ------ Password validation ------
 # https://docs.djangoproject.com/en/1.10/ref/settings/#auth-password-validators
 
 AUTH_PASSWORD_VALIDATORS = [
-	{
-		'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
-	},
-	{
-		'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
-	},
-	{
-		'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
-	},
-	{
-		'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
-	},
-
+	{'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator', },
+	{'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator', },
+	{'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator', },
+	{'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator', },
 ]
 
 AUTHENTICATION_BACKENDS = [
 	'django.contrib.auth.backends.ModelBackend',
 ]
+
+# ------ Rest framework ------
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated',
+    ],
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
+    ]
+}
 
 # ------ Internationalization -------
 LANGUAGE_CODE = 'en-us'
@@ -163,27 +172,55 @@ AWS_SECRET_ACCESS_KEY = 'YAGuIhUpp6i/tyfJsEDpJ3Km7NQoEApOrzVEKjoe'
 AWS_STORAGE_BUCKET_NAME = 'classgotcha-us-standard-20161024'
 
 # ----- Cross Origin Header -----
-# CORS_ORIGIN_ALLOW_ALL = True
 CORS_ORIGIN_WHITELIST = (
-    'google.com',
-    'localhost:4000',
-    'localhost:4004',
-    '127.0.0.1:9000',
-    'classgotcha-frontend-us-standard-20170218.s3-website-us-east-1.amazonaws.com',
-    'www.classgotcha.com',
-    'classgotcha.com'
+	'http://www.classgotcha.com',
+	'http://classgotcha.com'
 )
 CORS_ALLOW_HEADERS = (
-    'accept',
-    'accept-encoding',
-    'authorization',
-    'content-type',
-    'dnt',
-    'origin',
-    'user-agent',
-    'x-csrftoken',
-    'x-requested-with',
-    'cache-control',
-    'HTTP_X_XSRF_TOKEN',
+	'accept',
+	'accept-encoding',
+	'authorization',
+	'content-type',
+	'dnt',
+	'origin',
+	'user-agent',
+	'x-csrftoken',
+	'x-requested-with',
+	'cache-control',
+	'HTTP_X_XSRF_TOKEN',
 
 )
+
+# -------- JWT AUTH --------
+JWT_AUTH = {
+    'JWT_ENCODE_HANDLER':
+        'rest_framework_jwt.utils.jwt_encode_handler',
+
+    'JWT_DECODE_HANDLER':
+        'rest_framework_jwt.utils.jwt_decode_handler',
+
+    'JWT_PAYLOAD_HANDLER':
+        'rest_framework_jwt.utils.jwt_payload_handler',
+
+    'JWT_PAYLOAD_GET_USER_ID_HANDLER':
+        'rest_framework_jwt.utils.jwt_get_user_id_from_payload_handler',
+
+    'JWT_RESPONSE_PAYLOAD_HANDLER':
+        'rest_framework_jwt.utils.jwt_response_payload_handler',
+
+    'JWT_SECRET_KEY': SECRET_KEY,
+    'JWT_PUBLIC_KEY': None,
+    'JWT_PRIVATE_KEY': None,
+    'JWT_ALGORITHM': 'HS256',
+    'JWT_VERIFY': True,
+    'JWT_VERIFY_EXPIRATION': True,
+
+    'JWT_LEEWAY': 0,
+    'JWT_EXPIRATION_DELTA': datetime.timedelta(days=1),
+    'JWT_AUDIENCE': None,
+    'JWT_ISSUER': None,
+    'JWT_ALLOW_REFRESH': True,
+    'JWT_REFRESH_EXPIRATION_DELTA': datetime.timedelta(days=7),
+
+    'JWT_AUTH_HEADER_PREFIX': 'JWT'
+}

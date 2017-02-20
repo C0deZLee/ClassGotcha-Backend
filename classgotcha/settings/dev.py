@@ -33,33 +33,8 @@ DATABASES = {
 
 INTERNAL_IPS = ['127.0.0.1']
 
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
-# ------ Account customization ------
-ACCOUNT_USER_DISPLAY = lambda user: user.email
-ACCOUNT_EMAIL_UNIQUE = True
-ACCOUNT_EMAIL_CONFIRMATION_REQUIRED = True
-
-TEST_RUNNER = "lib.tests.MyTestDiscoverRunner"
-
-# ------ Rest framework ------
-REST_FRAMEWORK = {
-    # Use Django's standard `django.contrib.auth` permissions,
-    # or allow read-only access for unauthenticated users.
-    'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.IsAuthenticated',
-    ],
-    'DEFAULT_AUTHENTICATION_CLASSES': [
-        # 'rest_framework.authentication.SessionAuthentication',
-        # 'rest_framework.authentication.BasicAuthentication',
-        'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
-    ]
-}
-
-# -------- Others --------
-SERVER_ADR = "http://127.0.0.1:8000"
-FRONT_ADR = "http://127.0.0.1:4000"
-
+# -------- JWT AUTH --------
 JWT_AUTH = {
     'JWT_ENCODE_HANDLER':
     'rest_framework_jwt.utils.jwt_encode_handler',
@@ -84,37 +59,20 @@ JWT_AUTH = {
     'JWT_VERIFY_EXPIRATION': True,
 
     'JWT_LEEWAY': 0,
-    'JWT_EXPIRATION_DELTA': datetime.timedelta(days=1),
+    'JWT_EXPIRATION_DELTA': datetime.timedelta(days=100),
     'JWT_AUDIENCE': None,
     'JWT_ISSUER': None,
     'JWT_ALLOW_REFRESH': True,
-    'JWT_REFRESH_EXPIRATION_DELTA': datetime.timedelta(days=7),
+    'JWT_REFRESH_EXPIRATION_DELTA': datetime.timedelta(days=100),
 
     'JWT_AUTH_HEADER_PREFIX': 'JWT',
 }
 
 # ----- Cross Origin Header -----
-# CORS_ORIGIN_ALLOW_ALL = True
 CORS_ORIGIN_WHITELIST = (
-    'google.com',
     'localhost:4000',
+    '127.0.0.1:4000',
     'localhost:4004',
-    '127.0.0.1:9000',
-    'classgotcha-frontend-us-standard-20170218.s3-website-us-east-1.amazonaws.com',
-    'www.classgotcha.com'
-    'classgotcha.com'
-)
-CORS_ALLOW_HEADERS = (
-    'accept',
-    'accept-encoding',
-    'authorization',
-    'content-type',
-    'dnt',
-    'origin',
-    'user-agent',
-    'x-csrftoken',
-    'x-requested-with',
-    'cache-control',
-    'HTTP_X_XSRF_TOKEN'
+    '127.0.0.1:4004'
 )
 
