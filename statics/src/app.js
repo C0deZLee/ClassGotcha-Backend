@@ -24,7 +24,6 @@ export const app = new Vue({
     data: {},
     beforeCreate() {
         const formData = { token: cookie.getCookie('token') }
-        console.log('tokenVerify', formData)
         this.$store.dispatch('tokenVerify', formData)
         /* global Array:true Object:true */
         // add includes function to array

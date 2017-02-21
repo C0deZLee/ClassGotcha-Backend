@@ -28,6 +28,7 @@
             RightSideBar,
         },
         mounted() {
+            document.getElementsByTagName("Body")[0].style['background-color'] = "#2f4050"
             /* global $:true */
             $(document).ready(function() {
                 const SmoothlyMenu = () => {
