@@ -89,13 +89,13 @@
                         <br>
                         <div class="btn-group">
                             <!--TODO: FIXME-->
-                           <button class="btn btn-white btn-sm" :class="task_repeat.includes('Sa')? 'active':''" @click="addTaskRepeat('Sa')">Sa</button>
-                           <button class="btn btn-white btn-sm" :class="task_repeat.includes('Fr')? 'active':''" @click="addTaskRepeat('Fr')">Fr</button>
-                           <button class="btn btn-white btn-sm" :class="task_repeat.includes('Th')? 'active':''" @click="addTaskRepeat('Th')">Th</button>
-                           <button class="btn btn-white btn-sm" :class="task_repeat.includes('We')? 'active':''" @click="addTaskRepeat('We')">We</button>    
-                           <button class="btn btn-white btn-sm" :class="task_repeat.includes('Tu')? 'active':''" @click="addTaskRepeat('Tu')">Tu</button>
-                           <button class="btn btn-white btn-sm" :class="task_repeat.includes('Mo')? 'active':''" @click="addTaskRepeat('Mo')">Mo</button>
                            <button class="btn btn-white btn-sm" :class="task_repeat.includes('Su')? 'active':''" @click="addTaskRepeat('Su')">Su</button>                                    
+                           <button class="btn btn-white btn-sm" :class="task_repeat.includes('Mo')? 'active':''" @click="addTaskRepeat('Mo')">Mo</button>
+                           <button class="btn btn-white btn-sm" :class="task_repeat.includes('Tu')? 'active':''" @click="addTaskRepeat('Tu')">Tu</button>
+                           <button class="btn btn-white btn-sm" :class="task_repeat.includes('We')? 'active':''" @click="addTaskRepeat('We')">We</button>   
+                           <button class="btn btn-white btn-sm" :class="task_repeat.includes('Th')? 'active':''" @click="addTaskRepeat('Th')">Th</button>
+                           <button class="btn btn-white btn-sm" :class="task_repeat.includes('Fr')? 'active':''" @click="addTaskRepeat('Fr')">Fr</button>
+                           <button class="btn btn-white btn-sm" :class="task_repeat.includes('Sa')? 'active':''" @click="addTaskRepeat('Sa')">Sa</button>
                         </div>
                      </div>
                      <div class="col-md-12">
@@ -138,16 +138,14 @@
                   <div class="row">
                      <div class="col-md-12">
                         <span>Title</span>
-                        <input class="form-control m-b" v-model="chosen_task.task_name" placeholder="eg. Homework 1"></input>
+                        <input class="form-control m-b" v-model="chosen_task.task_name"></input>
                      </div>
-                     <div class="col-md-12 m-t">
+                     <div class="col-md-12">
                         <div class="form-group">
                            <span>Time</span>
                            <div class="input-group date">
-                              <input type="text" v-show="task_subcategory==1" placeholder="Due time?" v-model="task_due_datetime" id="task-due-datetime" class="form-control" />
-                              <input type="text" v-show="task_subcategory==2" placeholder="Which day?" v-model="task_due_date" id="task-due-date" class="form-control" />
-                              <input type="text" v-show="task_subcategory==3" placeholder="Start at?" v-model="task_start" id="task-start" class="form-control" />
-                              <input type="text" v-show="task_subcategory==3" placeholder="End at?" v-model="task_end" id="task-end" class="form-control" />
+                              <input type="text" v-show="chosen_task.start" placeholder="Start at?" v-model="chosen_task.start" id="chosen-task-start" class="form-control" />
+                              <input type="text" v-show="chosen_task.end" placeholder="End at?" v-model="chosen_task.end" id="chosen-task-end" class="form-control" />
                               <span class="input-group-addon">
                               <span class="fa fa-calendar"></span>
                            </div>
@@ -160,19 +158,19 @@
                      <div class="col-md-12 m-b">
                         <span>Repeat Every</span>
                         <br>
-                        <div class="btn-group" >
-                           <button class="btn btn-white btn-sm" :class="chosen_task.repeat.includes('Sa')? 'active':''" @click="addTaskRepeat('Sa')">Sa</button>
-                           <button class="btn btn-white btn-sm" :class="chosen_task.repeat.includes('Fr')? 'active':''" @click="addTaskRepeat('Fr')">Fr</button>
-                           <button class="btn btn-white btn-sm" :class="chosen_task.repeat.includes('Th')? 'active':''" @click="addTaskRepeat('Th')">Th</button>
-                           <button class="btn btn-white btn-sm" :class="chosen_task.repeat.includes('We')? 'active':''" @click="addTaskRepeat('We')">We</button>    
-                           <button class="btn btn-white btn-sm" :class="chosen_task.repeat.includes('Tu')? 'active':''" @click="addTaskRepeat('Tu')">Tu</button>
-                           <button class="btn btn-white btn-sm" :class="chosen_task.repeat.includes('Mo')? 'active':''" @click="addTaskRepeat('Mo')">Mo</button>
-                           <button class="btn btn-white btn-sm" :class="chosen_task.repeat.includes('Su')? 'active':''" @click="addTaskRepeat('Su')">Su</button>                                    
+                        <div class="btn-group">
+                           <button class="btn btn-white btn-sm" :class="chosen_task.repeat.includes('Su')? 'active':''" @click="changeTaskRepeat('Su')">Su</button>                                    
+                           <button class="btn btn-white btn-sm" :class="chosen_task.repeat.includes('Mo')? 'active':''" @click="changeTaskRepeat('Mo')">Mo</button>
+                           <button class="btn btn-white btn-sm" :class="chosen_task.repeat.includes('Tu')? 'active':''" @click="changeTaskRepeat('Tu')">Tu</button>
+                           <button class="btn btn-white btn-sm" :class="chosen_task.repeat.includes('We')? 'active':''" @click="changeTaskRepeat('We')">We</button>    
+                           <button class="btn btn-white btn-sm" :class="chosen_task.repeat.includes('Th')? 'active':''" @click="changeTaskRepeat('Th')">Th</button>
+                           <button class="btn btn-white btn-sm" :class="chosen_task.repeat.includes('Fr')? 'active':''" @click="changeTaskRepeat('Fr')">Fr</button>                          
+                           <button class="btn btn-white btn-sm" :class="chosen_task.repeat.includes('Sa')? 'active':''" @click="changeTaskRepeat('Sa')">Sa</button>
                         </div>
                      </div>
                      <div class="col-md-12">
                         <span>Description</span>                         
-                        <textarea class="form-control m-b" v-model="task_dscr" placeholder="Describe it in more detail? (optional)"></textarea>
+                        <textarea class="form-control m-b" v-model="chosen_task.description" placeholder="Describe it in more detail? (optional)"></textarea>
                      </div>
                      <!--<p class="text-center"><a @click="show_more=!show_more"> <i class="fa fa-angle-double-down"></i> More Options </a></p>-->
                      <!--<div class="col-md-12 m-t" v-show="show_more">
@@ -183,7 +181,8 @@
                   <p v-show="task_errMsg">{{task_errMsg}}</p>
                </div>
                <div class="modal-footer">
-                  <a @click="postTask($event)" :disabled="invaild_task" class="btn btn-sm btn-primary">Add To Classroom</a>
+                  <a @click="remTask()" class="btn btn-sm btn-danger">Delete</a>                   
+                  <a @click="changeTask()" class="btn btn-sm btn-primary">Update</a>
                </div>
             </div>
          </div>
@@ -232,7 +231,6 @@
                         end = moment(this.task_end, 'MM/DD/YYYY hh:mm A').format('YYYY-MM-DDTHH:mm:ss')
                     }
 
-                    console.log(start, end)
                     const data = {
                         formData: {
                             task_name: this.task_title,
@@ -241,7 +239,7 @@
                             end: end,
                             location: this.task_location,
                             category: parseInt(this.task_category),
-                            classroom_id: parseInt(this.$route.params.classroom_id),
+                            classroom: parseInt(this.$route.params.classroom_id),
                         },
                         pk: this.$route.params.classroom_id
                     }
@@ -258,13 +256,28 @@
                     this.clearTime()
                 }
             },
-            changeTask() {},
-            remTask() {},
+            changeTask() {
+                const data = {
+                    pk: this.chosen_task.id,
+                    formData: this.chosen_task
+                }
+                this.$store.dispatch('updateTask', data)
+            },
+            remTask(task) {
+                this.$store.dispatch('deleteTask', this.chosen_task.id)
+
+            },
             addTaskRepeat(day) {
                 if (this.task_repeat.includes(day))
                     this.task_repeat = this.task_repeat.replace(day, '')
                 else
                     this.task_repeat = this.task_repeat + day
+            },
+            changeTaskRepeat(day) {
+                if (this.chosen_task.repeat.includes(day))
+                    this.chosen_task.repeat = this.chosen_task.repeat.replace(day, '')
+                else
+                    this.chosen_task.repeat = this.chosen_task.repeat + day
             },
             clearTask() {
                 this.clearTime()
@@ -343,6 +356,12 @@
             )
             $('#task-end').datetimepicker().on(
                 'dp.change', () => { this.task_end = $('#task-end').val() }
+            )
+            $('#chosen-task-start').datetimepicker().on(
+                'dp.change', () => { this.task_end = $('#chosen-task-start').val() }
+            )
+            $('#chosen-task-end').datetimepicker().on(
+                'dp.change', () => { this.task_end = $('#chosen-task-end').val() }
             )
         },
         watch: {

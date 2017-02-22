@@ -5,7 +5,8 @@
             <h2>Professor</h2>
             <ol class="breadcrumb">
                <li>
-                  <a href="/#/">Home</a>
+                           <router-link  :to="{name:'home'}">Home</router-link>
+
                </li>
                <li class="active">
                   <strong>Professor</strong>

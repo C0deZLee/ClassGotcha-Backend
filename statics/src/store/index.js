@@ -11,7 +11,7 @@ import user from './modules/user'
 import classroom from './modules/classroom'
 import chat from './modules/chat'
 import post from './modules/post'
-
+import task from './modules/task'
 
 Vue.use(Vuex)
 const mutations = {
@@ -48,7 +48,8 @@ const store = new Vuex.Store({
         user,
         classroom,
         chat,
-        post
+        post,
+        task
     }
 })
 export default store

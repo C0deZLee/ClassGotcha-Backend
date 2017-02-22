@@ -97,3 +97,7 @@ export const LOAD_POSTS = 'LOAD_POSTS'
 export const LOAD_POST = 'LOAD_POST'
 export const POST_POST_COMMENT = 'POST_POST_COMMENT'
 export const ADD_POST_VOTE = 'ADD_POST_VOTE'
+
+// ----- tasks -----
+export const UPDATE_TASK = 'UPDATE_TASK'
+export const DELETE_TASK = 'DELETE_TASK'

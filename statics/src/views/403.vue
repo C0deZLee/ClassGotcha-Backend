@@ -7,7 +7,7 @@
             Sorry, but you are not allowed to visit this page, try to login to continue.
             <form class="form-inline m-t" role="form">
                 <div class="form-group">
-                    <a href="/#/login" placeholder="login" class="btn btn-primary">Login</a>
+                    <router-link :to="{name:'login'}" placeholder="login" class="btn btn-primary">Login</router-link>
                 </div>
                 
             </form>
@@ -15,7 +15,8 @@
     </div>
 </template>
 <script>
-  export default {
-    name: 'Page403'
-  }
+    export default {
+        name: 'Page403'
+    }
+
 </script>
