@@ -119,6 +119,15 @@ TEST_RUNNER = "lib.tests.MyTestDiscoverRunner"
 
 DATABASES = {
 
+	'default':{
+		'ENGINE':'django.db.backends.mysql',
+		'NAME':'ClassGotcha',
+		'USER':'ClassGotcha',
+		'PASSWORD':'admin12345',
+		'HOST':'/var/lib/mysql/mysql.sock',
+
+	}
+
 }
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
