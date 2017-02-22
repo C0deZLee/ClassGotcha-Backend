@@ -181,9 +181,12 @@ AWS_SECRET_ACCESS_KEY = 'YAGuIhUpp6i/tyfJsEDpJ3Km7NQoEApOrzVEKjoe'
 AWS_STORAGE_BUCKET_NAME = 'classgotcha-us-standard-20161024'
 
 # ----- Cross Origin Header -----
+CORS_ORIGIN_ALLOW_ALL = True
+
 CORS_ORIGIN_WHITELIST = (
 	'http://www.classgotcha.com',
-	'http://classgotcha.com'
+	'http://classgotcha.com',
+        'https://classgotcha.com',
 )
 CORS_ALLOW_HEADERS = (
 	'accept',
@@ -197,6 +200,7 @@ CORS_ALLOW_HEADERS = (
 	'x-requested-with',
 	'cache-control',
 	'HTTP_X_XSRF_TOKEN',
+        'XMLHttpRequest',
 
 )
 
