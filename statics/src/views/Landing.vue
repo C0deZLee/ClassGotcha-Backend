@@ -1,6 +1,6 @@
 <template>
-    <div>
-        <div class="navbar-wrapper">
+    <div id="page-top">
+        <div class="navbar-wrapper" >
                 <nav class="navbar navbar-default navbar-fixed-top navbar-scroll" role="navigation">
                     <div class="container">
                         <div class="navbar-header page-scroll">
@@ -19,6 +19,7 @@
                                 <li><a class="page-scroll" href="#team">Team</a></li>
                                 <li><a class="page-scroll" href="#pricing">Pricing</a></li>
                                 <li><a class="page-scroll" href="#contact">Contact</a></li>
+                                <li><router-link class="page-scroll btn-primary" :to="{name:'register'}">SIGN UP</rou></li>
                             </ul>
                         </div>
                     </div>
@@ -29,21 +30,17 @@
                 <div class="item active">
                     <div class="container">
                         <div class="carousel-caption">
-                            <h1>We craft<br/>
-                                brands, web apps,<br/>
-                                and user interfaces<br/>
-                                we are IN+ studio</h1>
-                            <p>Lorem Ipsum is simply dummy text of the printing.</p>
+                            <h1>save college student<br/>
+                                from<br/>
+                                homeworks, quizzes, exams<br/>
+                                </h1>
+                            <p>Currently under developement.</p>
                             <p>
-                                <a class="btn btn-lg btn-primary" href="#" role="button">READ MORE</a>
-                                <a class="caption-link" href="#" role="button">Inspinia Theme</a>
+                                <router-link  class="btn btn-lg btn-primary" :to="{name:'register'}">SIGN UP</router-link>
+                                <router-link class="caption-link" :to="{name:'login'}">LOG IN</router-link>
                             </p>
                         </div>
-                        <div class="carousel-image wow zoomIn">
-                            <img src="img/landing/laptop.png" alt="laptop"/>
-                        </div>
                     </div>
-                    <!-- Set background for slide in css -->
                     <div class="header-back one"></div>
                 </div>
             </div>
@@ -202,14 +199,14 @@
                     <div class="col-lg-12 text-center">
                         <div class="navy-line"></div>
                         <h1>Pricing</h1>
-                        <p>Donec sed odio dui. Etiam porta sem malesuada magna mollis euismod.</p>
+                        <p>Everything is free under beta test.</p>
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-lg-4 wow zoomIn">
+                    <div class="col-lg-12 wow zoomIn">
                         <ul class="pricing-plan list-unstyled">
                             <li class="pricing-title">
-                                Basic
+                                Free 
                             </li>
                             <li class="pricing-desc">
                                 Lorem ipsum dolor sit amet, illum fastidii dissentias quo ne. Sea ne sint animal iisque, nam an soluta sensibus.
@@ -218,56 +215,24 @@
                                 <span>$0</span> / month
                             </li>
                             <li>
-                                Dashboards
+                                Personalized schedule 
                             </li>
                             <li>
-                                Projects view
+                                Class Notes
                             </li>
                             <li>
-                                Contacts
+                                Event orgnization
                             </li>
                             <li>
-                                Calendar
+                                Online Chating
                             </li>
                             <li>
-                                AngularJs
+                                Other
                             </li>
                         </ul>
                     </div>
 
-                    <div class="col-lg-4 wow zoomIn">
-                        <ul class="pricing-plan list-unstyled selected">
-                            <li class="pricing-title">
-                                Standard
-                            </li>
-                            <li class="pricing-desc">
-                                Lorem ipsum dolor sit amet, illum fastidii dissentias quo ne. Sea ne sint animal iisque, nam an soluta sensibus.
-                            </li>
-                            <li class="pricing-price">
-                                <span>$0</span> / month
-                            </li>
-                            <li>
-                                Dashboards
-                            </li>
-                            <li>
-                                Projects view
-                            </li>
-                            <li>
-                                Contacts
-                            </li>
-                            <li>
-                                Calendar
-                            </li>
-                            <li>
-                                AngularJs
-                            </li>
-                            <li>
-                                <strong>Support platform</strong>
-                            </li>
-                        </ul>
-                    </div>
-
-                    <div class="col-lg-4 wow zoomIn">
+                    <!--<div class="col-lg-6 wow zoomIn">
                         <ul class="pricing-plan list-unstyled">
                             <li class="pricing-title">
                                 Premium
@@ -294,7 +259,7 @@
                                 AngularJs
                             </li>
                         </ul>
-                    </div>
+                    </div>-->
                 </div>
                 <div class="row m-t-lg">
                     <div class="col-lg-8 col-lg-offset-2 text-center m-t-lg">
@@ -361,34 +326,56 @@
         mounted() {
             document.getElementsByTagName("body")[0].style['background-color'] = "#fff"
             /* global $:true */
+
             $(document).ready(function() {
-                if (!$('body').hasClass('mini-navbar') || $('body').hasClass('body-small')) {
-                    // Hide menu in order to smoothly turn on when maximize menu
-                    $('#side-menu').hide()
-                    // For smoothly turn on menu
-                    setTimeout(
-                        function() {
-                            $('#side-menu').fadeIn(400)
-                        }, 200)
-                } else if ($('body').hasClass('fixed-sidebar')) {
-                    $('#side-menu').hide()
-                    setTimeout(
-                        function() {
-                            $('#side-menu').fadeIn(400)
-                        }, 100)
-                } else {
-                    // Remove all inline style from jquery fadeIn function to reset menu state
-                    $('#side-menu').removeAttr('style')
-                }
-                // Minimalize menu when screen is less than 768px
-                $(window).bind("resize", function() {
-                    if ($(this).width() < 769) {
-                        $('body').addClass('body-small')
-                    } else {
-                        $('body').removeClass('body-small')
-                    }
+
+                $('body').scrollspy({
+                    target: '.navbar-fixed-top',
+                    offset: 80
+                })
+
+                // Page scrolling feature
+                $('a.page-scroll').bind('click', function(event) {
+                    var link = $(this)
+                    $('html, body').stop().animate({
+                        scrollTop: $(link.attr('href')).offset().top - 50
+                    }, 500)
+                    event.preventDefault()
+                    $("#navbar").collapse('hide')
                 })
             })
+
+
+            const docElem = document.documentElement
+            const header = document.querySelector('.navbar-default')
+            let didScroll = false
+            const changeHeaderOn = 200
+
+            function init() {
+                window.addEventListener('scroll', function(event) {
+                    if (!didScroll) {
+                        didScroll = true
+                        setTimeout(scrollPage, 250)
+                    }
+                }, false)
+            }
+
+            function scrollPage() {
+                var sy = scrollY()
+                if (sy >= changeHeaderOn) {
+                    $(header).addClass('navbar-scroll')
+                } else {
+                    $(header).removeClass('navbar-scroll')
+                }
+                didScroll = false
+            }
+
+            function scrollY() {
+                return window.pageYOffset || docElem.scrollTop
+            }
+
+            init()
+
         }
     }
 
@@ -544,6 +531,15 @@
     
     .navbar-fixed-top.navbar-scroll {
         border-bottom: 1px solid #e7eaec !important;
+    }
+    
+    .navbar-default .navbar-brand {
+        font-size: 20px;
+        color: #e7eaec;
+        display: block;
+        border-radius: 0 0 5px 5px;
+        font-weight: 700;
+        transition: all 0.3s ease-in-out 0s;
     }
     
     .navbar.navbar-scroll .navbar-brand {

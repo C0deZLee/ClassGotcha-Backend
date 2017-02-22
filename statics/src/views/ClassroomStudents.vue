@@ -5,13 +5,13 @@
                     <h2>Students</h2>
                     <ol class="breadcrumb">
                         <li>
-                            <a href="#">Home</a>
+                           <router-link  :to="{name:'home'}">Home</router-link>
                         </li>
                         <li>
-                           Clssrooms
+                           Classrooms
                         </li>
                          <li>
-                           {{currentClassroom.class_short}}
+                           <router-link :to="{name:'classroom', params:{classroom_id:currentClassroom.id}}"> {{currentClassroom.class_short}}</router-link>
                         </li>
                         <li class="active">
                             <strong>Classmates</strong>
