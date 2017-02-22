@@ -89,13 +89,13 @@
                         <br>
                         <div class="btn-group">
                             <!--TODO: FIXME-->
-                           <button class="btn btn-white btn-sm" :class="task_repeat.includes('Sa')? 'active':''" @click="addTaskRepeat('Sa')">Sa</button>
-                           <button class="btn btn-white btn-sm" :class="task_repeat.includes('Fr')? 'active':''" @click="addTaskRepeat('Fr')">Fr</button>
-                           <button class="btn btn-white btn-sm" :class="task_repeat.includes('Th')? 'active':''" @click="addTaskRepeat('Th')">Th</button>
-                           <button class="btn btn-white btn-sm" :class="task_repeat.includes('We')? 'active':''" @click="addTaskRepeat('We')">We</button>    
-                           <button class="btn btn-white btn-sm" :class="task_repeat.includes('Tu')? 'active':''" @click="addTaskRepeat('Tu')">Tu</button>
-                           <button class="btn btn-white btn-sm" :class="task_repeat.includes('Mo')? 'active':''" @click="addTaskRepeat('Mo')">Mo</button>
                            <button class="btn btn-white btn-sm" :class="task_repeat.includes('Su')? 'active':''" @click="addTaskRepeat('Su')">Su</button>                                    
+                           <button class="btn btn-white btn-sm" :class="task_repeat.includes('Mo')? 'active':''" @click="addTaskRepeat('Mo')">Mo</button>
+                           <button class="btn btn-white btn-sm" :class="task_repeat.includes('Tu')? 'active':''" @click="addTaskRepeat('Tu')">Tu</button>
+                           <button class="btn btn-white btn-sm" :class="task_repeat.includes('We')? 'active':''" @click="addTaskRepeat('We')">We</button>   
+                           <button class="btn btn-white btn-sm" :class="task_repeat.includes('Th')? 'active':''" @click="addTaskRepeat('Th')">Th</button>
+                           <button class="btn btn-white btn-sm" :class="task_repeat.includes('Fr')? 'active':''" @click="addTaskRepeat('Fr')">Fr</button>
+                           <button class="btn btn-white btn-sm" :class="task_repeat.includes('Sa')? 'active':''" @click="addTaskRepeat('Sa')">Sa</button>
                         </div>
                      </div>
                      <div class="col-md-12">
@@ -144,8 +144,8 @@
                         <div class="form-group">
                            <span>Time</span>
                            <div class="input-group date">
-                              <input type="text" v-show="chosen_task.start" placeholder="Start at?" v-model="task_start" id="task-start" class="form-control" />
-                              <input type="text" v-show="chosen_task.end" placeholder="End at?" v-model="task_end" id="task-end" class="form-control" />
+                              <input type="text" v-show="chosen_task.start" placeholder="Start at?" v-model="chosen_task.start" id="chosen-task-start" class="form-control" />
+                              <input type="text" v-show="chosen_task.end" placeholder="End at?" v-model="chosen_task.end" id="chosen-task-end" class="form-control" />
                               <span class="input-group-addon">
                               <span class="fa fa-calendar"></span>
                            </div>
@@ -159,13 +159,13 @@
                         <span>Repeat Every</span>
                         <br>
                         <div class="btn-group">
-                           <button class="btn btn-white btn-sm" :class="chosen_task.repeat.includes('Sa')? 'active':''" @click="changeTaskRepeat('Sa')">Sa</button>
-                           <button class="btn btn-white btn-sm" :class="chosen_task.repeat.includes('Fr')? 'active':''" @click="changeTaskRepeat('Fr')">Fr</button>
-                           <button class="btn btn-white btn-sm" :class="chosen_task.repeat.includes('Th')? 'active':''" @click="changeTaskRepeat('Th')">Th</button>
-                           <button class="btn btn-white btn-sm" :class="chosen_task.repeat.includes('We')? 'active':''" @click="changeTaskRepeat('We')">We</button>    
-                           <button class="btn btn-white btn-sm" :class="chosen_task.repeat.includes('Tu')? 'active':''" @click="changeTaskRepeat('Tu')">Tu</button>
-                           <button class="btn btn-white btn-sm" :class="chosen_task.repeat.includes('Mo')? 'active':''" @click="changeTaskRepeat('Mo')">Mo</button>
                            <button class="btn btn-white btn-sm" :class="chosen_task.repeat.includes('Su')? 'active':''" @click="changeTaskRepeat('Su')">Su</button>                                    
+                           <button class="btn btn-white btn-sm" :class="chosen_task.repeat.includes('Mo')? 'active':''" @click="changeTaskRepeat('Mo')">Mo</button>
+                           <button class="btn btn-white btn-sm" :class="chosen_task.repeat.includes('Tu')? 'active':''" @click="changeTaskRepeat('Tu')">Tu</button>
+                           <button class="btn btn-white btn-sm" :class="chosen_task.repeat.includes('We')? 'active':''" @click="changeTaskRepeat('We')">We</button>    
+                           <button class="btn btn-white btn-sm" :class="chosen_task.repeat.includes('Th')? 'active':''" @click="changeTaskRepeat('Th')">Th</button>
+                           <button class="btn btn-white btn-sm" :class="chosen_task.repeat.includes('Fr')? 'active':''" @click="changeTaskRepeat('Fr')">Fr</button>                          
+                           <button class="btn btn-white btn-sm" :class="chosen_task.repeat.includes('Sa')? 'active':''" @click="changeTaskRepeat('Sa')">Sa</button>
                         </div>
                      </div>
                      <div class="col-md-12">
@@ -182,7 +182,7 @@
                </div>
                <div class="modal-footer">
                   <a @click="remTask()" class="btn btn-sm btn-danger">Delete</a>                   
-                  <a @click="changeTask()" :disabled="invaild_task" class="btn btn-sm btn-primary">Update</a>
+                  <a @click="changeTask()" class="btn btn-sm btn-primary">Update</a>
                </div>
             </div>
          </div>
@@ -356,6 +356,12 @@
             )
             $('#task-end').datetimepicker().on(
                 'dp.change', () => { this.task_end = $('#task-end').val() }
+            )
+            $('#chosen-task-start').datetimepicker().on(
+                'dp.change', () => { this.task_end = $('#chosen-task-start').val() }
+            )
+            $('#chosen-task-end').datetimepicker().on(
+                'dp.change', () => { this.task_end = $('#chosen-task-end').val() }
             )
         },
         watch: {

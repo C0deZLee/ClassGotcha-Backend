@@ -154,8 +154,8 @@ const actions = {
                 commit(types.LOG_ERROR, error)
             })
     },
-    getClassroomMoments({ commit, dispatch }, pk) {
-        classApi.getMoments(pk)
+    getClassroomMoments({ state, commit, dispatch }, pk) {
+        classApi.getMoments(state.classroom.id)
             .then((response) => {
                 commit(types.LOAD_CLASSROOM_MOMENTS, response)
             })

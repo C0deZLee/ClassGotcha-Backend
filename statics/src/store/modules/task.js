@@ -6,6 +6,7 @@ const actions = {
         taskApi.updateTask(data.pk, data.formData)
             .then((response) => {
                 commit(types.UPDATE_TASK, response)
+                dispatch('getClassroomMoments')
                 dispatch('getClassroomTasks')
             })
             .catch((error) => {
