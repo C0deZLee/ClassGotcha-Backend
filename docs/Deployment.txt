@@ -1,0 +1,26 @@
+##################
+sudo pip install -r requirments.txt
+###########
+yum grouplist
+sudo yum groupinstall 'Development Tools'
+################
+
+wget http://download.redis.io/redis-stable.tar.gz
+tar xvzf redis-stable.tar.gz
+cd redis-stable
+################
+sudo yum install jemalloc-devel
+################
+make
+
+sudo cp src/redis-server /usr/local/bin/
+sudo cp src/redis-cli /usr/local/bin/
+#############Pillow
+sudo yum install python-imaging
+
+https://www.digitalocean.com/community/tutorials/how-to-run-a-django-site-with-apache-mod_wsgi-and-mysql-on-freebsd-10-1
+
+sudo yum install mysql-devel
+sudo yum install mysql
+
+sudo env "PATH=$PATH" daphne classgotcha.asgi:channel_layer -b 0.0.0.0 -p 80 --verbosity 2

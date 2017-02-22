@@ -1,4 +1,3 @@
-import Vue from 'vue'
 import chatApi from '../../api/chat-api'
 import router from '../../router'
 // import * as cookie from '../../utils/cookie'
@@ -6,14 +5,14 @@ import * as types from '../mutation-types'
 
 // initial state
 const state = {
-    chatrooms: {
-        // pk : {
-        //   chatroom: {},
-        //   message_list: [],
-        // }
-    },
+    current_chatroom: null,
     sockets: {
         // pk:  websocket
+    },
+    messages: {
+        // pk: {
+        //     message:[]
+        // }
     },
     valid: false,
     current_chatroom_pk: null,
@@ -23,38 +22,36 @@ const state = {
 // getters
 const getters = {
     currentChatroom: (state) => {
-        if (state.chatrooms[state.current_chatroom_pk])
-            return state.chatrooms[state.current_chatroom_pk].chatroom
+        if (state.current_chatroom)
+            return state.current_chatroom
     },
     currentChatroomUsers: (state) => {
-        if (state.chatrooms[state.current_chatroom_pk])
-            return state.chatrooms[state.current_chatroom_pk].chatroom.accounts
+        if (state.current_chatroom)
+            return state.current_chatroom.accounts
     },
     currentChatroomMessages: (state) => {
-        if (state.chatrooms[state.current_chatroom_pk])
-            return state.chatrooms[state.current_chatroom_pk].message_list
+        if (state.messages[state.current_chatroom_pk])
+            return state.messages[state.current_chatroom_pk]
     },
     currentChatroomName: (state) => {
-        if (state.chatrooms[state.current_chatroom_pk])
-            return state.chatrooms[state.current_chatroom_pk].name
+        if (state.current_chatroom)
+            return state.current_chatroom.name
+        else return 'Waiting'
     }
 }
 
 // actions
 const actions = {
     getChatroom({ state, commit, dispatch }, pk) {
-        // console.log(pk, state.chatrooms, state.chatrooms[pk])
-        if (!state.chatrooms[pk]) {
-            return chatApi.getChatroom(pk)
-                .then((response) => {
-                    commit(types.GET_CHATROOM, response)
-                    return Promise.resolve(response)
-                })
-                .catch((error) => {
-                    commit(types.LOG_ERROR, error)
-                    return Promise.reject()
-                })
-        }
+        return chatApi.getChatroom(pk)
+            .then((response) => {
+                commit(types.GET_CHATROOM, response)
+                return Promise.resolve(response)
+            })
+            .catch((error) => {
+                commit(types.LOG_ERROR, error)
+                return Promise.reject()
+            })
     },
     validateChatroom({ state, commit, dispatch }, pk) {
         chatApi.validateChatroom(pk)
@@ -84,13 +81,11 @@ const actions = {
 // mutations
 const mutations = {
     [types.GET_CHATROOM](state, response) {
-        state.chatrooms[response.id] = {
-            chatroom: {},
-            chat_socket: {},
-            message_list: [],
-            users: [],
-        }
-        Vue.set(state.chatrooms[response.id], 'chatroom', response)
+        console.log('loaded chatroom', response)
+        state.current_chatroom = response
+        // Vue.set(state.current_chatroom, 'chatroom', response)
+
+        state.current_chatroom_pk = response.id
     },
     [types.CLEAR_SOCKET](state) {
         state.sockets = {}
@@ -98,7 +93,7 @@ const mutations = {
     [types.SET_SOCKET](state, data) {
         data.socket.onmessage = (message) => {
             console.log('received message', message.data)
-            state.chatrooms[data.pk].message_list.push(JSON.parse(message.data))
+            state.messages[data.pk].push(JSON.parse(message.data))
         }
         state.sockets[data.pk] = data.socket
     },
@@ -108,15 +103,12 @@ const mutations = {
     },
     [types.USER_IN_CHATROOM](state, pk) {
         state.valid = true
-        state.current_chatroom_pk = pk
     },
     [types.USER_NOT_IN_CHATROOM](state, pk) {
-        if (state.chatrooms[pk])
-            delete state.chatrooms[pk]
+        state.current_chatroom = {}
         state.valid = false
         state.current_chatroom_pk = null
-        // state.chatrooms[pk].valid = false
-        router.push('/')
+        router.push({ name: 'home' })
     },
     [types.LOG_ERROR](state, error) {
         state.error_msg = error
