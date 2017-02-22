@@ -280,7 +280,7 @@ class ClassroomViewSet(viewsets.ViewSet):
 
 					if 'instructor2' in cours:
 						if 'instructor2_email' in cours:
-							instructor1, created = Professor.objects.get_or_create(
+							instructor2, created = Professor.objects.get_or_create(
 								first_name=cours['instructor2'].split()[0],
 								last_name=cours['instructor2'].split()[1],
 								major=major, email=cours['instructor2_email'])
