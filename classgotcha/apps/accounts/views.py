@@ -184,7 +184,7 @@ class AccountViewSet(viewsets.ViewSet):
 			# add user to classroom student list
 			classroom.students.add(request.user)
 			# add class time to user task list
-			classroom.class_time.involved.add(request.usersour)
+			classroom.class_time.involved.add(request.user)
 			# add classroom tasks from user task list
 			for task in classroom.tasks.all():
 				task.involved.add(request.user)

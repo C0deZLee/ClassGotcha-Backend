@@ -30,8 +30,7 @@ class SemesterSerializer(serializers.ModelSerializer):
 class AvatarSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = Avatar
-		fields = '__all__'
-		read_only_fields = ('created',)
+		fields = ('avatar2x', 'avatar1x')
 
 
 class BasicProfessorSerializer(serializers.ModelSerializer):

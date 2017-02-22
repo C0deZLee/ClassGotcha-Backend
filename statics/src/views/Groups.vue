@@ -5,7 +5,8 @@
                     <h2>Teams board</h2>
                     <ol class="breadcrumb">
                         <li>
-                            <a href="index.html">Home</a>
+         <router-link :to="{name:'home'}" class="btn btn-primary">Home</router-link>
+
                         </li>
                         <li>
                             <a>App views</a>

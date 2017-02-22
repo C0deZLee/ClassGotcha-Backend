@@ -1,18 +1,17 @@
 <template>
-<spinner v-if="!loaded"></spinner>
-  <div v-else>
+  <div v-if='loaded && chatroom_name && chatroom'>
     <div class="row wrapper border-bottom white-bg page-heading">
       <div class="col-lg-10">
-        <h2>{{chatroom.name}}</h2>
+        <h2>{{$store.getters.currentChatroom.name}}</h2>
         <ol class="breadcrumb">
           <li>
-            <a href="/#/">Home</a>
+         <router-link :to="{name:'home'}" class="btn btn-primary">Home</router-link>
           </li>
           <li>
             <a>Chatrooms</a>
           </li>
           <li class="active">
-            <strong>{{chatroom.name}}</strong>
+            <strong>{{$store.getters.currentChatroom.name}}</strong>
           </li>
         </ol>
       </div>
@@ -22,7 +21,8 @@
     <div class="wrapper wrapper-content animated fadeInRight">
       <div class="ibox chat-view">
         <div class="ibox-title">
-          <small class="text-muted">Last message:  {{chatroom.latest_message.created}}</small>
+          <small v-if="chatroom.latest_message" class="text-muted">Last message: {{chatroom.latest_message.created}}</small>
+          <small v-else class="text-muted">Last message:  </small>
           <p class="pull-right">{{chatroom.accounts.length}} Users In Chatroom</p> 
         </div>
         <div class="ibox-content">
@@ -35,7 +35,7 @@
                     <img v-if="messageAvatar(message.send_from)" class="message-avatar" :src="messageAvatar(message.send_from)"> 
                     <avatar v-else class="message-avatar" :size="42" :username="message.username"></avatar>
                     <div class="message">
-                      <a class="<message-autho></message-autho>r" href=""> {{message.username}} </a>
+                      <a class="message-author"> {{message.username}} </a>
                       <span class="message-date"> {{message.created}} </span>
                       <span class="message-content text-left">
                       {{message.message}}
@@ -84,17 +84,23 @@
       </div>
     </div>
   </div>
+<spinner v-else></spinner>
+  
 </template>
 <script>
     import Avatar from 'vue-avatar'
     import Spinner from 'components/Spinner'
+    import { mapGetters } from 'vuex'
+
+    // import Debugger from 'utils/debugger'
+
     export default {
         name: 'Chat',
         components: {
             'avatar': Avatar.Avatar,
             'spinner': Spinner
         },
-        data: function() {
+        data() {
             return {
                 loaded: false,
                 message_text: '',
@@ -115,14 +121,13 @@
             },
             validateChatroom() {
                 this.$store.dispatch('getChatroom', this.$route.params.chatroom_id)
-                    .then((response) => {
-                        this.chatroom = response
+                    .then(() => {
                         this.$store.dispatch('validateChatroom', parseInt(this.$route.params.chatroom_id))
                             .then(() => {
                                 this.loaded = true
                             })
                             .catch((error) => {
-                                this.$route.push({ name: 'home' })
+                                this.$router.push({ name: 'home' })
                                 throw error
                             })
                     })
@@ -143,33 +148,25 @@
                 this.$store.dispatch('sendMessage', data)
                 this.message_text = ''
             },
+            formatTime(time) {
+                /* global moment:true */
+                return moment.utc(time)
+            }
         },
+        computed: mapGetters({
+            chatroom_messages: "currentChatroomMessages",
+            chatroom: "currentChatroom",
+            chatroom_name: "currentChatroomName"
+        }),
         directives: {
             bottom: {
-                // update: (el) => {
-                //     el.scrollTop = el.scrollHeight
-                // },
                 inserted: (el) => {
                     el.scrollTop = el.scrollHeight
                 },
-                // bind: (el) => {
-                //     el.scrollTop = el.scrollHeight
-                // },
                 componentUpdated: (el) => {
                     el.scrollTop = el.scrollHeight
                 },
-                // unbind: (el) => {
-                //     el.scrollTop = el.scrollHeight
-                // },
             },
-        },
-        computed: {
-            chatroom_messages() {
-                return this.$store.getters.currentChatroomMessages
-            },
-            chatroom() {
-                return this.$store.getters.currentChatroom
-            }
         },
         created() {
             this.validateChatroom()

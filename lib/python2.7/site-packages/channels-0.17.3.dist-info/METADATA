@@ -1,0 +1,16 @@
+Metadata-Version: 2.0
+Name: channels
+Version: 0.17.3
+Summary: Brings event-driven capabilities to Django with a channel system. Django 1.8 and up only.
+Home-page: http://github.com/django/channels
+Author: Django Software Foundation
+Author-email: foundation@djangoproject.com
+License: BSD
+Platform: UNKNOWN
+Requires-Dist: Django (>=1.8)
+Requires-Dist: asgiref (>=0.13)
+Requires-Dist: daphne (>=0.14.1)
+
+UNKNOWN
+
+

@@ -19,8 +19,8 @@ from django.contrib import admin
 from classgotcha.apps.accounts import urls as accounts_urls
 from classgotcha.apps.classrooms import urls as classroom_urls
 from classgotcha.apps.chat import urls as chat_urls
-from classgotcha.apps.posts import urls as posts_urls
-from rest_framework_docs import urls as docs_urls
+from classgotcha.apps.posts import urls as post_urls
+from classgotcha.apps.tasks import urls as task_urls
 
 admin.autodiscover()
 
@@ -29,11 +29,9 @@ urlpatterns = [
     url(r'^account/', include(accounts_urls)),
     url(r'^chatroom/', include(chat_urls)),
     url(r'^classroom/', include(classroom_urls)),
-    url(r'^post/', include(posts_urls)),
-
+    url(r'^post/', include(post_urls)),
+    url(r'^task/', include(task_urls)),
     # admin site and docs
     url(r'^admin/', admin.site.urls),
-    url(r'^docs/', include(docs_urls)),
-
 ]
 

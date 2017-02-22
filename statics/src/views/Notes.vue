@@ -5,7 +5,8 @@
             <h2>Notes</h2>
             <ol class="breadcrumb">
                <li>
-                  <a href="#">Home</a>
+                           <router-link  :to="{name:'home'}">Home</router-link>
+
                </li>
                <li>
                   <router-link :to="{name:'classroom', params:{classroom_id:current_classroom.id}}">{{current_classroom.class_short}}</router-link>

@@ -5,7 +5,7 @@
             <h2>Add New</h2>
             <ol class="breadcrumb">
                <li>
-                  <a href="index.html">Home</a>
+                <router-link :to="{name:'home'}">Home</router-link>
                </li>
                <li>
                   <a>Classroom</a>

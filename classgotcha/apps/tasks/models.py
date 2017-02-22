@@ -37,15 +37,16 @@ class Task(models.Model):
 	# Time
 	start = models.DateTimeField(blank=True, null=True)
 	end = models.DateTimeField(blank=True, null=True)  # the end equals to due
-	repeat = models.CharField(max_length=20, blank=True)  # MoTuWeThFi
+	repeat = models.CharField(max_length=20, default='')  # MoTuWeThFi
 	repeat_start = models.DateField(null=True)
 	repeat_end = models.DateField(null=True)
 
 	# Relationship
 	involved = models.ManyToManyField(Account, related_name='tasks', blank=True)
 	finished = models.ManyToManyField(Account, related_name='finished_tasks', blank=True)
-	classroom = models.ForeignKey(Classroom, blank=True, null=True, related_name='tasks', on_delete=models.CASCADE)
-	group = models.ForeignKey(Group, blank=True, null=True, related_name='tasks', on_delete=models.CASCADE)
+	classroom = models.ForeignKey(Classroom, null=True, related_name='tasks', on_delete=models.CASCADE)
+	group = models.ForeignKey(Group, null=True, related_name='tasks', on_delete=models.CASCADE)
+	creator = models.ForeignKey(Account, null=True)
 
 	def __unicode__(self):
 		return self.task_name

@@ -5,7 +5,8 @@
             <h2>{{currentPost.title}}</h2>
             <ol class="breadcrumb">
                <li>
-                  <a href="#">Home</a>
+                           <router-link  :to="{name:'home'}">Home</router-link>
+
                </li>
                <li>
                   <router-link :to="{name:'forum'}">Forum</router-link>

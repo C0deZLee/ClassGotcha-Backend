@@ -106,6 +106,7 @@ class Account(AbstractBaseUser, PermissionsMixin):
 	friends = models.ManyToManyField('self')
 	pending_friends = models.ManyToManyField('self')
 	major = models.ForeignKey('classrooms.Major', blank=True, null=True)
+	notifications = models.ManyToManyField('posts.Notification')
 	# Relatives
 	# 1) teaches
 	# 2) classrooms
@@ -135,6 +136,10 @@ class Account(AbstractBaseUser, PermissionsMixin):
 
 	def get_short_name(self):
 		return self.first_name
+
+	@property
+	def full_name(self):
+		return '%s %s' % (self.first_name, self.last_name)
 
 	def add_friends(self, value):
 		pass
