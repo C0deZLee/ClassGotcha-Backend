@@ -5,7 +5,7 @@
         <h2>{{$store.getters.currentChatroom.name}}</h2>
         <ol class="breadcrumb">
           <li>
-            <a href="/#/">Home</a>
+         <router-link :to="{name:'home'}" class="btn btn-primary">Home</router-link>
           </li>
           <li>
             <a>Chatrooms</a>
@@ -35,7 +35,7 @@
                     <img v-if="messageAvatar(message.send_from)" class="message-avatar" :src="messageAvatar(message.send_from)"> 
                     <avatar v-else class="message-avatar" :size="42" :username="message.username"></avatar>
                     <div class="message">
-                      <a class="<message-autho></message-autho>r" href=""> {{message.username}} </a>
+                      <a class="message-author"> {{message.username}} </a>
                       <span class="message-date"> {{message.created}} </span>
                       <span class="message-content text-left">
                       {{message.message}}

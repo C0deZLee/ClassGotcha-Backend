@@ -6,7 +6,8 @@
             <h2>User Forum</h2>
             <ol class="breadcrumb">
                <li>
-                  <a href="/#/">Home</a>
+         <router-link :to="{name:'home'}" class="btn btn-primary">Home</router-link>
+
                </li>
                <li class="active">
                   <strong>User Forum</strong>

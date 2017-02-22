@@ -19,7 +19,7 @@
                                 <li><a class="page-scroll" href="#team">Team</a></li>
                                 <li><a class="page-scroll" href="#pricing">Pricing</a></li>
                                 <li><a class="page-scroll" href="#contact">Contact</a></li>
-                                <li><router-link class="page-scroll btn-primary" :to="{name:'register'}">SIGN UP</rou></li>
+                                <li><router-link class="page-scroll btn-primary" :to="{name:'register'}">SIGN UP</router-link></li>
                             </ul>
                         </div>
                     </div>

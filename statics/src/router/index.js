@@ -28,7 +28,7 @@ Vue.use(Router)
 Vue.use(Resource)
 
 export default new Router({
-    mode: 'hash',
+    mode: 'history',
     routes: [{
             path: '/',
             component: App,
