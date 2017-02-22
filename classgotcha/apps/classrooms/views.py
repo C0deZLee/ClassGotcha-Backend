@@ -15,7 +15,7 @@ from ..chat.models import Room
 
 from serializers import ClassroomSerializer, MajorSerializer, OfficeHourSerializer
 from ..posts.serializers import MomentSerializer, Note, NoteSerializer, Moment
-from ..tasks.serializers import Task, TaskSerializer, BasicTaskSerializer
+from ..tasks.serializers import Task, TaskSerializer, BasicTaskSerializer, CreateTaskSerializer
 from ..accounts.serializers import BasicAccountSerializer, BasicClassroomSerializer
 from ..tags.serializers import ClassFolderSerializer, Tag
 
@@ -152,19 +152,19 @@ class ClassroomViewSet(viewsets.ViewSet):
 			end = request.data.get('end', None)
 			if start and end:
 				request.data['type'] = 0  # event
-			elif end:
+			elif not start and end:
 				del request.data['start']
 				request.data['type'] = 1  # task
 			else:
 				return Response(status=status.HTTP_400_BAD_REQUEST)
-
-			serializer = TaskSerializer(data=request.data)
+			# request.data['classroom'] = {'classroom_id': classroom.id}
+			serializer = CreateTaskSerializer(data=request.data)
 			serializer.is_valid(raise_exception=True)
 			serializer.save()
 
 			Moment.objects.create(
-				content='I just added a new task \"' + request.data.get('task_name',
-				                                                        '') + '\" to the classroom, check it out!',
+				content='I just added a new task \"' +
+				        request.data.get('task_name', '') + '\" to the classroom, check it out!',
 				creator=request.user,
 				classroom=classroom)
 
@@ -280,7 +280,7 @@ class ClassroomViewSet(viewsets.ViewSet):
 
 					if 'instructor2' in cours:
 						if 'instructor2_email' in cours:
-							instructor1, created = Professor.objects.get_or_create(
+							instructor2, created = Professor.objects.get_or_create(
 								first_name=cours['instructor2'].split()[0],
 								last_name=cours['instructor2'].split()[1],
 								major=major, email=cours['instructor2_email'])

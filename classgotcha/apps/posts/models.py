@@ -132,3 +132,12 @@ class Comment(models.Model):
 	# Timestamp
 	created = models.DateTimeField(auto_now_add=True)
 	updated = models.DateTimeField(auto_now=True)
+
+
+class Notification(models.Model):
+	content = models.TextField(max_length=200)
+	user = models.ForeignKey(Account)
+	created = models.DateTimeField(auto_now_add=True)
+
+	def __unicode__(self):
+		return self.content
