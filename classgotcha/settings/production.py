@@ -21,9 +21,9 @@ PROJECT_ROOT = os.path.abspath(os.path.dirname(PROJECT_APP_ROOT))
 with open(os.path.join(PROJECT_APP_ROOT, 'settings/secret.txt')) as f:
 	SECRET_KEY = f.read().strip()
 
-DEBUG = False
+DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '54.91.146.112']
+ALLOWED_HOSTS = ['*']
 
 SITE_ID = 1
 
@@ -81,7 +81,7 @@ CHANNEL_LAYERS = {
 		"CONFIG": {
 			"hosts": [os.environ.get('REDIS_URL', 'redis://localhost:6379')],
 		},
-		"ROUTING": "classgotcha.routing.channel_routing",
+		"ROUTING": "classgotcha.apps.chat.routing.channel_routing",
 	},
 }
 
