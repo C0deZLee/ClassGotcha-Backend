@@ -20,8 +20,6 @@ classroom_moments = views.ClassroomViewSet.as_view({
 classroom_tasks = views.ClassroomViewSet.as_view({
 	'get': 'tasks',
 	'post': 'tasks',
-	'put': 'tasks',
-	'delete': 'tasks'
 })
 
 classroom_students = views.ClassroomViewSet.as_view({

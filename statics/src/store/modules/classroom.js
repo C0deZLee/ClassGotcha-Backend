@@ -163,8 +163,8 @@ const actions = {
                 commit(types.LOG_ERROR, error)
             })
     },
-    getClassroomTasks({ commit, dispatch }, pk) {
-        classApi.getTasks(pk)
+    getClassroomTasks({ state, commit, dispatch }, pk) {
+        classApi.getTasks(state.classroom.id)
             .then((response) => {
                 commit(types.LOAD_CLASSROOM_TASKS, response)
             })

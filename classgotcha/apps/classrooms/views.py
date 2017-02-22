@@ -170,33 +170,6 @@ class ClassroomViewSet(viewsets.ViewSet):
 
 			return Response(status=status.HTTP_201_CREATED)
 
-		elif request.method == 'PUT':
-			task_pk = request.data.get('task_pk')
-			if task_pk:
-				task = get_object_or_404(classroom.tasks.all(), pk=task_pk)
-				for (key, value) in request.data.items():
-					if key in ['task_name', 'description', 'start', 'end', 'location', 'category', 'repeat']:
-						setattr(task, key, value)
-				task.save()
-
-				Moment.objects.create(
-					content='I just modified the task \"' + request.data.get('task_name',
-					                                                         '') + '\" to the classroom, check it out!',
-					creator=request.user,
-					classroom=classroom)
-				return Response(status=status.HTTP_200_OK)
-			else:
-				return Response(status=status.HTTP_400_BAD_REQUEST)
-
-		elif request.method == 'DELETE':
-			task_pk = request.data.get('task_pk')
-			if task_pk:
-				task = get_object_or_404(classroom.tasks.all(), pk=task_pk)
-				task.remove()
-				return Response(status=status.HTTP_200_OK)
-			else:
-				return Response(status=status.HTTP_400_BAD_REQUEST)
-
 	def students(self, request, pk):
 		classroom = get_object_or_404(self.queryset, pk=pk)
 		serializer = BasicAccountSerializer(classroom.students, many=True)

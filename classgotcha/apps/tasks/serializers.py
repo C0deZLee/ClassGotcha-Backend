@@ -46,6 +46,7 @@ class BasicTaskSerializer(serializers.ModelSerializer):
 		          'repeat_start_date',
 		          'repeat_end_date',
 		          'repeat_list',
+		          'repeat',
 		          'task_name',
 		          'type',
 		          'description',
