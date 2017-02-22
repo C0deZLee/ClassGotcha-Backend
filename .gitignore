@@ -28,3 +28,14 @@ classgotcha/apps/tags/migrations/*
 
 .DS_Store
 /npm-debug.log
+classgotcha/apps/chat/static/css/chat.css
+classgotcha/apps/chat/static/css/normalize.css
+classgotcha/apps/chat/static/css/skeleton.css
+classgotcha/apps/chat/static/js/chat.js
+classgotcha/apps/chat/static/js/jquery-1.12.1.min.js
+classgotcha/apps/chat/static/js/reconnecting-websocket.min.js
+classgotcha/apps/chat/templates/about.html
+classgotcha/apps/chat/templates/base.html
+classgotcha/apps/chat/templates/room.html
+classgotcha/apps/chat/templates/rooms.html
+classgotcha/apps/chat/templates/system_message.html

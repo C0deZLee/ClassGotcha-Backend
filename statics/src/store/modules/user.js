@@ -141,7 +141,8 @@ const actions = {
                 dispatch('getTasks')
                 dispatch('getFriends')
                 dispatch('setSockets')
-                router.push('/')
+                router.push({ path: 'home' })
+
             })
             .catch((error) => {
                 commit(types.LOGIN_FAILED, error)
@@ -152,8 +153,8 @@ const actions = {
         userApi.tokenVerify(formData)
             .then((response) => {
                 commit(types.VERIFY_SUCCESS, response)
-                if (rootState.route.path === '/login' || rootState.route.path === '/register') {
-                    router.push('/')
+                if (rootState.route.name === 'login' || rootState.route.name === 'register' || rootState.route.name === 'landing') {
+                    router.push({ path: 'home' })
                 }
                 dispatch('getSelf')
                 dispatch('getTasks')
@@ -162,13 +163,13 @@ const actions = {
                 dispatch('setSockets')
             })
             .catch((error) => {
-                if (rootState.route.path !== '/register') {
+                if (rootState.route.name !== 'register') {
                     dispatch('tokenRefresh', formData)
                 }
                 commit(types.LOG_ERROR, error)
             })
     },
-    tokenRefresh({ commit, dispatch }, formData) {
+    tokenRefresh({ rootState, commit, dispatch }, formData) {
         userApi.tokenRefresh(formData)
             .then((response) => {
                 commit(types.REFRESH_SUCCESS, response)
@@ -179,9 +180,9 @@ const actions = {
                 dispatch('setSockets')
             })
             .catch((error) => {
-                commit(types.LOGIN_FAILED)
+                if (rootState.route.name !== 'login' && rootState.route.name !== 'register' && rootState.route.name !== 'landing')
+                    commit(types.LOGIN_FAILED)
                 commit(types.LOG_ERROR, error)
-
             })
     },
     logout({ commit }) {
@@ -373,19 +374,19 @@ const mutations = {
         cookie.setCookie('token', response.token)
         state.token = response.token
         state.login_status = true
-        router.push('/')
+        router.push({ name: 'home' })
     },
     [types.REGSITER_SUCCESS](state, response) {
         cookie.setCookie('token', response.token)
         state.token = response.token
         state.login_status = true
-        router.push('/')
+        router.push({ name: 'home' })
     },
     [types.LOGIN_FAILED](state, error) {
         state.login_status = false
         state.token = null
         state.error_msg = error
-        router.push('/login')
+        router.push({ name: 'login' })
     },
     [types.REGSITER_FAILED](state, error) {
         state.login_status = false
