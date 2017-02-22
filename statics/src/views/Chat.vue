@@ -148,6 +148,10 @@
                 this.$store.dispatch('sendMessage', data)
                 this.message_text = ''
             },
+            formatTime(time) {
+                /* global moment:true */
+                return moment.utc(time)
+            }
         },
         computed: mapGetters({
             chatroom_messages: "currentChatroomMessages",
@@ -156,21 +160,12 @@
         }),
         directives: {
             bottom: {
-                // update: (el) => {
-                //     el.scrollTop = el.scrollHeight
-                // },
                 inserted: (el) => {
                     el.scrollTop = el.scrollHeight
                 },
-                // bind: (el) => {
-                //     el.scrollTop = el.scrollHeight
-                // },
                 componentUpdated: (el) => {
                     el.scrollTop = el.scrollHeight
                 },
-                // unbind: (el) => {
-                //     el.scrollTop = el.scrollHeight
-                // },
             },
         },
         created() {

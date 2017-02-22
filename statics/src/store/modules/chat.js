@@ -36,7 +36,6 @@ const getters = {
     currentChatroomName: (state) => {
         if (state.current_chatroom)
             return state.current_chatroom.name
-        else return 'Waiting'
     }
 }
 
@@ -96,6 +95,8 @@ const mutations = {
             state.messages[data.pk].push(JSON.parse(message.data))
         }
         state.sockets[data.pk] = data.socket
+        state.messages[data.pk] = []
+
     },
     [types.SEND_MESSAGE](state, data) {
         console.log('sent message', data.message)

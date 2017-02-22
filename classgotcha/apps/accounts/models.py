@@ -136,6 +136,10 @@ class Account(AbstractBaseUser, PermissionsMixin):
 	def get_short_name(self):
 		return self.first_name
 
+	@property
+	def full_name(self):
+		return '%s %s' % (self.first_name, self.last_name)
+
 	def add_friends(self, value):
 		pass
 
