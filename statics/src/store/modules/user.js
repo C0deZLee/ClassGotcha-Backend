@@ -1,4 +1,4 @@
-import { userApi } from '../../api/user-api'
+import userApi from '../../api/user-api'
 import router from '../../router'
 import * as cookie from '../../utils/cookie'
 import * as types from '../mutation-types'
@@ -14,7 +14,7 @@ const state = {
     login_status: false,
     token: null,
     loaded_user: {},
-    uploaded: null,
+    uploaded: null
 }
 
 // getters
@@ -25,6 +25,11 @@ const getters = {
             return state.user
         else return {}
     },
+    username: state => {
+        if (state.user && state.login_status)
+            return state.user.username
+    },
+
     userID: state => {
         if (state.user && state.login_status) {
             return state.user.id
@@ -38,8 +43,22 @@ const getters = {
         }
     },
     userAvatar: state => {
-        if (state.user && state.login_status) {
+        if (state.user && state.user.avatar && state.login_status) {
             return state.user.avatar
+        } else {
+            return ''
+        }
+    },
+    userAvatar1x: state => {
+        if (state.user && state.user.avatar && state.login_status) {
+            return state.user.avatar.avatar1x
+        } else {
+            return ''
+        }
+    },
+    userAvatar2x: state => {
+        if (state.user && state.login_status) {
+            return state.user.avatar.avatar2x
         } else {
             return ''
         }
@@ -82,7 +101,7 @@ const getters = {
                 const today = moment.utc().startOf('day')
                 const due_date = moment.utc(task.end)
                 const from_now_in_days = Math.round(moment.duration(due_date - today).asDays())
-                if (from_now_in_days >= 0 && from_now_in_days <= 7) {
+                if (from_now_in_days >= 0 && from_now_in_days <= 10) {
                     task.task_name = 'Do ' + task.task_name + ' of ' + task.classroom.class_short
                     tasks.push(task)
                 }
@@ -90,7 +109,7 @@ const getters = {
                 const today = moment.utc().startOf('day')
                 const due_date = moment.utc(task.end)
                 const from_now_in_days = Math.round(moment.duration(due_date - today).asDays())
-                if (from_now_in_days >= 0 && from_now_in_days <= 7) {
+                if (from_now_in_days >= 0 && from_now_in_days <= 10) {
                     task.task_name = 'Prepare ' + task.task_name + ' of ' + task.classroom.class_short
 
                     tasks.push(task)
@@ -124,6 +143,8 @@ const actions = {
     register({ commit, dispatch }, formData) {
         return userApi.register(formData)
             .then((response) => {
+                console.log('register res', response)
+
                 commit(types.REGSITER_SUCCESS, response)
                 dispatch('getSelf')
             })
@@ -244,12 +265,14 @@ const actions = {
     },
 
     getTasks({ commit }) {
-        userApi.getTasks()
+        return userApi.getTasks()
             .then((response) => {
                 commit(types.LOAD_TASKS, response)
+                return Promise.resolve()
             })
             .catch((error) => {
                 commit(types.LOG_ERROR, error)
+                return Promise.reject()
             })
     },
     getUser({ commit }, pk) {
@@ -359,6 +382,17 @@ const actions = {
                 return Promise.reject(error)
             })
     },
+    postTask({ commit }, data) {
+        return userApi.postTask(data)
+            .then(() => {
+                commit(types.POST_TASK)
+                return Promise.resolve()
+            })
+            .catch((error) => {
+                // console.log(error)
+                return Promise.reject(error)
+            })
+    },
     uploadFile({ commit }, payload) {
         commit(types.UPLOAD_FILE, payload)
     },
@@ -446,9 +480,10 @@ const mutations = {
     [types.UPLOAD_FILE](state, payload) {
         state.uploaded = payload
     },
-    [types.CLEAR_FILE](state, payload) {
+    [types.CLEAR_FILE](state) {
         state.uploaded = null
     },
+    [types.POST_TASK](state) {}
     // [types.ADD_CLASSROOM_FAILED](state) {},
 
 }
