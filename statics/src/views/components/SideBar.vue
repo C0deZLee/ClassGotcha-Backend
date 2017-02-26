@@ -38,12 +38,12 @@
                         </li>
                     </ul>
                 </li>
-                <li>
+                <!--<li>
                     <router-link :to="{name: 'myNotes'}">
                         <i class="fa fa-file-text"></i>
                         <span class="nav-label">My Notes</span>
                     </router-link>
-                </li>
+                </li>-->
                    <li>
                     <router-link :to="{name:'myGroups'}">
                         <i class="fa fa-users"></i>
@@ -69,6 +69,7 @@
 
 <script>
     import Avatar from 'vue-avatar'
+    import { mapGetters } from 'vuex'
 
     export default {
         name: 'sidebar',
@@ -80,24 +81,12 @@
                 return '/#/classroom/id/' + id
             }
         },
-        computed: {
-            fullName() {
-                return this.$store.getters.userFullName
-            },
-            avatar() {
-                if (this.$store.getters.userAvatar)
-                    return this.$store.getters.userAvatar.avatar1x
-                else return null
-            },
-            username() {
-                if (this.$store.getters.me)
-                    return this.$store.getters.me.username
-            },
-            classrooms() {
-                if (this.$store.getters.userClassrooms)
-                    return this.$store.getters.userClassrooms
-            }
-        }
+        computed: mapGetters({
+            fullName: "userFullName",
+            avatar: "userAvatar1x",
+            username: "username",
+            classrooms: "userClassrooms"
+        })
     }
 
 </script>
