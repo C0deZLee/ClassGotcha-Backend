@@ -22,7 +22,7 @@
                 </p>
 
             </div>
-            <div class="col-md-6">
+            <div class="col-md-6 col-xs-12">
                 <div class="ibox-content">
       <h1 class="text-center"> Login</h1>
                         <div class="form-group">

@@ -1,10 +1,10 @@
 import Cookie from 'js-cookie'
-import { COOKIE_DOMAIN, COOKIE_EXPIRE } from '../config.js'
+import { COOKIE_EXPIRE } from '../config.js'
 
 
 let cookieConfig = {}
-if (COOKIE_DOMAIN !== '' && COOKIE_EXPIRE !== '') {
-    cookieConfig = { domain: COOKIE_DOMAIN, expires: COOKIE_EXPIRE }
+if (COOKIE_EXPIRE !== '') {
+    cookieConfig = { expires: COOKIE_EXPIRE }
 }
 
 export const setCookie = (name, value) => {

@@ -16,7 +16,7 @@
                <small>It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.</small>
             </p>
          </div>
-         <div class="col-md-6">
+            <div class="col-md-6 col-xs-12">
             <div class="ibox-content">
                <div class="row">
                   <h1 class="text-center"> Register</h1>

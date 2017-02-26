@@ -63,7 +63,10 @@ account_add_moments = views.AccountViewSet.as_view({
 	'delete': 'moments'
 })
 account_tasks = views.AccountViewSet.as_view({
-	'get': 'tasks'
+	'get': 'tasks',
+	'put': 'tasks',
+	'post': 'tasks',
+	'delete': 'tasks'
 })
 
 account_freetime = views.AccountViewSet.as_view({

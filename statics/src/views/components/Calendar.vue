@@ -2,16 +2,18 @@
    <div>
       <div class="row  border-bottom white-bg dashboard-header">
          <div class="col-sm-3">
-            <h2>Recommended Tasks</h2>
-            <div class="ibox-content" v-show="!show_event_detail">
+            <h2 v-show="!show_event_detail && !create_new_event">Recommended Tasks</h2>
+            <h2 v-show="show_event_detail">Event Detail</h2>
+            <h2 v-show="create_new_event">Create New Event</h2>
+            <div class="ibox-content" v-show="!show_event_detail && !create_new_event">
                <div id="external-events">
                   <p>Drag a event and drop into callendar.</p>
                   <div v-for="recommened_task in user_recommened_tasks" class="external-event" :class="eventTaskBg(recommened_task)">{{recommened_task.task_name}} </div>
                </div>
             </div>
             <br>
-            <button class="btn form-control m-b" v-show="show_event_detail ||create_new_event" @click="show_event_detail=false; create_new_event=false;">Go back to recommended tasks</button>
-            <div v-show="show_event_detail">
+            <button class="btn form-control m-b" v-show="show_event_detail || create_new_event" @click="show_event_detail=false; create_new_event=false;">Go back to recommended tasks</button>
+            <div v-if="show_event_detail">
                <div class="form-group">
                   <label>Event Name</label>
                   <input type="text" class="form-control" placeholder="Title" v-model="event.task_name" disabled>
@@ -81,10 +83,10 @@
                   </div>
                </div>
             </div>
-            <div v-show="create_new_event">
+            <div v-if="create_new_event">
                <div class="form-group">
                   <label>Event Name</label>
-                  <input type="text" class="form-control" placeholder="Title" v-model="event.task_name">
+                  <input type="text" class="form-control" placeholder="Title" v-model="new_event.task_name">
                </div>
                <div class="form-group">
                   <div class="row">
@@ -107,32 +109,23 @@
                   </div>
                </div>
                <div class="form-group">
-                  <label>Category</label>
-                  <input type="text" class="form-control" placeholder="Category" :value="categoryName(event.category)">
-               </div>
-               <div class="form-group"  v-if="event.classroom" >
-                  <label>Classroom</label>
-                  <input type="text" class="form-control" placeholder="Classroom" :value="event.classroom.class_short">
-               </div>
-               <div class="form-group" v-if="event.group">
-                  <label>Group</label>
-                  <input type="text" class="form-control" placeholder="Group" :value="event.group">
-               </div>
-               <div class="form-group" v-show="event.location">
                   <label>Location</label>
-                  <input type="text" class="form-control" placeholder="Location" :value="event.location">
+                  <input type="text" class="form-control" placeholder="Location" v-model="new_event.location">
                </div>
-               <div class="form-group" v-if="event.repeat">
+               <div class="form-group">
                   <label>Repeat</label><br>
                   <div class="btn-group" >
-                     <button class="btn btn-white btn-sm" :class="event.repeat.includes('Sa')? 'active':''" @click="addTaskRepeat('Sa')">Sa</button>
-                     <button class="btn btn-white btn-sm" :class="event.repeat.includes('Fr')? 'active':''" @click="addTaskRepeat('Fr')">Fr</button>
-                     <button class="btn btn-white btn-sm" :class="event.repeat.includes('Th')? 'active':''" @click="addTaskRepeat('Th')">Th</button>
-                     <button class="btn btn-white btn-sm" :class="event.repeat.includes('We')? 'active':''" @click="addTaskRepeat('We')">We</button>    
-                     <button class="btn btn-white btn-sm" :class="event.repeat.includes('Tu')? 'active':''" @click="addTaskRepeat('Tu')">Tu</button>
-                     <button class="btn btn-white btn-sm" :class="event.repeat.includes('Mo')? 'active':''" @click="addTaskRepeat('Mo')">Mo</button>
-                     <button class="btn btn-white btn-sm" :class="event.repeat.includes('Su')? 'active':''" @click="addTaskRepeat('Su')">Su</button>    
+                     <button class="btn btn-white btn-sm" :class="new_event.repeat.includes('Su')? 'active':''" @click="addNewTaskRepeat('Su')">Su</button>    
+                     <button class="btn btn-white btn-sm" :class="new_event.repeat.includes('Mo')? 'active':''" @click="addNewTaskRepeat('Mo')">Mo</button>
+                     <button class="btn btn-white btn-sm" :class="new_event.repeat.includes('Tu')? 'active':''" @click="addNewTaskRepeat('Tu')">Tu</button>
+                     <button class="btn btn-white btn-sm" :class="new_event.repeat.includes('We')? 'active':''" @click="addNewTaskRepeat('We')">We</button>    
+                     <button class="btn btn-white btn-sm" :class="new_event.repeat.includes('Th')? 'active':''" @click="addNewTaskRepeat('Th')">Th</button>
+                     <button class="btn btn-white btn-sm" :class="new_event.repeat.includes('Fr')? 'active':''" @click="addNewTaskRepeat('Fr')">Fr</button>                      
+                     <button class="btn btn-white btn-sm" :class="new_event.repeat.includes('Sa')? 'active':''" @click="addNewTaskRepeat('Sa')">Sa</button>
                   </div>
+               </div>
+               <div class="form-group">
+                   <button class="btn btn-primary btn-block" @click="postNewTask()">Create</button>
                </div>
             </div>
          </div>
@@ -181,15 +174,15 @@
                     task_name: '',
                     type: 0, // Event
                     start_time: '',
-                    end_time: '',
                     start_date: '',
-                    end_date: '',
-                    category: 7, // Other
-                    description: '',
-                    id: '',
-                    location: '',
-                    repeat_list: [],
                     start: '',
+                    end_time: '',
+                    end_date: '',
+                    end: '',
+                    category: 6, // Other
+                    description: '',
+                    location: '',
+                    repeat: '',
                 },
                 // created_event: {},
                 // for fullcalendar
@@ -235,7 +228,7 @@
                 const event_color1 = '#f8ac59'
                 const event_color2 = '#ed5565'
                 const event_color3 = '#ed5565'
-                const event_color7 = '#3a87ad'
+                const event_color7 = '#23c6c8'
                 for (let i in this.user_tasks) {
                     const task = this.user_tasks[i]
                     /* global moment:true */
@@ -265,8 +258,8 @@
                         }
                         if (task.repeat_list.length) {
                             homework.dow = task.repeat_list
-                            homework.start = task.formatted_start_time // moment.utc(task.formatted_start_time).add(-0.5, 'hours').format()
-                            homework.end = task.formatted_start_time
+                            homework.start = moment.utc(task.formatted_end_time, 'HH:mm:ss').add(-0.5, 'hours').format('HH:mm:ss')
+                            homework.end = task.formatted_end_time
                             console.log(homework)
                         }
                         event_list1.push(homework)
@@ -292,9 +285,14 @@
                             end: (task.start ? task.end : moment.utc(task.end).add(0.5, 'hours').format()),
 
                         })
-                    } else if (task.category === 7) {
+                    } else if (task.category === 6) {
                         event_list7.push({
-                            id: task.id
+                            id: task.id,
+                            title: (task.location ? task.task_name + '\n' + task.location : task.task_name),
+                            editable: true,
+                            start: (task.start ? task.start : task.end),
+                            end: (task.start ? task.end : moment.utc(task.end).add(0.5, 'hours').format()),
+
                         })
                     }
                 }
@@ -323,6 +321,22 @@
 
                 })
             },
+            postNewTask() {
+                let formData = this.new_event
+                formData.start = formData.start_date + 'T' + formData.start_time
+                formData.end = formData.end_date + 'T' + formData.end_time
+                formData.involved = [this.user.id]
+                if (!formData.repeat) {
+                    delete formData['repeat']
+                }
+                this.$store.dispatch('postTask', formData)
+                    .then(() => {
+                        this.create_new_event = false
+                        this.$store.dispatch('getTasks').then(() => {
+                            this.createEvents()
+                        })
+                    })
+            },
             // data formatter
             formatTime(time) {
                 /* global moment: true */
@@ -337,9 +351,15 @@
             // data control
             addTaskRepeat(day) {
                 if (this.event.repeat.includes(day))
-                    this.event.repea = this.event.repea.replace(day, '')
+                    this.event.repeat = this.event.repeat.replace(day, '')
                 else
-                    this.event.repea = this.event.repea + day
+                    this.event.repeat = this.event.repeat + day
+            },
+            addNewTaskRepeat(day) {
+                if (this.new_event.repeat.includes(day))
+                    this.new_event.repeat = this.new_event.repeat.replace(day, '')
+                else
+                    this.new_event.repeat = this.new_event.repeat + day
             },
             // UI control
             eventTaskBg(event) {
@@ -368,7 +388,7 @@
                 return this.$store.getters.userRecommendedTasks
             },
             windowHeight() {
-                return window.innerHeight - 100
+                return window.innerHeight
             }
         },
         created() {
@@ -395,43 +415,76 @@
                 nowIndicator: true,
                 unselectAuto: false,
 
-                eventRender(event, element) {
-                    if (this.sync) {
-                        self.events = cal.fullCalendar('clientEvents')
-                    }
-                },
-                eventDestroy(event) {
-                    if (this.sync) {
-                        self.events = cal.fullCalendar('clientEvents')
-                    }
-                },
+                // eventRender(event, element) {
+                //     if (this.sync) {
+                //         self.events = cal.fullCalendar('clientEvents')
+                //     }
+                // },
+                // eventDestroy(event) {
+                //     if (this.sync) {
+                //         self.events = cal.fullCalendar('clientEvents')
+                //     }
+                // },
                 eventClick(event) {
+                    console.log(event)
+
+                    // The following code did this:
+                    // When click a event, if the event id is found in self.user_tasks, show event
+                    // else, this is a new event, create it
+                    let found = false
                     for (let i in self.user_tasks) {
-                        if (self.user_tasks[i].id === event.id)
+                        if (self.user_tasks[i].id === event.id) {
                             self.event = self.user_tasks[i]
+                            found = true
+                            self.show_event_detail = true
+                            self.create_new_event = false
+
+                        }
+                    }
+                    if (!found) {
+                        self.new_event.task_name = event.title
+                        // Here I'm doing the hack, 
+                        // fullcalendar event has a start attribute with an 
+                        // So I'm constructing time from this
+                        const event_start_iso_string = event.start._d.toISOString()
+                        const event_start = moment.utc(event_start_iso_string)
+                        let event_end
+                        if (event.end) {
+                            event_end = moment.utc(event.end._d.toISOString())
+                        } else {
+                            // default length of the event is 2 hours 
+                            event_end = moment.utc(event_start_iso_string).add(2, 'hours')
+                        }
+                        console.log(event.end, event_start, event_end)
+
+                        self.new_event.start_date = event_start.format('YYYY-MM-DD')
+                        self.new_event.start_time = event_start.format('HH:mm:ss')
+                        self.new_event.end_date = event_end.format('YYYY-MM-DD')
+                        self.new_event.end_time = event_end.format('HH:mm:ss')
+                        self.show_event_detail = false
+                        self.create_new_event = true
                     }
                     // $('#event-detail').modal('show')
-                    self.show_event_detail = true
                     $(self.$el).trigger('event-selected', event)
                 },
-                eventResize(event) {
-                    $(self.$el).trigger('event-resize', event)
-                    self.event = event
-                    self.show_event_detail = true
-                },
-                eventReceive(event) {
-                    $(this).remove()
-                    console.log(event)
-                    self.event = event
-                    self.show_event_detail = true
-                },
-                select(start, end, jsEvent) {
-                    $(self.$el).trigger('event-created', {
-                        start,
-                        end,
-                        allDay: !start.hasTime() && !end.hasTime(),
-                    })
-                },
+                // eventResize(event) {
+                //     $(self.$el).trigger('event-resize', event)
+                //     self.event = event
+                //     self.show_event_detail = true
+                // },
+                // eventReceive(event) {
+                //     $(this).remove()
+                //     console.log(event)
+                //     self.event = event
+                //     self.show_event_detail = true
+                // },
+                // select(start, end, jsEvent) {
+                //     $(self.$el).trigger('event-created', {
+                //         start,
+                //         end,
+                //         allDay: !start.hasTime() && !end.hasTime(),
+                //     })
+                // },
             })
             this.createExternalEvents()
         },

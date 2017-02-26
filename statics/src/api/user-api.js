@@ -6,7 +6,7 @@ import { getCookie } from '../utils/cookie'
 
 Vue.use(Resource)
 
-export const userApi = {
+export default {
     // Authorization
     login(formData) {
         return Vue.http.post(API_ROOT + 'account/login/', formData)
@@ -134,6 +134,11 @@ export const userApi = {
             .then((response) => Promise.resolve(response.data))
             .catch((error) => Promise.reject(error))
     },
+    postTask(fromData) {
+        return Vue.http.post(API_ROOT + 'account/tasks/', fromData, { headers: { Authorization: 'JWT ' + getCookie('token') } })
+            .then((response) => Promise.resolve(response.data))
+            .catch((error) => Promise.reject(error))
+    }
 }
 
 //  this.$http.post(state.apiEndPoint + '/account/login/', formData).then(response => {
