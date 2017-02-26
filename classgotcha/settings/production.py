@@ -59,9 +59,10 @@ INSTALLED_APPS = [
 	'classgotcha.apps.tags',
 
 ]
-
 MIDDLEWARE = [
-	'django.middleware.security.SecurityMiddleware',
+	'classgotcha.middleware.AtopdedTo110DebugMiddleware',
+        'classgotcha.middleware.MyMiddleware',
+        'django.middleware.security.SecurityMiddleware',
 	'django.contrib.sessions.middleware.SessionMiddleware',
 	'corsheaders.middleware.CorsMiddleware',
 	'django.middleware.common.CommonMiddleware',
@@ -69,7 +70,8 @@ MIDDLEWARE = [
 	'django.contrib.auth.middleware.AuthenticationMiddleware',
 	'django.contrib.messages.middleware.MessageMiddleware',
 	'django.middleware.clickjacking.XFrameOptionsMiddleware',
-	# --- account support ---
+	#'classgotcha.middleware.MyMiddleware',
+        # --- account support ---
 	# 'account.middleware.LocaleMiddleware',
 	# 'account.middleware.TimezoneMiddleware',
 ]
@@ -181,16 +183,18 @@ AWS_SECRET_ACCESS_KEY = 'YAGuIhUpp6i/tyfJsEDpJ3Km7NQoEApOrzVEKjoe'
 AWS_STORAGE_BUCKET_NAME = 'classgotcha-us-standard-20161024'
 
 # ----- Cross Origin Header -----
-CORS_ORIGIN_ALLOW_ALL = True
-
+#CORS_ORIGIN_ALLOW_ALL = True
+#CORS_ALLOW_CREDENTIALS = True
 CORS_ORIGIN_WHITELIST = (
 	'http://www.classgotcha.com',
 	'http://classgotcha.com',
         'https://classgotcha.com',
+        'classgotcha.com',
+        'www.classgotcha.com',
 )
 CORS_ALLOW_HEADERS = (
 	'accept',
-	'accept-encoding',
+        'accept-encoding',
 	'authorization',
 	'content-type',
 	'dnt',
@@ -201,7 +205,7 @@ CORS_ALLOW_HEADERS = (
 	'cache-control',
 	'HTTP_X_XSRF_TOKEN',
         'XMLHttpRequest',
-
+        'Access-Control-Allow-Origin',
 )
 
 # -------- JWT AUTH --------
