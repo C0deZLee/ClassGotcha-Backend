@@ -5,11 +5,23 @@ TMP_PATH = os.path.abspath(os.path.join(PROJECT_ROOT, 'local/tmp'))
 
 # Debug
 DEBUG = TEMPLATES[0]['OPTIONS']['debug'] = True
-#
-# if 'debug_toolbar' not in INSTALLED_APPS:
-#     INSTALLED_APPS += ('debug_toolbar',)
+
+if 'debug_toolbar' not in INSTALLED_APPS:
+    INSTALLED_APPS += ('debug_toolbar',)
 
 SECRET = '42'
+
+# ______ Channel Layers_____
+
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "asgi_redis.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [os.environ.get('REDIS_URL', 'redis://localhost:6379')],
+        },
+        "ROUTING": "classgotcha.apps.chat.routing.channel_routing",
+    },
+}
 
 # ------ Database ------
 DATABASES = {
