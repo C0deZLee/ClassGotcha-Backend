@@ -81,7 +81,7 @@ CHANNEL_LAYERS = {
 		"CONFIG": {
 			"hosts": [os.environ.get('REDIS_URL', 'redis://localhost:6379')],
 		},
-		"ROUTING": "classgotcha.routing.channel_routing",
+		"ROUTING": "classgotcha.apps.chat.routing.channel_routing",
 	},
 }
 
@@ -119,19 +119,18 @@ TEST_RUNNER = "lib.tests.MyTestDiscoverRunner"
 
 DATABASES = {
 
-	'default':{
-		'ENGINE':'django.db.backends.mysql',
-		'NAME':'ClassGotcha',
-		'USER':'ClassGotcha',
-		'PASSWORD':'admin12345',
-		'HOST':'/var/lib/mysql/mysql.sock',
+	'default': {
+		'ENGINE': 'django.db.backends.mysql',
+		'NAME': 'ClassGotcha',
+		'USER': 'ClassGotcha',
+		'PASSWORD': 'admin12345',
+		'HOST': '/var/lib/mysql/mysql.sock',
 
 	}
 
 }
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-
 
 # ------ Password validation ------
 # https://docs.djangoproject.com/en/1.10/ref/settings/#auth-password-validators
@@ -149,12 +148,12 @@ AUTHENTICATION_BACKENDS = [
 
 # ------ Rest framework ------
 REST_FRAMEWORK = {
-    'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.IsAuthenticated',
-    ],
-    'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
-    ]
+	'DEFAULT_PERMISSION_CLASSES': [
+		'rest_framework.permissions.IsAuthenticated',
+	],
+	'DEFAULT_AUTHENTICATION_CLASSES': [
+		'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
+	]
 }
 
 # ------ Internationalization -------
@@ -181,13 +180,8 @@ AWS_SECRET_ACCESS_KEY = 'YAGuIhUpp6i/tyfJsEDpJ3Km7NQoEApOrzVEKjoe'
 AWS_STORAGE_BUCKET_NAME = 'classgotcha-us-standard-20161024'
 
 # ----- Cross Origin Header -----
-CORS_ALLOW_CREDENTIALS = True
-CORS_ORIGIN_WHITELIST = (
-	'http://www.classgotcha.com',
-	'http://classgotcha.com',
-	'classgotcha.com',
-	'www.classgotcha.com'
-)
+CORS_ORIGIN_ALLOW_ALL = True
+CORS_ALLOW_CREDENTIALS = False
 CORS_ALLOW_HEADERS = (
 	'accept',
 	'accept-encoding',
@@ -205,34 +199,34 @@ CORS_ALLOW_HEADERS = (
 
 # -------- JWT AUTH --------
 JWT_AUTH = {
-    'JWT_ENCODE_HANDLER':
-        'rest_framework_jwt.utils.jwt_encode_handler',
+	'JWT_ENCODE_HANDLER':
+		'rest_framework_jwt.utils.jwt_encode_handler',
 
-    'JWT_DECODE_HANDLER':
-        'rest_framework_jwt.utils.jwt_decode_handler',
+	'JWT_DECODE_HANDLER':
+		'rest_framework_jwt.utils.jwt_decode_handler',
 
-    'JWT_PAYLOAD_HANDLER':
-        'rest_framework_jwt.utils.jwt_payload_handler',
+	'JWT_PAYLOAD_HANDLER':
+		'rest_framework_jwt.utils.jwt_payload_handler',
 
-    'JWT_PAYLOAD_GET_USER_ID_HANDLER':
-        'rest_framework_jwt.utils.jwt_get_user_id_from_payload_handler',
+	'JWT_PAYLOAD_GET_USER_ID_HANDLER':
+		'rest_framework_jwt.utils.jwt_get_user_id_from_payload_handler',
 
-    'JWT_RESPONSE_PAYLOAD_HANDLER':
-        'rest_framework_jwt.utils.jwt_response_payload_handler',
+	'JWT_RESPONSE_PAYLOAD_HANDLER':
+		'rest_framework_jwt.utils.jwt_response_payload_handler',
 
-    'JWT_SECRET_KEY': SECRET_KEY,
-    'JWT_PUBLIC_KEY': None,
-    'JWT_PRIVATE_KEY': None,
-    'JWT_ALGORITHM': 'HS256',
-    'JWT_VERIFY': True,
-    'JWT_VERIFY_EXPIRATION': True,
+	'JWT_SECRET_KEY': SECRET_KEY,
+	'JWT_PUBLIC_KEY': None,
+	'JWT_PRIVATE_KEY': None,
+	'JWT_ALGORITHM': 'HS256',
+	'JWT_VERIFY': True,
+	'JWT_VERIFY_EXPIRATION': True,
 
-    'JWT_LEEWAY': 0,
-    'JWT_EXPIRATION_DELTA': datetime.timedelta(days=1),
-    'JWT_AUDIENCE': None,
-    'JWT_ISSUER': None,
-    'JWT_ALLOW_REFRESH': True,
-    'JWT_REFRESH_EXPIRATION_DELTA': datetime.timedelta(days=7),
+	'JWT_LEEWAY': 0,
+	'JWT_EXPIRATION_DELTA': datetime.timedelta(days=1),
+	'JWT_AUDIENCE': None,
+	'JWT_ISSUER': None,
+	'JWT_ALLOW_REFRESH': True,
+	'JWT_REFRESH_EXPIRATION_DELTA': datetime.timedelta(days=7),
 
-    'JWT_AUTH_HEADER_PREFIX': 'JWT'
+	'JWT_AUTH_HEADER_PREFIX': 'JWT'
 }
