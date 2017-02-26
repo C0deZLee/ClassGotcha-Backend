@@ -2,17 +2,14 @@
     <div>
     <div class="row wrapper border-bottom white-bg page-heading">
                 <div class="col-lg-10">
-                    <h2>Teams board</h2>
+                    <h2>My Groups</h2>
                     <ol class="breadcrumb">
                         <li>
-         <router-link :to="{name:'home'}" class="btn btn-primary">Home</router-link>
+         <router-link :to="{name:'home'}">Home</router-link>
 
                         </li>
-                        <li>
-                            <a>App views</a>
-                        </li>
                         <li class="active">
-                            <strong>Teams board</strong>
+                            <strong>My Groups</strong>
                         </li>
                     </ol>
                 </div>
@@ -21,7 +18,7 @@
                 </div>
             </div>
         <div class="wrapper wrapper-content animated fadeInRight">
-            <div class="row">
+            <!--<div class="row">
                 <div class="col-lg-4">
                     <div class="ibox">
                         <div class="ibox-title">
@@ -387,8 +384,15 @@
                         </div>
                     </div>
                 </div>
-            </div>
-
+            </div>-->
+<div class="middle-box text-center animated fadeInRightBig">
+                    <h3 class="font-bold">This page is under developing</h3>
+                    <div class="error-desc">
+                       Coming soon!
+                        <br>
+                        <router-link :to="{name:'home'}" class="btn btn-primary m-t">Home</router-link>
+                    </div>
+                </div>
 
         </div>
     </div>
