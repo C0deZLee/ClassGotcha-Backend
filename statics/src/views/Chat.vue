@@ -5,7 +5,7 @@
         <h2>{{$store.getters.currentChatroom.name}}</h2>
         <ol class="breadcrumb">
           <li>
-         <router-link :to="{name:'home'}" class="btn btn-primary">Home</router-link>
+         <router-link :to="{name:'home'}" >Home</router-link>
           </li>
           <li>
             <a>Chatrooms</a>
