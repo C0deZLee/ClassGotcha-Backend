@@ -7,7 +7,7 @@ export const WS_ROOT = (process.env.NODE_ENV === 'production') ?
     'ws://localhost:8000/'
 
 export const COOKIE_DOMAIN = (process.env.NODE_ENV === 'production') ?
-    '*.classgotcha.com' :
+    'classgotcha.com' :
     'localhost'
 
 // cookie expired in 1 day
