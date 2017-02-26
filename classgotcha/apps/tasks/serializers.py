@@ -11,7 +11,7 @@ class TaskClassroomSerializer(serializers.ModelSerializer):
 		fields = ('id', 'class_short',)
 
 
-class TaskSerializer(serializers.ModelSerializer):
+class  TaskSerializer(serializers.ModelSerializer):
 	formatted_start_time = serializers.ReadOnlyField()
 	formatted_end_time = serializers.ReadOnlyField()
 	formatted_start_datetime = serializers.ReadOnlyField()
