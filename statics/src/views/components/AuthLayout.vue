@@ -2,7 +2,7 @@
   <div class="loginColumns animated fadeInDown">
         <router-view></router-view>
         <div class="text-right text-white">
-            <small>Chineseroom Studio © 2015-2017</small>
+            <small>Classgotcha © 2015-2017</small>
         </div>
   </div>
 

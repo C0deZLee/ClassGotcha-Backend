@@ -4,22 +4,12 @@
     <div class="row">
             <div class="col-md-6 text-white hidden-xs">
                 <h2 class="font-bold">Welcome to ClassGotcha <span class="label label-primary">Beta</span></h2>
-
-                <p>
-                    Perfectly designed and precisely prepared admin theme with over 50 pages with extra new web app views.
-                </p>
-
-                <p>
-                    Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s.
-                </p>
-
-                <p>
-                    When an unknown printer took a galley of type and scrambled it to make a type specimen book.
-                </p>
-
-                <p>
-                    <small>It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.</small>
-                </p>
+            <p>ClassGotcha is a tool that makes the life of college students easier.</p>
+            <p> It can help you organize, communicate and share learning materials at one place.</p>
+            <p> All kinds of learning activities are automatically pushed to your calendar, including but not limited to homework, quiz, exams and projects. </p>
+            <p>If you want to ask questions and talk to classmates, this facebook like timeline and instant chatroom will make everyone in your class easy to find.</p>
+            <p> You can also share notes to earn money, and be accessible to all the notes shared by your classmates.
+            </p>
 
             </div>
             <div class="col-md-6 col-xs-12">

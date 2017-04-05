@@ -3,15 +3,20 @@
         <div class="navbar-wrapper" >
                 <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
                     <div class="container">
-                        <div class="navbar-header page-scroll">
-                            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                        <div class="navbar-header">
+                            <!--<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
                                 <span class="sr-only">Toggle navigation</span>
                                 <span class="icon-bar"></span>
                                 <span class="icon-bar"></span>
                                 <span class="icon-bar"></span>
-                            </button>
-                            <a class="navbar-brand">ClassGotcha <span class="label label-primary">Beta</span></a>
+                            </button>-->
+                            <a class="navbar-brand"> ClassGotcha <span class="label label-primary">Beta</span></a>
                         </div>
+                           
+                               <ul class="m-l nav navbar-nav navbar-right">
+                                <li><router-link class="btn-primary" style=" color: #ffffff;" :to="{name:'register'}" >SIGN UP</router-link></li>
+                                <li><router-link  :to="{name:'login'}">LOG IN</router-link></li>
+                            </ul> 
                         <div id="navbar" class="navbar-collapse collapse">
                             <ul class="nav navbar-nav navbar-right">
                                 <li><a class="page-scroll" href="#page-top">Home</a></li>
@@ -19,8 +24,8 @@
                                 <li><a class="page-scroll" href="#team">Team</a></li>
                                 <li><a class="page-scroll" href="#pricing">Pricing</a></li>
                                 <li><a class="page-scroll" href="#contact">Contact</a></li>
-                                <li><router-link class="page-scroll btn-primary" :to="{name:'register'}">SIGN UP</router-link></li>
                             </ul>
+                      
                         </div>
                     </div>
                 </nav>
@@ -30,14 +35,12 @@
                 <div class="item active">
                     <div class="container">
                         <div class="carousel-caption">
-                            <h1>save college student<br/>
-                                from<br/>
-                                homeworks, quizzes, exams<br/>
-                                </h1>
-                            <p>Currently under developement.</p>
+                            <h1>
+                                Save you from <br>
+                                college</h1>
+                            <p>Your personal assistant for courses organizing.</p>
                             <p>
-                                <router-link  class="btn btn-lg btn-primary" :to="{name:'register'}">SIGN UP</router-link>
-                                <router-link class="caption-link" :to="{name:'login'}">LOG IN</router-link>
+                                <router-link  class="btn btn-lg btn-primary" :to="{name:'register'}">Join Now</router-link>
                             </p>
                         </div>
                     </div>
@@ -47,69 +50,122 @@
 
         </div>
 
-        <section id="features" class="container services">
-            <div class="row">
+<section id="features" class="features">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12 text-center">
+                <div class="navy-line"></div>
+                <h1>Our Great Feautres</h1>
+                <p>YOUR PERSONAL ASSISTANT FOR COURSES ORGANIZING.</p>
+            </div>
+        </div>
+        <br>
+        <div class="row">
                 <div class="col-sm-3">
-                    <h2>Full responsive</h2>
-                    <p>Donec sed odio dui. Etiam porta sem malesuada magna mollis euismod. Nullam id dolor id nibh ultricies vehicula ut id elit. Morbi leo risus.</p>
-                    <p><a class="navy-link" href="#" role="button">Details &raquo;</a></p>
+                    <h2>INTERACTIVE CALENDAR</h2>
+                    <p>Courses deadlines and shared activities are automatically pushed onto your tasks list. With simple drag and drop, you can arrange them on your calendar without conflicts with personal events.</p>
+             <p><a class="navy-link" href="#" role="button">Details &raquo;</a></p>
                 </div>
                 <div class="col-sm-3">
-                    <h2>LESS/SASS Files</h2>
-                    <p>Donec sed odio dui. Etiam porta sem malesuada magna mollis euismod. Nullam id dolor id nibh ultricies vehicula ut id elit. Morbi leo risus.</p>
-                    <p><a class="navy-link" href="#" role="button">Details &raquo;</a></p>
+                    <h2>COMMUNICATION</h2>
+                    <p>To create an environment closed to your daily online social experience, the Q&A system use the form of facebook activities feeds. The instant messaging chatroom can help you find and chat with your classmates at one click.</p>
+              <p><a class="navy-link" href="#" role="button">Details &raquo;</a></p>
                 </div>
                 <div class="col-sm-3">
-                    <h2>6 Charts Library</h2>
-                    <p>Donec sed odio dui. Etiam porta sem malesuada magna mollis euismod. Nullam id dolor id nibh ultricies vehicula ut id elit. Morbi leo risus.</p>
-                    <p><a class="navy-link" href="#" role="button">Details &raquo;</a></p>
+                    <h2>NOTES SHARING</h2>
+                    <p>To create an environment closed to your daily online social experience, the Q&A system use the form of facebook activities feeds. The instant messaging chatroom can help you find and chat with your classmates at one click.</p>
+                <p><a class="navy-link" href="#" role="button">Details &raquo;</a></p>
                 </div>
                 <div class="col-sm-3">
-                    <h2>Advanced Forms</h2>
-                    <p>Donec sed odio dui. Etiam porta sem malesuada magna mollis euismod. Nullam id dolor id nibh ultricies vehicula ut id elit. Morbi leo risus.</p>
-                    <p><a class="navy-link" href="#" role="button">Details &raquo;</a></p>
+                    <h2>LEARNING ANALYTIC</h2>
+                    <p>A powerful learning analytic backend can provide a personalized learning profile. It analyzes all your online footprints and provide you a thorough report to inform you where you are in the semester. </p>
+              <p><a class="navy-link" href="#" role="button">Details &raquo;</a></p>
                 </div>
             </div>
-        </section>
+    </div>
+
+</section>
+                <div class="gray-line"></div>
 
         <section  class="container features">
-            <div class="row">
+        <div class="row features-block">
+
+        <div class="col-lg-5  features-text">
+                <small>CLASSGOTCHA</small>
+                <h1>Interactive Calendar</h1>
+                <i class="fa fa fa-calendar-check-o big-icon pull-left"></i>
+                <p>Courses deadlines and shared activities are automatically pushed onto your tasks list. With simple drag and drop, you can arrange them on your calendar without conflicts with personal events.</p>
+        </div>
+        <div class="col-lg-7 text-right wow fadeInRight animated">
+           <img  src="~img/landing/homepage.png" alt="dashboard" class="img-responsive shadow pull-right">
+        </div>
+    </div>
+                <div class="gray-line"></div>
+    
+            <div class="row features-block">
+  <div class="col-lg-7 text-right wow fadeInLeft animated">
+           <img  src="~img/landing/classroom.png" alt="dashboard" class="img-responsive shadow">
+        </div>
+        
+        <div class="col-lg-5  features-text">
+                <small>CLASSGOTCHA</small>
+                <h1>Communication</h1>
+                <i class="fa fa fa-users big-icon pull-right"></i>
+                <p>To create an environment closed to your daily online social experience, the Q&A system use the form of facebook activities feeds. The instant messaging chatroom can help you find and chat with your classmates at one click.</p>
+                </div>
+      
+    </div>     
+                <div class="gray-line"></div>
+    
+       <div class="row features-block">
+
+        <div class="col-lg-5  features-text">
+                <small>CLASSGOTCHA</small>
+                <h1>Notes Sharing</h1>
+                <i class="fa fa fa-file-text big-icon pull-left"></i>
+                <p>To create an environment closed to your daily online social experience, the Q&A system use the form of facebook activities feeds. The instant messaging chatroom can help you find and chat with your classmates at one click.</p>
+        </div>
+        <div class="col-lg-7 text-right wow fadeInRight animated">
+           <img  src="~img/landing/notes.png" alt="dashboard" class="img-responsive shadow pull-right">
+        </div>
+    </div>
+          <!--  <div class="row">
                 <div class="col-lg-12 text-center">
                     <div class="navy-line"></div>
-                    <h1>Over 40+ unique view<br/> <span class="navy"> with many custom components</span> </h1>
-                    <p>Donec sed odio dui. Etiam porta sem malesuada magna mollis euismod. </p>
+                    <h1>Greatly Designed User Interface</h1>
+                    <p>YOUR PERSONAL ASSISTANT FOR COURSES ORGANIZING.</p>
                 </div>
             </div>
             <div class="row">
                 <div class="col-md-3 text-center wow fadeInLeft">
                     <div>
-                        <i class="fa fa-mobile features-icon"></i>
-                        <h2>Full responsive</h2>
-                        <p>Donec sed odio dui. Etiam porta sem malesuada magna mollis euismod. Nullam id dolor id nibh ultricies vehicula ut id elit. Morbi leo risus.</p>
+                        <i class="fa fa-calendar-check-o features-icon"></i>
+                        <h2>Calendar</h2>
+                        <p>Courses deadlines and shared activities are automatically pushed onto your tasks list. With simple drag and drop, you can arrange them on your calendar without conflicts with personal events. </p>
                     </div>
                     <div class="m-t-lg">
                         <i class="fa fa-bar-chart features-icon"></i>
-                        <h2>6 Charts Library</h2>
-                        <p>Donec sed odio dui. Etiam porta sem malesuada magna mollis euismod. Nullam id dolor id nibh ultricies vehicula ut id elit. Morbi leo risus.</p>
+                        <h2>Learning Analytics</h2>
+                        <p>A powerful learning analytics backend can provide a personalized learning profile. It analyzes all your online footprints and provide you a thorough report to inform you where you are in the semester. </p>
                     </div>
                 </div>
-                <div class="col-md-6 text-center  wow zoomIn">
-                    <img src="img/landing/perspective.png" alt="dashboard" class="img-responsive">
+                <div class="col-md-6 text-center wow zoomIn">
+                    <img  src="~img/landing/homepage.png" alt="dashboard" class="img-responsive shadow">
                 </div>
                 <div class="col-md-3 text-center wow fadeInRight">
                     <div>
-                        <i class="fa fa-envelope features-icon"></i>
-                        <h2>Mail pages</h2>
-                        <p>Donec sed odio dui. Etiam porta sem malesuada magna mollis euismod. Nullam id dolor id nibh ultricies vehicula ut id elit. Morbi leo risus.</p>
+                        <i class="fa fa-file-text-o features-icon"></i>
+                        <h2>Notes sharing</h2>
+                        <p>You can view and share course notes with all classmates. Shared notes are automatically tagged for easy Notes with high quality can get rewards.</p>
                     </div>
-                    <div class="m-t-lg">
-                        <i class="fa fa-google features-icon"></i>
-                        <h2>AngularJS version</h2>
-                        <p>Donec sed odio dui. Etiam porta sem malesuada magna mollis euismod. Nullam id dolor id nibh ultricies vehicula ut id elit. Morbi leo risus.</p>
+                     <div class="m-t-lg">
+                        <i class="fa fa-comments-o features-icon"></i>
+                        <h2>Communication</h2>
+                        <p>To create an environment closed to your daily online social experience, the Q&A system use the form of facebook activities feeds. The instant messaging chatroom can help you find and chat with your classmates at one click.</p>
                     </div>
                 </div>
             </div>
-            <div class="row">
+            <!--<div class="row">
                 <div class="col-lg-12 text-center">
                     <div class="navy-line"></div>
                     <h1>Discover great feautres</h1>
@@ -126,7 +182,7 @@
                 <div class="col-lg-6 text-right wow fadeInRight">
                     <img src="img/landing/dashboard.png" alt="dashboard" class="img-responsive pull-right">
                 </div>
-            </div>
+            </div>-->
         </section>
 
         <section id="team" class="gray-section team">
@@ -135,15 +191,15 @@
                     <div class="col-lg-12 text-center">
                         <div class="navy-line"></div>
                         <h1>Our Team</h1>
-                        <p>Donec sed odio dui. Etiam porta sem malesuada magna mollis euismod.</p>
+                        <p>YOUR PERSONAL ASSISTANT FOR COURSES ORGANIZING.</p>
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-sm-4 wow fadeInLeft">
-                        <div class="team-member">
-                            <img src="img/landing/avatar3.jpg" class="img-responsive img-circle img-small" alt="">
-                            <h4><span class="navy">Amelia</span> Smith</h4>
-                            <p>Lorem ipsum dolor sit amet, illum fastidii dissentias quo ne. Sea ne sint animal iisque, nam an soluta sensibus. </p>
+                    <div class="col-sm-4">
+                         <div class="team-member">
+                            <img src="~img/landing/simowu.png" class="img-responsive img-circle" alt="">
+                            <h4><span class="navy">Simo</span> Wu</h4>
+                            <p>Expert in data mining. <br>  Help you understand your learning activities better. </p>
                             <ul class="list-inline social-icon">
                                 <li><a href="#"><i class="fa fa-twitter"></i></a>
                                 </li>
@@ -155,10 +211,10 @@
                         </div>
                     </div>
                     <div class="col-sm-4">
-                        <div class="team-member wow zoomIn">
-                            <img src="img/landing/avatar1.jpg" class="img-responsive img-circle" alt="">
-                            <h4><span class="navy">John</span> Novak</h4>
-                            <p>Lorem ipsum dolor sit amet, illum fastidii dissentias quo ne. Sea ne sint animal iisque, nam an soluta sensibus.</p>
+                        <div class="team-member">
+                            <img src="~img/landing/xiangli.png" class="img-responsive img-circle" alt="">
+                            <h4><span class="navy">Xiang</span> Li</h4>
+                            <p>Developing expert. <br> Provide perfect experience in organizing your learning activities.</p>
                             <ul class="list-inline social-icon">
                                 <li><a href="#"><i class="fa fa-twitter"></i></a>
                                 </li>
@@ -169,11 +225,11 @@
                             </ul>
                         </div>
                     </div>
-                    <div class="col-sm-4 wow fadeInRight">
+                    <div class="col-sm-4">
                         <div class="team-member">
-                            <img src="img/landing/avatar2.jpg" class="img-responsive img-circle img-small" alt="">
-                            <h4><span class="navy">Peter</span> Johnson</h4>
-                            <p>Lorem ipsum dolor sit amet, illum fastidii dissentias quo ne. Sea ne sint animal iisque, nam an soluta sensibus.</p>
+                            <img src="~img/landing/qiyuanli.png" class="img-responsive img-circle" alt="">
+                            <h4><span class="navy">Qiyuan</span> Li</h4>
+                            <p>Educational Designer. <br> Create sustained learning community for you.</p>
                             <ul class="list-inline social-icon">
                                 <li><a href="#"><i class="fa fa-twitter"></i></a>
                                 </li>
@@ -185,12 +241,12 @@
                         </div>
                     </div>
                 </div>
-                <div class="row">
+                <!--<div class="row">
                     <div class="col-lg-8 col-lg-offset-2 text-center m-t-lg m-b-lg">
                         <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aut eaque, laboriosam veritatis, quos non quis ad perspiciatis, totam corporis ea, alias ut unde.</p>
                     </div>
                 </div>
-            </div>
+            </div>-->
         </section>
 
         <section id="pricing" class="pricing">
@@ -199,17 +255,17 @@
                     <div class="col-lg-12 text-center">
                         <div class="navy-line"></div>
                         <h1>Pricing</h1>
-                        <p>Everything is free under beta test.</p>
+                        <!--<p>Everything is free under beta test.</p>-->
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-lg-12 wow zoomIn">
+                    <div class=" col-md-offset-4 col-md-4 wow zoomIn">
                         <ul class="pricing-plan list-unstyled">
                             <li class="pricing-title">
                                 Free 
                             </li>
                             <li class="pricing-desc">
-                                Lorem ipsum dolor sit amet, illum fastidii dissentias quo ne. Sea ne sint animal iisque, nam an soluta sensibus.
+                                Everything is free under beta test.
                             </li>
                             <li class="pricing-price">
                                 <span>$0</span> / month
@@ -218,16 +274,16 @@
                                 Personalized schedule 
                             </li>
                             <li>
-                                Class Notes
+                                Class notes sharing
                             </li>
                             <li>
                                 Event orgnization
                             </li>
                             <li>
-                                Online Chating
+                                Online chating
                             </li>
                             <li>
-                                Other
+                               All Other services
                             </li>
                         </ul>
                     </div>
@@ -261,11 +317,11 @@
                         </ul>
                     </div>-->
                 </div>
-                <div class="row m-t-lg">
+                <!--<div class="row m-t-lg">
                     <div class="col-lg-8 col-lg-offset-2 text-center m-t-lg">
                         <p>*Many desktop publishing packages and web page editors now use Lorem Ipsum as their default model text, and a search for 'lorem ipsum' will uncover many web sites still in their infancy. <span class="navy">Various versions</span>  have evolved over the years, sometimes by accident, sometimes on purpose (injected humour and the like).</p>
                     </div>
-                </div>
+                </div>-->
             </div>
 
         </section>
@@ -276,16 +332,16 @@
                     <div class="col-lg-12 text-center">
                         <div class="navy-line"></div>
                         <h1>Contact Us</h1>
-                        <p>Donec sed odio dui. Etiam porta sem malesuada magna mollis euismod.</p>
+                        <p>Have questions? Just let us know.</p>
                     </div>
                 </div>
                 <div class="row m-b-lg">
                     <div class="col-lg-3 col-lg-offset-3">
                         <address>
-                            <strong><span class="navy">Chineseroom Studio</span></strong><br/>
-                            Launch Box 108<br/>
+                            <h3><span class="navy">ClassGotcha</span></h3>
+                            Launch Box<br/>
                             State College, PA 16803<br/>
-                            <abbr title="Email"><i class="fa fa-envelope"></i></abbr>  team@classgotcha.com
+                            <!--<abbr title="Email"><i class="fa fa-envelope"></i></abbr>  team@classgotcha.com-->
                         </address>
                     </div>
                     <div class="col-lg-4">
@@ -296,7 +352,7 @@
                 </div>
                 <div class="row">
                     <div class="col-lg-12 text-center">
-                        <a href="mailto:test@email.com" class="btn btn-primary">Send us mail</a>
+                        <a href="mailto:team@classgotcha.com" class="btn btn-primary">Send us mail</a>
                         <p class="m-t-sm">
                             Or follow us on social platform
                         </p>
@@ -312,7 +368,7 @@
                 </div>
                 <div class="row">
                     <div class="col-lg-8 col-lg-offset-2 text-center m-t-lg m-b-lg">
-                        <p><strong>&copy; 2017 Chineseroom</strong><br/> 
+                        <p><strong>&copy; 2017 ClassGotcha Team</strong><br/> 
                         All rights reserved.</p>
                     </div>
                 </div>
@@ -330,19 +386,20 @@
             $(document).ready(function() {
 
                 $('body').scrollspy({
-                    target: '.navbar-fixed-top',
+                    target: '.page-scroll',
                     offset: 80
                 })
 
                 // Page scrolling feature
-                $('a.page-scroll').bind('click', function(event) {
+                setTimeout($('a.page-scroll').bind('click', function(event) {
                     var link = $(this)
                     $('html, body').stop().animate({
                         scrollTop: $(link.attr('href')).offset().top - 50
                     }, 500)
                     event.preventDefault()
                     $("#navbar").collapse('hide')
-                })
+                }), 250)
+
             })
 
 
@@ -420,6 +477,13 @@
         border-bottom: 2px solid #1ab394;
     }
     
+    .gray-line {
+        width: 60px;
+        height: 1px;
+        margin: 60px auto 0;
+        border-bottom: 2px solid #aeaeae;
+    }
+    
     .navbar-wrapper {
         position: fixed;
         top: 0;
@@ -457,6 +521,11 @@
         letter-spacing: 1px;
         text-transform: uppercase;
         font-size: 14px;
+    }
+    
+    .nav>li.active {
+        border: none;
+        background: inherit;
     }
     
     .navbar-nav>li>a {
@@ -930,6 +999,12 @@
     fieldset[disabled] .btn-primary.active {
         background-color: #1dc5a3;
         border-color: #1dc5a3;
+    }
+    
+    .shadow {
+        -webkit-box-shadow: 10px 10px 55px -1px rgba(0, 0, 0, 0.69);
+        -moz-box-shadow: 10px 10px 55px -1px rgba(0, 0, 0, 0.69);
+        box-shadow: 10px 10px 55px -1px rgba(0, 0, 0, 0.69);
     }
     
     @media (min-width: 768px) {

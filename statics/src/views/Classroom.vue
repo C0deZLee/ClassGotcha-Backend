@@ -3,8 +3,8 @@
   <div>
     <div class="row m-b-lg m-t-lg">
       <div class="col-md-6">
-        <div class="profile-image">
-          <img src="img/CS.png" class="img-circle circle-border m-b-md" alt="profile">
+       <div class="profile-image">
+          <img src="~img/major/math.jpg" class="img-circle circle-border m-b-md" alt="profile">
         </div>
         <div class="profile-info">
           <div>
@@ -136,10 +136,9 @@
           <input type="text" placeholder="4/12 5:00pm-6:00pm" class="form-control">
           <h5>People invited</h5>
           <div class="user-friends">
-            <a href=""><img alt="image" class="img-circle" src="modules/classrooms/img/a4.jpg"></a>
-            <a href=""><img alt="image" class="img-circle" src="modules/classrooms/img/a5.jpg"></a>
-            <a href=""><img alt="image" class="img-circle" src="modules/classrooms/img/a6.jpg"></a>
-            <a href=""><img alt="add people" class="img-circle" src="modules/classrooms/img/a6.jpg"></a>
+            <a href=""><img alt="image" class="img-circle" src="~img/avatar/a1.jpg"></a>
+            <a href=""><img alt="image" class="img-circle" src="~img/avatar/a2.jpg"></a>
+            <a href=""><img alt="image" class="img-circle" src="~img/avatar/a4.jpg"></a>
           </div>
           <br>    
           <a href="#" class="btn btn-sm btn-primary"> Invite!</a>
