@@ -24,7 +24,7 @@ def read_file(request, file_name=None):
 	uploaded_file = request.FILES.get('file', False)
 	if not uploaded_file:
 		return None
-	name, extension = os.path.splitext(uploaded_file.name)
+	name, extension = uploaded_file.name.split('.')
 
 	if file_name:
 		name = file_name
