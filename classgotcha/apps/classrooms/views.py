@@ -65,13 +65,14 @@ class ClassroomViewSet(viewsets.ViewSet):
 			return Response(serializer.data)
 		# major + class number
 		else:
-			match = re.match(r"([a-z]+) *([0-9]+)", search_token, re.I)
+			match = re.match(r"([a-z]+) *([0-9a-z]*)", search_token, re.I)
 			if match:
 				items = match.groups()
+				print items
 				class_major = items[0].upper()
 				class_number = items[1]
 				major = Major.objects.get(major_short=class_major)
-				classrooms = Classroom.objects.filter(major=major, class_number=class_number)
+				classrooms = Classroom.objects.filter(major=major, class_number=class_number) if class_number else Classroom.objects.filter(major=major)
 				serializer = BasicClassroomSerializer(classrooms, many=True)
 				return Response(serializer.data)
 			else:
