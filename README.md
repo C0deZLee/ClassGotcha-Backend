@@ -16,7 +16,7 @@
 ### Create local folder for temp database and virtual env
 
 ```
-mkdir local/tmp
+> mkdir local/tmp
 ```
 
 ### Virtual Env
