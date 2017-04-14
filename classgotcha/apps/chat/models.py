@@ -10,6 +10,9 @@ class Room(models.Model):
 	name = models.CharField(max_length=20)
 	read = models.BooleanField(default=True)
 
+	room_id = models.CharField(max_length=200)
+
+
 	# Relationship
 	accounts = models.ManyToManyField(Account, related_name='chatrooms')
 	creator = models.ForeignKey(Account, related_name='owned_rooms')
@@ -70,3 +73,4 @@ class Message(models.Model):
 
 	class Meta:
 		get_latest_by = 'created'
+
