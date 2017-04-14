@@ -47,9 +47,7 @@ INSTALLED_APPS = [
 	'rest_framework_docs',
 	'rest_framework_jwt',
 	'storages',
-	'channels',
 	'corsheaders',
-	'widget_tweaks',
 	# myapp
 	'classgotcha.apps.accounts',
 	'classgotcha.apps.classrooms',

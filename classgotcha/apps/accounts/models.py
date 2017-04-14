@@ -102,6 +102,7 @@ class Account(AbstractBaseUser, PermissionsMixin):
 	about_me = models.CharField(max_length=200, default='Yo!')
 	level = models.IntegerField(default=1)
 	phone = models.CharField(max_length=20, null=True)
+	matrix_token = models.CharField(max_length=200, null=True)
 	# Relations
 	friends = models.ManyToManyField('self')
 	pending_friends = models.ManyToManyField('self')
