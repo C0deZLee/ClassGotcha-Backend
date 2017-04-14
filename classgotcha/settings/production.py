@@ -176,9 +176,9 @@ AUTH_USER_MODEL = 'accounts.Account'
 # ------ Amazon S3 ------
 DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
 # Amazon Web Services access key, as a string.
-AWS_ACCESS_KEY_ID = 'AKIAIC72HESTHUCZQHLQ'
+AWS_ACCESS_KEY_ID = 'AKIAIRSAW2O7ARSWDQMA'
 # Amazon Web Services secret access key, as a string.
-AWS_SECRET_ACCESS_KEY = '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'
+AWS_SECRET_ACCESS_KEY = 'Zp3/A1ZYANLVa0odjIiSaflazVdsG0Ra2p+eNeoC'
 # Amazon Web Services storage bucket name, as a string.
 AWS_STORAGE_BUCKET_NAME = 'classgotcha-us-standard-20161024'
 
@@ -188,9 +188,9 @@ AWS_STORAGE_BUCKET_NAME = 'classgotcha-us-standard-20161024'
 CORS_ORIGIN_WHITELIST = (
 	'http://www.classgotcha.com',
 	'http://classgotcha.com',
-        'https://classgotcha.com',
-        'classgotcha.com',
-        'www.classgotcha.com',
+	'https://classgotcha.com',
+	'classgotcha.com',
+	'www.classgotcha.com',
 )
 CORS_ALLOW_HEADERS = (
 	'accept',
