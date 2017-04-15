@@ -2,8 +2,8 @@ import views
 from django.conf.urls import url
 from rest_framework_jwt.views import obtain_jwt_token, refresh_jwt_token, verify_jwt_token
 
-account_reset_password = views.AccountViewSet.as_view({
-	'post': 'reset_password'
+account_change_password = views.AccountViewSet.as_view({
+	'post': 'change_password'
 })
 
 account_detail = views.AccountViewSet.as_view({
@@ -94,13 +94,13 @@ urlpatterns = [
 	url(r'^avatar/$', views.account_avatar, name='user-avatar'),
 	url(r'^classrooms/$', account_classrooms, name='user-classrooms'),
 	url(r'^chatrooms/$', account_chatrooms, name='user-chatrooms'),
-	url(r'^friends/$', account_friends, name='uer-friends'),
+	url(r'^friends/$', account_friends, name='user-friends'),
 	url(r'^pending-friends/$', account_pending_friends, name='user-pending-friends'),
 	url(r'^login/$', obtain_jwt_token),
 	url(r'^login-refresh/$', refresh_jwt_token),
 	url(r'^login-verify/$', verify_jwt_token),
 	url(r'^register/$', views.account_register, name='register'),
-	url(r'^reset/$', account_reset_password, name='reset-pass'),
+	url(r'^reset/$', account_change_password, name='change-pass'),
 	url(r'^notes/$', account_notes, name='user-notes'),
 	url(r'^moments/$', account_moments, name='user-moments'),
 	url(r'^tasks/$', account_tasks, name='user-tasks'),

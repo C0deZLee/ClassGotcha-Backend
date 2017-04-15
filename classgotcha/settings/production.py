@@ -43,6 +43,7 @@ INSTALLED_APPS = [
 	'django.contrib.staticfiles',
 	'django_extensions',
 	# installed
+    'django_ses',
 	'rest_framework',
 	'rest_framework_docs',
 	'rest_framework_jwt',
@@ -57,6 +58,7 @@ INSTALLED_APPS = [
 	'classgotcha.apps.tasks',
 	'classgotcha.apps.chat',
 	'classgotcha.apps.tags',
+	'classgotcha.apps.email',
 
 ]
 MIDDLEWARE = [
@@ -107,6 +109,11 @@ TEMPLATES = [
 			'debug': False,
 		},
 	},
+]
+
+# ------ Email Templates ------
+TEMPLATES_DIRS = [
+	os.path.join(PROJECT_ROOT, 'classgotcha/apps/email/templates')
 ]
 
 # ------ Account customization ------
@@ -176,9 +183,9 @@ AUTH_USER_MODEL = 'accounts.Account'
 # ------ Amazon S3 ------
 DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
 # Amazon Web Services access key, as a string.
-AWS_ACCESS_KEY_ID = 'AKIAIRSAW2O7ARSWDQMA'
+# AWS_ACCESS_KEY_ID = 'AKIAIRSAW2O7ARSWDQMA'
 # Amazon Web Services secret access key, as a string.
-AWS_SECRET_ACCESS_KEY = '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'
+# AWS_SECRET_ACCESS_KEY = 'Zp3/A1ZYANLVa0odjIiSaflazVdsG0Ra2p+eNeoC'
 # Amazon Web Services storage bucket name, as a string.
 AWS_STORAGE_BUCKET_NAME = 'classgotcha-us-standard-20161024'
 
@@ -241,3 +248,19 @@ JWT_AUTH = {
 
     'JWT_AUTH_HEADER_PREFIX': 'JWT'
 }
+
+
+# ------ SES email settings ------
+
+EMAIL_BACKEND = 'django_ses.SESBackend'
+
+# These are optional -- if they're set as environment variables they won't
+# need to be set here as well
+AWS_ACCESS_KEY_ID = 'AKIAIRH23FF4HTP5BCHA'
+AWS_SECRET_ACCESS_KEY = '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'
+
+# Additionally, if you are not using the default AWS region of us-east-1,
+# you need to specify a region, like so:
+AWS_SES_REGION_NAME = 'us-east-1'
+AWS_SES_REGION_ENDPOINT = 'email.us-east-1.amazonaws.com'
+AWS_SES_AUTO_THROTTLE = 0.5 # (default; safety factor applied to rate limit)

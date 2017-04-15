@@ -3,7 +3,9 @@
 mkdir -p local
 mkdir -p local/tmp
 
-python manage.py makemigration
+rm -rf *.pyc
+
+python manage.py makemigrations
 python manage.py migrate
 
 python manage.py runserver

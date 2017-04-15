@@ -21,6 +21,8 @@ from classgotcha.apps.classrooms import urls as classroom_urls
 from classgotcha.apps.chat import urls as chat_urls
 from classgotcha.apps.posts import urls as post_urls
 from classgotcha.apps.tasks import urls as task_urls
+from classgotcha.apps.email import urls as email_urls
+
 
 admin.autodiscover()
 
@@ -31,7 +33,8 @@ urlpatterns = [
     url(r'^classroom/', include(classroom_urls)),
     url(r'^post/', include(post_urls)),
     url(r'^task/', include(task_urls)),
+	url(r'^email/', include(email_urls)),
     # admin site and docs
     url(r'^admin/', admin.site.urls),
+	url(r'^admin/django-ses/', include('django_ses.urls'))
 ]
-

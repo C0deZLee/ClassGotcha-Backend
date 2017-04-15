@@ -2,6 +2,7 @@ from  datetime import datetime
 
 from django.shortcuts import get_object_or_404
 from django.core.files.base import File
+from django.contrib.auth.hashers import check_password
 
 from rest_framework_jwt.settings import api_settings
 from rest_framework import viewsets, status
@@ -151,19 +152,20 @@ class AccountViewSet(viewsets.ViewSet):
 				request.user.save()
 			return Response(status=status.HTTP_200_OK)
 
-	@staticmethod
-	def reset_password(request, pk=None):
-		if request.user.is_admin or request.user.pk == int(pk):
-			if not request.data['old-password']:
-				return Response(status=status.HTTP_400_BAD_REQUEST)
-			try:
+	# @staticmethod
+	def change_password(self, request): 
+		if not request.data['old-password']:
+			return Response(status=status.HTTP_400_BAD_REQUEST)
+		try:
+			if check_password(request.data['old-password'], request.user.password):
 				request.user.set_password(request.data['password'])
 				request.user.save()
-				return Response(status=200)
-			except:
-				return Response(status=status.HTTP_400_BAD_REQUEST)
-		else:
-			return Response(status=status.HTTP_403_FORBIDDEN)
+				return Response(status=status.HTTP_200_OK)
+			else:
+				return Response({"ERROR": "Password not match"},status=status.HTTP_400_BAD_REQUEST)
+				
+		except:
+			return Response(status=status.HTTP_400_BAD_REQUEST)
 
 	@staticmethod
 	def pending_friends(request):
