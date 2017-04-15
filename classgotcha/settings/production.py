@@ -176,9 +176,9 @@ AUTH_USER_MODEL = 'accounts.Account'
 # ------ Amazon S3 ------
 DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
 # Amazon Web Services access key, as a string.
-AWS_ACCESS_KEY_ID = 'AKIAIRSAW2O7ARSWDQMA'
+AWS_ACCESS_KEY_ID = 'AKIAIRH23FF4HTP5BCHA'
 # Amazon Web Services secret access key, as a string.
-AWS_SECRET_ACCESS_KEY = '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'
+AWS_SECRET_ACCESS_KEY = 'btT55r3JbZ93Piis5iMuChiCuWsiAEqKTcL/bjeM'
 # Amazon Web Services storage bucket name, as a string.
 AWS_STORAGE_BUCKET_NAME = 'classgotcha-us-standard-20161024'
 

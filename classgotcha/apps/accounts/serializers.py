@@ -101,7 +101,6 @@ class AccountSerializer(serializers.ModelSerializer):
 	classrooms = BasicClassroomSerializer(many=True)
 	is_professor = serializers.ReadOnlyField()
 	full_name = serializers.ReadOnlyField()
-	chatrooms = RoomSerializer(many=True)
 	tasks = BasicTaskSerializer(many=True)
 	avatar = AvatarSerializer(required=False)
 
