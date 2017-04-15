@@ -23,6 +23,7 @@ from serializers import AccountSerializer, BasicAccountSerializer, AuthAccountSe
 from script import group, complement
 
 
+
 @api_view(['POST'])
 @permission_classes((AllowAny,))
 def account_register(request):

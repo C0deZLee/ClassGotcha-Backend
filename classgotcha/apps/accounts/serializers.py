@@ -6,6 +6,7 @@ from ..classrooms.models import Semester, Classroom, Major, OfficeHour
 from ..tasks.serializers import BasicTaskSerializer, ClassTimeTaskSerializer
 from ..tags.serializers import ClassFolderSerializer
 
+from ..matrix.client import MatrixClient
 
 # Due to the cross dependency,
 # I have to move SemesterSerializer, MajorSerializer and BasicClassroomSerializer here
@@ -118,9 +119,13 @@ class AuthAccountSerializer(serializers.ModelSerializer):
 		write_only_fields = ('password',)
 
 	def create(self, validated_data):
+		
+		Client = MatrixClient()
 		account = Account(email=validated_data['email'], username=validated_data['username'],
 		                  first_name=validated_data['first_name'], last_name=validated_data['last_name'])
 		account.set_password(validated_data['password'])
+		token = Client.register_with_password(validated_data['username'], validated_data['password'])
+		account.matrix_token = token
 		account.save()
 		return account
 

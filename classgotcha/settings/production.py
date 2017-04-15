@@ -55,6 +55,8 @@ INSTALLED_APPS = [
 	'classgotcha.apps.tasks',
 	'classgotcha.apps.chat',
 	'classgotcha.apps.tags',
+	'classgotcha.apps.matrix',
+	
 
 ]
 MIDDLEWARE = [
