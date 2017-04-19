@@ -13,6 +13,7 @@ local/tmp/*
 .editorconfig
 .eslintrc
 dist/
+.dump.rdb
 
 # static files
 statics/node_modules
