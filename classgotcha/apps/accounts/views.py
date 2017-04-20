@@ -24,11 +24,13 @@ from serializers import AccountSerializer, BasicAccountSerializer, AuthAccountSe
 	ProfessorSerializer
 
 from script import group, complement
+from django.core.mail import send_mail, EmailMessage
 
 
 @api_view(['POST'])
 @permission_classes((AllowAny,))
 def account_register(request):
+	# TODO: ADD verification of email <send email>
 	serializer = AuthAccountSerializer(data=request.data)
 	serializer.is_valid(raise_exception=True)
 	user = serializer.save()
@@ -42,13 +44,17 @@ def account_register(request):
 @api_view(['POST', 'GET', 'PUT'])
 @permission_classes((AllowAny,))
 def forget_password(request, token=None):
-	# send email
+	token_queryset = PasswordResetToken.objects.all()
+
 	if request.method == 'POST':
-		if not request.data['email']:
+		if request.data['email']:
+			account = get_object_or_404(Account.objects.all(), email=request.data['email'])
+		elif request.data['username']:
+			account = get_object_or_404(Account.objects.all(), username=request.data['username'])
+		else:
 			return Response(status=status.HTTP_400_BAD_REQUEST)
 
-		account = get_object_or_404(token_queryset, email=request.data['email'])
-		reset_token = uuid.uuid64
+		reset_token = uuid.uuid4()
 		token_instance, created = PasswordResetToken.objects.get_or_create(account=account)
 		if created or token_instance.is_expired:
 			token_instance.expire_time = timezone.now() + timedelta(hours=5)
@@ -57,25 +63,29 @@ def forget_password(request, token=None):
 		else:
 			reset_token = token_instance.token
 
-		#TODO: send email with reset_token
+		email = EmailMessage("Reset Password URL", reset_token,
+					 "no-reply@classgotcha.com", [request.data['email']])
+		email.send()
 
-		return Response(status=status.HTTP_200_OK)
+		return Response({"message": "The reset email has been sent. "}, status=status.HTTP_200_OK)
 
 	# verify token
 	elif request.method == 'GET':
-		# verify token
-		token_queryset = PasswordResetToken.objects.exclude(is_expired=True)
 		# if token not exist return 404 here
-		get_object_or_404(token_queryset, token=token)
+		token_instance = get_object_or_404(token_queryset, token=token)
+		# check is_expired
+		if token_instance.is_expired:
+			return Response(status=status.HTTP_404_NOT_FOUND)
 		# else return 200
 		return Response(status=status.HTTP_200_OK)
 
 	# change password
 	elif request.method == 'PUT':
-		# verify token
-		token_queryset = PasswordResetToken.objects.exclude(is_expired=True)
 		# if token not exist return 404 here
 		token_instance = get_object_or_404(token_queryset, token=token)
+		# check is_expired
+		if token_instance.is_expired:
+			return Response(status=status.HTTP_404_NOT_FOUND)
 		# set new password to user
 		token_instance.account.set_password(request.data['password'])
 		token_instance.account.save()
