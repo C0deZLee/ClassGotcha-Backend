@@ -1,5 +1,7 @@
 from django.db import models
 from django.db.models import Avg
+from django.utils import timezone
+from datetime import datetime, timedelta
 
 from ..tags.models import Tag
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseUserManager
@@ -155,6 +157,15 @@ class Account(AbstractBaseUser, PermissionsMixin):
 	def is_professor(self):
 		return self.professor_id is not None
 
+
+class PasswordResetToken(models.Model):
+	account = models.ForeignKey(Account)
+	token = models.CharField(max_length=200, null=True)
+	expire_time = models.DateTimeField(auto_now_add=True)
+
+	@property
+	def is_expired(self):
+		return (timezone.now() - timedelta(hours=5)) > self.expire_time
 
 class Group(models.Model):
 	# Basic Info

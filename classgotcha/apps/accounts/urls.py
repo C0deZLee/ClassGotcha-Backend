@@ -6,6 +6,13 @@ account_change_password = views.AccountViewSet.as_view({
 	'post': 'change_password'
 })
 
+account_forget_password = views.AccountViewSet.as_view({
+	'get': 'forget_password',
+	'post': 'forget_password',
+	'put': 'forget_password'
+
+})
+
 account_detail = views.AccountViewSet.as_view({
 	'get': 'retrieve',
 	'delete': 'destroy'
@@ -105,6 +112,7 @@ urlpatterns = [
 	url(r'^moments/$', account_moments, name='user-moments'),
 	url(r'^tasks/$', account_tasks, name='user-tasks'),
 	url(r'^freetime/$', account_freetime, name='freetime'),
+	url(r'^forget_password/(?P<token>[A-z0-9]+)/$', account_forget_password, name='user-forget-password'),
 
 	url(r'^me/$', account_me, name='me'),
 

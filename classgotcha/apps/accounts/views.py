@@ -1,4 +1,6 @@
-from  datetime import datetime
+import uuid
+from django.utils import timezone
+from datetime import datetime, timedelta
 
 from django.shortcuts import get_object_or_404
 from django.core.files.base import File
@@ -17,7 +19,7 @@ from ..chat.serializers import RoomSerializer
 from ..tasks.serializers import TaskSerializer
 
 from ..posts.models import Rate
-from models import Account, Avatar, Professor
+from models import Account, Avatar, Professor, PasswordResetToken
 from serializers import AccountSerializer, BasicAccountSerializer, AuthAccountSerializer, AvatarSerializer, \
 	ProfessorSerializer
 
@@ -37,6 +39,47 @@ def account_register(request):
 	token = jwt_encode_handler(payload)
 	return Response({'token': token}, status=status.HTTP_201_CREATED)
 
+@api_view(['POST', 'GET', 'PUT'])
+@permission_classes((AllowAny,))
+def forget_password(request, token=None):
+	# send email
+	if request.method == 'POST':
+		if not request.data['email']:
+			return Response(status=status.HTTP_400_BAD_REQUEST)
+
+		account = get_object_or_404(token_queryset, email=request.data['email'])
+		reset_token = uuid.uuid64
+		token_instance, created = PasswordResetToken.objects.get_or_create(account=account)
+		if created or token_instance.is_expired:
+			token_instance.expire_time = timezone.now() + timedelta(hours=5)
+			token_instance.token = reset_token
+			token_instance.save()
+		else:
+			reset_token = token_instance.token
+
+		#TODO: send email with reset_token
+
+		return Response(status=status.HTTP_200_OK)
+
+	# verify token
+	elif request.method == 'GET':
+		# verify token
+		token_queryset = PasswordResetToken.objects.exclude(is_expired=True)
+		# if token not exist return 404 here
+		get_object_or_404(token_queryset, token=token)
+		# else return 200
+		return Response(status=status.HTTP_200_OK)
+
+	# change password
+	elif request.method == 'PUT':
+		# verify token
+		token_queryset = PasswordResetToken.objects.exclude(is_expired=True)
+		# if token not exist return 404 here
+		token_instance = get_object_or_404(token_queryset, token=token)
+		# set new password to user
+		token_instance.account.set_password(request.data['password'])
+		token_instance.account.save()
+		return Response(status=status.HTTP_200_OK)
 
 @api_view(['GET', 'POST', 'OPTION'])
 @permission_classes((IsAuthenticated,))
@@ -153,8 +196,8 @@ class AccountViewSet(viewsets.ViewSet):
 			return Response(status=status.HTTP_200_OK)
 
 	# @staticmethod
-	def change_password(self, request): 
-		if not request.data['old-password']:
+	def change_password(self, request):
+		if not request.data['old-password'] or request.data['password']:
 			return Response(status=status.HTTP_400_BAD_REQUEST)
 		try:
 			if check_password(request.data['old-password'], request.user.password):
@@ -163,7 +206,7 @@ class AccountViewSet(viewsets.ViewSet):
 				return Response(status=status.HTTP_200_OK)
 			else:
 				return Response({"ERROR": "Password not match"},status=status.HTTP_400_BAD_REQUEST)
-				
+
 		except:
 			return Response(status=status.HTTP_400_BAD_REQUEST)
 
