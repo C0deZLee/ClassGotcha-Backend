@@ -87,6 +87,8 @@ class Account(AbstractBaseUser, PermissionsMixin):
 	# Rule
 	is_staff = models.BooleanField(default=False)
 	is_active = models.BooleanField(default=True)
+	
+	is_verified = models.BooleanField(default=False)
 	# is_student = models.BooleanField(default=True)
 	# is_professor = models.BooleanField(default=False)
 	professor = models.ForeignKey(Professor, blank=True, null=True, related_name='is_professor')
@@ -157,8 +159,7 @@ class Account(AbstractBaseUser, PermissionsMixin):
 	def is_professor(self):
 		return self.professor_id is not None
 
-
-class PasswordResetToken(models.Model):
+class AccountVerifyToken(models.Model):
 	account = models.ForeignKey(Account)
 	token = models.CharField(max_length=200, null=True)
 	expire_time = models.DateTimeField(auto_now_add=True)
