@@ -26,16 +26,18 @@ from serializers import AccountSerializer, BasicAccountSerializer, AuthAccountSe
 from script import group, complement
 from django.core.mail import send_mail, EmailMessage
 
-def send_verifying_email(account, email):
+def send_verifying_email(account, subject, to):
 	token_queryset = AccountVerifyToken.objects.all()
 	verify_token = uuid.uuid4()
-	token_instance, created = AccountVerifyToken.objects.get_or_create(account=user)
+	token_instance, created = AccountVerifyToken.objects.get_or_create(account=account)
 	if created or token_instance.is_expired:
 		token_instance.expire_time = timezone.now() + timedelta(hours=5)
 		token_instance.token = verify_token
 		token_instance.save()
 	else:
 		verify_token = token_instance.token
+	email=EmailMessage(subject, str(verify_token),
+				 "no-reply@classgotcha.com", [to])
 	email.send()
 
 @api_view(['POST'])
@@ -48,8 +50,7 @@ def account_register(request):
 	jwt_encode_handler = api_settings.JWT_ENCODE_HANDLER
 
 	#TODO: email templates
-	send_verifying_email(account=user, email=EmailMessage("Verification Email", str(verify_token),
-				 "no-reply@classgotcha.com", [request.data['email']]))
+	send_verifying_email(account=user, subject="Verification Email", to=request.data['email'])
 
 	return Response({"message": "The verification email has been sent. "}, status=status.HTTP_201_CREATED)
 
@@ -60,7 +61,7 @@ def email_verify(request, token=None):
 	if request.method == 'GET':
 		if request.user.is_verified:
 			return Response({"message": "This email has been verified"}, status=status.HTTP_400_BAD_REQUEST)
-		send_verifying_email(account=request.user, email=EmailMessage("Verification Email (resend)", str(verify_token), "no-reply@classgotcha.com", [request.data['email']]))
+		send_verifying_email(account=request.user, subject="Verification Email (resend)", to=request.data['email'])
 		return Response({"message": "The verification email has been resent. "}, status=status.HTTP_201_CREATED)
 	elif request.method == 'POST':
 		if not token:
