@@ -119,7 +119,7 @@ TEMPLATES_DIRS = [
 # ------ Account customization ------
 ACCOUNT_USER_DISPLAY = lambda user: user.email
 ACCOUNT_EMAIL_UNIQUE = True
-ACCOUNT_EMAIL_CONFIRMATION_REQUIRED = False
+ACCOUNT_EMAIL_CONFIRMATION_REQUIRED = True
 
 TEST_RUNNER = "lib.tests.MyTestDiscoverRunner"
 
@@ -154,7 +154,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 AUTHENTICATION_BACKENDS = [
 	'django.contrib.auth.backends.ModelBackend',
-	'account.auth_backends.EmailAuthenticationBackend',
+	# 'account.auth_backends.EmailAuthenticationBackend', # This cannot be used
 ]
 
 # ------ Rest framework ------
