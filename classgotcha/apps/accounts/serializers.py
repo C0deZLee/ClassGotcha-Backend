@@ -7,6 +7,7 @@ from ..tasks.serializers import BasicTaskSerializer, ClassTimeTaskSerializer
 from ..tags.serializers import ClassFolderSerializer
 
 from ..matrix.client import MatrixClient
+from ...settings.production import MATRIX_HOST
 
 # Due to the cross dependency,
 # I have to move SemesterSerializer, MajorSerializer and BasicClassroomSerializer here
@@ -118,8 +119,12 @@ class AuthAccountSerializer(serializers.ModelSerializer):
 		write_only_fields = ('password',)
 
 	def create(self, validated_data):
-		
-		Client = MatrixClient()
+		#Client = MatrixClient(MATRIX_HOST,token = 'MDAyNGxvY2F0aW9uIG1hdHJpeC5jbGFzc2dvdGNoYS5jb20KMDAxM2lkZW50aWZpZXIga2V5CjAwMTBjaWQgZ2VuID0gMQowMDMxY2lkIHVzZXJfaWQgPSBAc2ltb3d1Om1hdHJpeC5jbGFzc2dvdGNoYS5jb20KMDAxNmNpZCB0eXBlID0gYWNjZXNzCjAwMjFjaWQgbm9uY2UgPSBVUE1BZThKK2owc1F4OSxxCjAwMmZzaWduYXR1cmUg83EO7apwt7bOwIdduNoS9HKKZhDvSnwi1pDRWjBXlxYK',user_id = '@simowu:matrix.classgotcha.com')
+		#print Client.get_rooms()
+		Client = MatrixClient("http://localhost:8007")
+		token = Client.register_with_password(username="foobar",
+            password="monkey")
+		print token
 		account = Account(email=validated_data['email'], username=validated_data['username'],
 		                  first_name=validated_data['first_name'], last_name=validated_data['last_name'])
 		account.set_password(validated_data['password'])

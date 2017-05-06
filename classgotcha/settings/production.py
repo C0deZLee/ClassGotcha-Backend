@@ -241,3 +241,6 @@ JWT_AUTH = {
 
     'JWT_AUTH_HEADER_PREFIX': 'JWT'
 }
+
+#------------MATRIX CONFIGURATION--------------
+MATRIX_HOST = 'https://matrix.classgotcha.com:8448'
