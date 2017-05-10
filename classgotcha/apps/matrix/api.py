@@ -99,16 +99,16 @@ class MatrixHttpApi(object):
 
     def register(self, login_type, **kwargs):
         """Performs /register.
-
         Args:
             login_type(str): The value for the 'type' key.
             **kwargs: Additional key/values to add to the JSON submitted.
         """
         content = {
-            "type": login_type
+            "auth": {"session":"WiCuQtvIHmrlQeEpHatNDaiZ","type":login_type}
         }
         for key in kwargs:
             content[key] = kwargs[key]
+        #content["bind_email"]= False
 
         return self._send("POST", "/register", content, api_path=MATRIX_V2_API_PATH)
 
@@ -512,7 +512,10 @@ class MatrixHttpApi(object):
         if "Content-Type" not in headers:
             headers["Content-Type"] = "application/json"
 
-        query_params["access_token"] = self.token
+        #query_params["access_token"] = self.token
+
+        query_params["kind"] = "user"
+
         if self.identity:
             query_params["user_id"] = self.identity
 
@@ -522,6 +525,8 @@ class MatrixHttpApi(object):
             content = json.dumps(content)
 
         response = None
+        print content
+        print query_params
         while True:
             response = requests.request(
                 method, endpoint,

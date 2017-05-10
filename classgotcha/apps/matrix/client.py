@@ -114,20 +114,17 @@ class MatrixClient(object):
 
     def register_with_password(self, username, password, limit=1):
         """ Register for a new account on this HS.
-
         Args:
             username (str): Account username
             password (str): Account password
             limit (int): Deprecated. How many messages to return when syncing.
-
         Returns:
             str: Access Token
-
         Raises:
             MatrixRequestError
         """
         response = self.api.register(
-            "m.login.password", user=username, password=password
+            "m.login.dummy", user=username, password=password
         )
         self.user_id = response["user_id"]
         self.token = response["access_token"]
