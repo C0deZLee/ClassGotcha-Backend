@@ -106,10 +106,8 @@ def forget_password(request, token=None):
 		else:
 			reset_token = token_instance.token
 
-		#TODO: email templates
-		send_verifying_email(account=account, email=EmailMessage('Reset Password URL', reset_token,
-					 'no-reply@classgotcha.com', [request.data['email']]))
-		return Response({'message': 'The reset email has been sent. '}, status=status.HTTP_200_OK)
+		send_verifying_email(account=request.user, subject='Verification Email (resend)', to=request.data['email'], template='reset')
+		return Response({'message': 'The reset password email has been sent. '}, status=status.HTTP_200_OK)
 
 	# verify token
 	elif request.method == 'GET':
