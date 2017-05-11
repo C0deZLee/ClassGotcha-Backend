@@ -57,7 +57,7 @@ def account_register(request):
 	jwt_encode_handler = api_settings.JWT_ENCODE_HANDLER
 
 	#TODO: email templates
-	send_verifying_email(account=user, subject='Please Confirm Your Email', to=request.data['email'], template='verification')
+	send_verifying_email(account=user, subject='[ClassGotcha] Verification Email', to=request.data['email'], template='verification')
 
 	return Response({'message': 'The verification email has been sent. '}, status=status.HTTP_201_CREATED)
 
@@ -68,7 +68,7 @@ def email_verify(request, token=None):
 	if request.method == 'GET':
 		if request.user.is_verified:
 			return Response({'message': 'This email has been verified'}, status=status.HTTP_400_BAD_REQUEST)
-		send_verifying_email(account=request.user, subject='Verification Email (resend)', to=request.data['email'], template='reset')
+		send_verifying_email(account=request.user, subject='[ClassGotcha] Verification Email (resend)', to=request.data['email'], template='reset')
 		return Response({'message': 'The verification email has been resent. '}, status=status.HTTP_201_CREATED)
 	elif request.method == 'POST':
 		if not token:
@@ -92,10 +92,12 @@ def forget_password(request, token=None):
 	if request.method == 'POST':
 		if request.data['email']:
 			account = get_object_or_404(Account.objects.all(), email=request.data['email'])
-		elif request.data['username']:
-			account = get_object_or_404(Account.objects.all(), username=request.data['username'])
+		# USERNAME is not allowed now
+		# elif request.data['username']:
+		# 	account = get_object_or_404(Account.objects.all(), username=request.data['username'])
 		else:
 			return Response(status=status.HTTP_400_BAD_REQUEST)
+		print account
 
 		reset_token = uuid.uuid4()
 		token_instance, created = AccountVerifyToken.objects.get_or_create(account=account)
@@ -106,7 +108,7 @@ def forget_password(request, token=None):
 		else:
 			reset_token = token_instance.token
 
-		send_verifying_email(account=request.user, subject='Verification Email (resend)', to=request.data['email'], template='reset')
+		send_verifying_email(account=account, subject='[ClassGotcha] Reset Password', to=request.data['email'], template='reset')
 		return Response({'message': 'The reset password email has been sent. '}, status=status.HTTP_200_OK)
 
 	# verify token
