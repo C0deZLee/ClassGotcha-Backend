@@ -19,10 +19,10 @@ class AccountAdmin(UserAdmin):
 	fieldsets = (
 		(None, {'fields': ('email', 'username', 'password')}),
 		('Personal info', {'fields': ('first_name', 'last_name', 'gender', 'school_year', 'major', 'avatar')}),
-		('Permissions', {'fields': ('is_professor', 'is_staff', 'is_superuser')}),
+		('Permissions', {'fields': ('is_professor', 'is_verified', 'is_staff', 'is_superuser')}),
 		('Timestamp', {'fields': ('created', 'updated')})
 	)
-	readonly_fields = ('created', 'updated', 'is_staff', 'is_superuser', 'is_professor')
+	readonly_fields = ('created', 'updated', 'is_staff', 'is_superuser', 'is_professor', 'is_verified')
 	# add_fieldsets is not a standard ModelAdmin attribute. UserAdmin
 	# overrides get_fieldsets to use this attribute when creating a user.
 	add_fieldsets = (
