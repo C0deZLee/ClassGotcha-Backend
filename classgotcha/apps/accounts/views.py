@@ -24,9 +24,10 @@ from serializers import AccountSerializer, BasicAccountSerializer, AuthAccountSe
 	ProfessorSerializer
 
 from script import group, complement
-from django.core.mail import send_mail, EmailMessage
+from django.core.mail import EmailMessage, EmailMultiAlternatives
+from django.template.loader import render_to_string
 
-def send_verifying_email(account, subject, to):
+def send_verifying_email(account, subject, to, template):
 	token_queryset = AccountVerifyToken.objects.all()
 	verify_token = uuid.uuid4()
 	token_instance, created = AccountVerifyToken.objects.get_or_create(account=account)
@@ -36,8 +37,14 @@ def send_verifying_email(account, subject, to):
 		token_instance.save()
 	else:
 		verify_token = token_instance.token
-	email=EmailMessage(subject, str(verify_token),
-				 "no-reply@classgotcha.com", [to])
+
+	print account.first_name
+	ctx = {
+		'first_name': account.first_name,
+		'token': verify_token,
+	}
+	email=EmailMessage(subject, render_to_string('email/%s.html' % template, ctx), 'no-reply@classgotcha.com', [to])
+	email.content_subtype = 'html'
 	email.send()
 
 @api_view(['POST'])
@@ -50,9 +57,9 @@ def account_register(request):
 	jwt_encode_handler = api_settings.JWT_ENCODE_HANDLER
 
 	#TODO: email templates
-	send_verifying_email(account=user, subject="Verification Email", to=request.data['email'])
+	send_verifying_email(account=user, subject='Please Confirm Your Email', to=request.data['email'], template='verification')
 
-	return Response({"message": "The verification email has been sent. "}, status=status.HTTP_201_CREATED)
+	return Response({'message': 'The verification email has been sent. '}, status=status.HTTP_201_CREATED)
 
 
 @api_view(['POST', 'GET'])
@@ -60,9 +67,9 @@ def account_register(request):
 def email_verify(request, token=None):
 	if request.method == 'GET':
 		if request.user.is_verified:
-			return Response({"message": "This email has been verified"}, status=status.HTTP_400_BAD_REQUEST)
-		send_verifying_email(account=request.user, subject="Verification Email (resend)", to=request.data['email'])
-		return Response({"message": "The verification email has been resent. "}, status=status.HTTP_201_CREATED)
+			return Response({'message': 'This email has been verified'}, status=status.HTTP_400_BAD_REQUEST)
+		send_verifying_email(account=request.user, subject='Verification Email (resend)', to=request.data['email'], template='reset')
+		return Response({'message': 'The verification email has been resent. '}, status=status.HTTP_201_CREATED)
 	elif request.method == 'POST':
 		if not token:
 			return Response(status=status.HTTP_400_BAD_REQUEST)
@@ -71,10 +78,10 @@ def email_verify(request, token=None):
 		token_instance = get_object_or_404(token_queryset, token=token)
 		# check is_expired
 		if token_instance.is_expired:
-			return Response({"message": "Token is expired"}, status=status.HTTP_400_BAD_REQUEST)
+			return Response({'message': 'Token is expired'}, status=status.HTTP_400_BAD_REQUEST)
 
 		token_instance.account.is_verified = True
-		print token_instance.account, "has been verified"
+		print token_instance.account, 'has been verified'
 		return Response(status=status.HTTP_200_OK)
 
 @api_view(['POST', 'GET', 'PUT'])
@@ -100,9 +107,9 @@ def forget_password(request, token=None):
 			reset_token = token_instance.token
 
 		#TODO: email templates
-		send_verifying_email(account=account, email=EmailMessage("Reset Password URL", reset_token,
-					 "no-reply@classgotcha.com", [request.data['email']]))
-		return Response({"message": "The reset email has been sent. "}, status=status.HTTP_200_OK)
+		send_verifying_email(account=account, email=EmailMessage('Reset Password URL', reset_token,
+					 'no-reply@classgotcha.com', [request.data['email']]))
+		return Response({'message': 'The reset email has been sent. '}, status=status.HTTP_200_OK)
 
 	# verify token
 	elif request.method == 'GET':
@@ -250,7 +257,7 @@ class AccountViewSet(viewsets.ViewSet):
 				request.user.save()
 				return Response(status=status.HTTP_200_OK)
 			else:
-				return Response({"ERROR": "Password not match"},status=status.HTTP_400_BAD_REQUEST)
+				return Response({'ERROR': 'Password not match'},status=status.HTTP_400_BAD_REQUEST)
 
 		except:
 			return Response(status=status.HTTP_400_BAD_REQUEST)
@@ -332,7 +339,7 @@ class AccountViewSet(viewsets.ViewSet):
 				except TypeError:
 					return Response({'detail': 'invalid image!'}, status=status.HTTP_400_BAD_REQUEST)
 				file_name = str(uuid.uuid4())
-				complete_file_name = "%s.%s" % (file_name, file_extension,)
+				complete_file_name = '%s.%s' % (file_name, file_extension,)
 				moment.images = ContentFile(decoded_file, complete_file_name)
 			moment.save()
 			return Response(status=status.HTTP_200_OK)
