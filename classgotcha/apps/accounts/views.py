@@ -55,11 +55,13 @@ def account_register(request):
 	user = serializer.save()
 	jwt_payload_handler = api_settings.JWT_PAYLOAD_HANDLER
 	jwt_encode_handler = api_settings.JWT_ENCODE_HANDLER
+	payload = jwt_payload_handler(user)
+	token = jwt_encode_handler(payload)
 
 	#TODO: email templates
 	send_verifying_email(account=user, subject='[ClassGotcha] Verification Email', to=request.data['email'], template='verification')
 
-	return Response({'message': 'The verification email has been sent. '}, status=status.HTTP_201_CREATED)
+	return Response({'token': token}, status=status.HTTP_201_CREATED)
 
 
 @api_view(['POST', 'GET'])
