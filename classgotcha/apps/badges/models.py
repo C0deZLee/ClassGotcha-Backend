@@ -33,7 +33,7 @@ class Badge(models.Model):
 
 
 class Action(models.Model):
-	name = models.CharField(max_length=200)
+	name = models.CharField(max_length=200, unique=True)
 	exp = models.IntegerField()
 
 	def __unicode__(self):
