@@ -40,7 +40,7 @@ def send_verifying_email(account, subject, to, template):
 
 	print account.first_name
 	ctx = {
-		'first_name': account.first_name,
+		'user': account,
 		'token': verify_token,
 	}
 	email=EmailMessage(subject, render_to_string('email/%s.html' % template, ctx), 'no-reply@classgotcha.com', [to])
