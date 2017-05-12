@@ -29,4 +29,12 @@ class Badge(models.Model):
 	account = models.ForeignKey('accounts.Account')
 
 	def __unicode__(self):
-		return self.badge_type.name
+		return self.badge_type
+
+
+class Action(models.Model):
+	name = models.CharField(max_length=200)
+	exp = models.IntegerField()
+
+	def __unicode__(self):
+		return self.name
