@@ -120,16 +120,16 @@ class AuthAccountSerializer(serializers.ModelSerializer):
 		write_only_fields = ('password',)
 
 	def create(self, validated_data):
-		Client = MatrixClient("http://matrix.classgotcha.com:8008")
-		token = Client.register_with_password(username="simowu",
-            password="12345")
-		r = requests.post('http://matrix.classgotcha.com:8008/_matrix/client/r0/register', data = {'username':validated_data['username'],'password':validated_data['password'],'bind_email':False})
-		print token
+		#Client = MatrixClient("http://matrix.classgotcha.com:8008")
+		#token = Client.register_with_password(username="simowu",password="12345")
+		r = requests.post('http://matrix.classgotcha.com:8008/_matrix/client/r0/register', json={'username':validated_data['username'],'password':validated_data['password'],'bind_email':False,"auth":{"example_credential":"verypoorsharedsecret","session":"","type":"m.login.dummy"}},headers = {"Content-Type":"application/json"})
+		#print token
 		print r
 		account = Account(email=validated_data['email'], username=validated_data['username'],
 		                  first_name=validated_data['first_name'], last_name=validated_data['last_name'])
 		account.set_password(validated_data['password'])
-		token = Client.register_with_password(validated_data['username'], validated_data['password'])
+		#token = Client.register_with_password(validated_data['username'], validated_data['password'])
+		token = r.json()['access_token']
 		account.matrix_token = token
 		account.save()
 		return account
