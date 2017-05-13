@@ -159,6 +159,7 @@ class Account(AbstractBaseUser, PermissionsMixin):
 	def is_professor(self):
 		return self.professor_id is not None
 
+
 class AccountVerifyToken(models.Model):
 	account = models.ForeignKey(Account)
 	token = models.CharField(max_length=200, null=True)
@@ -167,6 +168,7 @@ class AccountVerifyToken(models.Model):
 	@property
 	def is_expired(self):
 		return (timezone.now() - timedelta(hours=5)) > self.expire_time
+
 
 class Group(models.Model):
 	# Basic Info
