@@ -27,6 +27,7 @@ from script import group, complement
 from django.core.mail import EmailMessage, EmailMultiAlternatives
 from django.template.loader import render_to_string
 
+
 def send_verifying_email(account, subject, to, template):
 	token_queryset = AccountVerifyToken.objects.all()
 	verify_token = uuid.uuid4()
@@ -47,6 +48,7 @@ def send_verifying_email(account, subject, to, template):
 	email.content_subtype = 'html'
 	email.send()
 
+
 @api_view(['POST'])
 @permission_classes((AllowAny,))
 def account_register(request):
@@ -63,7 +65,7 @@ def account_register(request):
 
 
 @api_view(['POST', 'GET'])
-@permission_classes((IsAuthenticated,))
+@permission_classes((AllowAny,))
 def email_verify(request, token=None):
 	if request.method == 'GET':
 		if request.user.is_verified:
@@ -83,6 +85,7 @@ def email_verify(request, token=None):
 		token_instance.account.is_verified = True
 		print token_instance.account, 'has been verified'
 		return Response(status=status.HTTP_200_OK)
+
 
 @api_view(['POST', 'GET', 'PUT'])
 @permission_classes((AllowAny,))

@@ -3,7 +3,7 @@ from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.models import Group as AdminGroup
 
 from forms import UserChangeForm, UserCreationForm
-from models import Account, Avatar, Group, Professor
+from models import Account, Avatar, Group, Professor, AccountVerifyToken
 
 
 class AccountAdmin(UserAdmin):
@@ -62,8 +62,17 @@ class ProfessorAdmin(admin.ModelAdmin):
 	readonly_fields = ('department', 'created')
 
 
+class AccountVerifyTokenAdmin(admin.ModelAdmin):
+	list_display = ('account', 'is_expired')
+	fieldsets = (
+		(None, {'fields': ('account', 'token', 'expire_time', 'is_expired')}),
+	)
+	readonly_fields = ('is_expired', 'expire_time')
+
+
 admin.site.register(Group, GroupAdmin)
 admin.site.register(Account, AccountAdmin)
 admin.site.register(Avatar, AvatarAdmin)
 admin.site.register(Professor, ProfessorAdmin)
+admin.site.register(AccountVerifyToken, AccountVerifyTokenAdmin)
 admin.site.unregister(AdminGroup)
