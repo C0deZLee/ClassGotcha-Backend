@@ -6,12 +6,12 @@ from ..classrooms.models import Classroom
 
 
 class Room(models.Model):
-	Classroom ,Private,One_on_One = 0,1,2
+	class_room ,Private,One_on_One = 0,1,2
 	type_choices = (
-		(Classroom,'Classroom'),
+		(class_room,'Classroom'),
 		(Private,'Private'),
-		(One_on_One),'One on One'
-		)  
+		(One_on_One,'One on One')  
+		)
 	name = models.CharField(max_length=20)
 	room_id = models.CharField(max_length=200)
 	room_alias = models.CharField(max_length=200)
@@ -19,8 +19,11 @@ class Room(models.Model):
 	# Timestamp
 	created = models.DateTimeField(auto_now_add=True)
 	accounts = models.ManyToManyField(Account,related_name = 'chatrooms',null = True)
-	room_type = models.IntegerField(default=Classroom,choices = type_choices) # type = Classroom/Private/one on one
+	room_type = models.IntegerField(default=class_room,choices = type_choices) # type = Classroom/Private/one on one
 	classroom = models.ManyToManyField(Classroom, related_name = 'chatroom', null= True) 
+
+
+
 
 	class Meta:
 		ordering = ("name",)

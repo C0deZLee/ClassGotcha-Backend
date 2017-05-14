@@ -272,7 +272,7 @@ class ClassroomViewSet(viewsets.ViewSet):
 					r = requests.post('http://matrix.classgotcha.com:8008/_matrix/client/r0/createRoom',json = {"preset":"public_chat","room_alis_name":cours['name'] + ' - ' + cours['section'] + ' Chat Room' ,"name":cours['name'] + ' - ' + cours['section'] + ' Chat Room',"topic":"classroom chat","creation_content":{"m.federate":False}},headers = {"Content-Type":"application/json"},params = {"access_token":request.user.matrix_token})
 					room_id = r.json()['room_id']
 					Room.objects.create(creator=Account.objects.get(is_superuser=True),
-										room_type = "Classroom",room_id = room_id
+										room_type = "Classroom",room_id = room_id,
 					                    name=cours['name'] + ' - ' + cours['section'] + ' Chat Room',
 					                    classroom=classroom)
 				except IntegrityError:
