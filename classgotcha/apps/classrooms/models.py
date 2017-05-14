@@ -57,6 +57,8 @@ class Classroom(models.Model):
 	semester = models.ForeignKey(Semester)
 	folders = models.ManyToManyField(Tag) 	# Use tag to implement folders
 
+	
+
 	# Relatives
 	# 1) notes
 	# 2) tasks

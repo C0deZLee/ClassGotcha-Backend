@@ -19,6 +19,7 @@ from ..tasks.serializers import Task, TaskSerializer, BasicTaskSerializer, Creat
 from ..accounts.serializers import BasicAccountSerializer, BasicClassroomSerializer
 from ..tags.serializers import ClassFolderSerializer, Tag
 
+import requests
 
 def read_file(request, file_name=None):
 	uploaded_file = request.FILES.get('file', False)
@@ -268,7 +269,10 @@ class ClassroomViewSet(viewsets.ViewSet):
 					# save classroom to get pk in db
 					classroom.save()
 					# create chat room
+					r = requests.post('http://matrix.classgotcha.com:8008/_matrix/client/r0/createRoom',json = {"preset":"public_chat","room_alis_name":cours['name'] + ' - ' + cours['section'] + ' Chat Room' ,"name":cours['name'] + ' - ' + cours['section'] + ' Chat Room',"topic":"classroom chat","creation_content":{"m.federate":False}},headers = {"Content-Type":"application/json"},params = {"access_token":request.user.matrix_token})
+					room_id = r.json()['room_id']
 					Room.objects.create(creator=Account.objects.get(is_superuser=True),
+										room_type = "Classroom",room_id = room_id
 					                    name=cours['name'] + ' - ' + cours['section'] + ' Chat Room',
 					                    classroom=classroom)
 				except IntegrityError:
