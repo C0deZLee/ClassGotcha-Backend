@@ -89,7 +89,7 @@ def email_verify(request, token=None):
 		return Response(status=status.HTTP_200_OK)
 
 
-@api_view(['POST', 'GET', 'PUT'])
+@api_view(['POST', 'GET', 'PUT', 'PATCH'])
 @permission_classes((AllowAny,))
 def forget_password(request, token=None):
 	token_queryset = AccountVerifyToken.objects.all()
@@ -97,12 +97,8 @@ def forget_password(request, token=None):
 	if request.method == 'POST':
 		if request.data['email']:
 			account = get_object_or_404(Account.objects.all(), email=request.data['email'])
-		# USERNAME is not allowed now
-		# elif request.data['username']:
-		# 	account = get_object_or_404(Account.objects.all(), username=request.data['username'])
 		else:
 			return Response(status=status.HTTP_400_BAD_REQUEST)
-		print account
 
 		reset_token = uuid.uuid4()
 		token_instance, created = AccountVerifyToken.objects.get_or_create(account=account)
@@ -127,7 +123,7 @@ def forget_password(request, token=None):
 		return Response(status=status.HTTP_200_OK)
 
 	# change password
-	elif request.method == 'PUT':
+	elif request.method == 'PATCH':
 		# if token not exist return 404 here
 		token_instance = get_object_or_404(token_queryset, token=token)
 		# check is_expired
@@ -137,6 +133,7 @@ def forget_password(request, token=None):
 		token_instance.account.set_password(request.data['password'])
 		token_instance.account.save()
 		return Response(status=status.HTTP_200_OK)
+
 
 @api_view(['GET', 'POST', 'OPTION'])
 @permission_classes((IsAuthenticated,))
