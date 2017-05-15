@@ -70,7 +70,7 @@ def email_verify(request, token=None):
 	if request.method == 'GET':
 		if request.user.is_verified:
 			return Response({'message': 'This email has been verified'}, status=status.HTTP_400_BAD_REQUEST)
-		send_verifying_email(account=request.user, subject='[ClassGotcha] Verification Email (resend)', to=request.data['email'], template='reset')
+		send_verifying_email(account=request.user, subject='[ClassGotcha] Verification Email (resend)', to=request.data['email'], template='verification')
 		return Response({'message': 'The verification email has been resent. '}, status=status.HTTP_201_CREATED)
 	elif request.method == 'POST':
 		if not token:
