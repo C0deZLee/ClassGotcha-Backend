@@ -83,6 +83,7 @@ def email_verify(request, token=None):
 			return Response({'message': 'Token is expired'}, status=status.HTTP_400_BAD_REQUEST)
 
 		token_instance.account.is_verified = True
+		token_instance.is_expired = True
 		print token_instance.account, 'has been verified'
 		return Response(status=status.HTTP_200_OK)
 
@@ -133,6 +134,7 @@ def forget_password(request, token=None):
 		# set new password to user
 		token_instance.account.set_password(request.data['password'])
 		token_instance.account.save()
+		token_instance.is_expired = True
 		return Response(status=status.HTTP_200_OK)
 
 @api_view(['GET', 'POST', 'OPTION'])
