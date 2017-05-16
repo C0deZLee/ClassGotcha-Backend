@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-import os, uuid, re, json, datetime
+import uuid, re, json, datetime
 from django.core.files.base import File
 from django.shortcuts import get_object_or_404
 from django.db import IntegrityError
@@ -11,7 +11,7 @@ from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework.decorators import parser_classes
 
 from models import Account, Classroom, Semester, Major, Professor
-from ..chat.models import Room
+from ..chatroom.models import Chatroom
 
 from serializers import ClassroomSerializer, MajorSerializer, OfficeHourSerializer
 from ..posts.serializers import MomentSerializer, Note, NoteSerializer, Moment
@@ -72,7 +72,9 @@ class ClassroomViewSet(viewsets.ViewSet):
 				class_major = items[0].upper()
 				class_number = items[1]
 				major = Major.objects.get(major_short=class_major)
-				classrooms = Classroom.objects.filter(major=major, class_number=class_number) if class_number else Classroom.objects.filter(major=major)
+				classrooms = Classroom.objects.filter(major=major,
+				                                      class_number=class_number) if class_number else Classroom.objects.filter(
+					major=major)
 				serializer = BasicClassroomSerializer(classrooms, many=True)
 				return Response(serializer.data)
 			else:
@@ -267,10 +269,10 @@ class ClassroomViewSet(viewsets.ViewSet):
 
 					# save classroom to get pk in db
 					classroom.save()
-					# create chat room
-					Room.objects.create(creator=Account.objects.get(is_superuser=True),
-					                    name=cours['name'] + ' - ' + cours['section'] + ' Chat Room',
-					                    classroom=classroom)
+					# create chatroom
+					Chatroom.objects.create(creator=Account.objects.get(is_superuser=True),
+					                        name=cours['name'] + ' - ' + cours['section'] + ' Chat Room',
+					                        classroom=classroom)
 				except IntegrityError:
 					print IntegrityError
 			return Response(status=status.HTTP_201_CREATED)

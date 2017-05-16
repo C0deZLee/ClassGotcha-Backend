@@ -1,14 +1,14 @@
 from rest_framework import serializers
 
 from models import Account, Avatar, Group, Professor
-from ..chat.models import Room
+from ..chatroom.models import Chatroom
 from ..classrooms.models import Semester, Classroom, Major, OfficeHour
 from ..tasks.serializers import BasicTaskSerializer, ClassTimeTaskSerializer
 from ..tags.serializers import ClassFolderSerializer
 
-from ..matrix.client import MatrixClient
-from ...settings.production import MATRIX_HOST
+from ..chatroom.matrix.matrix_api import MatrixApi
 import requests
+
 
 # Due to the cross dependency,
 # I have to move SemesterSerializer, MajorSerializer and BasicClassroomSerializer here
@@ -95,7 +95,7 @@ class RoomSerializer(serializers.ModelSerializer):
 	creator = BasicAccountSerializer()
 
 	class Meta:
-		model = Room
+		model = Chatroom
 		fields = '__all__'
 
 
@@ -120,17 +120,13 @@ class AuthAccountSerializer(serializers.ModelSerializer):
 		write_only_fields = ('password',)
 
 	def create(self, validated_data):
-		#Client = MatrixClient("http://matrix.classgotcha.com:8008")
-		#token = Client.register_with_password(username="simowu",password="12345")
-		r = requests.post('http://matrix.classgotcha.com:8008/_matrix/client/r0/register', json={'username':validated_data['username'],'password':validated_data['password'],'bind_email':False,"auth":{"example_credential":"verypoorsharedsecret","session":"","type":"m.login.dummy"}},headers = {"Content-Type":"application/json"})
-		#print token
-		print r
 		account = Account(email=validated_data['email'], username=validated_data['username'],
 		                  first_name=validated_data['first_name'], last_name=validated_data['last_name'])
 		account.set_password(validated_data['password'])
-		#token = Client.register_with_password(validated_data['username'], validated_data['password'])
-		token = r.json()['access_token']
-		account.matrix_token = token
+
+		matrix = MatrixApi()
+		account.matrix_token = matrix.register(validated_data['username'], validated_data['password'])['access_token']
+
 		account.save()
 		return account
 

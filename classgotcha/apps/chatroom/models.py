@@ -4,10 +4,10 @@ from django.db import models
 from ..accounts.models import Account
 
 
-class Room(models.Model):
+class Chatroom(models.Model):
 	name = models.CharField(max_length=20)
 	room_id = models.CharField(max_length=200)
-	room_alias = models.CharField(max_length=200)
+	room_name = models.CharField(max_length=200)
 
 	# Timestamp
 	created = models.DateTimeField(auto_now_add=True)

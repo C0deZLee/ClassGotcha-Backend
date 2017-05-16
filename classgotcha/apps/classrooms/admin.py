@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 from models import Classroom, Semester, Major
-from ..chat.models import Room, Account
+from ..chatroom.models import Chatroom, Account
 
 
 class ClassroomAdmin(admin.ModelAdmin):

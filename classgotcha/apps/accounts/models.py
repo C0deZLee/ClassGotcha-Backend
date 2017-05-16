@@ -87,7 +87,7 @@ class Account(AbstractBaseUser, PermissionsMixin):
 	is_active = models.BooleanField(default=True)
 	# is_student = models.BooleanField(default=True)
 	# is_professor = models.BooleanField(default=False)
-	professor = models.ForeignKey(Professor, blank=True, null=True, related_name='is_professor')
+	professor = models.ForeignKey(Professor, blank=True, null=True, related_name='account')
 	# Timestamp
 	created = models.DateTimeField(auto_now_add=True)
 	updated = models.DateTimeField(auto_now=True)
