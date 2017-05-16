@@ -274,7 +274,7 @@ class ClassroomViewSet(viewsets.ViewSet):
 
 					# create chatroom
 					matrix = MatrixApi(auth_token=request.user.matrix_token)
-					matrix_id = matrix.create_room(name=cours['name'] + ' - ' + cours['section'] + ' Chat Room')
+					matrix_id = matrix.create_room(name=cours['name'] + ' - ' + cours['section'] + ' Chat Room')['room_id']
 
 					Chatroom.objects.create(creator=Account.objects.get(is_superuser=True),
 					                        room_type="Classroom",
