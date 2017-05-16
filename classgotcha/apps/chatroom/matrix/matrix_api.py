@@ -129,17 +129,19 @@ class MatrixApi(object):
 			response = self._send('POST', '/register', content)
 		return response
 
-	def create_room(self, preset='public_chat', is_public=False, topic='', invitees=()):
+	def create_room(self, name, preset='public_chat', is_public=True, topic='', invitees=()):
 		"""Perform /createRoom.
 
 		Args:
-			preset(str): Required. One of ["private_chat", "public_chat", "trusted_private_chat"]
+			name(str): Required. Chatroom name
+			preset(str): Optional. One of ["private_chat", "public_chat", "trusted_private_chat"]
 				Detail: matrix.org/docs/spec/client_server/latest.html#post-matrix-client-r0-createroom
 			is_public(bool): Optional. The public/private visibility.
 			topic(str): Optional. Topic of chatroom.
 			invitees(list<str>): Optional. The list of user IDs to invite.
 		"""
 		content = {
+			'name': name,
 			'visibility': 'public' if is_public else 'private',
 			'preset'    : preset
 		}

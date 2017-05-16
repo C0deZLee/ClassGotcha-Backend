@@ -19,6 +19,8 @@ from ..tasks.serializers import Task, TaskSerializer, BasicTaskSerializer, Creat
 from ..accounts.serializers import BasicAccountSerializer, BasicClassroomSerializer
 from ..tags.serializers import ClassFolderSerializer, Tag
 
+from ..chatroom.matrix.matrix_api import MatrixApi
+
 
 def read_file(request, file_name=None):
 	uploaded_file = request.FILES.get('file', False)
@@ -269,8 +271,14 @@ class ClassroomViewSet(viewsets.ViewSet):
 
 					# save classroom to get pk in db
 					classroom.save()
+
 					# create chatroom
+					matrix = MatrixApi(auth_token=request.user.matrix_token)
+					matrix_id = matrix.create_room(name=cours['name'] + ' - ' + cours['section'] + ' Chat Room')
+
 					Chatroom.objects.create(creator=Account.objects.get(is_superuser=True),
+					                        room_type="Classroom",
+					                        matrix_id=matrix_id,
 					                        name=cours['name'] + ' - ' + cours['section'] + ' Chat Room',
 					                        classroom=classroom)
 				except IntegrityError:

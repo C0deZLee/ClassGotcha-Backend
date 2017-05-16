@@ -118,7 +118,7 @@ class Account(AbstractBaseUser, PermissionsMixin):
 	# 7) posts
 	# 8) moments
 	# 9) tasks
-	# 10) rooms
+	# 10) created_chatrooms
 	# Manager
 	objects = AccountManager()
 	# Settings
