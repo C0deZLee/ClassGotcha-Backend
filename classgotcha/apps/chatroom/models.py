@@ -23,7 +23,7 @@ class Chatroom(models.Model):
 	created = models.DateTimeField(auto_now_add=True)
 
 	class Meta:
-		ordering = ("name",)
+		ordering = ("room_name",)
 
 	def __unicode__(self):
 		return self.name
