@@ -7,8 +7,7 @@
 
 Authenticate the user with the system and obtain the auth_token
 
-### Request
-
+#### Request
 
 | Method | URL |
 | --- | --- |
@@ -19,7 +18,7 @@ Authenticate the user with the system and obtain the auth_token
 | Body | username | string | True|
 | Body | password | string | True|
 
-### Response 
+#### Response 
 
 | Status | Response |
 | --- | --- |
@@ -31,3 +30,32 @@ Authenticate the user with the system and obtain the auth_token
 ---
 
 ### Register
+
+TODO
+
+---
+
+### Change Password
+
+User change password
+
+#### Request 
+
+| Method | URL |
+| --- | --- |
+| POST | account/reset/ |
+
+| Type | Params | Values | Required|
+| --- | --- | --- | --- |
+| Header | token | auth_token | True|
+| Body | password | string | True|
+| Body | old-password | string | True|
+
+#### Response 
+
+| Status | Response |
+| --- | --- |
+| 200 | None |
+| 400 |{'ERROR': 'Password not match'} |
+| 400 | None |
+
