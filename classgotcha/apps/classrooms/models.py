@@ -51,9 +51,9 @@ class Classroom(models.Model):
 	updated = models.DateTimeField(auto_now=True)
 	# Relations
 	class_time = models.ForeignKey('tasks.Task', related_name='classtime', null=True)
-	professors = models.ManyToManyField(Professor, related_name='classrooms', null=True)
+	professors = models.ManyToManyField(Professor, related_name='classrooms')
 	major = models.ForeignKey(Major)
-	students = models.ManyToManyField(Account, related_name='classrooms', null=True)
+	students = models.ManyToManyField(Account, related_name='classrooms')
 	semester = models.ForeignKey(Semester)
 	folders = models.ManyToManyField(Tag) 	# Use tag to implement folders
 
