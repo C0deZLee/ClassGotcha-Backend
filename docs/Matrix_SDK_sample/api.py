@@ -132,7 +132,7 @@ class MatrixHttpApi(object):
 		"""
 		return self._send("POST", "/logout", api_path=MATRIX_V2_API_PATH)
 
-	def create_room(self, alias=None, is_public=False, invitees=()):
+	def create_room(self, alias=None, is_public=False, invitees=[]):
 		"""Perform /createRoom.
 
 		Args:

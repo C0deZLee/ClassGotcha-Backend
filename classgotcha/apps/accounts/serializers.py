@@ -126,7 +126,8 @@ class AuthAccountSerializer(serializers.ModelSerializer):
 
 		matrix = MatrixApi()
 		account.matrix_token = matrix.register(validated_data['username'], validated_data['password'])['access_token']
-
+		# TODO: store matrix_id
+		# account.matrix_id =
 		account.save()
 		return account
 

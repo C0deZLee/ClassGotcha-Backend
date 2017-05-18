@@ -16,7 +16,6 @@ class MatrixApi(object):
 	def __init__(self, auth_token=None, base_url=MATRIX_HOST, api_root=MATRIX_API_ROOT):
 		"""Construct and configure the HTTP API.
 		Args:
-			token(str): Required. The client's access token.
 			base_url(str): Optional. The home server URL. Default is set to settings.MATRIX_HOST
 		"""
 		self.base_url = base_url
@@ -129,7 +128,7 @@ class MatrixApi(object):
 			response = self._send('POST', '/register', content)
 		return response
 
-	def create_room(self, name, preset='public_chat', is_public=True, topic='', invitees=()):
+	def create_room(self, name, preset='public_chat', is_public=True, topic='', invitees=[]):
 		"""Perform /createRoom.
 
 		Args:
