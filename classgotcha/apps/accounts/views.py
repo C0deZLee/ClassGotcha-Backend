@@ -137,6 +137,7 @@ def forget_password(request, token=None):
 		token_instance.is_expired = True
 		return Response(status=status.HTTP_200_OK)
 
+
 @api_view(['GET', 'POST', 'OPTION'])
 @permission_classes((IsAuthenticated,))
 @parser_classes((MultiPartParser, FormParser,))
