@@ -251,19 +251,24 @@ class AccountViewSet(viewsets.ViewSet):
 				request.user.save()
 			return Response(status=status.HTTP_200_OK)
 
-	# @staticmethod
-	def change_password(self, request):
+	@staticmethod
+	def change_password(request):
+		# If password or old-password not in request body
 		if not request.data['old-password'] or request.data['password']:
+			# Return error message with status code 400
 			return Response(status=status.HTTP_400_BAD_REQUEST)
 		try:
+			#  if old-password match
 			if check_password(request.data['old-password'], request.user.password):
+				# change user password
 				request.user.set_password(request.data['password'])
 				request.user.save()
 				return Response(status=status.HTTP_200_OK)
 			else:
-				return Response({'ERROR': 'Password not match'},status=status.HTTP_400_BAD_REQUEST)
-
+				# else return with error message and status code 400
+				return Response({'ERROR': 'Password not match'}, status=status.HTTP_400_BAD_REQUEST)
 		except:
+			# If exception return with status 400
 			return Response(status=status.HTTP_400_BAD_REQUEST)
 
 	@staticmethod
