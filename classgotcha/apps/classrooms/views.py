@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-import os, uuid, re, json, datetime
+import uuid, re, json, datetime
 from django.core.files.base import File
 from django.shortcuts import get_object_or_404
 from django.db import IntegrityError
@@ -11,7 +11,7 @@ from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework.decorators import parser_classes
 
 from models import Account, Classroom, Semester, Major, Professor
-from ..chat.models import Room
+from ..chatroom.models import Chatroom
 
 from serializers import ClassroomSerializer, MajorSerializer, OfficeHourSerializer
 from ..posts.serializers import MomentSerializer, Note, NoteSerializer, Moment
@@ -19,7 +19,8 @@ from ..tasks.serializers import Task, TaskSerializer, BasicTaskSerializer, Creat
 from ..accounts.serializers import BasicAccountSerializer, BasicClassroomSerializer
 from ..tags.serializers import ClassFolderSerializer, Tag
 
-import requests
+from ..chatroom.matrix.matrix_api import MatrixApi
+
 
 def read_file(request, file_name=None):
 	uploaded_file = request.FILES.get('file', False)
@@ -73,7 +74,9 @@ class ClassroomViewSet(viewsets.ViewSet):
 				class_major = items[0].upper()
 				class_number = items[1]
 				major = Major.objects.get(major_short=class_major)
-				classrooms = Classroom.objects.filter(major=major, class_number=class_number) if class_number else Classroom.objects.filter(major=major)
+				classrooms = Classroom.objects.filter(major=major,
+				                                      class_number=class_number) if class_number else Classroom.objects.filter(
+					major=major)
 				serializer = BasicClassroomSerializer(classrooms, many=True)
 				return Response(serializer.data)
 			else:
@@ -268,13 +271,16 @@ class ClassroomViewSet(viewsets.ViewSet):
 
 					# save classroom to get pk in db
 					classroom.save()
-					# create chat room
-					r = requests.post('http://matrix.classgotcha.com:8008/_matrix/client/r0/createRoom',json = {"preset":"public_chat","room_alis_name":cours['name'] + ' - ' + cours['section'] + ' Chat Room' ,"name":cours['name'] + ' - ' + cours['section'] + ' Chat Room',"topic":"classroom chat","creation_content":{"m.federate":False}},headers = {"Content-Type":"application/json"},params = {"access_token":request.user.matrix_token})
-					room_id = r.json()['room_id']
-					Room.objects.create(creator=Account.objects.get(is_superuser=True),
-										room_type = "Classroom",room_id = room_id,
-					                    name=cours['name'] + ' - ' + cours['section'] + ' Chat Room',
-					                    classroom=classroom)
+
+					# create chatroom
+					matrix = MatrixApi(auth_token=request.user.matrix_token)
+					matrix_id = matrix.create_room(name=cours['name'] + ' - ' + cours['section'] + ' Chat Room')['room_id']
+
+					Chatroom.objects.create(creator=Account.objects.get(is_superuser=True),
+					                        room_type="Classroom",
+					                        matrix_id=matrix_id,
+					                        name=cours['name'] + ' - ' + cours['section'] + ' Chat Room',
+					                        classroom=classroom)
 				except IntegrityError:
 					print IntegrityError
 			return Response(status=status.HTTP_201_CREATED)

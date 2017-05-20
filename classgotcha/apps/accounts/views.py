@@ -12,7 +12,7 @@ from rest_framework.permissions import IsAuthenticated, AllowAny
 
 from ..classrooms.serializers import Classroom, BasicClassroomSerializer
 from ..posts.serializers import Moment, MomentSerializer, NoteSerializer, Comment, CommentSerializer
-from ..chat.serializers import RoomSerializer
+from ..chatroom.serializers import ChatroomSerializer
 from ..tasks.serializers import TaskSerializer
 
 from ..posts.models import Rate
@@ -265,7 +265,7 @@ class AccountViewSet(viewsets.ViewSet):
 	def rooms(request, pk=None):
 		room_query_set = request.user.rooms.all()
 		if request.method == 'GET':
-			serializer = RoomSerializer(room_query_set, many=True)
+			serializer = ChatroomSerializer(room_query_set, many=True)
 			return Response(serializer.data)
 		elif request.method == 'POST':
 			room = get_object_or_404(room_query_set, pk)

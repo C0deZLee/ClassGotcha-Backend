@@ -57,13 +57,11 @@ class Classroom(models.Model):
 	semester = models.ForeignKey(Semester)
 	folders = models.ManyToManyField(Tag) 	# Use tag to implement folders
 
-	
-
 	# Relatives
 	# 1) notes
 	# 2) tasks
 	# 3) groups
-	# 4) chatroom
+	# 4) chatrooms
 	# 5) office_hours
 
 	def __unicode__(self):
