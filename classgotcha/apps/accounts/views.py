@@ -190,6 +190,8 @@ class AccountViewSet(viewsets.ViewSet):
 			for task in classroom.tasks.all():
 				task.involved.add(request.user)
 			# add user to classroom chatroom
+			# TODO: change into matrix version: classroom.chatroom.get().accounts.add(request.user.username ???)
+			# also need to call the matrix api? add the user into matrix chatroom...
 			classroom.chatroom.get().accounts.add(request.user)
 			return Response(status=200)
 
