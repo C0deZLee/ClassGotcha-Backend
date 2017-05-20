@@ -27,7 +27,6 @@ from script import group, complement
 from django.core.mail import EmailMessage, EmailMultiAlternatives
 from django.template.loader import render_to_string
 
-
 def send_verifying_email(account, subject, to, template):
 	token_queryset = AccountVerifyToken.objects.all()
 	verify_token = uuid.uuid4()
@@ -41,13 +40,12 @@ def send_verifying_email(account, subject, to, template):
 
 	print account.first_name
 	ctx = {
-		'first_name': account.first_name,
+		'user': account,
 		'token': verify_token,
 	}
 	email=EmailMessage(subject, render_to_string('email/%s.html' % template, ctx), 'no-reply@classgotcha.com', [to])
 	email.content_subtype = 'html'
 	email.send()
-
 
 @api_view(['POST'])
 @permission_classes((AllowAny,))
@@ -67,12 +65,12 @@ def account_register(request):
 
 
 @api_view(['POST', 'GET'])
-@permission_classes((AllowAny,))
+@permission_classes((IsAuthenticated,))
 def email_verify(request, token=None):
 	if request.method == 'GET':
 		if request.user.is_verified:
 			return Response({'message': 'This email has been verified'}, status=status.HTTP_400_BAD_REQUEST)
-		send_verifying_email(account=request.user, subject='[ClassGotcha] Verification Email (resend)', to=request.data['email'], template='reset')
+		send_verifying_email(account=request.user, subject='[ClassGotcha] Verification Email (resend)', to=request.data['email'], template='verification')
 		return Response({'message': 'The verification email has been resent. '}, status=status.HTTP_201_CREATED)
 	elif request.method == 'POST':
 		if not token:
@@ -85,11 +83,11 @@ def email_verify(request, token=None):
 			return Response({'message': 'Token is expired'}, status=status.HTTP_400_BAD_REQUEST)
 
 		token_instance.account.is_verified = True
+		token_instance.is_expired = True
 		print token_instance.account, 'has been verified'
 		return Response(status=status.HTTP_200_OK)
 
-
-@api_view(['POST', 'GET', 'PUT', 'PATCH'])
+@api_view(['POST', 'GET', 'PUT'])
 @permission_classes((AllowAny,))
 def forget_password(request, token=None):
 	token_queryset = AccountVerifyToken.objects.all()
@@ -97,8 +95,12 @@ def forget_password(request, token=None):
 	if request.method == 'POST':
 		if request.data['email']:
 			account = get_object_or_404(Account.objects.all(), email=request.data['email'])
+		# USERNAME is not allowed now
+		# elif request.data['username']:
+		# 	account = get_object_or_404(Account.objects.all(), username=request.data['username'])
 		else:
 			return Response(status=status.HTTP_400_BAD_REQUEST)
+		print account
 
 		reset_token = uuid.uuid4()
 		token_instance, created = AccountVerifyToken.objects.get_or_create(account=account)
@@ -123,7 +125,7 @@ def forget_password(request, token=None):
 		return Response(status=status.HTTP_200_OK)
 
 	# change password
-	elif request.method == 'PATCH':
+	elif request.method == 'PUT':
 		# if token not exist return 404 here
 		token_instance = get_object_or_404(token_queryset, token=token)
 		# check is_expired
@@ -132,8 +134,8 @@ def forget_password(request, token=None):
 		# set new password to user
 		token_instance.account.set_password(request.data['password'])
 		token_instance.account.save()
+		token_instance.is_expired = True
 		return Response(status=status.HTTP_200_OK)
-
 
 @api_view(['GET', 'POST', 'OPTION'])
 @permission_classes((IsAuthenticated,))
@@ -249,19 +251,24 @@ class AccountViewSet(viewsets.ViewSet):
 				request.user.save()
 			return Response(status=status.HTTP_200_OK)
 
-	# @staticmethod
-	def change_password(self, request):
+	@staticmethod
+	def change_password(request):
+		# If password or old-password not in request body
 		if not request.data['old-password'] or request.data['password']:
+			# Return error message with status code 400
 			return Response(status=status.HTTP_400_BAD_REQUEST)
 		try:
+			#  if old-password match
 			if check_password(request.data['old-password'], request.user.password):
+				# change user password
 				request.user.set_password(request.data['password'])
 				request.user.save()
 				return Response(status=status.HTTP_200_OK)
 			else:
-				return Response({'ERROR': 'Password not match'},status=status.HTTP_400_BAD_REQUEST)
-
+				# else return with error message and status code 400
+				return Response({'ERROR': 'Password not match'}, status=status.HTTP_400_BAD_REQUEST)
 		except:
+			# If exception return with status 400
 			return Response(status=status.HTTP_400_BAD_REQUEST)
 
 	@staticmethod
