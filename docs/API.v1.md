@@ -47,7 +47,7 @@ User change password
 
 | Type | Params | Values | Required|
 | --- | --- | --- | --- |
-| Header | token | auth_token | True|
+| Header | Authorization | auth_token | True|
 | Body | password | string | True|
 | Body | old-password | string | True|
 
