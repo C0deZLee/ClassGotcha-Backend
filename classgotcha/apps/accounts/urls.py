@@ -62,10 +62,14 @@ account_add_moments = views.AccountViewSet.as_view({
 	'post': 'moments',
 	'delete': 'moments'
 })
+
 account_tasks = views.AccountViewSet.as_view({
 	'get': 'tasks',
+	'post': 'tasks'
+})
+
+account_tasks_edit = views.AccountViewSet.as_view({
 	'put': 'tasks',
-	'post': 'tasks',
 	'delete': 'tasks'
 })
 
@@ -109,6 +113,8 @@ urlpatterns = [
 	url(r'^notes/$', account_notes, name='user-notes'),
 	url(r'^moments/$', account_moments, name='user-moments'),
 	url(r'^tasks/$', account_tasks, name='user-tasks'),
+	url(r'^tasks/(?P<pk>[0-9]+)$', account_tasks_edit, name='user-tasks-edit'),
+
 	url(r'^freetime/$', account_freetime, name='freetime'),
 
 	url(r'^forget/$', views.forget_password, name='user-forget-password-gettoken'),
