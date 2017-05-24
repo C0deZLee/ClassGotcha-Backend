@@ -100,8 +100,8 @@ show user moment
 
 | Status | Response | Value
 | --- | --- | --- |
-| 200 | [] | [{"id", <br>
-              "comments",
+| 200 | [] | [{"id", <br> |
+              "comments",
               "creator" {
                           "pk",
                           "id",
