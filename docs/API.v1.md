@@ -276,7 +276,7 @@ the avatar for user
 | Status | Response |
 | --- | --- |
 | 200 | {'data': 'success'} |
-| 400 | none
+| 400 | none |
 
 ### Request
 
@@ -292,7 +292,7 @@ the avatar for user
 
 | Status | Response | Value
 | --- | --- |
-| 200 | {} | "avatar"
+| 200 | {} | "avatar" |
 
 ---
 
@@ -314,14 +314,7 @@ show pending friend request
 
 | Status | Response | Value
 | --- | --- |
-| 200 | [] | 'pk',
-              'id', 
-              'avatar', 
-              'username', 
-              'email', 
-              'full_name', 
-              'about_me', 
-              'level'
+| 200 | [] | 'pk', 'id', 'avatar', 'username', 'email', 'full_name', 'about_me', 'level' |
 
 ### Login
 
@@ -513,31 +506,31 @@ accessing personal information
 | Status | Response | Value
 | --- | --- | --- |
 | 200 | "id" | int |
-      | "classrooms" | []
-      | "is_professor": | boolean
-      | "full_name": | string
-      | "chatrooms": | []
-      | "tasks": | []
-      | "last_login": | null
-      | "email": | string
-      | "username": | string
-      | "created": | Date
-      | "updated": | Date
-      | "first_name": | string
-      | "mid_name": | string
-      | "last_name": | string
-      | "gender": | string
-      | "birthday": | Date
-      | "school_year": | int
-      | "about_me": | "Yo!"
-      | "level": | int
-      | "phone": | int
-      | "professor": | null
-      | "avatar": | null
-      | "major": | int
-      | "friends": | []
-      | "pending_friends": | []
-      | "notifications": | []
+      | "classrooms" | [] |
+      | "is_professor": | boolean |
+      | "full_name": | string |
+      | "chatrooms": | [] |
+      | "tasks": | [] |
+      | "last_login": | null |
+      | "email": | string |
+      | "username": | string |
+      | "created": | Date |
+      | "updated": | Date |
+      | "first_name": | string |
+      | "mid_name": | string |
+      | "last_name": | string |
+      | "gender": | string |
+      | "birthday": | Date |
+      | "school_year": | int |
+      | "about_me": | "Yo!" |
+      | "level": | int |
+      | "phone": | int |
+      | "professor": | null |
+      | "avatar": | null |
+      | "major": | int |
+      | "friends": | [] |
+      | "pending_friends": | [] |
+      | "notifications": | [] |
 
 #### Request 
 
@@ -578,7 +571,7 @@ for user to change password
 
 | Status | Response |
 | --- | --- | --- |
-| 400 |  |
+| 400 | none |
 | 400 | 'ERROR': 'Password not match' |
 
 ---
@@ -602,31 +595,31 @@ to view the user page
 | Status | Response | Value
 | --- | --- | --- |
 | 200 | "id" | int |
-      | "classrooms" | []
-      | "is_professor": | boolean
-      | "full_name": | string
-      | "chatrooms": | []
-      | "tasks": | []
-      | "last_login": | null
-      | "email": | string
-      | "username": | string
-      | "created": | Date
-      | "updated": | Date
-      | "first_name": | string
-      | "mid_name": | string
-      | "last_name": | string
-      | "gender": | string
-      | "birthday": | Date
-      | "school_year": | int
-      | "about_me": | "Yo!"
-      | "level": | int
-      | "phone": | int
-      | "professor": | null
-      | "avatar": | null
-      | "major": | int
-      | "friends": | []
-      | "pending_friends": | []
-      | "notifications": | []| --- | --- | --- |
+      | "classrooms" | [] |
+      | "is_professor": | boolean |
+      | "full_name": | string |
+      | "chatrooms": | [] |
+      | "tasks": | [] |
+      | "last_login": | null |
+      | "email": | string |
+      | "username": | string |
+      | "created": | Date |
+      | "updated": | Date |
+      | "first_name": | string |
+      | "mid_name": | string |
+      | "last_name": | string |
+      | "gender": | string |
+      | "birthday": | Date |
+      | "school_year": | int |
+      | "about_me": | "Yo!" |
+      | "level": | int |
+      | "phone": | int |
+      | "professor": | null |
+      | "avatar": | null |
+      | "major": | int |
+      | "friends": | [] |
+      | "pending_friends": | [] |
+      | "notifications": | []|
 | 404 | "detail": "Not found." |
 
 ---
