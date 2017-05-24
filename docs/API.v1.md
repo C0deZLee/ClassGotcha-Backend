@@ -2,6 +2,30 @@
 ### Version 1.0
 
 ## Account
+### Register
+
+user registration
+
+#### Request
+
+| Method | URL |
+| --- | --- |
+| POST | account/register/ |
+
+| Type | Params | Values | Required |
+| --- | --- | --- | --- |
+| Body | first_name | string | True |
+| Body | last_name | string | True |
+| Body | username | string | True |
+| Body | password | string | True |
+
+#### Response 
+
+| Status | Response |
+| --- | --- |
+| 200 | {'token': <auth_token>} |
+
+---
 
 ### Friends
 
@@ -225,6 +249,54 @@ to manage chatroom
 
 ---
 
+### pk (integer)
+
+to view the user page
+
+### Request
+
+| Method | URL |
+| --- | --- |
+| GET | account/(integer)/ |
+
+| Type | Params | Values | Required |
+| --- | --- | --- | --- |
+| Header | Authorization | auth_token | True |
+
+### Response
+
+| Status | Response | Value
+| --- | --- | --- |
+| 200 | "id" | int |
+|     | "classrooms" | [] |
+|     | "is_professor": | boolean |
+|     | "full_name": | string |
+|     | "chatrooms": | [] |
+|     | "tasks": | [] |
+|     | "last_login": | null |
+|     | "email": | string |
+|     | "username": | string |
+|     | "created": | Date |
+|     | "updated": | Date |
+|     | "first_name": | string |
+|     | "mid_name": | string |
+|     | "last_name": | string |
+|     | "gender": | string |
+|     | "birthday": | Date |
+|     | "school_year": | int |
+|     | "about_me": | "Yo!" |
+|     | "level": | int |
+|     | "phone": | int |
+|     | "professor": | null |
+|     | "avatar": | null |
+|     | "major": | int |
+|     | "friends": | [] |
+|     | "pending_friends": | [] |
+|     | "notifications": | []|
+| 404 | "detail": "Not found." |
+
+---
+
 ### Avatar
 
 the avatar for user
@@ -403,30 +475,6 @@ verify the email
 | 400 | 'message': 'Token is expired' |
 
 ---
-### Register
-
-user registration
-
-#### Request
-
-| Method | URL |
-| --- | --- |
-| POST | account/register/ |
-
-| Type | Params | Values | Required |
-| --- | --- | --- | --- |
-| Body | first_name | string | True |
-| Body | last_name | string | True |
-| Body | username | string | True |
-| Body | password | string | True |
-
-#### Response 
-
-| Status | Response |
-| --- | --- |
-| 200 | {'token': <auth_token>} |
-
----
 
 ### Change Password
 
@@ -454,6 +502,226 @@ User change password
 
 ---
 
+### notes
+
+user notes
+
+#### Request 
+
+| Method | URL |
+| --- | --- |
+| GET | account/notes/ |
+
+| Type | Params | Values | Required |
+| --- | --- | --- | --- |
+| Header | Authorization | auth_token | True |
+
+#### Response 
+
+| Status | Response | Value |
+| --- | --- | --- |
+| 200 | [] |  |
+
+---
+
+### tasks
+
+user tasks
+
+#### Request 
+
+| Method | URL |
+| --- | --- |
+| GET | account/tasks/ |
+
+| Type | Params | Values | Required |
+| --- | --- | --- | --- |
+| Header | Authorization | auth_token | True |
+
+#### Response 
+
+| Status | Response | Value |
+| --- | --- | --- |
+| 200 | [] | [{'formatted_start_time',<br>'formatted_end_time',<br>'formatted_start_date',<br>'formatted_end_date',<br>'repeat_start_date',<br>'repeat_end_date',<br>'repeat_list',<br>'repeat',<br>'task_name',<br>'type',<br>'description',<br>'category',<br>'location',<br>'start',<br>'end',<br>'id',<br>'classroom',<br>'expired'} ... ] |
+
+#### Request 
+
+| Method | URL |
+| --- | --- |
+| POST | account/tasks/ |
+
+| Type | Params | Values | Required |
+| --- | --- | --- | --- |
+| Header | Authorization | auth_token | True |
+| body | pk | int | true |
+| body | task_name | string | false |
+| body | type |  | false |
+| body | description | string | false |
+| body | category | string | false |
+| body | location | string | false |
+| body | start |DATE | false |
+| body | end | DATE | false |
+| body | id | int | false |
+| body | classroom | int | false |
+
+#### Response 
+
+| Status | Response | 
+| --- | --- |
+| 201 | none |
+| 404 | "detail": "Not found." |
+
+### Request 
+
+| Method | URL |
+| --- | --- |
+| DELETE | account/tasks/ |
+
+| Type | Params | Values | Required |
+| --- | --- | --- | --- |
+| Header | Authorization | auth_token | True |
+| body | pk | int | true |
+
+#### Response 
+
+| Status | Response |
+| --- | --- |
+| 200 | none |
+| 404 | "detail": "Not found." |
+
+---
+
+### Freetime
+
+show user freetime table
+
+#### Request 
+
+| Method | URL |
+| --- | --- |
+| GET | account/freetime/ |
+
+| Type | Params | Values | Required |
+| --- | --- | --- | --- |
+| Header | Authorization | auth_token | True |
+
+#### Response 
+
+| Status | Response |
+| --- | --- |
+| 200 | 'freetime': |
+
+---
+
+### Forget 
+
+if user forget their password. both /account/forget/ and /account/forget/pk/ are here
+
+#### Request 
+
+| Method | URL |
+| --- | --- |
+| POST | account/forget/ |
+
+| Type | Params | Values | Required |
+| --- | --- | --- | --- |
+| body | email | string | true |
+
+#### Response 
+
+| Status | Response |
+| --- | --- |
+| 200 | 'message': 'The reset password email has been sent. ' |
+| 404 | "detail": "Not found." |
+
+#### Request 
+
+| Method | URL |
+| --- | --- |
+| GET | account/forget/ |
+
+| Type | Params | Values | Required |
+| --- | --- | --- | --- |
+| body | token | string | True |
+
+#### Response 
+
+| Status | Response |
+| --- | --- |
+| 200 | none |
+| 404 | "detail": "Not found." |
+
+#### Request 
+
+| Method | URL |
+| --- | --- |
+| PUT | account/forget/ |
+
+| Type | Params | Values | Required |
+| --- | --- | --- | --- |
+| body | token | string | True |
+
+#### Response 
+
+| Status | Response |
+| --- | --- |
+| 200 | none |
+| 404 | "detail": "Not found." |
+
+#### Request 
+
+| Method | URL |
+| --- | --- |
+| POST | account/forget/(pk)/ |
+
+| Type | Params | Values | Required |
+| --- | --- | --- | --- |
+| body | email | string | true |
+
+#### Response 
+
+| Status | Response |
+| --- | --- |
+| 200 | 'freetime': |
+| 404 | "detail": "Not found." |
+
+#### Request 
+
+| Method | URL |
+| --- | --- |
+| GET | account/forget/(pk)/ |
+
+| Type | Params | Values | Required |
+| --- | --- | --- | --- |
+| body | token | string | True |
+
+#### Response 
+
+| Status | Response |
+| --- | --- |
+| 200 | 'freetime': |
+| 404 | "detail": "Not found." |
+
+#### Request 
+
+| Method | URL |
+| --- | --- |
+| PUT | account/forget/(pk)/ |
+
+| Type | Params | Values | Required |
+| --- | --- | --- | --- |
+| body | token | string | True |
+| 404 | "detail": "Not found." |
+
+#### Response 
+
+| Status | Response |
+| --- | --- |
+| 200 | 'freetime': |
+| 404 | "detail": "Not found." |
+
+---
+
 ### me
 
 accessing personal information
@@ -467,7 +735,6 @@ accessing personal information
 | Type | Params | Values | Required |
 | --- | --- | --- | --- |
 | Header | Authorization | auth_token | True |
-
 
 #### Response 
 
@@ -519,75 +786,3 @@ accessing personal information
 
 ---
 
-### change_password
-
-for user to change password
-
-#### Request 
-
-| Method | URL |
-| --- | --- |
-| POST | account/change_password/ |
-
-| Type | Params | Values | Required |
-| --- | --- | --- | --- |
-| Header | Authorization | auth_token | True |
-| Body | 'old-password' | string | True |
-| Body | 'password' | string | True |
-
-#### Response 
-
-| Status | Response |
-| --- | --- | 
-| 400 | none |
-| 400 | 'ERROR': 'Password not match' |
-
----
-
-### pk (integer)
-
-to view the user page
-
-### Request
-
-| Method | URL |
-| --- | --- |
-| GET | account/(integer)/ |
-
-| Type | Params | Values | Required |
-| --- | --- | --- | --- |
-| Header | Authorization | auth_token | True |
-
-### Response
-
-| Status | Response | Value
-| --- | --- | --- |
-| 200 | "id" | int |
-|     | "classrooms" | [] |
-|     | "is_professor": | boolean |
-|     | "full_name": | string |
-|     | "chatrooms": | [] |
-|     | "tasks": | [] |
-|     | "last_login": | null |
-|     | "email": | string |
-|     | "username": | string |
-|     | "created": | Date |
-|     | "updated": | Date |
-|     | "first_name": | string |
-|     | "mid_name": | string |
-|     | "last_name": | string |
-|     | "gender": | string |
-|     | "birthday": | Date |
-|     | "school_year": | int |
-|     | "about_me": | "Yo!" |
-|     | "level": | int |
-|     | "phone": | int |
-|     | "professor": | null |
-|     | "avatar": | null |
-|     | "major": | int |
-|     | "friends": | [] |
-|     | "pending_friends": | [] |
-|     | "notifications": | []|
-| 404 | "detail": "Not found." |
-
----
