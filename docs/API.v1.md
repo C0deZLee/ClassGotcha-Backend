@@ -100,7 +100,7 @@ show user moment
 
 | Status | Response | Value
 | --- | --- | --- |
-| 200 | [] | [{"id", <br> "comments", <br> "creator" { <br> "pk", <br>  "id", <br>  "avatar", <br>"username", <br>"email", <br>"full_name", <br>"about_me", <br>"level" <br>}, <br>"likes", <br>"content", <br>"images", <br>"deleted", <br>"solved", <br>"permission", <br>"created", <br>"updated", <br>"classroom", <br>"flagged_users", <br>"liked_users"}, ... ] |
+| 200 | [] | [{"id", <br> "comments", <br> "creator" `{ <br> "pk", <br>  "id", <br>  "avatar", <br>"username", <br>"email", <br>"full_name", <br>"about_me", <br>"level" <br>}`, <br>"likes", <br>"content", <br>"images", <br>"deleted", <br>"solved", <br>"permission", <br>"created", <br>"updated", <br>"classroom", <br>"flagged_users", <br>"liked_users"}, ... ] |
 
 ### Request
 
@@ -538,7 +538,7 @@ for user to change password
 #### Response 
 
 | Status | Response |
-| --- | --- | --- |
+| --- | --- | 
 | 400 | none |
 | 400 | 'ERROR': 'Password not match' |
 
