@@ -260,7 +260,7 @@ the avatar for user
 #### Response 
 
 | Status | Response | Value |
-| --- | --- |
+| --- | --- | --- |
 | 200 | {} | "avatar" |
 
 ---
@@ -474,31 +474,31 @@ accessing personal information
 | Status | Response | Value
 | --- | --- | --- |
 | 200 | "id" | int |
-      | "classrooms" | [] |
-      | "is_professor": | boolean |
-      | "full_name": | string |
-      | "chatrooms": | [] |
-      | "tasks": | [] |
-      | "last_login": | null |
-      | "email": | string |
-      | "username": | string |
-      | "created": | Date |
-      | "updated": | Date |
-      | "first_name": | string |
-      | "mid_name": | string |
-      | "last_name": | string |
-      | "gender": | string |
-      | "birthday": | Date |
-      | "school_year": | int |
-      | "about_me": | "Yo!" |
-      | "level": | int |
-      | "phone": | int |
-      | "professor": | null |
-      | "avatar": | null |
-      | "major": | int |
-      | "friends": | [] |
-      | "pending_friends": | [] |
-      | "notifications": | [] |
+|     | "classrooms" | [] |
+|     | "is_professor": | boolean |
+|     | "full_name": | string |
+|     | "chatrooms": | [] |
+|     | "tasks": | [] |
+|     | "last_login": | null |
+|     | "email": | string |
+|     | "username": | string |
+|     | "created": | Date |
+|     | "updated": | Date |
+|     | "first_name": | string |
+|     | "mid_name": | string |
+|     | "last_name": | string |
+|     | "gender": | string |
+|     | "birthday": | Date |
+|     | "school_year": | int |
+|     | "about_me": | "Yo!" |
+|     | "level": | int |
+|     | "phone": | int |
+|     | "professor": | null |
+|     | "avatar": | null |
+|     | "major": | int |
+|     | "friends": | [] |
+|     | "pending_friends": | [] |
+|     | "notifications": | [] |
 
 #### Request 
 
