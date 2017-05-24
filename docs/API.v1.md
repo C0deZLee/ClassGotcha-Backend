@@ -86,7 +86,7 @@ user friend related functions
 
 show user moment
 
-###Request
+### Request
 
 | Method | URL |
 | --- | --- |
@@ -100,7 +100,7 @@ show user moment
 
 | Status | Response | Value
 | --- | --- | --- |
-| 200 | [] |  "id", 
+| 200 | [] | [{"id", <br>
               "comments",
               "creator" {
                           "pk",
@@ -122,7 +122,7 @@ show user moment
               "updated",
               "classroom",
               "flagged_users",
-              "liked_users" |
+              "liked_users"}, ... ] |
 
 ### Request
 
@@ -136,7 +136,7 @@ show user moment
 | Body | cotent | string | true |
 | Body | question | string | true |
 | Body | classroom_id | int | false |
-| Body | file | file
+| Body | file | file | true |
 //check file
 
 #### Response 
@@ -199,9 +199,9 @@ manage classrooms
 
 #### Response 
 
-| Status | Response | Value
-| --- | --- |
-| 200 | [] | {'id',
+| Status | Response | Value |
+| --- | --- | --- |
+| 200 | [] |[ {'id',
               'class_code',
               'class_short',
               'students_count',
@@ -210,7 +210,7 @@ manage classrooms
               'class_time',
               'semester',
               'professors',
-              'folders'} |
+              'folders'} , ...]|
 
 ### Request
 
@@ -290,7 +290,7 @@ the avatar for user
 
 #### Response 
 
-| Status | Response | Value
+| Status | Response | Value |
 | --- | --- |
 | 200 | {} | "avatar" |
 
@@ -312,8 +312,8 @@ show pending friend request
 
 #### Response 
 
-| Status | Response | Value
-| --- | --- |
+| Status | Response | Value |
+| --- | --- | --- |
 | 200 | [] | 'pk', 'id', 'avatar', 'username', 'email', 'full_name', 'about_me', 'level' |
 
 ### Login
@@ -434,7 +434,6 @@ verify the email
 | 400 | 'message': 'Token is expired' |
 
 ---
-
 ### Register
 
 user registration
