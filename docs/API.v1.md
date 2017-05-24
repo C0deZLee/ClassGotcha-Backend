@@ -179,16 +179,7 @@ manage classrooms
 
 | Status | Response | Value |
 | --- | --- | --- |
-| 200 | [] |[ {'id',
-              'class_code',
-              'class_short',
-              'students_count',
-              'class_section',
-              'description',
-              'class_time',
-              'semester',
-              'professors',
-              'folders'} , ...]|
+| 200 | [] | [ {'id', <br> 'class_code', <br> 'class_short', <br> 'students_count', <br> 'class_section', <br> 'description', <br> 'class_time', <br> 'semester', <br> 'professors', <br> 'folders'} , ...] |
 
 ### Request
 
@@ -292,7 +283,7 @@ show pending friend request
 
 | Status | Response | Value |
 | --- | --- | --- |
-| 200 | [] | 'pk', 'id', 'avatar', 'username', 'email', 'full_name', 'about_me', 'level' |
+| 200 | [] | [{'pk', <br>'id', <br>'avatar', <br>'username', <br>'email', <br>'full_name', <br>'about_me', <br>'level'}, ... ] |
 
 ### Login
 
