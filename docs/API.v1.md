@@ -23,7 +23,7 @@ user registration
 
 | Status | Response |
 | --- | --- |
-| 200 | {'token': <auth_token>} |
+| 201 | {'token': <auth_token>} |
 
 ---
 
@@ -165,6 +165,7 @@ show user moment
 | Status | Response |
 | --- | --- |
 | 200 | none |
+| 404 | "detail": "Not found." |
 
 ### Request
 
@@ -182,6 +183,7 @@ show user moment
 | Status | Response |
 | --- | --- |
 | 200 | none |
+| 404 | "detail": "Not found." |
 
 ---
 
@@ -221,6 +223,7 @@ manage classrooms
 | Status | Response |
 | --- | --- |
 | 200 | none |
+| 404 | "detail": "Not found." |
 
 ### Request
 
@@ -238,6 +241,7 @@ manage classrooms
 | Status | Response |
 | --- | --- |
 | 200 | none |
+| 404 | "detail": "Not found." |
 
 ---
 
@@ -345,7 +349,7 @@ show pending friend request
 
 | Method | URL |
 | --- | --- |
-| GET | account/avatar/ |
+| GET | account/pending-friends/ |
 
 | Type | Params | Values | Required |
 | --- | --- | --- | --- |
@@ -632,6 +636,7 @@ if user forget their password. both /account/forget/ and /account/forget/pk/ are
 | Status | Response |
 | --- | --- |
 | 200 | 'message': 'The reset password email has been sent. ' |
+| 400 | none |
 | 404 | "detail": "Not found." |
 
 #### Request 
@@ -682,7 +687,8 @@ if user forget their password. both /account/forget/ and /account/forget/pk/ are
 
 | Status | Response |
 | --- | --- |
-| 200 | 'freetime': |
+| 200 | 'message': 'The reset password email has been sent. ' |
+| 400 | none |
 | 404 | "detail": "Not found." |
 
 #### Request 
@@ -699,7 +705,7 @@ if user forget their password. both /account/forget/ and /account/forget/pk/ are
 
 | Status | Response |
 | --- | --- |
-| 200 | 'freetime': |
+| 200 | none |
 | 404 | "detail": "Not found." |
 
 #### Request 
@@ -717,7 +723,7 @@ if user forget their password. both /account/forget/ and /account/forget/pk/ are
 
 | Status | Response |
 | --- | --- |
-| 200 | 'freetime': |
+| 200 | none |
 | 404 | "detail": "Not found." |
 
 ---
@@ -776,7 +782,6 @@ accessing personal information
 | Type | Params | Values | Required |
 | --- | --- | --- | --- |
 | Header | Authorization | auth_token | True |
-
 
 #### Response 
 
