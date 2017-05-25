@@ -11,7 +11,7 @@ from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework.decorators import parser_classes
 
 from models import Account, Classroom, Semester, Major, Professor
-from ..chatroom.models import Chatroom
+from ..chatrooms.models import Chatroom
 
 from serializers import ClassroomSerializer, MajorSerializer, OfficeHourSerializer
 from ..posts.serializers import MomentSerializer, Note, NoteSerializer, Moment
@@ -19,7 +19,7 @@ from ..tasks.serializers import Task, TaskSerializer, BasicTaskSerializer, Creat
 from ..accounts.serializers import BasicAccountSerializer, BasicClassroomSerializer
 from ..tags.serializers import ClassFolderSerializer, Tag
 
-from ..chatroom.matrix.matrix_api import MatrixApi
+from ..chatrooms.matrix.matrix_api import MatrixApi
 
 
 def read_file(request, file_name=None):
@@ -272,7 +272,7 @@ class ClassroomViewSet(viewsets.ViewSet):
 					# save classroom to get pk in db
 					classroom.save()
 
-					# create chatroom
+					# create chatrooms
 					matrix = MatrixApi(auth_token=request.user.matrix_token)
 					matrix_id = matrix.create_room(name=cours['name'] + ' - ' + cours['section'] + ' Chat Room')['room_id']
 

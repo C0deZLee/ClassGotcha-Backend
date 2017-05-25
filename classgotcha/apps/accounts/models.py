@@ -169,4 +169,4 @@ class Group(models.Model):
 	creator = models.ForeignKey(Account, related_name='created_groups')
 
 # Relatives
-# 1) chatroom
+# 1) chatrooms

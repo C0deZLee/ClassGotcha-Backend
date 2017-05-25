@@ -18,7 +18,10 @@ class Chatroom(models.Model):
 
 	# Relations
 	classroom = models.ForeignKey(Classroom, related_name='chatrooms', null=True)
-	creator = models.ForeignKey(Account, related_name='created_chatrooms')
+	admin = models.ForeignKey(Account, related_name='created_chatrooms', null=True)
+	members = models.ManyToManyField(Account, related_name='chatrooms')
+	invitees = models.ManyToManyField(Account, related_name='pending_chatrooms')
+
 	# Timestamp
 	created = models.DateTimeField(auto_now_add=True)
 

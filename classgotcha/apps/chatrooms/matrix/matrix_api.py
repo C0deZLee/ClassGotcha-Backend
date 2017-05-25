@@ -27,8 +27,8 @@ class MatrixApi(object):
 	          ):
 		"""Perform Send HTTP Request
 		 Args:
-			method(str): Required. "GET", "PUT", "DELETE", "POST"
-			api_path(str): Required. The api path, e.g "/user/{userId}/filter/{filterId}"
+			method(str): Required. 'GET', 'PUT', 'DELETE', 'POST'
+			api_path(str): Required. The api path, e.g '/user/{userId}/filter/{filterId}'
 			api_root(str): Optional. Default is set to self.api_root
 			content(dic): Optional
 			query_params(dic): Optional
@@ -81,7 +81,7 @@ class MatrixApi(object):
 			filter (int|str): Either a Filter ID or a JSON string.
 			full_state (bool): Return the full state for every room the user has joined
 				Defaults to false.
-			set_presence (str): Should the client be marked as "online" or" offline"
+			set_presence (str): Should the client be marked as 'online' or' offline'
 		"""
 
 		request = {
@@ -128,31 +128,28 @@ class MatrixApi(object):
 			response = self._send('POST', '/register', content)
 		return response
 
-	def create_room(self, name, preset='public_chat', is_public=True, topic='', invitees=[]):
+	def create_room(self, name, preset='public_chat', is_public=True, topic=''):
 		"""Perform /createRoom.
 
 		Args:
 			name(str): Required. Chatroom name
-			preset(str): Optional. One of ["private_chat", "public_chat", "trusted_private_chat"]
+			preset(str): Optional. One of ['private_chat', 'public_chat', 'trusted_private_chat']
 				Detail: matrix.org/docs/spec/client_server/latest.html#post-matrix-client-r0-createroom
 			is_public(bool): Optional. The public/private visibility.
-			topic(str): Optional. Topic of chatroom.
-			invitees(list<str>): Optional. The list of user IDs to invite.
+			topic(str): Optional. Topic of chatrooms.
 		"""
-		content = {
-			'name': name,
+		body = {
+			'name'      : name,
 			'visibility': 'public' if is_public else 'private',
 			'preset'    : preset
 		}
 
-		if invitees:
-			content['invite'] = invitees
 		if topic:
-			content['topic'] = topic
+			body['topic'] = topic
 
-		return self._send('POST', '/createRoom', content)
+		return self._send('POST', '/createRoom', body)
 
-	def join_room(self, room_id):
+	def join_room(self, room_id=None):
 		"""Performs /join/$room_id
 
 		Args:
@@ -162,6 +159,15 @@ class MatrixApi(object):
 			print 'Room Not Found'
 			return False
 
-		path = '/join/%s' % quote(room_id)
+		return self._send('POST', '/join/' + room_id)
 
-		return self._send('POST', path)
+	def leave_room(self, room_id=None):
+		"""Perform POST /rooms/$room_id/leave
+		Args:
+			room_id(str): The room ID
+		"""
+		if not room_id:
+			print 'Room Not Found'
+			return False
+
+		return self._send('POST', '/rooms/' + room_id + '/leave')

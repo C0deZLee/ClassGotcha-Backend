@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 from models import Classroom, Semester, Major
-from ..chatroom.models import Chatroom, Account
+from ..chatrooms.models import Chatroom, Account
 
 
 class ClassroomAdmin(admin.ModelAdmin):
@@ -27,7 +27,7 @@ class ClassroomAdmin(admin.ModelAdmin):
 		super(ClassroomAdmin, self).save_related(
 			request, form, formsets, change)
 		# only apply this when first created, when classroom first created, no
-		# chatroom pk
+		# chatrooms pk
 		if not form.instance.chatroom:
 			# TODO: UNSTABLE! Only retrieve the first admin user as the class
 			# chat room controller

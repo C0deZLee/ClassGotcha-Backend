@@ -53,7 +53,7 @@ INSTALLED_APPS = [
 	'classgotcha.apps.classrooms',
 	'classgotcha.apps.posts',
 	'classgotcha.apps.tasks',
-	'classgotcha.apps.chatroom',
+	'classgotcha.apps.chatrooms',
 	'classgotcha.apps.tags',
 ]
 MIDDLEWARE = [

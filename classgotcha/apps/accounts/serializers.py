@@ -1,12 +1,12 @@
 from rest_framework import serializers
 
 from models import Account, Avatar, Group, Professor
-from ..chatroom.models import Chatroom
+from ..chatrooms.models import Chatroom
 from ..classrooms.models import Semester, Classroom, Major, OfficeHour
 from ..tasks.serializers import BasicTaskSerializer, ClassTimeTaskSerializer
 from ..tags.serializers import ClassFolderSerializer
 
-from ..chatroom.matrix.matrix_api import MatrixApi
+from ..chatrooms.matrix.matrix_api import MatrixApi
 import requests
 
 

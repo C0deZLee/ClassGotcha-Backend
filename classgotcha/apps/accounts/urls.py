@@ -87,7 +87,7 @@ urlpatterns = [
 	url(r'^friends/(?P<pk>[0-9]+)/$', account_add_friends, name='add-friend'),
 	url(r'^moments/(?P<pk>[0-9]+)/$', account_add_moments, name='add-moment'),
 	url(r'^classrooms/(?P<pk>[0-9]+)/$', account_add_classrooms, name='add-classroom'),
-	url(r'^chatrooms/(?P<pk>[0-9]+)/$', account_add_chatrooms, name='add-chatroom'),
+	url(r'^chatrooms/(?P<pk>[0-9]+)/$', account_add_chatrooms, name='add-chatrooms'),
 
 	url(r'^(?P<pk>[0-9]+)/$', account_detail, name='user-detail'),
 
