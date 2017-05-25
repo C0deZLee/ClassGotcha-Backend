@@ -786,3 +786,26 @@ accessing personal information
 
 ---
 
+### Professor
+
+about the information of the professors
+
+#### Request 
+
+| Method | URL |
+| --- | --- |
+| GET | account/professor/(pk) |
+
+| Type | Params | Values | Required |
+| --- | --- | --- | --- |
+| Header | Authorization | auth_token | True |
+
+
+#### Response 
+
+| Status | Response | Value |
+| --- | --- | --- |
+| 200 | "id" | int |
+|  | "full_name" | string |
+|  | "classrooms" | [{"id", <br>"class_code",<br>"class_short",<br>"students_count",<br>"class_section",<br>"description",<br>"class_time":<br> {<br>"formatted_start_time",<br>"formatted_end_time",<br>"repeat_list": []<br>,"task_name",<br>"location",<br>"repeat" },<br>"semester":<br> {<br>"name",<br>"formatted_start_date",<br>"formatted_end_date"<br>},<br>"professors": <br>[{<br>"id",<br>"first_name",<br>"last_name",<br>"mid_name",<br>"email",<br>"office",<br>"created",<br>"major",<br>"tags": []<br>}, ...]|
+|  | "folders" | [] |
