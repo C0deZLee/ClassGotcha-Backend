@@ -850,7 +850,7 @@ about the professors' comment
 
 | Status | Response | Value |
 | --- | --- | --- |
-| 200 |   |  |
+| 200 | [] | [{'id',<br>'title', <br>'comments', <br>'creator', <br>'created', <br>'vote', <br>'tags'}, ...] |
 | 404 | "detail": "Not found." |
 
 #### Request 
@@ -862,10 +862,11 @@ about the professors' comment
 | Type | Params | Values | Required |
 | --- | --- | --- | --- |
 | Header | Authorization | auth_token | True |
+| Body | content |  | True |
 
 #### Response 
 
-| Status | Response | Value |
-| --- | --- | --- |
-| 201 |   |  |
+| Status | Response |
+| --- | --- |
+| 201 | none |
 | 400 | none |
