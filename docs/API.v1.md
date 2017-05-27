@@ -875,3 +875,89 @@ about the professors' comment
 | --- | --- |
 | 201 | none |
 | 400 | none |
+
+---
+
+## Chat
+### Validate
+#### Request 
+
+| Method | URL |
+| --- | --- |
+|  | chat/pk/validate/ |
+
+| Type | Params | Values | Required |
+| --- | --- | --- | --- |
+| Header | Authorization | auth_token | True |
+
+#### Response 
+
+| Status | Response |
+| --- | --- |
+
+
+### last-message
+#### Request 
+
+| Method | URL |
+| --- | --- |
+|  | chat/pk/last-message/ |
+
+| Type | Params | Values | Required |
+| --- | --- | --- | --- |
+| Header | Authorization | auth_token | True |
+
+#### Response 
+
+| Status | Response |
+| --- | --- |
+
+### users
+#### Request 
+
+| Method | URL |
+| --- | --- |
+|  | chat/pk/users/ |
+
+| Type | Params | Values | Required |
+| --- | --- | --- | --- |
+| Header | Authorization | auth_token | True |
+
+#### Response 
+
+| Status | Response |
+| --- | --- |
+
+### pk
+#### Request 
+
+| Method | URL |
+| --- | --- |
+|  | chat/pk/ |
+
+| Type | Params | Values | Required |
+| --- | --- | --- | --- |
+| Header | Authorization | auth_token | True |
+
+#### Response 
+
+| Status | Response |
+| --- | --- |
+
+###
+#### Request 
+
+| Method | URL |
+| --- | --- |
+|  | chat/ |
+
+| Type | Params | Values | Required |
+| --- | --- | --- | --- |
+| Header | Authorization | auth_token | True |
+
+#### Response 
+
+| Status | Response |
+| --- | --- |
+
+
