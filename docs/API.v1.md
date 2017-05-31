@@ -522,9 +522,9 @@ user notes
 
 #### Response 
 
-| Status | Response | Value |
-| --- | --- | --- |
-| 200 | [] |  |
+| Status | Response |
+| --- | --- |
+| 200 | [{'pk',<br>'id', <br>'avatar', <br>'username', <br>'email', <br>'full_name', <br>'about_me', <br>'level', <br>'tag':{<br>'name'}}, ...] |
 
 ---
 
@@ -960,4 +960,259 @@ about the professors' comment
 | Status | Response |
 | --- | --- |
 
+---
 
+## classroom
+### notes
+
+user notes
+
+#### Request 
+
+| Method | URL |
+| --- | --- |
+| GET | classroom/pk/notes/ |
+
+| Type | Params | Values | Required |
+| --- | --- | --- | --- |
+| Header | Authorization | auth_token | True |
+
+#### Response 
+
+| Status | Response |
+| --- | --- |
+| 200 | [{'pk',<br>'id', <br>'avatar', <br>'username', <br>'email', <br>'full_name', <br>'about_me', <br>'level', <br>'tag':{<br>'name'}}, ...] |
+| 404 | none |
+
+#### Request 
+
+| Method | URL |
+| --- | --- |
+| POST | classroom/pk/notes/ |
+
+| Type | Params | Values | Required |
+| --- | --- | --- | --- |
+| Header | Authorization | auth_token | True |
+| body | uploaded_file | file | true |
+| body | title | string | true |
+| body | tags | string | true |
+| body | description | sting | true |
+
+#### Response 
+
+| Status | Response |
+| --- | --- |
+| 201 | none |
+| 400 | none |
+
+---
+
+### tasks
+
+user task
+
+#### Request 
+
+| Method | URL |
+| --- | --- |
+| GET | classroom/pk/tasks/ |
+
+| Type | Params | Values | Required |
+| --- | --- | --- | --- |
+| Header | Authorization | auth_token | True |
+
+#### Response 
+
+| Status | Response |
+| --- | --- |
+| 200 | [] | [{'formatted_start_time',<br>'formatted_end_time',<br>'formatted_start_date',<br>'formatted_end_date',<br>'repeat_start_date',<br>'repeat_end_date',<br>'repeat_list',<br>'repeat',<br>'task_name',<br>'type',<br>'description',<br>'category',<br>'location',<br>'start',<br>'end',<br>'id',<br>'classroom',<br>'expired'} ... ] |
+
+#### Request 
+
+| Method | URL |
+| --- | --- |
+| POST | classroom/pk/tasks/ |
+
+| Type | Params | Values | Required |
+| --- | --- | --- | --- |
+| Header | Authorization | auth_token | True |
+| body | start | DATE | true |
+| body | end | DATE | true |
+| body | task_name | string | true |
+
+#### Response 
+
+| Status | Response |
+| --- | --- |
+| 201 | none |
+| 400 | none |
+
+---
+
+### students
+#### Request 
+
+| Method | URL |
+| --- | --- |
+| GET | classroom/pk/students/ |
+
+| Type | Params | Values | Required |
+| --- | --- | --- | --- |
+| Header | Authorization | auth_token | True |
+
+#### Response 
+
+| Status | Response |
+| --- | --- |
+| 200 | [{'pk',<br>'id', <br>'avatar', <br>'username', <br>'email', <br>'full_name', <br>'about_me', <br>'level'}, ... ] |
+| 404 | none |
+
+---
+
+### moments
+
+user moments
+
+#### Request 
+
+| Method | URL |
+| --- | --- |
+| GET | classroom/pk/moments/ |
+
+| Type | Params | Values | Required |
+| --- | --- | --- | --- |
+| Header | Authorization | auth_token | True |
+
+#### Response 
+
+| Status | Response |
+| --- | --- |
+| 200 | [] | [{"id", <br> "comments",<br> "creator" <br>{<br> "pk", <br> "id", <br> "avatar", <br>"username", <br>"email", <br>"full_name", <br>"about_me", <br>"level" <br>}, <br>"likes", <br>"content", <br>"images", <br>"deleted", <br>"solved", <br>"permission", <br>"created", <br>"updated", <br>"classroom", <br>"flagged_users", <br>"liked_users"}, ... ] |
+| 404 | none |
+
+---
+
+### validate
+#### Request 
+
+| Method | URL |
+| --- | --- |
+| GET | classroom/pk/validate/ |
+
+| Type | Params | Values | Required |
+| --- | --- | --- | --- |
+| Header | Authorization | auth_token | True |
+
+#### Response 
+
+| Status | Response |
+| --- | --- |
+| 200 | none |
+| 403 | 'error': 'You are not in this classroom' |
+
+---
+
+### 
+#### Request 
+
+| Method | URL |
+| --- | --- |
+| GET | classroom/pk/ |
+
+| Type | Params | Values | Required |
+| --- | --- | --- | --- |
+| Header | Authorization | auth_token | True |
+
+#### Response 
+
+| Status | Response | Value |
+| --- | --- | --- |
+| 200 | "id" | int |
+|  | "class_time" | {<br>"formatted_start_time",<br>"formatted_end_time",<br>"repeat_list": [],<br>"task_name",<br>"location",<br>"repeat"} |
+|  | "students" | [] |
+|  | "students_count" | string |
+|  | "class_short" | string |
+|  | "folders" | [] |
+|  | "semester" |{<br>"name",<br>"formatted_start_date",<br>"formatted_end_date"} |
+|  | "major" | {"id",<br>"major_short",<br>"major_full",<br>"major_college",<br>"department",<br>"major_icon"},
+|  | "professors" | [{<br>"id", <br>"full_name",<br>"classrooms":<br>[{<br>  "id",<br>"class_code",<br>"class_short",<br>"students_count",<br>"class_section",<br>"description",<br>"class_time":<br> {<br>"formatted_start_time",<br>"formatted_end_time",<br>"repeat_list",<br>"task_name",<br>"location",<br>"repeat"<br>},<br>"semester":<br> {"name",<br>"formatted_start_date",<br>"formatted_end_date"<br>},<br>"professors":<br>[{<br>"id",<br>"first_name",<br>"last_name",<br>"mid_name",<br>"email",<br>"office",<br>"created",<br>"major",<br>"tags"<br>}],<br>"folders"<br>},<br> ...],<br>"office_hours",<br>"avg_rate",<br>"first_name",<br>  "last_name",<br>"mid_name",<br>"email",<br>"office",<br>"created",<br>"major",<br>"tags"<br>}] |
+|  | "class_name" | string |
+|  |"class_number"| int |
+|  |"class_code"| int |
+|  |"class_section"| int |
+|  |"class_credit" | int |
+|  |"class_location": | string |
+|  |"syllabus" | file |
+|  |"description"| string |
+|  |"created" | DATE |
+|  |"updated" | DATE |
+
+---
+
+### search
+#### Request 
+
+| Method | URL |
+| --- | --- |
+| POST | classroom/search/ |
+
+| Type | Params | Values | Required |
+| --- | --- | --- | --- |
+| Header | Authorization | auth_token | True |
+
+#### Response 
+
+| Status | Response | Value |
+| --- | --- | --- |
+| 200 | students | {'pk',<br>'id', <br>'avatar', <br>'username', <br>'email', <br>'full_name', <br>'about_me', <br>'level'}
+|  | 'name' | string |
+|  | folders | {'name', <br>'formatted_start_date', <br>'formatted_end_date'} |
+|  | major | {full_name , <br>classrooms, <br>office_hours, <br>avg_rate} |
+| 400 | none |  |
+
+---
+
+### majors
+#### Request 
+
+| Method | URL |
+| --- | --- |
+| GET | classroom/majors/ |
+
+| Type | Params | Values | Required |
+| --- | --- | --- | --- |
+| Header | Authorization | auth_token | True |
+
+#### Response 
+
+| Status | Response | Value |
+| --- | --- | --- |
+| 200 |"id" | 63 |
+|  | "major_short" | string |
+|  | "major_full" | string |
+|  | "major_college" | string |
+|  | "department" | string |
+|  | "major_icon" |  |
+
+---
+
+### upload
+#### Request 
+
+| Method | URL |
+| --- | --- |
+| POST | classroom/upload/ |
+
+| Type | Params | Values | Required |
+| --- | --- | --- | --- |
+| Header | Authorization | auth_token | True |
+| body | file | file | true |
+
+#### Response 
+
+| Status | Response |
+| --- | --- |
+| 201 | none |
+| 400 | none |
+| 403 | none |
+---
