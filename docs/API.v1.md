@@ -1050,6 +1050,9 @@ user task
 ---
 
 ### students
+
+view students in classroom id
+
 #### Request 
 
 | Method | URL |
@@ -1093,6 +1096,9 @@ user moments
 ---
 
 ### validate
+
+validate status of user in classroom
+
 #### Request 
 
 | Method | URL |
@@ -1150,6 +1156,9 @@ user moments
 ---
 
 ### search
+
+search things
+
 #### Request 
 
 | Method | URL |
@@ -1173,6 +1182,9 @@ user moments
 ---
 
 ### majors
+
+view majors
+
 #### Request 
 
 | Method | URL |
@@ -1197,6 +1209,9 @@ user moments
 ---
 
 ### upload
+
+upload file
+
 #### Request 
 
 | Method | URL |
@@ -1215,4 +1230,262 @@ user moments
 | 201 | none |
 | 400 | none |
 | 403 | none |
+
 ---
+
+## email
+does not work
+
+## posts
+### moment/comment
+#### Request 
+
+| Method | URL |
+| --- | --- |
+| POST | /post/moment/pk/comment/ |
+
+| Type | Params | Values | Required |
+| --- | --- | --- | --- |
+| Header | Authorization | auth_token | True |
+
+#### Response 
+
+| Status | Response |
+| --- | --- |
+| 200 | none |
+| 400 | none |
+| 404 | none |
+
+---
+
+### moment/like
+#### Request 
+
+| Method | URL |
+| --- | --- |
+| POST | /post/moment/pk/like/ |
+
+| Type | Params | Values | Required |
+| --- | --- | --- | --- |
+| Header | Authorization | auth_token | True |
+
+#### Response 
+
+| Status | Response |
+| --- | --- |
+| 200 | none |
+| 404 | none |
+
+---
+
+### moment/solve
+#### Request 
+
+| Method | URL |
+| --- | --- |
+| POST | /post/moment/pk/solve/ |
+
+| Type | Params | Values | Required |
+| --- | --- | --- | --- |
+| Header | Authorization | auth_token | True |
+
+#### Response 
+
+| Status | Response |
+| --- | --- |
+| 200 | none |
+| 404 | none |
+
+---
+
+### moment/report
+#### Request 
+
+| Method | URL |
+| --- | --- |
+| PUT | /post/moment/pk/report/ |
+
+| Type | Params | Values | Required |
+| --- | --- | --- | --- |
+| Header | Authorization | auth_token | True |
+
+#### Response 
+
+| Status | Response |
+| --- | --- |
+| 200 | none |
+| 404 | none |
+
+---
+
+### moment/pk
+#### Request 
+
+| Method | URL |
+| --- | --- |
+| GET | /post/moment/pk/ |
+
+| Type | Params | Values | Required |
+| --- | --- | --- | --- |
+| Header | Authorization | auth_token | True |
+
+#### Response 
+
+| Status | Response | value |
+| --- | --- | --- |
+| 200 | id | int |
+|  | comments | [{<br>"id",<br>"creator": <br>{<br>"pk",<br>"id",<br>"avatar",<br>"username",<br>"email",<br>"full_name",<br>"about_me",<br>"level"<br>},<br>"content",<br>"created",<br>"updated",<br>"post",<br>"moment",<br>"note",<br>"professor",<br>"rate"<br>}] |
+|  | creator | {"pk",<br>"id",<br>"avatar",<br>"username",<br>"email",<br>"full_name",<br>"about_me",<br>"level"} |
+|  | likes | int |
+|  | content | string |
+|  | images" | null |
+|  | deleted" | boolean |
+|  | solved | null |
+|  | permission | int |
+|  | created | DATE |
+|  | updated | DATE |
+|  | classroom | int |
+|  | flagged_users | [] |
+|  | liked_users | [] |
+| 404 | none |  |
+
+---
+
+### post
+#### Request 
+
+| Method | URL |
+| --- | --- |
+| GET | /post/post/ |
+
+| Type | Params | Values | Required |
+| --- | --- | --- | --- |
+| Header | Authorization | auth_token | True |
+
+#### Response 
+
+| Status | Response | value |
+| --- | --- | --- |
+| 200 | [] |["id",<br><br>"title",<br>"comments",<br>"creator": <br>{<br>"pk",<br>"id",<br>"avatar",<br>"username",<br>"email",<br>"full_name",<br>"about_me",<br>"level"<br>},<br>"created",<br>"vote",<br>"tags"}, ... ] |
+| 404 | none |  |
+
+#### Request 
+
+| Method | URL |
+| --- | --- |
+| POST | /post/post/ |
+
+| Type | Params | Values | Required |
+| --- | --- | --- | --- |
+| Header | Authorization | auth_token | True |
+| body | title | string | true |
+| body | content | string | true |
+
+#### Response 
+
+| Status | Response |
+| --- | --- |
+| 200 | none |
+| 400 | none |
+
+---
+
+### post/pk
+#### Request 
+
+| Method | URL |
+| --- | --- |
+| GET | /post/pk/ |
+
+| Type | Params | Values | Required |
+| --- | --- | --- | --- |
+| Header | Authorization | auth_token | True |
+
+#### Response 
+
+| Status | Response |
+| --- | --- |
+| 200 | "id" | int |
+|  | "comments" | [],
+|  | "creator" | {"pk",<br>"id",<br>"avatar",<br>"username",<br>"email",<br>"full_name",<br>"about_me",<br>"level"} |
+|  | "vote" | int |
+|  | "tags" | [] |
+|  | "title" | string |
+|  | "content" | string |
+|  | "flagged_num" | int |
+|  | "permission" | int |
+|  | "created" | DATE |
+|  | "updated" | DATE |
+|  | "up_voted_user" | [] |
+|  | "down_voted_user" | [] |
+| 404 | none |  |
+
+#### Request 
+
+| Method | URL |
+| --- | --- |
+| PUT | /post/pk/ |
+
+| Type | Params | Values | Required |
+| --- | --- | --- | --- |
+| Header | Authorization | auth_token | True |
+| body | vote | int | true |
+
+#### Response 
+
+| Status | Response |
+| --- | --- |
+| 200 | none |
+| 400 | none |
+| 404 | none |
+
+### post/pk/comment
+
+## tags
+does not have url file
+
+## tasks
+### pk
+
+put update
+delete delete
+#### Request 
+
+| Method | URL |
+| --- | --- |
+| PUT | /pk/ |
+
+| Type | Params | Values | Required |
+| --- | --- | --- | --- |
+| Header | Authorization | auth_token | True |
+| body | task_name | string | true |
+| body | description | string | true |
+| body | start | DATE | true |
+| body | end | DATE | true |
+| body | location | int | true |
+| body | category | int | true |
+| body | repeat | [int] |
+
+#### Response 
+
+| Status | Response |
+| --- | --- |
+| 200 | none |
+| 404 | none |
+
+#### Request 
+
+| Method | URL |
+| --- | --- |
+| DELETE | /pk/ |
+
+| Type | Params | Values | Required |
+| --- | --- | --- | --- |
+| Header | Authorization | auth_token | True |
+
+#### Response 
+
+| Status | Response |
+| --- | --- |
+| 200 | none |
+| 404 | none |
