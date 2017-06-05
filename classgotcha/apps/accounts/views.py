@@ -15,7 +15,7 @@ from rest_framework.permissions import IsAuthenticated, AllowAny
 
 from ..classrooms.serializers import Classroom, BasicClassroomSerializer
 from ..posts.serializers import Moment, MomentSerializer, NoteSerializer, Comment, CommentSerializer
-from ..chat.serializers import RoomSerializer
+from ..chatrooms.serializers import ChatroomSerializer
 from ..tasks.serializers import TaskSerializer
 
 from ..posts.models import Rate
@@ -46,6 +46,7 @@ def send_verifying_email(account, subject, to, template):
 	email=EmailMessage(subject, render_to_string('email/%s.html' % template, ctx), 'no-reply@classgotcha.com', [to])
 	email.content_subtype = 'html'
 	email.send()
+
 
 @api_view(['POST'])
 @permission_classes((AllowAny,))
@@ -297,7 +298,9 @@ class AccountViewSet(viewsets.ViewSet):
 			# add classroom tasks from user task list
 			for task in classroom.tasks.all():
 				task.involved.add(request.user)
-			# add user to classroom chatroom
+			# add user to classroom chatrooms
+			# TODO: change into matrix version: classroom.chatrooms.get().accounts.add(request.user.username ???)
+			# also need to call the matrix api? add the user into matrix chatrooms...
 			classroom.chatroom.get().accounts.add(request.user)
 			return Response(status=200)
 
@@ -310,7 +313,7 @@ class AccountViewSet(viewsets.ViewSet):
 			# remove classroom tasks from user task list
 			for task in classroom.tasks.all():
 				task.involved.remove(request.user)
-			# remove user from classroom chatroom
+			# remove user from classroom chatrooms
 			classroom.chatroom.get().accounts.remove(request.user)
 			return Response(status=200)
 
@@ -371,7 +374,7 @@ class AccountViewSet(viewsets.ViewSet):
 	def rooms(request, pk=None):
 		room_query_set = request.user.rooms.all()
 		if request.method == 'GET':
-			serializer = RoomSerializer(room_query_set, many=True)
+			serializer = ChatroomSerializer(room_query_set, many=True)
 			return Response(serializer.data)
 		elif request.method == 'POST':
 			room = get_object_or_404(room_query_set, pk)

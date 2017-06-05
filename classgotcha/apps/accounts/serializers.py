@@ -1,10 +1,13 @@
 from rest_framework import serializers
 
 from models import Account, Avatar, Group, Professor
-from ..chat.models import Room
+from ..chatrooms.models import Chatroom
 from ..classrooms.models import Semester, Classroom, Major, OfficeHour
 from ..tasks.serializers import BasicTaskSerializer, ClassTimeTaskSerializer
 from ..tags.serializers import ClassFolderSerializer
+
+from ..chatrooms.matrix.matrix_api import MatrixApi
+import requests
 
 
 # Due to the cross dependency,
@@ -92,7 +95,7 @@ class RoomSerializer(serializers.ModelSerializer):
 	creator = BasicAccountSerializer()
 
 	class Meta:
-		model = Room
+		model = Chatroom
 		fields = '__all__'
 
 
@@ -100,7 +103,6 @@ class AccountSerializer(serializers.ModelSerializer):
 	classrooms = BasicClassroomSerializer(many=True)
 	is_professor = serializers.ReadOnlyField()
 	full_name = serializers.ReadOnlyField()
-	chatrooms = RoomSerializer(many=True)
 	tasks = BasicTaskSerializer(many=True)
 	avatar = AvatarSerializer(required=False)
 
@@ -121,6 +123,11 @@ class AuthAccountSerializer(serializers.ModelSerializer):
 		account = Account(email=validated_data['email'], username=validated_data['username'],
 		                  first_name=validated_data['first_name'], last_name=validated_data['last_name'])
 		account.set_password(validated_data['password'])
+
+		matrix = MatrixApi()
+		account.matrix_token = matrix.register(validated_data['username'], validated_data['password'])['access_token']
+		# TODO: store matrix_id
+		# account.matrix_id =
 		account.save()
 		return account
 

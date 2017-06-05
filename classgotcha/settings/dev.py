@@ -11,18 +11,6 @@ if 'debug_toolbar' not in INSTALLED_APPS:
 
 SECRET = '42'
 
-# ______ Channel Layers_____
-
-CHANNEL_LAYERS = {
-    "default": {
-        "BACKEND": "asgi_redis.RedisChannelLayer",
-        "CONFIG": {
-            "hosts": [os.environ.get('REDIS_URL', 'redis://localhost:6379')],
-        },
-        "ROUTING": "classgotcha.apps.chat.routing.channel_routing",
-    },
-}
-
 # ------ Database ------
 DATABASES = {
     'default': {

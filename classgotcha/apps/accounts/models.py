@@ -91,7 +91,7 @@ class Account(AbstractBaseUser, PermissionsMixin):
 	is_verified = models.BooleanField(default=False)
 	# is_student = models.BooleanField(default=True)
 	# is_professor = models.BooleanField(default=False)
-	professor = models.ForeignKey(Professor, blank=True, null=True, related_name='is_professor')
+	professor = models.ForeignKey(Professor, blank=True, null=True, related_name='account')
 	# Timestamp
 	created = models.DateTimeField(auto_now_add=True)
 	updated = models.DateTimeField(auto_now=True)
@@ -106,6 +106,9 @@ class Account(AbstractBaseUser, PermissionsMixin):
 	about_me = models.CharField(max_length=200, default='Yo!')
 	level = models.IntegerField(default=1)
 	phone = models.CharField(max_length=20, null=True)
+	# Matrix info
+	matrix_token = models.CharField(max_length=200, null=True)
+	matrix_id = models.CharField(max_length=200, null=True)
 	# Relations
 	friends = models.ManyToManyField('self')
 	pending_friends = models.ManyToManyField('self')
@@ -121,7 +124,7 @@ class Account(AbstractBaseUser, PermissionsMixin):
 	# 7) posts
 	# 8) moments
 	# 9) tasks
-	# 10) rooms
+	# 10) created_chatrooms
 	# Manager
 	objects = AccountManager()
 	# Settings
@@ -180,4 +183,4 @@ class Group(models.Model):
 	creator = models.ForeignKey(Account, related_name='created_groups')
 
 # Relatives
-# 1) chatroom
+# 1) chatrooms

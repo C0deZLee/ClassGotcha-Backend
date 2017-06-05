@@ -61,7 +61,7 @@ class Classroom(models.Model):
 	# 1) notes
 	# 2) tasks
 	# 3) groups
-	# 4) chatroom
+	# 4) chatrooms
 	# 5) office_hours
 
 	def __unicode__(self):
