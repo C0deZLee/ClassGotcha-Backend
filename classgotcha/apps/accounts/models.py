@@ -113,7 +113,6 @@ class Account(AbstractBaseUser, PermissionsMixin):
 	friends = models.ManyToManyField('self')
 	pending_friends = models.ManyToManyField('self')
 	major = models.ForeignKey('classrooms.Major', blank=True, null=True)
-	notifications = models.ManyToManyField('posts.Notification')
 	# Relatives
 	# 1) teaches
 	# 2) classrooms

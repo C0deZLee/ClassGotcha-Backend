@@ -57,6 +57,7 @@ INSTALLED_APPS = [
 	'classgotcha.apps.chatrooms',
 	'classgotcha.apps.tags',
 	'classgotcha.apps.email',
+	'classgotcha.apps.notifications',
 ]
 MIDDLEWARE = [
 	'classgotcha.middleware.AtopdedTo110DebugMiddleware',
@@ -231,14 +232,12 @@ JWT_AUTH = {
 	'JWT_ALGORITHM': 'HS256',
 	'JWT_VERIFY': True,
 	'JWT_VERIFY_EXPIRATION': True,
-
 	'JWT_LEEWAY': 0,
 	'JWT_EXPIRATION_DELTA': datetime.timedelta(days=1),
 	'JWT_AUDIENCE': None,
 	'JWT_ISSUER': None,
 	'JWT_ALLOW_REFRESH': True,
 	'JWT_REFRESH_EXPIRATION_DELTA': datetime.timedelta(days=7),
-
 	'JWT_AUTH_HEADER_PREFIX': 'JWT'
 }
 
