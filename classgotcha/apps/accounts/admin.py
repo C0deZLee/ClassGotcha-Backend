@@ -19,7 +19,7 @@ class AccountAdmin(UserAdmin):
 	fieldsets = (
 		(None, {'fields': ('email', 'username', 'password', 'matrix_token')}),
 		('Personal info', {'fields': ('first_name', 'last_name', 'gender', 'school_year', 'major', 'avatar')}),
-		('Permissions', {'fields': ('is_professor', 'is_staff', 'is_superuser')}),
+		('Permissions', {'fields': ('is_professor', 'is_verified', 'is_staff', 'is_superuser')}),
 		('Timestamp', {'fields': ('created', 'updated')})
 	)
 	readonly_fields = ('created', 'matrix_token', 'updated', 'is_staff', 'is_superuser', 'is_professor')

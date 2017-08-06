@@ -105,6 +105,7 @@ class Account(AbstractBaseUser, PermissionsMixin):
 	avatar = models.ForeignKey(Avatar, blank=True, null=True, related_name='user_profiles_avatars')
 	about_me = models.CharField(max_length=200, default='Yo!')
 	level = models.IntegerField(default=1)
+	exp = models.IntegerField(default=0)
 	phone = models.CharField(max_length=20, null=True)
 	# Matrix info
 	matrix_token = models.CharField(max_length=200, null=True)
@@ -124,6 +125,9 @@ class Account(AbstractBaseUser, PermissionsMixin):
 	# 8) moments
 	# 9) tasks
 	# 10) created_chatrooms
+	# 10) rooms
+	# 11) badges
+
 	# Manager
 	objects = AccountManager()
 	# Settings

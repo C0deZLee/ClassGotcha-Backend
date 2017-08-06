@@ -58,7 +58,9 @@ INSTALLED_APPS = [
 	'classgotcha.apps.tags',
 	'classgotcha.apps.email',
 	'classgotcha.apps.notifications',
+	'classgotcha.apps.badges',
 ]
+
 MIDDLEWARE = [
 	'classgotcha.middleware.AtopdedTo110DebugMiddleware',
 	'classgotcha.middleware.MyMiddleware',
