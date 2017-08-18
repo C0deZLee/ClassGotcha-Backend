@@ -24,12 +24,19 @@ from classgotcha.apps.tasks import urls as task_urls
 admin.autodiscover()
 
 urlpatterns = [
-    # models
-    url(r'^account/', include(accounts_urls)),
-    url(r'^classroom/', include(classroom_urls)),
-    url(r'^post/', include(post_urls)),
-    url(r'^task/', include(task_urls)),
-    # admin site and docs
-    url(r'^admin/', admin.site.urls),
-    url(r'^admin/django-ses/', include('django_ses.urls')),
+	# models
+	url(r'^account/', include(accounts_urls)),
+	url(r'^classroom/', include(classroom_urls)),
+	url(r'^post/', include(post_urls)),
+	url(r'^task/', include(task_urls)),
+	# admin site and docs
+	url(r'^admin/', admin.site.urls),
+	url(r'^admin/django-ses/', include('django_ses.urls')),
+
 ]
+
+import debug_toolbar
+from django.conf import settings
+
+if settings.DEBUG:
+	urlpatterns += [url(r'^__debug__/', include(debug_toolbar.urls))]

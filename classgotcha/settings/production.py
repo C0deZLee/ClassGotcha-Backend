@@ -43,7 +43,7 @@ INSTALLED_APPS = [
 	'django.contrib.staticfiles',
 	'django_extensions',
 	# installed
-    'django_ses',
+	'django_ses',
 	'rest_framework',
 	'rest_framework_docs',
 	'rest_framework_jwt',
@@ -62,8 +62,8 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
-	'classgotcha.middleware.AtopdedTo110DebugMiddleware',
-	'classgotcha.middleware.MyMiddleware',
+	#'classgotcha.middleware.AtopdedTo110DebugMiddleware',
+	#'classgotcha.middleware.MyMiddleware',
 	'django.middleware.security.SecurityMiddleware',
 	'django.contrib.sessions.middleware.SessionMiddleware',
 	'corsheaders.middleware.CorsMiddleware',
@@ -82,7 +82,7 @@ MIDDLEWARE = [
 CHANNEL_LAYERS = {
 	"default": {
 		"BACKEND": "asgi_redis.RedisChannelLayer",
-		"CONFIG": {
+		"CONFIG" : {
 			"hosts": [os.environ.get('REDIS_URL', 'redis://localhost:6379')],
 		},
 		"ROUTING": "classgotcha.apps.chat.routing.channel_routing",
@@ -92,10 +92,10 @@ CHANNEL_LAYERS = {
 # ------ Templates ------
 TEMPLATES = [
 	{
-		'BACKEND': 'django.template.backends.django.DjangoTemplates',
-		'DIRS': [os.path.join(PROJECT_ROOT, 'classgotcha/templates')],
+		'BACKEND' : 'django.template.backends.django.DjangoTemplates',
+		'DIRS'    : [os.path.join(PROJECT_ROOT, 'classgotcha/templates')],
 		'APP_DIRS': True,
-		'OPTIONS': {
+		'OPTIONS' : {
 			'context_processors': [
 				# Insert your TEMPLATE_CONTEXT_PROCESSORS here or use this
 				# list if you haven't customized them:
@@ -106,7 +106,7 @@ TEMPLATES = [
 				'django.template.context_processors.tz',
 				'django.contrib.messages.context_processors.messages',
 			],
-			'debug': False,
+			'debug'             : False,
 		},
 	},
 ]
@@ -129,11 +129,11 @@ TEST_RUNNER = "lib.tests.MyTestDiscoverRunner"
 DATABASES = {
 
 	'default': {
-		'ENGINE': 'django.db.backends.mysql',
-		'NAME': 'ClassGotcha',
-		'USER': 'ClassGotcha',
+		'ENGINE'  : 'django.db.backends.mysql',
+		'NAME'    : 'ClassGotcha',
+		'USER'    : 'ClassGotcha',
 		'PASSWORD': 'admin12345',
-		'HOST': '/var/lib/mysql/mysql.sock',
+		'HOST'    : '/var/lib/mysql/mysql.sock',
 
 	}
 
@@ -158,7 +158,7 @@ AUTHENTICATION_BACKENDS = [
 
 # ------ Rest framework ------
 REST_FRAMEWORK = {
-	'DEFAULT_PERMISSION_CLASSES': [
+	'DEFAULT_PERMISSION_CLASSES'    : [
 		'rest_framework.permissions.IsAuthenticated',
 	],
 	'DEFAULT_AUTHENTICATION_CLASSES': [
@@ -213,34 +213,34 @@ CORS_ALLOW_HEADERS = (
 
 # -------- JWT AUTH --------
 JWT_AUTH = {
-	'JWT_ENCODE_HANDLER':
+	'JWT_ENCODE_HANDLER'             :
 		'rest_framework_jwt.utils.jwt_encode_handler',
 
-	'JWT_DECODE_HANDLER':
+	'JWT_DECODE_HANDLER'             :
 		'rest_framework_jwt.utils.jwt_decode_handler',
 
-	'JWT_PAYLOAD_HANDLER':
+	'JWT_PAYLOAD_HANDLER'            :
 		'rest_framework_jwt.utils.jwt_payload_handler',
 
 	'JWT_PAYLOAD_GET_USER_ID_HANDLER':
 		'rest_framework_jwt.utils.jwt_get_user_id_from_payload_handler',
 
-	'JWT_RESPONSE_PAYLOAD_HANDLER':
+	'JWT_RESPONSE_PAYLOAD_HANDLER'   :
 		'rest_framework_jwt.utils.jwt_response_payload_handler',
 
-	'JWT_SECRET_KEY': SECRET_KEY,
-	'JWT_PUBLIC_KEY': None,
-	'JWT_PRIVATE_KEY': None,
-	'JWT_ALGORITHM': 'HS256',
-	'JWT_VERIFY': True,
-	'JWT_VERIFY_EXPIRATION': True,
-	'JWT_LEEWAY': 0,
-	'JWT_EXPIRATION_DELTA': datetime.timedelta(days=1),
-	'JWT_AUDIENCE': None,
-	'JWT_ISSUER': None,
-	'JWT_ALLOW_REFRESH': True,
-	'JWT_REFRESH_EXPIRATION_DELTA': datetime.timedelta(days=7),
-	'JWT_AUTH_HEADER_PREFIX': 'JWT'
+	'JWT_SECRET_KEY'                 : SECRET_KEY,
+	'JWT_PUBLIC_KEY'                 : None,
+	'JWT_PRIVATE_KEY'                : None,
+	'JWT_ALGORITHM'                  : 'HS256',
+	'JWT_VERIFY'                     : True,
+	'JWT_VERIFY_EXPIRATION'          : True,
+	'JWT_LEEWAY'                     : 0,
+	'JWT_EXPIRATION_DELTA'           : datetime.timedelta(days=1),
+	'JWT_AUDIENCE'                   : None,
+	'JWT_ISSUER'                     : None,
+	'JWT_ALLOW_REFRESH'              : True,
+	'JWT_REFRESH_EXPIRATION_DELTA'   : datetime.timedelta(days=7),
+	'JWT_AUTH_HEADER_PREFIX'         : 'JWT'
 }
 
 # ------ SES email settings ------
@@ -256,8 +256,7 @@ AWS_SECRET_ACCESS_KEY = 'btT55r3JbZ93Piis5iMuChiCuWsiAEqKTcL/bjeM'
 # you need to specify a region, like so:
 AWS_SES_REGION_NAME = 'us-east-1'
 AWS_SES_REGION_ENDPOINT = 'email.us-east-1.amazonaws.com'
-AWS_SES_AUTO_THROTTLE = 0.5 # (default; safety factor applied to rate limit)
+AWS_SES_AUTO_THROTTLE = 0.5  # (default; safety factor applied to rate limit)
 
 # ------------MATRIX CONFIGURATION--------------
 MATRIX_HOST = 'http://matrix.classgotcha.com:8008'
-

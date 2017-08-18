@@ -27,6 +27,7 @@ from script import group, complement
 from django.core.mail import EmailMessage, EmailMultiAlternatives
 from django.template.loader import render_to_string
 
+
 def send_verifying_email(account, subject, to, template):
 	token_queryset = AccountVerifyToken.objects.all()
 	verify_token = uuid.uuid4()
@@ -40,10 +41,10 @@ def send_verifying_email(account, subject, to, template):
 
 	print account.first_name
 	ctx = {
-		'user': account,
+		'user' : account,
 		'token': verify_token,
 	}
-	email=EmailMessage(subject, render_to_string('email/%s.html' % template, ctx), 'no-reply@classgotcha.com', [to])
+	email = EmailMessage(subject, render_to_string('email/%s.html' % template, ctx), 'no-reply@classgotcha.com', [to])
 	email.content_subtype = 'html'
 	email.send()
 
@@ -62,7 +63,7 @@ def account_register(request):
 	payload = jwt_payload_handler(user)
 	token = jwt_encode_handler(payload)
 
-	#TODO: email templates
+	# TODO: email templates
 	send_verifying_email(account=user, subject='[ClassGotcha] Verification Email', to=request.data['email'], template='verification')
 
 	return Response({'token': token}, status=status.HTTP_201_CREATED)
@@ -90,6 +91,7 @@ def email_verify(request, token=None):
 		token_instance.is_expired = True
 		print token_instance.account, 'has been verified'
 		return Response(status=status.HTTP_200_OK)
+
 
 @api_view(['POST', 'GET', 'PUT'])
 @permission_classes((AllowAny,))
@@ -140,6 +142,7 @@ def forget_password(request, token=None):
 		token_instance.account.save()
 		token_instance.is_expired = True
 		return Response(status=status.HTTP_200_OK)
+
 
 @api_view(['GET', 'POST', 'OPTION'])
 @permission_classes((IsAuthenticated,))

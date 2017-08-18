@@ -7,7 +7,5 @@ task_detail = views.TaskViewSet.as_view({
 })
 
 urlpatterns = [
-	url(r'^(?P<pk>[0-9]+)/$', task_detail, name='task-update'),
-	# TODO: need to fix
-	url(r'^(?P<pk>[0-9]+)/$', task_detail, name='task-delete'),
+	url(r'^(?P<pk>[0-9]+)/$', task_detail, name='task-detail'),
 ]
