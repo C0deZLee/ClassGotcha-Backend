@@ -53,7 +53,7 @@ def send_verifying_email(account, subject, to, template):
 @permission_classes((AllowAny,))
 def account_register(request):
 	if request.data['email'][-4:] != ".edu":
-		return Response(status=status.HTTP_403_FORBIDDEN)
+		return Response({'email': ['Sorry, we only accept edu emails right now.']}, status=status.HTTP_403_FORBIDDEN)
 
 	serializer = AuthAccountSerializer(data=request.data)
 	serializer.is_valid(raise_exception=True)

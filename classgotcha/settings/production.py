@@ -21,7 +21,7 @@ PROJECT_ROOT = os.path.abspath(os.path.dirname(PROJECT_APP_ROOT))
 with open(os.path.join(PROJECT_APP_ROOT, 'settings/secret.txt')) as f:
 	SECRET_KEY = f.read().strip()
 
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['*']
 
@@ -62,8 +62,8 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
-	#'classgotcha.middleware.AtopdedTo110DebugMiddleware',
-	#'classgotcha.middleware.MyMiddleware',
+	# 'classgotcha.middleware.AtopdedTo110DebugMiddleware',
+	# 'classgotcha.middleware.MyMiddleware',
 	'django.middleware.security.SecurityMiddleware',
 	'django.contrib.sessions.middleware.SessionMiddleware',
 	'corsheaders.middleware.CorsMiddleware',
