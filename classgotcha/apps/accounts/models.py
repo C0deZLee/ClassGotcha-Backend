@@ -7,12 +7,6 @@ from ..tags.models import Tag
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseUserManager
 
 
-class Avatar(models.Model):
-	avatar2x = models.ImageField(upload_to='avatars', null=True, blank=True)
-	avatar1x = models.ImageField(upload_to='avatars', null=True, blank=True)
-	created = models.DateTimeField(auto_now_add=True)
-
-
 class AccountManager(BaseUserManager):
 	def create_user(self, email, password=None, **kwargs):
 		"""Creates and saves a User with the given email, username and password."""
@@ -83,7 +77,7 @@ class Professor(models.Model):
 class Account(AbstractBaseUser, PermissionsMixin):
 	# Basic
 	email = models.EmailField(unique=True)
-	username = models.CharField(max_length=40, unique=True)
+	username = models.CharField(max_length=40, blank=True, null=True)
 	# Rule
 	is_staff = models.BooleanField(default=False)
 	is_active = models.BooleanField(default=True)
@@ -102,11 +96,13 @@ class Account(AbstractBaseUser, PermissionsMixin):
 	gender = models.CharField(max_length=40, blank=True)
 	birthday = models.DateField(null=True, blank=True)
 	school_year = models.CharField(max_length=40, blank=True)
-	avatar = models.ForeignKey(Avatar, blank=True, null=True, related_name='user_profiles_avatars')
 	about_me = models.CharField(max_length=200, default='Yo!')
 	level = models.IntegerField(default=1)
 	exp = models.IntegerField(default=0)
 	phone = models.CharField(max_length=20, null=True)
+	# Avatar
+	avatar2x = models.ImageField(upload_to='avatars', default='/avatars/default/user-male100.png')
+	avatar1x = models.ImageField(upload_to='avatars', default='/avatars/default/user-male50.png')
 	# Matrix info
 	matrix_token = models.CharField(max_length=200, null=True)
 	matrix_id = models.CharField(max_length=200, null=True)

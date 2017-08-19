@@ -19,7 +19,7 @@ from ..chatrooms.serializers import ChatroomSerializer
 from ..tasks.serializers import TaskSerializer
 
 from ..posts.models import Rate
-from models import Account, Avatar, Professor, AccountVerifyToken
+from models import Account, Professor, AccountVerifyToken
 from serializers import AccountSerializer, BasicAccountSerializer, AuthAccountSerializer, AvatarSerializer, \
 	ProfessorSerializer
 
@@ -158,10 +158,10 @@ def account_avatar(request):
 			return Response(status=status.HTTP_400_BAD_REQUEST)
 		filename, file_extension = upload.name.split('.')
 		with Image.open(upload) as image:
-			image2x = resizeimage.resize_cover(image, [128, 128])
-			image1x = resizeimage.resize_cover(image, [48, 48])
-			img2x_name = str(request.user.id) + '.2x' + file_extension
-			img1x_name = str(request.user.id) + '.1x' + file_extension
+			image2x = resizeimage.resize_cover(image, [100, 100])
+			image1x = resizeimage.resize_cover(image, [50, 50])
+			img2x_name = str(request.user.id) + '100' + file_extension
+			img1x_name = str(request.user.id) + '50' + file_extension
 			img2x_io = StringIO()
 			img1x_io = StringIO()
 			image2x.save(img2x_io, image.format)
@@ -170,14 +170,11 @@ def account_avatar(request):
 			                                    img2x_io.len, None)
 			image1x_file = InMemoryUploadedFile(img1x_io, None, img1x_name, 'image/' + image.format,
 			                                    img1x_io.len, None)
+		request.user.avatar1x = image1x_file
+		request.user.avatar2x = image2x_file
 
-		new_avatar = Avatar.objects.create(avatar2x=image2x_file, avatar1x=image1x_file)
-		request.user.avatar = new_avatar
 		request.user.save()
 		return Response({'data': 'success'}, status=status.HTTP_200_OK)
-	elif request.method == 'GET':
-		serializer = AvatarSerializer(request.user.avatar)
-		return Response(serializer.data)
 
 
 class AccountViewSet(viewsets.ViewSet):
@@ -317,7 +314,7 @@ class AccountViewSet(viewsets.ViewSet):
 			for task in classroom.tasks.all():
 				task.involved.remove(request.user)
 			# remove user from classroom chatrooms
-			classroom.chatroom.get().accounts.remove(request.user)
+			# classroom.chatroom.get().accounts.remove(request.user)
 			return Response(status=200)
 
 	@staticmethod

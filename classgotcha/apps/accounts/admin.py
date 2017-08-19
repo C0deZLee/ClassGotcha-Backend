@@ -3,7 +3,7 @@ from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.models import Group as AdminGroup
 
 from forms import UserChangeForm, UserCreationForm
-from models import Account, Avatar, Group, Professor, AccountVerifyToken
+from models import Account, Group, Professor, AccountVerifyToken
 
 
 class AccountAdmin(UserAdmin):
@@ -11,20 +11,15 @@ class AccountAdmin(UserAdmin):
 	form = UserChangeForm
 	add_form = UserCreationForm
 
-	# The fields to be used in displaying the User model.
-	# These override the definitions on the base UserAdmin
-	# that reference specific fields on auth.User.
-	list_display = ('id', 'email', 'username', 'get_full_name', 'school_year', 'is_staff')
+	list_display = ('id', 'email', 'username', 'get_full_name', 'school_year', 'is_staff', 'is_verified')
 	list_filter = ['is_staff', 'school_year']
 	fieldsets = (
 		(None, {'fields': ('email', 'username', 'password', 'matrix_token')}),
-		('Personal info', {'fields': ('first_name', 'last_name', 'gender', 'school_year', 'major', 'avatar')}),
+		('Personal info', {'fields': ('first_name', 'last_name', 'gender', 'school_year', 'major', 'avatar1x', 'avatar2x')}),
 		('Permissions', {'fields': ('is_professor', 'is_verified', 'is_staff', 'is_superuser')}),
 		('Timestamp', {'fields': ('created', 'updated')})
 	)
 	readonly_fields = ('created', 'matrix_token', 'updated', 'is_staff', 'is_superuser', 'is_professor')
-	# add_fieldsets is not a standard ModelAdmin attribute. UserAdmin
-	# overrides get_fieldsets to use this attribute when creating a user.
 	add_fieldsets = (
 		(None, {
 			'classes': ('wide',),
@@ -35,14 +30,7 @@ class AccountAdmin(UserAdmin):
 	ordering = ('email',)
 
 
-class AvatarAdmin(admin.ModelAdmin):
-	list_display = ('id', 'avatar2x')
-
-
 class GroupAdmin(admin.ModelAdmin):
-	# The fields to be used in displaying the User model.
-	# These override the definitions on the base UserAdmin
-	# that reference specific fields on auth.User.
 	list_display = ('group_type', 'creator', 'classroom')
 	list_filter = ['group_type']
 
@@ -72,7 +60,6 @@ class AccountVerifyTokenAdmin(admin.ModelAdmin):
 
 admin.site.register(Group, GroupAdmin)
 admin.site.register(Account, AccountAdmin)
-admin.site.register(Avatar, AvatarAdmin)
 admin.site.register(Professor, ProfessorAdmin)
 admin.site.register(AccountVerifyToken, AccountVerifyTokenAdmin)
 admin.site.unregister(AdminGroup)

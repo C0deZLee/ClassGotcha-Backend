@@ -1,17 +1,18 @@
 from rest_framework import serializers
 
-from models import Account, Avatar, Group, Professor
+from models import Account, Group, Professor
 from ..chatrooms.models import Chatroom
 from ..classrooms.models import Semester, Classroom, Major, OfficeHour
 from ..tasks.serializers import BasicTaskSerializer, ClassTimeTaskSerializer
 from ..tags.serializers import ClassFolderSerializer
 
-from ..chatrooms.matrix.matrix_api import MatrixApi
-import requests
+from django.core.files.images import ImageFile
+# from ..chatrooms.matrix.matrix_api import MatrixApi
+# import requests
 
 
 # Due to the cross dependency,
-# I have to move SemesterSerializer, MajorSerializer and BasicClassroomSerializer here
+# I have to copy SemesterSerializer, MajorSerializer and BasicClassroomSerializer here
 
 # WARN: Duplicate
 class MajorSerializer(serializers.ModelSerializer):
@@ -32,7 +33,7 @@ class SemesterSerializer(serializers.ModelSerializer):
 
 class AvatarSerializer(serializers.ModelSerializer):
 	class Meta:
-		model = Avatar
+		model = Account
 		fields = ('avatar2x', 'avatar1x')
 
 
@@ -120,12 +121,15 @@ class AuthAccountSerializer(serializers.ModelSerializer):
 		write_only_fields = ('password',)
 
 	def create(self, validated_data):
-		account = Account(email=validated_data['email'], username=validated_data['username'],
-		                  first_name=validated_data['first_name'], last_name=validated_data['last_name'])
+		account = Account(email=validated_data['email'],
+		                  username=validated_data['username'],
+		                  first_name=validated_data['first_name'],
+		                  last_name=validated_data['last_name'])
+
 		account.set_password(validated_data['password'])
 
-		matrix = MatrixApi()
-		account.matrix_token = matrix.register(validated_data['username'], validated_data['password'])['access_token']
+		# matrix = MatrixApi()
+		# account.matrix_token = matrix.register(validated_data['username'], validated_data['password'])['access_token']
 		# TODO: store matrix_id
 		# account.matrix_id =
 		account.save()
