@@ -2,31 +2,31 @@ from django.db import models
 
 
 class BadgeType(models.Model):
-	NOTE, PROFESSOR, CALENDAR = 0, 1, 2
 	TYPE_CHOICE = (
-		(NOTE, 'File'),
-		(PROFESSOR, 'Professor'),
-		(CALENDAR, 'Calendar'),
+		(0, 'Note'),
+		(1, 'Professor'),
+		(2, 'Calendar'),
 	)
+
 	# Basic
 	name = models.CharField(max_length=200, unique=True)
-	type = models.IntegerField(default=NOTE, choices=TYPE_CHOICE)
-
-	# Timestamp
-	created = models.DateTimeField(auto_now_add=True)
-
-	# Relationship
+	type = models.IntegerField(default=0, choices=TYPE_CHOICE)
 
 	def __unicode__(self):
 		return self.name
 
 
 class Badge(models.Model):
-	badge_type = models.ForeignKey('badges.BadgeType')
 	counter = models.IntegerField(default=0)
 	started = models.DateTimeField(auto_now_add=True)
 	finished = models.DateTimeField(null=True, blank=True)
-	account = models.ForeignKey('accounts.Account')
+
+	# Relationship
+	account = models.ForeignKey('accounts.Account', related_name='badges', on_delete=models.CASCADE)
+	badge_type = models.ForeignKey(BadgeType, on_delete=models.CASCADE)
+
+	# Timestamp
+	created = models.DateTimeField(auto_now_add=True)
 
 	def __unicode__(self):
 		return self.badge_type
