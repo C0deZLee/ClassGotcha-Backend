@@ -9,9 +9,9 @@ from ..tags.models import Tag
 
 EVERYONE, STUDENTS_ONLY, PRIVATE = 0, 1, 2
 PERMISSION_CHOICE = (
-	(EVERYONE, 'Everyone'),
-	(STUDENTS_ONLY, 'Student_only'),
-	(PRIVATE, 'Private')
+	(0, 'Everyone'),
+	(1, 'Student_only'),
+	(2, 'Private')
 )
 
 
@@ -91,6 +91,9 @@ class Moment(models.Model):
 
 
 class Post(models.Model):
+	TAG_CHOICES = ((0, 'Bug Report'),
+	               (1, 'Suggestion'),
+	               (2, 'Others'))
 	# Basic
 	title = models.CharField(max_length=100)
 	content = models.TextField()
@@ -100,7 +103,7 @@ class Post(models.Model):
 	up_voted_user = models.ManyToManyField(Account, related_name='post_up_vote')
 	down_voted_user = models.ManyToManyField(Account, related_name='post_down_vote')
 	# Relations
-	tags = models.ManyToManyField(Tag, related_name='posts')
+	tag = models.IntegerField(choices=TAG_CHOICES, default=0)
 	creator = models.ForeignKey(Account, on_delete=models.CASCADE, related_name='posts', null=True, blank=True)
 	# Timestamp
 	created = models.DateTimeField(auto_now_add=True)

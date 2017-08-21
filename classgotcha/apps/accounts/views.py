@@ -300,7 +300,7 @@ class AccountViewSet(viewsets.ViewSet):
 			# add user to classroom chatrooms
 			# TODO: change into matrix version: classroom.chatrooms.get().accounts.add(request.user.username ???)
 			# also need to call the matrix api? add the user into matrix chatrooms...
-			classroom.chatroom.get().accounts.add(request.user)
+			# classroom.chatroom.get().accounts.add(request.user)
 			return Response(status=200)
 
 		if request.method == 'DELETE':
