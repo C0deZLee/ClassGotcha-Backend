@@ -14,7 +14,7 @@ classroom_notes = views.ClassroomViewSet.as_view({
 })
 
 classroom_moments = views.ClassroomViewSet.as_view({
-	'get': 'recent_moments'
+	'get': 'moments'
 })
 
 classroom_tasks = views.ClassroomViewSet.as_view({
@@ -47,11 +47,12 @@ urlpatterns = [
 	url(r'^(?P<pk>[0-9]+)/tasks/$', classroom_tasks, name='classroom-tasks'),
 	url(r'^(?P<pk>[0-9]+)/students/$', classroom_students, name='classroom-students'),
 	url(r'^(?P<pk>[0-9]+)/moments/$', classroom_moments, name='classroom-moments'),
+	url(r'^(?P<pk>[0-9]+)/moments/(?P<page>[0-9]+)/$', classroom_moments, name='classroom-moments-page'),
 	url(r'^(?P<pk>[0-9]+)/validate/$', classroom_validate, name='classroom-check'),
 	url(r'^(?P<pk>[0-9]+)/$', classroom_detail, name='classroom-detail'),
 	url(r'^search/$', classroom_search, name='classroom-search'),
-	url(r'^majors/$', majors_all, name='major_list'),
-	url(r'^upload/$', classroom_admin_upload, name='classroom_admin_upload'),
+	url(r'^majors/$', majors_all, name='major-list'),
+	url(r'^upload/$', classroom_admin_upload, name='classroom-admin-upload'),
 ]
 
 # classroom/all

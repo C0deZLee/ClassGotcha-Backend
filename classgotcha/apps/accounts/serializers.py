@@ -31,10 +31,10 @@ class SemesterSerializer(serializers.ModelSerializer):
 		fields = ('name', 'formatted_start_date', 'formatted_end_date')
 
 
-class AvatarSerializer(serializers.ModelSerializer):
-	class Meta:
-		model = Account
-		fields = ('avatar2x', 'avatar1x')
+# class AvatarSerializer(serializers.ModelSerializer):
+# 	class Meta:
+# 		model = Account
+# 		fields = ('avatar2x', 'avatar1x')
 
 
 class BasicProfessorSerializer(serializers.ModelSerializer):
@@ -81,23 +81,22 @@ class ProfessorSerializer(serializers.ModelSerializer):
 
 
 class BasicAccountSerializer(serializers.ModelSerializer):
-	avatar = AvatarSerializer(required=False)
 	full_name = serializers.ReadOnlyField()
 
 	class Meta:
 		model = Account
-		fields = ('pk', 'id', 'avatar', 'username', 'email', 'full_name', 'about_me', 'level')
+		fields = ('pk', 'id', 'avatar1x', 'avatar2x', 'username', 'email', 'full_name', 'about_me', 'level')
 
 
 # WARN: Duplicate
-class RoomSerializer(serializers.ModelSerializer):
-	latest_message = serializers.ReadOnlyField()
-	accounts = BasicAccountSerializer(many=True)
-	creator = BasicAccountSerializer()
-
-	class Meta:
-		model = Chatroom
-		fields = '__all__'
+# class RoomSerializer(serializers.ModelSerializer):
+# 	latest_message = serializers.ReadOnlyField()
+# 	accounts = BasicAccountSerializer(many=True)
+# 	creator = BasicAccountSerializer()
+#
+# 	class Meta:
+# 		model = Chatroom
+# 		fields = '__all__'
 
 
 class AccountSerializer(serializers.ModelSerializer):
@@ -105,12 +104,11 @@ class AccountSerializer(serializers.ModelSerializer):
 	is_professor = serializers.ReadOnlyField()
 	full_name = serializers.ReadOnlyField()
 	tasks = BasicTaskSerializer(many=True)
-	avatar = AvatarSerializer(required=False)
 
 	class Meta:
 		model = Account
 		exclude = ('user_permissions', 'groups', 'is_superuser', 'is_staff',
-		           'is_active', 'password', 'avatar')
+		           'is_active', 'password',)
 		read_only_fields = ('created', 'updated',)
 
 
@@ -130,7 +128,6 @@ class AuthAccountSerializer(serializers.ModelSerializer):
 
 		# matrix = MatrixApi()
 		# account.matrix_token = matrix.register(validated_data['username'], validated_data['password'])['access_token']
-		# TODO: store matrix_id
 		# account.matrix_id =
 		account.save()
 		return account
