@@ -201,7 +201,7 @@ class AccountViewSet(viewsets.ViewSet):
 		# send friend request
 		if request.method == 'POST':
 			if request.user.pk is int(pk):  # cant add yourself as your friend
-				return Response({'detail': 'cant add yourself as your friend'}, status=status.HTTP_403_FORBIDDEN)
+				return Response({'detail': 'You can\'t add yourself as your friend'}, status=status.HTTP_403_FORBIDDEN)
 			else:
 				new_friend = get_object_or_404(self.queryset, pk=pk)
 				if new_friend in request.user.friends.all():
@@ -216,7 +216,7 @@ class AccountViewSet(viewsets.ViewSet):
 		# accept friend request
 		if request.method == 'PUT':
 			if request.user.pk is int(pk):  # cant add yourself as your friend
-				return Response({'detail': 'cant add yourself as your friend'}, status=status.HTTP_403_FORBIDDEN)
+				return Response({'detail': 'You can\'t add yourself as your friend'}, status=status.HTTP_403_FORBIDDEN)
 			else:
 				new_friend = get_object_or_404(self.queryset, pk=pk)
 				if new_friend not in request.user.pending_friends.all():
@@ -323,9 +323,13 @@ class AccountViewSet(viewsets.ViewSet):
 
 	@staticmethod
 	def moments(request, pk=None):
-		moment_query_set = request.user.moments.filter(deleted=False).order_by('-created')
-		# Only return first 20 moments
+		if not pk:
+			moment_query_set = request.user.moments.filter(deleted=False).order_by('-created')
+		else:
+			moment_query_set = Account.objects.get(pk=pk).moments.filter(deleted=False).order_by('-created')
+
 		if request.method == 'GET':
+			# Only return first 20 moments
 			serializer = MomentSerializer(moment_query_set[0:20], many=True)
 			return Response(serializer.data)
 		elif request.method == 'POST':
