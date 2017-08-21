@@ -64,15 +64,17 @@ class PostViewSet(viewsets.ViewSet):
 		return Response(serializer.data)
 
 	def list(self, request):
-		posts = Post.objects.order_by('-votes')
+		posts = Post.objects.order_by('-created')
 		serializer = BasicPostSerializer(posts, many=True)
 		return Response(serializer.data)
 
 	def create(self, request):
 		title = request.data.get('title')
 		content = request.data.get('content')
-		if title and content:
-			Post.objects.create(creator_id=request.user.id, title=title, content=content)
+		tag = request.data.get('tag')
+
+		if title and content and tag:
+			Post.objects.create(creator_id=request.user.id, title=title, content=content, tag=tag)
 			return Response(status=status.HTTP_200_OK)
 		else:
 			return Response(status=status.HTTP_400_BAD_REQUEST)
