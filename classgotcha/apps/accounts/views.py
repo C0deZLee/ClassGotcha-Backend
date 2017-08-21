@@ -15,17 +15,17 @@ from rest_framework.permissions import IsAuthenticated, AllowAny
 
 from ..classrooms.serializers import Classroom, BasicClassroomSerializer
 from ..posts.serializers import Moment, MomentSerializer, NoteSerializer, Comment, CommentSerializer
-from ..chat.serializers import RoomSerializer
+from ..chatrooms.serializers import ChatroomSerializer
 from ..tasks.serializers import TaskSerializer
 
 from ..posts.models import Rate
-from models import Account, Avatar, Professor, AccountVerifyToken
-from serializers import AccountSerializer, BasicAccountSerializer, AuthAccountSerializer, AvatarSerializer, \
-	ProfessorSerializer
+from models import Account, Professor, AccountVerifyToken
+from serializers import AccountSerializer, BasicAccountSerializer, AuthAccountSerializer, ProfessorSerializer
 
 from script import group, complement
 from django.core.mail import EmailMessage, EmailMultiAlternatives
 from django.template.loader import render_to_string
+
 
 def send_verifying_email(account, subject, to, template):
 	token_queryset = AccountVerifyToken.objects.all()
@@ -40,16 +40,20 @@ def send_verifying_email(account, subject, to, template):
 
 	print account.first_name
 	ctx = {
-		'user': account,
+		'user' : account,
 		'token': verify_token,
 	}
-	email=EmailMessage(subject, render_to_string('email/%s.html' % template, ctx), 'no-reply@classgotcha.com', [to])
+	email = EmailMessage(subject, render_to_string('email/%s.html' % template, ctx), 'no-reply@classgotcha.com', [to])
 	email.content_subtype = 'html'
 	email.send()
+
 
 @api_view(['POST'])
 @permission_classes((AllowAny,))
 def account_register(request):
+	if request.data['email'][-4:] != ".edu":
+		return Response({'email': ['Sorry, we only accept edu emails right now.']}, status=status.HTTP_403_FORBIDDEN)
+
 	serializer = AuthAccountSerializer(data=request.data)
 	serializer.is_valid(raise_exception=True)
 	user = serializer.save()
@@ -58,7 +62,7 @@ def account_register(request):
 	payload = jwt_payload_handler(user)
 	token = jwt_encode_handler(payload)
 
-	#TODO: email templates
+	# TODO: email templates
 	send_verifying_email(account=user, subject='[ClassGotcha] Verification Email', to=request.data['email'], template='verification')
 
 	return Response({'token': token}, status=status.HTTP_201_CREATED)
@@ -86,6 +90,7 @@ def email_verify(request, token=None):
 		token_instance.is_expired = True
 		print token_instance.account, 'has been verified'
 		return Response(status=status.HTTP_200_OK)
+
 
 @api_view(['POST', 'GET', 'PUT'])
 @permission_classes((AllowAny,))
@@ -137,6 +142,7 @@ def forget_password(request, token=None):
 		token_instance.is_expired = True
 		return Response(status=status.HTTP_200_OK)
 
+
 @api_view(['GET', 'POST', 'OPTION'])
 @permission_classes((IsAuthenticated,))
 @parser_classes((MultiPartParser, FormParser,))
@@ -151,10 +157,10 @@ def account_avatar(request):
 			return Response(status=status.HTTP_400_BAD_REQUEST)
 		filename, file_extension = upload.name.split('.')
 		with Image.open(upload) as image:
-			image2x = resizeimage.resize_cover(image, [128, 128])
-			image1x = resizeimage.resize_cover(image, [48, 48])
-			img2x_name = str(request.user.id) + '.2x' + file_extension
-			img1x_name = str(request.user.id) + '.1x' + file_extension
+			image2x = resizeimage.resize_cover(image, [100, 100])
+			image1x = resizeimage.resize_cover(image, [50, 50])
+			img2x_name = str(request.user.id) + '100' + file_extension
+			img1x_name = str(request.user.id) + '50' + file_extension
 			img2x_io = StringIO()
 			img1x_io = StringIO()
 			image2x.save(img2x_io, image.format)
@@ -163,14 +169,11 @@ def account_avatar(request):
 			                                    img2x_io.len, None)
 			image1x_file = InMemoryUploadedFile(img1x_io, None, img1x_name, 'image/' + image.format,
 			                                    img1x_io.len, None)
+		request.user.avatar1x = image1x_file
+		request.user.avatar2x = image2x_file
 
-		new_avatar = Avatar.objects.create(avatar2x=image2x_file, avatar1x=image1x_file)
-		request.user.avatar = new_avatar
 		request.user.save()
 		return Response({'data': 'success'}, status=status.HTTP_200_OK)
-	elif request.method == 'GET':
-		serializer = AvatarSerializer(request.user.avatar)
-		return Response(serializer.data)
 
 
 class AccountViewSet(viewsets.ViewSet):
@@ -251,19 +254,24 @@ class AccountViewSet(viewsets.ViewSet):
 				request.user.save()
 			return Response(status=status.HTTP_200_OK)
 
-	# @staticmethod
-	def change_password(self, request):
+	@staticmethod
+	def change_password(request):
+		# If password or old-password not in request body
 		if not request.data['old-password'] or request.data['password']:
+			# Return error message with status code 400
 			return Response(status=status.HTTP_400_BAD_REQUEST)
 		try:
+			#  if old-password match
 			if check_password(request.data['old-password'], request.user.password):
+				# change user password
 				request.user.set_password(request.data['password'])
 				request.user.save()
 				return Response(status=status.HTTP_200_OK)
 			else:
-				return Response({'ERROR': 'Password not match'},status=status.HTTP_400_BAD_REQUEST)
-
+				# else return with error message and status code 400
+				return Response({'ERROR': 'Password not match'}, status=status.HTTP_400_BAD_REQUEST)
 		except:
+			# If exception return with status 400
 			return Response(status=status.HTTP_400_BAD_REQUEST)
 
 	@staticmethod
@@ -289,7 +297,9 @@ class AccountViewSet(viewsets.ViewSet):
 			# add classroom tasks from user task list
 			for task in classroom.tasks.all():
 				task.involved.add(request.user)
-			# add user to classroom chatroom
+			# add user to classroom chatrooms
+			# TODO: change into matrix version: classroom.chatrooms.get().accounts.add(request.user.username ???)
+			# also need to call the matrix api? add the user into matrix chatrooms...
 			classroom.chatroom.get().accounts.add(request.user)
 			return Response(status=200)
 
@@ -302,8 +312,8 @@ class AccountViewSet(viewsets.ViewSet):
 			# remove classroom tasks from user task list
 			for task in classroom.tasks.all():
 				task.involved.remove(request.user)
-			# remove user from classroom chatroom
-			classroom.chatroom.get().accounts.remove(request.user)
+			# remove user from classroom chatrooms
+			# classroom.chatroom.get().accounts.remove(request.user)
 			return Response(status=200)
 
 	@staticmethod
@@ -363,7 +373,7 @@ class AccountViewSet(viewsets.ViewSet):
 	def rooms(request, pk=None):
 		room_query_set = request.user.rooms.all()
 		if request.method == 'GET':
-			serializer = RoomSerializer(room_query_set, many=True)
+			serializer = ChatroomSerializer(room_query_set, many=True)
 			return Response(serializer.data)
 		elif request.method == 'POST':
 			room = get_object_or_404(room_query_set, pk)

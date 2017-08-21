@@ -29,7 +29,6 @@ class MomentSerializer(serializers.ModelSerializer):
 class PostSerializer(serializers.ModelSerializer):
 	comments = CommentSerializer(required=False, many=True)
 	creator = BasicAccountSerializer(required=False)
-	vote = serializers.ReadOnlyField()
 	tags = BasicTagSerializer(many=True)
 
 	class Meta:
@@ -39,12 +38,11 @@ class PostSerializer(serializers.ModelSerializer):
 
 class BasicPostSerializer(serializers.ModelSerializer):
 	creator = BasicAccountSerializer(required=False)
-	vote = serializers.ReadOnlyField()
 	tags = BasicTagSerializer(many=True)
 
 	class Meta:
 		model = Post
-		fields = ('id', 'title', 'comments', 'creator', 'created', 'vote', 'tags')
+		fields = ('id', 'title', 'comments', 'creator', 'created', 'votes', 'tags')
 
 # from ..groups.models import Group
 # from ..tasks.models import Task
@@ -56,7 +54,6 @@ class NoteSerializer(serializers.ModelSerializer):
 	overall_rating = serializers.ReadOnlyField()
 	creator = BasicAccountSerializer()
 	tags = BasicTagSerializer(many=True)
-
 
 	class Meta:
 		model = Note

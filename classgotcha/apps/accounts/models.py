@@ -7,12 +7,6 @@ from ..tags.models import Tag
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseUserManager
 
 
-class Avatar(models.Model):
-	avatar2x = models.ImageField(upload_to='avatars', null=True, blank=True)
-	avatar1x = models.ImageField(upload_to='avatars', null=True, blank=True)
-	created = models.DateTimeField(auto_now_add=True)
-
-
 class AccountManager(BaseUserManager):
 	def create_user(self, email, password=None, **kwargs):
 		"""Creates and saves a User with the given email, username and password."""
@@ -52,6 +46,8 @@ class Professor(models.Model):
 	mid_name = models.CharField(max_length=40, blank=True)
 	email = models.CharField(max_length=50)
 	office = models.CharField(max_length=100, blank=True)
+	personal_page = models.CharField(max_length=100, blank=True)
+	department = models.CharField(max_length=100, blank=True)
 	# Relationship
 	major = models.ForeignKey('classrooms.Major')
 	tags = models.ManyToManyField(Tag)
@@ -73,7 +69,7 @@ class Professor(models.Model):
 
 	@property
 	def full_name(self):
-		return self.first_name + ' ' + self.last_name
+		return '%s %s' % (self.first_name, self.last_name)
 
 	@property
 	def avg_rate(self):
@@ -83,7 +79,7 @@ class Professor(models.Model):
 class Account(AbstractBaseUser, PermissionsMixin):
 	# Basic
 	email = models.EmailField(unique=True)
-	username = models.CharField(max_length=40, unique=True)
+	username = models.CharField(max_length=40, blank=True, null=True)
 	# Rule
 	is_staff = models.BooleanField(default=False)
 	is_active = models.BooleanField(default=True)
@@ -91,7 +87,7 @@ class Account(AbstractBaseUser, PermissionsMixin):
 	is_verified = models.BooleanField(default=False)
 	# is_student = models.BooleanField(default=True)
 	# is_professor = models.BooleanField(default=False)
-	professor = models.ForeignKey(Professor, blank=True, null=True, related_name='is_professor')
+	professor = models.ForeignKey(Professor, blank=True, null=True, related_name='account')
 	# Timestamp
 	created = models.DateTimeField(auto_now_add=True)
 	updated = models.DateTimeField(auto_now=True)
@@ -102,15 +98,20 @@ class Account(AbstractBaseUser, PermissionsMixin):
 	gender = models.CharField(max_length=40, blank=True)
 	birthday = models.DateField(null=True, blank=True)
 	school_year = models.CharField(max_length=40, blank=True)
-	avatar = models.ForeignKey(Avatar, blank=True, null=True, related_name='user_profiles_avatars')
 	about_me = models.CharField(max_length=200, default='Yo!')
 	level = models.IntegerField(default=1)
+	exp = models.IntegerField(default=0)
 	phone = models.CharField(max_length=20, null=True)
+	# Avatar
+	avatar2x = models.ImageField(upload_to='avatars', default='/avatars/default/user-male100.png')
+	avatar1x = models.ImageField(upload_to='avatars', default='/avatars/default/user-male50.png')
+	# Matrix info
+	matrix_token = models.CharField(max_length=200, null=True)
+	matrix_id = models.CharField(max_length=200, null=True)
 	# Relations
 	friends = models.ManyToManyField('self')
 	pending_friends = models.ManyToManyField('self')
 	major = models.ForeignKey('classrooms.Major', blank=True, null=True)
-	notifications = models.ManyToManyField('posts.Notification')
 	# Relatives
 	# 1) teaches
 	# 2) classrooms
@@ -121,7 +122,10 @@ class Account(AbstractBaseUser, PermissionsMixin):
 	# 7) posts
 	# 8) moments
 	# 9) tasks
+	# 10) created_chatrooms
 	# 10) rooms
+	# 11) badges
+
 	# Manager
 	objects = AccountManager()
 	# Settings
@@ -180,4 +184,4 @@ class Group(models.Model):
 	creator = models.ForeignKey(Account, related_name='created_groups')
 
 # Relatives
-# 1) chatroom
+# 1) chatrooms

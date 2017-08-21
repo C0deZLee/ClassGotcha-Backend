@@ -2,7 +2,7 @@ from models import Classroom, Major, OfficeHour
 from rest_framework import serializers
 
 from ..tasks.serializers import ClassTimeTaskSerializer
-from ..accounts.serializers import BasicAccountSerializer, ProfessorSerializer, SemesterSerializer
+from ..accounts.serializers import BasicAccountSerializer, ProfessorSerializer, SemesterSerializer, BasicProfessorSerializer
 from ..tags.serializers import ClassFolderSerializer
 
 
@@ -17,7 +17,7 @@ class BasicClassroomSerializer(serializers.ModelSerializer):
 	class_short = serializers.ReadOnlyField()
 	class_time = ClassTimeTaskSerializer()
 	semester = SemesterSerializer()
-	professors = ProfessorSerializer(many=True)
+	professors = BasicProfessorSerializer(many=True)
 
 	class Meta:
 		model = Classroom
@@ -34,7 +34,7 @@ class ClassroomSerializer(serializers.ModelSerializer):
 	folders = ClassFolderSerializer(many=True)
 	semester = SemesterSerializer()
 	major = MajorSerializer()
-	professors = ProfessorSerializer(many=True)
+	professors = BasicProfessorSerializer(many=True)
 
 	class Meta:
 		model = Classroom

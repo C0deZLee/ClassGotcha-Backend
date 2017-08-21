@@ -62,10 +62,14 @@ account_add_moments = views.AccountViewSet.as_view({
 	'post': 'moments',
 	'delete': 'moments'
 })
+
 account_tasks = views.AccountViewSet.as_view({
 	'get': 'tasks',
+	'post': 'tasks'
+})
+
+account_tasks_edit = views.AccountViewSet.as_view({
 	'put': 'tasks',
-	'post': 'tasks',
 	'delete': 'tasks'
 })
 
@@ -87,7 +91,7 @@ urlpatterns = [
 	url(r'^friends/(?P<pk>[0-9]+)/$', account_add_friends, name='add-friend'),
 	url(r'^moments/(?P<pk>[0-9]+)/$', account_add_moments, name='add-moment'),
 	url(r'^classrooms/(?P<pk>[0-9]+)/$', account_add_classrooms, name='add-classroom'),
-	url(r'^chatrooms/(?P<pk>[0-9]+)/$', account_add_chatrooms, name='add-chatroom'),
+	url(r'^chatrooms/(?P<pk>[0-9]+)/$', account_add_chatrooms, name='add-chatrooms'),
 
 	url(r'^(?P<pk>[0-9]+)/$', account_detail, name='user-detail'),
 
@@ -109,6 +113,8 @@ urlpatterns = [
 	url(r'^notes/$', account_notes, name='user-notes'),
 	url(r'^moments/$', account_moments, name='user-moments'),
 	url(r'^tasks/$', account_tasks, name='user-tasks'),
+	url(r'^tasks/(?P<pk>[0-9]+)$', account_tasks_edit, name='user-tasks-edit'),
+
 	url(r'^freetime/$', account_freetime, name='freetime'),
 
 	url(r'^forget/$', views.forget_password, name='user-forget-password-gettoken'),

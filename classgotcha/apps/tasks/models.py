@@ -30,7 +30,7 @@ class Task(models.Model):
 	task_name = models.CharField(max_length=50)
 	description = models.CharField(max_length=500, null=True, blank=True)  # task_description
 	category = models.IntegerField(default=TASK, choices=CATEGORY_CHOICES)
-	# = models.ForeignKey('tags.Tag')
+
 	type = models.IntegerField(default=TASK, choices=TYPE_CHOICES)
 	location = models.CharField(max_length=50, null=True, blank=True)
 

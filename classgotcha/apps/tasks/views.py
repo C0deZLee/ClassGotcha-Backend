@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from django.shortcuts import get_object_or_404
 
 from rest_framework import viewsets, status
@@ -15,20 +14,20 @@ class TaskViewSet(viewsets.ViewSet):
 	permission_classes = (IsAuthenticated,)
 
 	def update(self, request, pk):
-		print pk, "wocaonima"
-
 		task = get_object_or_404(self.queryset, pk=pk)
-		for (key, value) in request.data.items():
-			if key in ['task_name', 'description', 'start', 'end', 'location', 'category', 'repeat']:
-				setattr(task, key, value)
-		task.save()
+		if task.creator_id is request.user_id or (task.classroom and task.classroom in request.user.classrooms):
+			for (key, value) in request.data.items():
+				if key in ['task_name', 'description', 'start', 'end', 'location', 'category', 'repeat']:
+					setattr(task, key, value)
+			task.save()
 
 		if task.classroom:
 			Moment.objects.create(
 				content='I just updated the task \"' +
-				        request.data.get('task_name', '') + '\" to the classroom, check it out!',
+				        request.data.get('task_name', '') + '\", check it out!',
 				creator=request.user,
 				classroom=task.classroom)
+
 		return Response(status=status.HTTP_200_OK)
 
 	def delete(self, request, pk):

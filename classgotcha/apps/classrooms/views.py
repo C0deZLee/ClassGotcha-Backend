@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-import os, uuid, re, json, datetime
+import uuid, re, json, datetime
 from django.core.files.base import File
 from django.shortcuts import get_object_or_404
 from django.db import IntegrityError
@@ -11,13 +11,15 @@ from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework.decorators import parser_classes
 
 from models import Account, Classroom, Semester, Major, Professor
-from ..chat.models import Room
+from ..chatrooms.models import Chatroom
 
 from serializers import ClassroomSerializer, MajorSerializer, OfficeHourSerializer
 from ..posts.serializers import MomentSerializer, Note, NoteSerializer, Moment
 from ..tasks.serializers import Task, TaskSerializer, BasicTaskSerializer, CreateTaskSerializer
-from ..accounts.serializers import BasicAccountSerializer, BasicClassroomSerializer
+from ..accounts.serializers import BasicClassroomSerializer, BasicAccountSerializer
 from ..tags.serializers import ClassFolderSerializer, Tag
+
+from ..chatrooms.matrix.matrix_api import MatrixApi
 
 
 def read_file(request, file_name=None):
@@ -72,7 +74,9 @@ class ClassroomViewSet(viewsets.ViewSet):
 				class_major = items[0].upper()
 				class_number = items[1]
 				major = Major.objects.get(major_short=class_major)
-				classrooms = Classroom.objects.filter(major=major, class_number=class_number) if class_number else Classroom.objects.filter(major=major)
+				classrooms = Classroom.objects.filter(major=major,
+				                                      class_number=class_number) if class_number else Classroom.objects.filter(
+					major=major)
 				serializer = BasicClassroomSerializer(classrooms, many=True)
 				return Response(serializer.data)
 			else:
@@ -132,12 +136,14 @@ class ClassroomViewSet(viewsets.ViewSet):
 
 			return Response(status=status.HTTP_201_CREATED)
 
-	def recent_moments(self, request, pk):
-		page = request.data.get('page')
+	def moments(self, request, pk, page=None):
+		# If no page provided, default is 1
 		if not page:
-			page = 0
+			page = 1
+
 		classroom = get_object_or_404(self.queryset, pk=pk)
-		moments = classroom.moments.filter(deleted=False).order_by('-created')[page * 20:page + 1 * 20]
+		# 20 moments per page
+		moments = classroom.moments.filter(deleted=False).order_by('-created')[0:int(page)*20]
 		serializer = MomentSerializer(moments, many=True)
 		return Response(serializer.data)
 
@@ -267,10 +273,16 @@ class ClassroomViewSet(viewsets.ViewSet):
 
 					# save classroom to get pk in db
 					classroom.save()
-					# create chat room
-					Room.objects.create(creator=Account.objects.get(is_superuser=True),
-					                    name=cours['name'] + ' - ' + cours['section'] + ' Chat Room',
-					                    classroom=classroom)
+
+					# create chatrooms
+					matrix = MatrixApi(auth_token=request.user.matrix_token)
+					matrix_id = matrix.create_room(name=cours['name'] + ' - ' + cours['section'] + ' Chat Room')['room_id']
+
+					Chatroom.objects.create(creator=Account.objects.get(is_superuser=True),
+					                        room_type="Classroom",
+					                        matrix_id=matrix_id,
+					                        name=cours['name'] + ' - ' + cours['section'] + ' Chat Room',
+					                        classroom=classroom)
 				except IntegrityError:
 					print IntegrityError
 			return Response(status=status.HTTP_201_CREATED)

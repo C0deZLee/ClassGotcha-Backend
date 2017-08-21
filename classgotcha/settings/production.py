@@ -21,7 +21,7 @@ PROJECT_ROOT = os.path.abspath(os.path.dirname(PROJECT_APP_ROOT))
 with open(os.path.join(PROJECT_APP_ROOT, 'settings/secret.txt')) as f:
 	SECRET_KEY = f.read().strip()
 
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['*']
 
@@ -43,28 +43,28 @@ INSTALLED_APPS = [
 	'django.contrib.staticfiles',
 	'django_extensions',
 	# installed
-    'django_ses',
+	'django_ses',
 	'rest_framework',
 	'rest_framework_docs',
 	'rest_framework_jwt',
 	'storages',
-	'channels',
 	'corsheaders',
-	'widget_tweaks',
 	# myapp
 	'classgotcha.apps.accounts',
 	'classgotcha.apps.classrooms',
 	'classgotcha.apps.posts',
 	'classgotcha.apps.tasks',
-	'classgotcha.apps.chat',
+	'classgotcha.apps.chatrooms',
 	'classgotcha.apps.tags',
 	'classgotcha.apps.email',
-
+	'classgotcha.apps.notifications',
+	'classgotcha.apps.badges',
 ]
+
 MIDDLEWARE = [
-	'classgotcha.middleware.AtopdedTo110DebugMiddleware',
-        'classgotcha.middleware.MyMiddleware',
-        'django.middleware.security.SecurityMiddleware',
+	# 'classgotcha.middleware.AtopdedTo110DebugMiddleware',
+	# 'classgotcha.middleware.MyMiddleware',
+	'django.middleware.security.SecurityMiddleware',
 	'django.contrib.sessions.middleware.SessionMiddleware',
 	'corsheaders.middleware.CorsMiddleware',
 	'django.middleware.common.CommonMiddleware',
@@ -72,8 +72,8 @@ MIDDLEWARE = [
 	'django.contrib.auth.middleware.AuthenticationMiddleware',
 	'django.contrib.messages.middleware.MessageMiddleware',
 	'django.middleware.clickjacking.XFrameOptionsMiddleware',
-	#'classgotcha.middleware.MyMiddleware',
-        # --- account support ---
+	# 'classgotcha.middleware.MyMiddleware',
+	# --- account support ---
 	# 'account.middleware.LocaleMiddleware',
 	# 'account.middleware.TimezoneMiddleware',
 ]
@@ -82,7 +82,7 @@ MIDDLEWARE = [
 CHANNEL_LAYERS = {
 	"default": {
 		"BACKEND": "asgi_redis.RedisChannelLayer",
-		"CONFIG": {
+		"CONFIG" : {
 			"hosts": [os.environ.get('REDIS_URL', 'redis://localhost:6379')],
 		},
 		"ROUTING": "classgotcha.apps.chat.routing.channel_routing",
@@ -92,10 +92,10 @@ CHANNEL_LAYERS = {
 # ------ Templates ------
 TEMPLATES = [
 	{
-		'BACKEND': 'django.template.backends.django.DjangoTemplates',
-		'DIRS': [os.path.join(PROJECT_ROOT, 'classgotcha/templates')],
+		'BACKEND' : 'django.template.backends.django.DjangoTemplates',
+		'DIRS'    : [os.path.join(PROJECT_ROOT, 'classgotcha/templates')],
 		'APP_DIRS': True,
-		'OPTIONS': {
+		'OPTIONS' : {
 			'context_processors': [
 				# Insert your TEMPLATE_CONTEXT_PROCESSORS here or use this
 				# list if you haven't customized them:
@@ -106,7 +106,7 @@ TEMPLATES = [
 				'django.template.context_processors.tz',
 				'django.contrib.messages.context_processors.messages',
 			],
-			'debug': False,
+			'debug'             : False,
 		},
 	},
 ]
@@ -128,19 +128,18 @@ TEST_RUNNER = "lib.tests.MyTestDiscoverRunner"
 
 DATABASES = {
 
-	'default':{
-		'ENGINE':'django.db.backends.mysql',
-		'NAME':'ClassGotcha',
-		'USER':'ClassGotcha',
-		'PASSWORD':'admin12345',
-		'HOST':'/var/lib/mysql/mysql.sock',
+	'default': {
+		'ENGINE'  : 'django.db.backends.mysql',
+		'NAME'    : 'ClassGotcha',
+		'USER'    : 'ClassGotcha',
+		'PASSWORD': 'admin12345',
+		'HOST'    : '/var/lib/mysql/mysql.sock',
 
 	}
 
 }
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-
 
 # ------ Password validation ------
 # https://docs.djangoproject.com/en/1.10/ref/settings/#auth-password-validators
@@ -159,12 +158,12 @@ AUTHENTICATION_BACKENDS = [
 
 # ------ Rest framework ------
 REST_FRAMEWORK = {
-    'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.IsAuthenticated',
-    ],
-    'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
-    ]
+	'DEFAULT_PERMISSION_CLASSES'    : [
+		'rest_framework.permissions.IsAuthenticated',
+	],
+	'DEFAULT_AUTHENTICATION_CLASSES': [
+		'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
+	]
 }
 
 # ------ Internationalization -------
@@ -183,16 +182,12 @@ AUTH_USER_MODEL = 'accounts.Account'
 
 # ------ Amazon S3 ------
 DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
-# Amazon Web Services access key, as a string.
-# AWS_ACCESS_KEY_ID = 'AKIAIRSAW2O7ARSWDQMA'
-# Amazon Web Services secret access key, as a string.
-# AWS_SECRET_ACCESS_KEY = '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'
 # Amazon Web Services storage bucket name, as a string.
 AWS_STORAGE_BUCKET_NAME = 'classgotcha-us-standard-20161024'
 
 # ----- Cross Origin Header -----
-#CORS_ORIGIN_ALLOW_ALL = True
-#CORS_ALLOW_CREDENTIALS = True
+# CORS_ORIGIN_ALLOW_ALL = True
+# CORS_ALLOW_CREDENTIALS = True
 CORS_ORIGIN_WHITELIST = (
 	'http://www.classgotcha.com',
 	'http://classgotcha.com',
@@ -202,7 +197,7 @@ CORS_ORIGIN_WHITELIST = (
 )
 CORS_ALLOW_HEADERS = (
 	'accept',
-        'accept-encoding',
+	'accept-encoding',
 	'authorization',
 	'content-type',
 	'dnt',
@@ -212,44 +207,41 @@ CORS_ALLOW_HEADERS = (
 	'x-requested-with',
 	'cache-control',
 	'HTTP_X_XSRF_TOKEN',
-        'XMLHttpRequest',
-        'Access-Control-Allow-Origin',
+	'XMLHttpRequest',
+	'Access-Control-Allow-Origin',
 )
 
 # -------- JWT AUTH --------
 JWT_AUTH = {
-    'JWT_ENCODE_HANDLER':
-        'rest_framework_jwt.utils.jwt_encode_handler',
+	'JWT_ENCODE_HANDLER'             :
+		'rest_framework_jwt.utils.jwt_encode_handler',
 
-    'JWT_DECODE_HANDLER':
-        'rest_framework_jwt.utils.jwt_decode_handler',
+	'JWT_DECODE_HANDLER'             :
+		'rest_framework_jwt.utils.jwt_decode_handler',
 
-    'JWT_PAYLOAD_HANDLER':
-        'rest_framework_jwt.utils.jwt_payload_handler',
+	'JWT_PAYLOAD_HANDLER'            :
+		'rest_framework_jwt.utils.jwt_payload_handler',
 
-    'JWT_PAYLOAD_GET_USER_ID_HANDLER':
-        'rest_framework_jwt.utils.jwt_get_user_id_from_payload_handler',
+	'JWT_PAYLOAD_GET_USER_ID_HANDLER':
+		'rest_framework_jwt.utils.jwt_get_user_id_from_payload_handler',
 
-    'JWT_RESPONSE_PAYLOAD_HANDLER':
-        'rest_framework_jwt.utils.jwt_response_payload_handler',
+	'JWT_RESPONSE_PAYLOAD_HANDLER'   :
+		'rest_framework_jwt.utils.jwt_response_payload_handler',
 
-    'JWT_SECRET_KEY': SECRET_KEY,
-    'JWT_PUBLIC_KEY': None,
-    'JWT_PRIVATE_KEY': None,
-    'JWT_ALGORITHM': 'HS256',
-    'JWT_VERIFY': True,
-    'JWT_VERIFY_EXPIRATION': True,
-
-    'JWT_LEEWAY': 0,
-    'JWT_EXPIRATION_DELTA': datetime.timedelta(days=1),
-    'JWT_AUDIENCE': None,
-    'JWT_ISSUER': None,
-    'JWT_ALLOW_REFRESH': True,
-    'JWT_REFRESH_EXPIRATION_DELTA': datetime.timedelta(days=7),
-
-    'JWT_AUTH_HEADER_PREFIX': 'JWT'
+	'JWT_SECRET_KEY'                 : SECRET_KEY,
+	'JWT_PUBLIC_KEY'                 : None,
+	'JWT_PRIVATE_KEY'                : None,
+	'JWT_ALGORITHM'                  : 'HS256',
+	'JWT_VERIFY'                     : True,
+	'JWT_VERIFY_EXPIRATION'          : True,
+	'JWT_LEEWAY'                     : 0,
+	'JWT_EXPIRATION_DELTA'           : datetime.timedelta(days=1),
+	'JWT_AUDIENCE'                   : None,
+	'JWT_ISSUER'                     : None,
+	'JWT_ALLOW_REFRESH'              : True,
+	'JWT_REFRESH_EXPIRATION_DELTA'   : datetime.timedelta(days=7),
+	'JWT_AUTH_HEADER_PREFIX'         : 'JWT'
 }
-
 
 # ------ SES email settings ------
 
@@ -264,4 +256,7 @@ AWS_SECRET_ACCESS_KEY = 'btT55r3JbZ93Piis5iMuChiCuWsiAEqKTcL/bjeM'
 # you need to specify a region, like so:
 AWS_SES_REGION_NAME = 'us-east-1'
 AWS_SES_REGION_ENDPOINT = 'email.us-east-1.amazonaws.com'
-AWS_SES_AUTO_THROTTLE = 0.5 # (default; safety factor applied to rate limit)
+AWS_SES_AUTO_THROTTLE = 0.5  # (default; safety factor applied to rate limit)
+
+# ------------MATRIX CONFIGURATION--------------
+MATRIX_HOST = 'http://matrix.classgotcha.com:8008'

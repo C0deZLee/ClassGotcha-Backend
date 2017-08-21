@@ -64,7 +64,8 @@ class PostViewSet(viewsets.ViewSet):
 		return Response(serializer.data)
 
 	def list(self, request):
-		serializer = BasicPostSerializer(sorted(Post.objects.all(), key=lambda p: p.vote, reverse=True), many=True)
+		posts = Post.objects.order_by('-votes')
+		serializer = BasicPostSerializer(posts, many=True)
 		return Response(serializer.data)
 
 	def create(self, request):
@@ -89,15 +90,21 @@ class PostViewSet(viewsets.ViewSet):
 		vote = request.data.get('vote')
 		if vote == 1:
 			post = get_object_or_404(self.queryset, pk=pk)
-			post.up_voted_user.add(request.user)
-			if request.user in post.down_voted_user.all():
-				post.down_voted_user.remove(request.user)
+
+			if request.user not in post.down_voted_user.all() and request.user not in post.up_voted_user.all():
+				post.up_voted_user.add(request.user)
+				post.votes += 1
+				post.save()
+
 			return Response(status=status.HTTP_200_OK)
 		elif vote == -1:
 			post = get_object_or_404(self.queryset, pk=pk)
-			post.down_voted_user.add(request.user)
-			if request.user in post.up_voted_user.all():
-				post.up_voted_user.remove(request.user)
+
+			if request.user not in post.down_voted_user.all() and request.user not in post.up_voted_user.all():
+				post.down_voted_user.add(request.user)
+				post.votes -= 1
+				post.save()
+
 			return Response(status=status.HTTP_200_OK)
 		else:
 			return Response(status=status.HTTP_400_BAD_REQUEST)
