@@ -46,6 +46,8 @@ class Professor(models.Model):
 	mid_name = models.CharField(max_length=40, blank=True)
 	email = models.CharField(max_length=50)
 	office = models.CharField(max_length=100, blank=True)
+	personal_page = models.CharField(max_length=100, blank=True)
+	department = models.CharField(max_length=100, blank=True)
 	# Relationship
 	major = models.ForeignKey('classrooms.Major')
 	tags = models.ManyToManyField(Tag)
@@ -67,7 +69,7 @@ class Professor(models.Model):
 
 	@property
 	def full_name(self):
-		return self.first_name + ' ' + self.last_name
+		return '%s %s' % (self.first_name, self.last_name)
 
 	@property
 	def avg_rate(self):

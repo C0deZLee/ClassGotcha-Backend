@@ -20,8 +20,7 @@ from ..tasks.serializers import TaskSerializer
 
 from ..posts.models import Rate
 from models import Account, Professor, AccountVerifyToken
-from serializers import AccountSerializer, BasicAccountSerializer, AuthAccountSerializer, AvatarSerializer, \
-	ProfessorSerializer
+from serializers import AccountSerializer, BasicAccountSerializer, AuthAccountSerializer, ProfessorSerializer
 
 from script import group, complement
 from django.core.mail import EmailMessage, EmailMultiAlternatives

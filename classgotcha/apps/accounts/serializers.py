@@ -7,6 +7,8 @@ from ..tasks.serializers import BasicTaskSerializer, ClassTimeTaskSerializer
 from ..tags.serializers import ClassFolderSerializer
 
 from django.core.files.images import ImageFile
+
+
 # from ..chatrooms.matrix.matrix_api import MatrixApi
 # import requests
 
@@ -40,7 +42,7 @@ class SemesterSerializer(serializers.ModelSerializer):
 class BasicProfessorSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = Professor
-		fields = '__all__'
+		fields = ['full_name', 'email', 'id']
 		read_only_fields = ('created',)
 
 
