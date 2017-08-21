@@ -56,7 +56,7 @@ class MomentViewSet(viewsets.ViewSet):
 class PostViewSet(viewsets.ViewSet):
 	queryset = Post.objects.all()
 	serializer_class = PostSerializer
-	permission_classes = (permissions.AllowAny,)
+	permission_classes = (permissions.IsAuthenticated,)
 
 	def retrieve(self, request, pk):
 		post = get_object_or_404(self.queryset, pk=pk)

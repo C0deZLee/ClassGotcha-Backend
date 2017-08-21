@@ -16,7 +16,7 @@ from ..chatrooms.models import Chatroom
 from serializers import ClassroomSerializer, MajorSerializer, OfficeHourSerializer
 from ..posts.serializers import MomentSerializer, Note, NoteSerializer, Moment
 from ..tasks.serializers import Task, TaskSerializer, BasicTaskSerializer, CreateTaskSerializer
-from ..accounts.serializers import BasicAccountSerializer, BasicClassroomSerializer
+from ..accounts.serializers import BasicClassroomSerializer, BasicAccountSerializer
 from ..tags.serializers import ClassFolderSerializer, Tag
 
 from ..chatrooms.matrix.matrix_api import MatrixApi
@@ -136,12 +136,14 @@ class ClassroomViewSet(viewsets.ViewSet):
 
 			return Response(status=status.HTTP_201_CREATED)
 
-	def recent_moments(self, request, pk):
-		page = request.data.get('page')
+	def moments(self, request, pk, page=None):
+		# If no page provided, default is 1
 		if not page:
-			page = 0
+			page = 1
+
 		classroom = get_object_or_404(self.queryset, pk=pk)
-		moments = classroom.moments.filter(deleted=False).order_by('-created')[page * 20:page + 1 * 20]
+		# 20 moments per page
+		moments = classroom.moments.filter(deleted=False).order_by('-created')[0:int(page)*20]
 		serializer = MomentSerializer(moments, many=True)
 		return Response(serializer.data)
 
