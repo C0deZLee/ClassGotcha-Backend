@@ -8,9 +8,16 @@ from ..tasks.models import Task
 # import Intervals 
 
 # TODO download the intervals package
-#def 
+def generate_recommendations_for_quiz(date):
+
+	
+
+def generate_recommendations_for_homework(date):
+	
+
 
 weekday_dict = {1:'Mo',2:'Tu',3:'We',4:'Th',5:'Fi'}
+
 def get_user_free_intervals(account,date):
 	# get week day from date
 	weekday = weekday_dict[date.weekday]
