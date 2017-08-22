@@ -142,6 +142,14 @@ def forget_password(request, token=None):
 		token_instance.is_expired = True
 		return Response(status=status.HTTP_200_OK)
 
+# For Friend Searching
+def is_similar(user1, user2):
+	return (lambda a,b,c: len(a)/float(len(b)) > .8 and len(a)/float(len(c)) > .8 if b and c else False) (user1.classroom.intersects(user2.classroom), user1.classroom, user2.classroom)
+
+@api_view(['GET'])
+@permission_classes((IsAuthenticated,))
+def get_similar_account(request):
+	pass
 
 @api_view(['GET', 'POST', 'OPTION'])
 @permission_classes((IsAuthenticated,))
@@ -273,6 +281,28 @@ class AccountViewSet(viewsets.ViewSet):
 		except:
 			# If exception return with status 400
 			return Response(status=status.HTTP_400_BAD_REQUEST)
+
+	def explore_friends(self, request):
+		def similarity_check_classrooms(user, other):
+			# return boolean whether they could be friends [based on the classroom list]
+			print type(other.classrooms.all())
+			print other.classrooms.all()
+			if other.classrooms.all():
+				print "this is not empty\n"
+			mine = set(user.classrooms.all())
+			his = set(other.classrooms.all())
+			return True if mine and his and mine <= his or mine > his or len(mine & his) >= 2 else False
+
+		# def sharing_friends(user, other):
+		# 	# return boolean
+
+		possible_friends = []
+		# Explore Friends basing on classrooms
+		for account in self.queryset:
+			if account not in (request.user.friends.all() | request.user.pending_friends.all()) and similarity_check_classrooms(request.user, account):
+				possible_friends.append(account)
+		serializer = AccountSerializer(possible_friends, many=True)
+		return Response(serializer.data)
 
 	@staticmethod
 	def pending_friends(request):
