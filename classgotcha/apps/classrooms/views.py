@@ -189,15 +189,6 @@ class ClassroomViewSet(viewsets.ViewSet):
 			folders = classroom.folders.all()
 			serializer = ClassFolderSerializer(folders, many=True)
 			return Response(serializer.data)
-		elif request.method == 'POST':
-			# TODO: for lecture and homework, no children needed,
-			# for notes, we need a subclass,
-			content = request.data.get('content')
-			parent = request.data.get('parent')
-			if content:
-				Tag.objects.get(content=content)
-
-			pass
 
 	def office_hours(self, request, pk):
 		if request.method == 'GET':

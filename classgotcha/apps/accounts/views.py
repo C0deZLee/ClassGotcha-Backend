@@ -142,14 +142,17 @@ def forget_password(request, token=None):
 		token_instance.is_expired = True
 		return Response(status=status.HTTP_200_OK)
 
+
 # For Friend Searching
 def is_similar(user1, user2):
-	return (lambda a,b,c: len(a)/float(len(b)) > .8 and len(a)/float(len(c)) > .8 if b and c else False) (user1.classroom.intersects(user2.classroom), user1.classroom, user2.classroom)
+	return (lambda a, b, c: len(a) / float(len(b)) > .8 and len(a) / float(len(c)) > .8 if b and c else False)(user1.classroom.intersects(user2.classroom), user1.classroom, user2.classroom)
+
 
 @api_view(['GET'])
 @permission_classes((IsAuthenticated,))
 def get_similar_account(request):
 	pass
+
 
 @api_view(['GET', 'POST', 'OPTION'])
 @permission_classes((IsAuthenticated,))
@@ -479,16 +482,6 @@ class AccountViewSet(viewsets.ViewSet):
 
 		return Response({'freetime': free_time_dict}, status=status.HTTP_200_OK)
 
-	@staticmethod
-	def home_page_activity(request):
-		# TODO: show latest activity related to me
-		# include moments, comments, notes my classmates and friends posted
-		classrooms = Classroom.objects.filter(students__pk=request.user.pk)
-
-		moments = Moment.objects.filter(classroom__in=classrooms).filter(deleted=False).order_by('-created')[0:20]
-		serializer = MomentSerializer(moments, many=True)
-		return Response(serializer.data)
-
 
 class ProfessorViewSet(viewsets.ViewSet):
 	queryset = Professor.objects.all()
@@ -511,23 +504,20 @@ class ProfessorViewSet(viewsets.ViewSet):
 		return Response(status=status.HTTP_200_OK)
 
 	def comments(self, request, pk):
+		professor = get_object_or_404(self.queryset, pk=pk)
 		if request.method == 'GET':
-			professor = get_object_or_404(self.queryset, pk=pk)
 			comments = professor.comments.all()
 			return Response(CommentSerializer(comments, many=True).data)
 		elif request.method == 'POST':
-			content = request.data.get('content')
-			num = request.data.get('num')
-			if content and num:
-				professor = get_object_or_404(self.queryset, pk=pk)
-				comment = Comment.objects.create(content=content)
-				rate = Rate.objects.create(num=num)
-				rate.professor = professor
-				rate.creator = request.user
-				rate.save()
-				comment.professor = professor
-				comment.creator = request.user
-				comment.rate = rate
+			print request.data
+			content = request.data.get('content', '')
+			is_anonymous = request.data.get('is_anonymous')
+			# num = request.data.get('num')
+			if content:
+				comment = Comment.objects.create(content=content,
+				                                 professor_id=professor.id,
+				                                 is_anonymous=is_anonymous,
+				                                 creator=request.user)
 				comment.save()
 				return Response(status=status.HTTP_201_CREATED)
 			else:
