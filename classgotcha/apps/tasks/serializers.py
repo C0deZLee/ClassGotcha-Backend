@@ -34,7 +34,8 @@ class BasicTaskSerializer(serializers.ModelSerializer):
 	repeat_start_date = serializers.ReadOnlyField()
 	repeat_end_date = serializers.ReadOnlyField()
 	repeat_list = serializers.ReadOnlyField()
-	classroom = TaskClassroomSerializer(required=False)
+	classroom = TaskClassroomSerializer(required=False)  # Classroom time
+	task_of_classroom = TaskClassroomSerializer(required=False)  # Classroom task
 	expired = serializers.ReadOnlyField()
 
 	class Meta:
@@ -56,6 +57,7 @@ class BasicTaskSerializer(serializers.ModelSerializer):
 		          'end',
 		          'id',
 		          'classroom',
+		          'task_of_classroom',
 		          'expired')
 
 
@@ -93,22 +95,15 @@ class CreateTaskSerializer(serializers.ModelSerializer):
 	def create(self, validated_data):
 		# if no involved
 		if 'involved' in validated_data and validated_data['involved'] == []:
-			# TODO: deal with involved later on
+			# deal with involved later on
 			del validated_data['involved']
 
-		# create a empty instance first so we have pk and can add m2m relations
 		task = Task.objects.create(**validated_data)
-		print validated_data
-		# put value in
-		# Task.objects.filter(pk=task.pk).update()
-		# # don't know why but add this line then work
-		# task = Task.objects.get(pk=task.pk)
 
-		if 'classroom_id' in validated_data:
-			task.classroom_id = validated_data['classroom_id']
+		# TODO: Task add to all classroom users immediately
+		if task.task_of_classroom_id:
+			task.involved.add(*task.task_of_classroom.students.all())
 
-		if task.classroom:
-			task.involved.add(*task.classroom.students.all())
 		elif task.group:
 			task.involved.add(*task.group.members.all())
 

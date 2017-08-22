@@ -15,18 +15,19 @@ class TaskViewSet(viewsets.ViewSet):
 
 	def update(self, request, pk):
 		task = get_object_or_404(self.queryset, pk=pk)
-		if task.creator_id is request.user_id or (task.classroom and task.classroom in request.user.classrooms):
+
+		if (task.creator_id is request.user.id) or (task.task_of_classroom in request.user.classrooms.all()):
 			for (key, value) in request.data.items():
 				if key in ['task_name', 'description', 'start', 'end', 'location', 'category', 'repeat']:
 					setattr(task, key, value)
 			task.save()
 
-		if task.classroom:
+		if task.task_of_classroom:
 			Moment.objects.create(
-				content='I just updated the task \"' +
+				content='I updated the task \"' +
 				        request.data.get('task_name', '') + '\", check it out!',
 				creator=request.user,
-				classroom=task.classroom)
+				classroom_id=task.task_of_classroom_id)
 
 		return Response(status=status.HTTP_200_OK)
 
