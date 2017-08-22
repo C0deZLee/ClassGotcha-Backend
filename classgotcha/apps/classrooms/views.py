@@ -144,7 +144,7 @@ class ClassroomViewSet(viewsets.ViewSet):
 
 		classroom = get_object_or_404(self.queryset, pk=pk)
 		# 20 moments per page
-		moments = classroom.moments.filter(deleted=False).order_by('-created')[0:int(page)*20]
+		moments = classroom.moments.filter(deleted=False).order_by('-created')[0:int(page) * 20]
 		serializer = MomentSerializer(moments, many=True)
 		return Response(serializer.data)
 
@@ -171,7 +171,7 @@ class ClassroomViewSet(viewsets.ViewSet):
 			serializer.save()
 
 			Moment.objects.create(
-				content='I just added a new task \"' +
+				content='I added a new task \"' +
 				        request.data.get('task_name', '') + '\" to the classroom, check it out!',
 				creator=request.user,
 				classroom=classroom)
