@@ -34,7 +34,7 @@ class BasicTaskSerializer(serializers.ModelSerializer):
 	repeat_start_date = serializers.ReadOnlyField()
 	repeat_end_date = serializers.ReadOnlyField()
 	repeat_list = serializers.ReadOnlyField()
-	classroom = TaskClassroomSerializer()
+	classroom = TaskClassroomSerializer(required=False)
 	expired = serializers.ReadOnlyField()
 
 	class Meta:
@@ -71,14 +71,21 @@ class ClassTimeTaskSerializer(serializers.ModelSerializer):
 
 	class Meta:
 		model = Task
-		fields = ('formatted_start_time', 'formatted_end_time', 'repeat_start_date',
-		          'repeat_end_date', 'repeat_list', 'task_name', 'location', 'repeat')
+		fields = ('formatted_start_time',
+		          'formatted_end_time',
+		          'repeat_start_date',
+		          'repeat_end_date',
+		          'repeat_list',
+		          'task_name',
+		          'location',
+		          'repeat')
 
 
 class CreateTaskSerializer(serializers.ModelSerializer):
 	'''
 	The serializer for create tasks
 	'''
+
 	class Meta:
 		model = Task
 		fields = '__all__'
@@ -106,4 +113,3 @@ class CreateTaskSerializer(serializers.ModelSerializer):
 			task.involved.add(*task.group.members.all())
 
 		return task
-
