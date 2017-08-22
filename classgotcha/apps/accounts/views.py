@@ -143,6 +143,17 @@ def forget_password(request, token=None):
 		return Response(status=status.HTTP_200_OK)
 
 
+# For Friend Searching
+def is_similar(user1, user2):
+	return (lambda a, b, c: len(a) / float(len(b)) > .8 and len(a) / float(len(c)) > .8 if b and c else False)(user1.classroom.intersects(user2.classroom), user1.classroom, user2.classroom)
+
+
+@api_view(['GET'])
+@permission_classes((IsAuthenticated,))
+def get_similar_account(request):
+	pass
+
+
 @api_view(['GET', 'POST', 'OPTION'])
 @permission_classes((IsAuthenticated,))
 @parser_classes((MultiPartParser, FormParser,))
@@ -201,7 +212,7 @@ class AccountViewSet(viewsets.ViewSet):
 		# send friend request
 		if request.method == 'POST':
 			if request.user.pk is int(pk):  # cant add yourself as your friend
-				return Response({'detail': 'cant add yourself as your friend'}, status=status.HTTP_403_FORBIDDEN)
+				return Response({'detail': 'You can\'t add yourself as your friend'}, status=status.HTTP_403_FORBIDDEN)
 			else:
 				new_friend = get_object_or_404(self.queryset, pk=pk)
 				if new_friend in request.user.friends.all():
@@ -216,7 +227,7 @@ class AccountViewSet(viewsets.ViewSet):
 		# accept friend request
 		if request.method == 'PUT':
 			if request.user.pk is int(pk):  # cant add yourself as your friend
-				return Response({'detail': 'cant add yourself as your friend'}, status=status.HTTP_403_FORBIDDEN)
+				return Response({'detail': 'You can\'t add yourself as your friend'}, status=status.HTTP_403_FORBIDDEN)
 			else:
 				new_friend = get_object_or_404(self.queryset, pk=pk)
 				if new_friend not in request.user.pending_friends.all():
@@ -274,6 +285,28 @@ class AccountViewSet(viewsets.ViewSet):
 			# If exception return with status 400
 			return Response(status=status.HTTP_400_BAD_REQUEST)
 
+	def explore_friends(self, request):
+		def similarity_check_classrooms(user, other):
+			# return boolean whether they could be friends [based on the classroom list]
+			print type(other.classrooms.all())
+			print other.classrooms.all()
+			if other.classrooms.all():
+				print "this is not empty\n"
+			mine = set(user.classrooms.all())
+			his = set(other.classrooms.all())
+			return True if mine and his and mine <= his or mine > his or len(mine & his) >= 2 else False
+
+		# def sharing_friends(user, other):
+		# 	# return boolean
+
+		possible_friends = []
+		# Explore Friends basing on classrooms
+		for account in self.queryset:
+			if account not in (request.user.friends.all() | request.user.pending_friends.all()) and similarity_check_classrooms(request.user, account):
+				possible_friends.append(account)
+		serializer = BasicAccountSerializer(possible_friends, many=True)
+		return Response(serializer.data)
+
 	@staticmethod
 	def pending_friends(request):
 		serializer = BasicAccountSerializer(request.user.pending_friends, many=True)
@@ -300,7 +333,7 @@ class AccountViewSet(viewsets.ViewSet):
 			# add user to classroom chatrooms
 			# TODO: change into matrix version: classroom.chatrooms.get().accounts.add(request.user.username ???)
 			# also need to call the matrix api? add the user into matrix chatrooms...
-			classroom.chatroom.get().accounts.add(request.user)
+			# classroom.chatroom.get().accounts.add(request.user)
 			return Response(status=200)
 
 		if request.method == 'DELETE':
@@ -323,9 +356,13 @@ class AccountViewSet(viewsets.ViewSet):
 
 	@staticmethod
 	def moments(request, pk=None):
-		moment_query_set = request.user.moments.filter(deleted=False).order_by('-created')
-		# Only return first 20 moments
+		if not pk:
+			moment_query_set = request.user.moments.filter(deleted=False).order_by('-created')
+		else:
+			moment_query_set = Account.objects.get(pk=pk).moments.filter(deleted=False).order_by('-created')
+
 		if request.method == 'GET':
+			# Only return first 20 moments
 			serializer = MomentSerializer(moment_query_set[0:20], many=True)
 			return Response(serializer.data)
 		elif request.method == 'POST':
@@ -445,16 +482,6 @@ class AccountViewSet(viewsets.ViewSet):
 
 		return Response({'freetime': free_time_dict}, status=status.HTTP_200_OK)
 
-	@staticmethod
-	def home_page_activity(request):
-		# TODO: show latest activity related to me
-		# include moments, comments, notes my classmates and friends posted
-		classrooms = Classroom.objects.filter(students__pk=request.user.pk)
-
-		moments = Moment.objects.filter(classroom__in=classrooms).filter(deleted=False).order_by('-created')[0:20]
-		serializer = MomentSerializer(moments, many=True)
-		return Response(serializer.data)
-
 
 class ProfessorViewSet(viewsets.ViewSet):
 	queryset = Professor.objects.all()
@@ -477,23 +504,20 @@ class ProfessorViewSet(viewsets.ViewSet):
 		return Response(status=status.HTTP_200_OK)
 
 	def comments(self, request, pk):
+		professor = get_object_or_404(self.queryset, pk=pk)
 		if request.method == 'GET':
-			professor = get_object_or_404(self.queryset, pk=pk)
 			comments = professor.comments.all()
 			return Response(CommentSerializer(comments, many=True).data)
 		elif request.method == 'POST':
-			content = request.data.get('content')
-			num = request.data.get('num')
-			if content and num:
-				professor = get_object_or_404(self.queryset, pk=pk)
-				comment = Comment.objects.create(content=content)
-				rate = Rate.objects.create(num=num)
-				rate.professor = professor
-				rate.creator = request.user
-				rate.save()
-				comment.professor = professor
-				comment.creator = request.user
-				comment.rate = rate
+			print request.data
+			content = request.data.get('content', '')
+			is_anonymous = request.data.get('is_anonymous')
+			# num = request.data.get('num')
+			if content:
+				comment = Comment.objects.create(content=content,
+				                                 professor_id=professor.id,
+				                                 is_anonymous=is_anonymous,
+				                                 creator=request.user)
 				comment.save()
 				return Response(status=status.HTTP_201_CREATED)
 			else:

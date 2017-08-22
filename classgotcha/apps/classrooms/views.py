@@ -11,7 +11,7 @@ from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework.decorators import parser_classes
 
 from models import Account, Classroom, Semester, Major, Professor
-from ..chatrooms.models import Chatroom
+# from ..chatrooms.models import Chatroom
 
 from serializers import ClassroomSerializer, MajorSerializer, OfficeHourSerializer
 from ..posts.serializers import MomentSerializer, Note, NoteSerializer, Moment
@@ -19,7 +19,8 @@ from ..tasks.serializers import Task, TaskSerializer, BasicTaskSerializer, Creat
 from ..accounts.serializers import BasicClassroomSerializer, BasicAccountSerializer
 from ..tags.serializers import ClassFolderSerializer, Tag
 
-from ..chatrooms.matrix.matrix_api import MatrixApi
+
+# from ..chatrooms.matrix.matrix_api import MatrixApi
 
 
 def read_file(request, file_name=None):
@@ -130,7 +131,7 @@ class ClassroomViewSet(viewsets.ViewSet):
 					classroom.folders.add(tag)
 				new_note.tags.add(tag)
 			Moment.objects.create(
-				content='I just uploaded a new note \"' + title + '\" to the classroom, check it out!',
+				content='I uploaded a new note \"' + title + '\" to the classroom, check it out!',
 				creator=request.user,
 				classroom=classroom)
 
@@ -143,7 +144,7 @@ class ClassroomViewSet(viewsets.ViewSet):
 
 		classroom = get_object_or_404(self.queryset, pk=pk)
 		# 20 moments per page
-		moments = classroom.moments.filter(deleted=False).order_by('-created')[0:int(page)*20]
+		moments = classroom.moments.filter(deleted=False).order_by('-created')[0:int(page) * 20]
 		serializer = MomentSerializer(moments, many=True)
 		return Response(serializer.data)
 
@@ -170,7 +171,7 @@ class ClassroomViewSet(viewsets.ViewSet):
 			serializer.save()
 
 			Moment.objects.create(
-				content='I just added a new task \"' +
+				content='I added a new task \"' +
 				        request.data.get('task_name', '') + '\" to the classroom, check it out!',
 				creator=request.user,
 				classroom=classroom)
@@ -188,15 +189,6 @@ class ClassroomViewSet(viewsets.ViewSet):
 			folders = classroom.folders.all()
 			serializer = ClassFolderSerializer(folders, many=True)
 			return Response(serializer.data)
-		elif request.method == 'POST':
-			# TODO: for lecture and homework, no children needed,
-			# for notes, we need a subclass,
-			content = request.data.get('content')
-			parent = request.data.get('parent')
-			if content:
-				Tag.objects.get(content=content)
-
-			pass
 
 	def office_hours(self, request, pk):
 		if request.method == 'GET':
@@ -242,7 +234,8 @@ class ClassroomViewSet(viewsets.ViewSet):
 					                                                     class_section=cours['section'],
 					                                                     class_credit=cours['unit'],
 					                                                     class_location=cours['room'],
-					                                                     class_time=time, major=major,
+					                                                     class_time=time,
+					                                                     major=major,
 					                                                     semester=semester)
 					# create professor
 					if 'instructor1' in cours:
@@ -274,15 +267,15 @@ class ClassroomViewSet(viewsets.ViewSet):
 					# save classroom to get pk in db
 					classroom.save()
 
-					# create chatrooms
-					matrix = MatrixApi(auth_token=request.user.matrix_token)
-					matrix_id = matrix.create_room(name=cours['name'] + ' - ' + cours['section'] + ' Chat Room')['room_id']
+				# create chatrooms
+				# matrix = MatrixApi(auth_token=request.user.matrix_token)
+				# matrix_id = matrix.create_room(name=cours['name'] + ' - ' + cours['section'] + ' Chat Room')['room_id']
 
-					Chatroom.objects.create(creator=Account.objects.get(is_superuser=True),
-					                        room_type="Classroom",
-					                        matrix_id=matrix_id,
-					                        name=cours['name'] + ' - ' + cours['section'] + ' Chat Room',
-					                        classroom=classroom)
+				# Chatroom.objects.create(creator=Account.objects.get(is_superuser=True),
+				#                         room_type="Classroom",
+				#                         # matrix_id=matrix_id,
+				#                         name=cours['name'] + ' - ' + cours['section'] + ' Chat Room',
+				#                         classroom=classroom)
 				except IntegrityError:
 					print IntegrityError
 			return Response(status=status.HTTP_201_CREATED)

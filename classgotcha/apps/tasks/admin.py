@@ -1,19 +1,49 @@
 from django.contrib import admin
+from django.core.urlresolvers import reverse
 
 from models import Task
+from ..classrooms.models import Classroom
+
+
+class InlineEditLinkMixin(object):
+	readonly_fields = ['edit_details']
+	edit_label = "EDIT"
+
+	def edit_details(self, obj):
+		if obj.id:
+			opts = self.model._meta
+			return "<a href='%s' target='_blank'>%s</a>" % (reverse(
+				'admin:%s_%s_change' % (opts.app_label, opts.object_name.lower()),
+				args=[obj.id]
+			), self.edit_label)
+		else:
+			return "(save to edit details)"
+
+	edit_details.allow_tags = True
+
+
+class ClassroomInline(InlineEditLinkMixin, admin.TabularInline):
+	model = Classroom
+	extra = 0
+	fields = ('class_name', 'class_code', 'edit_details')
+	readonly_fields = ('class_name', 'class_code', 'edit_details')
 
 
 class TaskAdmin(admin.ModelAdmin):
-	list_display = ('pk', 'task_name', 'type', 'category', 'classroom')
+	list_display = ('pk', 'task_name', 'type', 'category')
 
 	list_filter = ('type', 'category')
 
+	search_fields = ('task_name', 'type', 'category')
 	fieldsets = (
 		('Task Info', {'fields': ('task_name', 'description', 'location', 'category', 'type')}),
 		('Time', {'fields': ('start', 'end',)}),
 		('Repeat', {'fields': ('repeat', 'repeat_start', 'repeat_end')}),
-		('Involved', {'fields': ('involved', 'classroom', 'group')}),
+		('Involved', {'fields': ('involved', 'group')}),
 	)
+
+	inlines = [ClassroomInline]
+
 	readonly_fields = ('involved', 'classroom', 'group')
 
 	# Fix admin saving issue
