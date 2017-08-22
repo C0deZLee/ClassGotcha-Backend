@@ -130,7 +130,7 @@ class ClassroomViewSet(viewsets.ViewSet):
 					classroom.folders.add(tag)
 				new_note.tags.add(tag)
 			Moment.objects.create(
-				content='I just uploaded a new note \"' + title + '\" to the classroom, check it out!',
+				content='I uploaded a new note \"' + title + '\" to the classroom, check it out!',
 				creator=request.user,
 				classroom=classroom)
 
@@ -242,7 +242,8 @@ class ClassroomViewSet(viewsets.ViewSet):
 					                                                     class_section=cours['section'],
 					                                                     class_credit=cours['unit'],
 					                                                     class_location=cours['room'],
-					                                                     class_time=time, major=major,
+					                                                     class_time=time,
+					                                                     major=major,
 					                                                     semester=semester)
 					# create professor
 					if 'instructor1' in cours:
@@ -275,14 +276,14 @@ class ClassroomViewSet(viewsets.ViewSet):
 					classroom.save()
 
 					# create chatrooms
-					matrix = MatrixApi(auth_token=request.user.matrix_token)
-					matrix_id = matrix.create_room(name=cours['name'] + ' - ' + cours['section'] + ' Chat Room')['room_id']
+					# matrix = MatrixApi(auth_token=request.user.matrix_token)
+					# matrix_id = matrix.create_room(name=cours['name'] + ' - ' + cours['section'] + ' Chat Room')['room_id']
 
-					Chatroom.objects.create(creator=Account.objects.get(is_superuser=True),
-					                        room_type="Classroom",
-					                        matrix_id=matrix_id,
-					                        name=cours['name'] + ' - ' + cours['section'] + ' Chat Room',
-					                        classroom=classroom)
+					# Chatroom.objects.create(creator=Account.objects.get(is_superuser=True),
+					#                         room_type="Classroom",
+					#                         # matrix_id=matrix_id,
+					#                         name=cours['name'] + ' - ' + cours['section'] + ' Chat Room',
+					#                         classroom=classroom)
 				except IntegrityError:
 					print IntegrityError
 			return Response(status=status.HTTP_201_CREATED)

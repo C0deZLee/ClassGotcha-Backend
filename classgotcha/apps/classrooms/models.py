@@ -50,7 +50,7 @@ class Classroom(models.Model):
 	created = models.DateField(auto_now_add=True)
 	updated = models.DateTimeField(auto_now=True)
 	# Relations
-	class_time = models.ForeignKey('tasks.Task', related_name='classtime', null=True)
+	class_time = models.OneToOneField('tasks.Task', related_name='classroom', null=True)
 	professors = models.ManyToManyField(Professor, related_name='classrooms')
 	major = models.ForeignKey(Major)
 	students = models.ManyToManyField(Account, related_name='classrooms')
@@ -65,7 +65,7 @@ class Classroom(models.Model):
 	# 5) office_hours
 
 	def __unicode__(self):
-		return self.major.major_short + ' ' + self.class_number
+		return self.class_short
 
 	@property
 	def students_count(self):
