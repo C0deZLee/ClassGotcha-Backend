@@ -76,12 +76,12 @@ def get_user_free_intervals(account, date):
 
 	# find the union of all intervals
 
-	intervals = Intervals.combine(all_class_intervals)
+	intervals = combine(all_class_intervals)
 
 	# compute the complement of all the intervals
 
 
-	free_intervals = Intervals.complement(intervals)
+	free_intervals = complement(intervals)
 
 	return free_intervals
 
@@ -122,3 +122,32 @@ def complement(intervals, first=None, last=None):
 	if last and last > last_to:
 		new_intervals.append((last_to, last))
 	return new_intervals
+
+
+def combine( intervals ):
+    """combine intervals.
+
+    Overlapping intervals are concatenated into larger intervals.
+    """
+    if not intervals:
+        return []
+
+    new_intervals = []
+
+    intervals.sort()
+    first_from, last_to = intervals[0]
+
+    for this_from, this_to in intervals[1:]:
+        if this_from > last_to:
+            new_intervals.append( (first_from, last_to ) )
+            first_from, last_to = this_from, this_to
+            continue
+
+        if last_to < this_to:
+            last_to = this_to
+
+    new_intervals.append( ( first_from, last_to ))
+
+    return new_intervals
+
+

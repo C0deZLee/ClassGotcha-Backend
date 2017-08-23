@@ -66,6 +66,7 @@ class ClassroomViewSet(viewsets.ViewSet):
 			classrooms = Classroom.objects.filter(class_code=search_token)
 			serializer = ClassroomSerializer(classrooms, many=True)
 			return Response(serializer.data)
+
 		# major + class number
 		else:
 			match = re.match(r"([a-z]+) *([0-9a-z]*)", search_token, re.I)
@@ -76,12 +77,10 @@ class ClassroomViewSet(viewsets.ViewSet):
 				class_number = items[1]
 				major = Major.objects.get(major_short=class_major)
 				classrooms = Classroom.objects.filter(major=major,
-				                                      class_number=class_number) if class_number else Classroom.objects.filter(
-					major=major)
+				                                      class_number=class_number) if class_number else Classroom.objects.filter(major=major)
 				serializer = BasicClassroomSerializer(classrooms, many=True)
 				return Response(serializer.data)
 			else:
-				# TODO STEVE: need to consider more circumstances
 				return Response({})
 
 	def validate(self, request, pk):
@@ -207,11 +206,11 @@ class ClassroomViewSet(viewsets.ViewSet):
 		upload = request.FILES.get('file', False)
 		temp_file = open(upload.temporary_file_path())
 		if upload:
+			semester, created = Semester.objects.get_or_create(name="Fall 2017", start=datetime.datetime(year=2017, month=8, day=21), end=datetime.datetime(year=2017, month=12, day=8))
 			course = json.load(temp_file)
 			for key, cours in course.iteritems():
 				# print cours['description']
 				major, created = Major.objects.get_or_create(major_short=cours['major'])
-				semester, created = Semester.objects.get_or_create(name="Spring 2017")
 				try:
 					# create class time
 					time = Task.objects.create(task_name=cours['name'] + ' - ' + cours['section'],
