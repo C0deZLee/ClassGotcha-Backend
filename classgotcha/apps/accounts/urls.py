@@ -81,6 +81,10 @@ account_freetime = views.AccountViewSet.as_view({
 	'get': 'freetime'
 })
 
+account_explore = views.AccountViewSet.as_view({
+	'get':'explore_friends'
+})
+
 professor_detail = views.ProfessorViewSet.as_view({
 	'get': 'retrieve',
 	'put': 'update'
@@ -105,6 +109,7 @@ urlpatterns = [
 	url(r'^chatrooms/$', account_chatrooms, name='user-chatrooms'),
 	url(r'^friends/$', account_friends, name='user-friends'),
 	url(r'^pending-friends/$', account_pending_friends, name='user-pending-friends'),
+	url(r'^explore-friends/$', account_explore, name='user-explore-friends'),
 	url(r'^login/$', obtain_jwt_token),
 	url(r'^login-refresh/$', refresh_jwt_token),
 	url(r'^login-verify/$', verify_jwt_token),

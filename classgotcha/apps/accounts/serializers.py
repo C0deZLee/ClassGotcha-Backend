@@ -57,7 +57,7 @@ class BasicClassroomSerializer(serializers.ModelSerializer):
 
 	class Meta:
 		model = Classroom
-		fields = ('id', 'class_code', 'class_short', 'students_count',
+		fields = ('id', 'class_code', 'class_short', 'students_count', 'class_credit',
 		          'class_section', 'description', 'class_time', 'semester', 'professors', 'folders')
 
 
