@@ -13,6 +13,13 @@ from datetime import datetime
 # TODO download the intervals package
 
 
+def test_scheduler():
+	account  = Account.objects.all()[0]
+	print account.tasks.all()
+	task  = account.tasks.all()
+	generate_recommendations_for_homework(account,task)
+
+
 def generate_recommendations_for_quiz(date):
 	# review for the quiz one week prior and 2 days prior
 	pass
