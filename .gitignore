@@ -9,7 +9,6 @@ __pycache__/
 
 # Local files
 local/env/*
-local/tmp/*
 .editorconfig
 .eslintrc
 dist/
@@ -22,7 +21,6 @@ statics/node_modules
 classgotcha/apps/accounts/migrations/*
 classgotcha/apps/classrooms/migrations/*
 classgotcha/apps/chatrooms/migrations/*
-classgotcha/apps/groups/migrations/*
 classgotcha/apps/posts/migrations/*
 classgotcha/apps/tasks/migrations/*
 classgotcha/apps/tags/migrations/*
