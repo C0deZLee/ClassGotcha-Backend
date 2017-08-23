@@ -44,7 +44,7 @@ def generate_recommendations_for_homework(account, task):  # in this case the en
 			# generate a new task to do the homework
 			try:
 				new_task = Task(task_name='do homework for' + task.task_name,
-				                category='Homework',
+				                category=1,
 				                start=datetime(work_date.year, work_date.month, work_date.day, int(interval[0]), int(60 * (interval[0] - int(interval[0])))),
 				                end=datetime(work_date.year, work_date.month, work_date.day, int(interval[1]), int(60 * (interval[1] - int(interval[1])))),
 				                classroom=task.classroom, creator=account)
@@ -62,7 +62,7 @@ def generate_recommendations_for_homework(account, task):  # in this case the en
 			if start>interval[0] and start<(interval[1]-1):
 				try:
 					new_task = Task(task_name='do homework for' + task.task_name,
-				                category='Homework',
+				                category=1,
 				                start=datetime(work_date.year, work_date.month, work_date.day, start, 0),
 				                end=datetime(work_date.year, work_date.month, work_date.day, start+1, 0),
 				                classroom=task.classroom, creator=account)
