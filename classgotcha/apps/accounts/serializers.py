@@ -1,14 +1,13 @@
 from rest_framework import serializers
 
 from models import Account, Group, Professor
-from ..chatrooms.models import Chatroom
+# from ..chatrooms.models import Chatroom
 from ..classrooms.models import Semester, Classroom, Major, OfficeHour
 from ..tasks.serializers import BasicTaskSerializer, ClassTimeTaskSerializer
 from ..tags.serializers import ClassFolderSerializer
 
-from django.core.files.images import ImageFile
 
-
+# from django.core.files.images import ImageFile
 # from ..chatrooms.matrix.matrix_api import MatrixApi
 # import requests
 
@@ -31,12 +30,6 @@ class SemesterSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = Semester
 		fields = ('name', 'formatted_start_date', 'formatted_end_date')
-
-
-# class AvatarSerializer(serializers.ModelSerializer):
-# 	class Meta:
-# 		model = Account
-# 		fields = ('avatar2x', 'avatar1x')
 
 
 class BasicProfessorSerializer(serializers.ModelSerializer):

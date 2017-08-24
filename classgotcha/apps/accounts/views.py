@@ -1,9 +1,8 @@
-import uuid, re
+import uuid
 from django.utils import timezone
-from datetime import datetime, timedelta
+from datetime import timedelta
 
 from django.shortcuts import get_object_or_404
-from django.core.files.base import File
 from django.contrib.auth.hashers import check_password
 
 from rest_framework_jwt.settings import api_settings
@@ -18,12 +17,11 @@ from ..posts.serializers import Moment, MomentSerializer, NoteSerializer, Commen
 from ..chatrooms.serializers import ChatroomSerializer
 from ..tasks.serializers import TaskSerializer
 
-from ..posts.models import Rate
 from models import Account, Professor, AccountVerifyToken
 from serializers import AccountSerializer, BasicAccountSerializer, AuthAccountSerializer, ProfessorSerializer
 
 from script import group, complement
-from django.core.mail import EmailMessage, EmailMultiAlternatives
+from django.core.mail import EmailMessage
 from django.template.loader import render_to_string
 
 
@@ -46,6 +44,10 @@ def send_verifying_email(account, subject, to, template):
 	email = EmailMessage(subject, render_to_string('email/%s.html' % template, ctx), 'no-reply@classgotcha.com', [to])
 	email.content_subtype = 'html'
 	email.send()
+
+# For Friend Searching
+def is_similar(user1, user2):
+	return (lambda a, b, c: len(a) / float(len(b)) > .8 and len(a) / float(len(c)) > .8 if b and c else False)(user1.classroom.intersects(user2.classroom), user1.classroom, user2.classroom)
 
 
 @api_view(['POST'])
@@ -100,9 +102,6 @@ def forget_password(request, token=None):
 	if request.method == 'POST':
 		if request.data['email']:
 			account = get_object_or_404(Account.objects.all(), email=request.data['email'])
-		# USERNAME is not allowed now
-		# elif request.data['username']:
-		# 	account = get_object_or_404(Account.objects.all(), username=request.data['username'])
 		else:
 			return Response(status=status.HTTP_400_BAD_REQUEST)
 		print account
@@ -141,11 +140,6 @@ def forget_password(request, token=None):
 		token_instance.account.save()
 		token_instance.is_expired = True
 		return Response(status=status.HTTP_200_OK)
-
-
-# For Friend Searching
-def is_similar(user1, user2):
-	return (lambda a, b, c: len(a) / float(len(b)) > .8 and len(a) / float(len(c)) > .8 if b and c else False)(user1.classroom.intersects(user2.classroom), user1.classroom, user2.classroom)
 
 
 @api_view(['GET'])
@@ -525,7 +519,3 @@ class ProfessorViewSet(viewsets.ViewSet):
 
 	def classrooms(self, request, pk):
 		pass
-
-
-class GroupViewSet(viewsets.ViewSet):
-	pass
