@@ -50,7 +50,7 @@ def generate_recommendations_for_homework(account, task):  # in this case the en
 				pass
 
 		for start in range(9, 18):
-			if start > interval[0] and start < (interval[1] - 1):
+			if (interval[1] - 1) > start > interval[0]:
 				try:
 					new_task = Task(task_name='do homework for' + task.task_name,
 					                category=1,
@@ -62,7 +62,7 @@ def generate_recommendations_for_homework(account, task):  # in this case the en
 					break
 				except:
 					pass
-		if task_add == True:
+		if task_add:
 			break
 	return task_add
 
