@@ -2,6 +2,7 @@ import views
 from django.conf.urls import url
 
 task_detail = views.TaskViewSet.as_view({
+	'post': 'add',
 	'put': 'update',
 	'delete': 'delete'
 })

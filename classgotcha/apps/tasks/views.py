@@ -14,6 +14,11 @@ class TaskViewSet(viewsets.ViewSet):
 	serializer_class = MomentSerializer
 	permission_classes = (IsAuthenticated,)
 
+	def add(self, request, pk):
+		task = get_object_or_404(self.queryset, pk=pk)
+		task.involved.add(request.user)
+		return Response(status=status.HTTP_200_OK)
+
 	def update(self, request, pk):
 		task = get_object_or_404(self.queryset, pk=pk)
 
@@ -39,7 +44,6 @@ class TaskViewSet(viewsets.ViewSet):
 					task.task_name = request.data['task_name']
 					task.save()
 			except:
-
 				return Response({'detail': 'Wrong Time Format.'}, status=status.HTTP_400_BAD_REQUEST)
 
 		# Classroom or public task

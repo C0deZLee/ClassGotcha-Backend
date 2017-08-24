@@ -1,12 +1,9 @@
-from models import Moment, Post, Comment
-
 from django.shortcuts import get_object_or_404
 from rest_framework import permissions, viewsets, status
-from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from rest_framework.reverse import reverse
 
-from serializers import MomentSerializer, CommentSerializer, PostSerializer, BasicPostSerializer
+from models import Moment, Post, Comment
+from serializers import MomentSerializer, PostSerializer, BasicPostSerializer
 
 
 class MomentViewSet(viewsets.ViewSet):

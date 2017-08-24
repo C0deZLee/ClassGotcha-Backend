@@ -99,9 +99,18 @@ class Account(AbstractBaseUser, PermissionsMixin):
 	birthday = models.DateField(null=True, blank=True)
 	school_year = models.CharField(max_length=40, blank=True)
 	about_me = models.CharField(max_length=200, default='Yo!')
+	phone = models.CharField(max_length=20, null=True)
+
+	# Social Media
+	facebook = models.CharField(max_length=200, null=True)
+	twitter = models.CharField(max_length=200, null=True)
+	linkedin = models.CharField(max_length=200, null=True)
+	instagram = models.CharField(max_length=200, null=True)
+	snapchat = models.CharField(max_length=200, null=True)
+
+	# Level
 	level = models.IntegerField(default=1)
 	exp = models.IntegerField(default=0)
-	phone = models.CharField(max_length=20, null=True)
 	# Avatar
 	avatar2x = models.ImageField(upload_to='avatars', default='/avatars/default/user-male100.png')
 	avatar1x = models.ImageField(upload_to='avatars', default='/avatars/default/user-male50.png')
