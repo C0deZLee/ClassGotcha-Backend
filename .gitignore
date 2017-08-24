@@ -25,6 +25,7 @@ classgotcha/apps/posts/migrations/*
 classgotcha/apps/tasks/migrations/*
 classgotcha/apps/tags/migrations/*
 classgotcha/apps/badges/migrations/*
+classgotcha/apps/notifications/migrations/
 
 !classgotcha/apps/accounts/migrations/__init__.py
 !classgotcha/apps/classrooms/migrations/__init__.py
@@ -34,6 +35,7 @@ classgotcha/apps/badges/migrations/*
 !classgotcha/apps/tasks/migrations/__init__.py
 !classgotcha/apps/tags/migrations/__init__.py
 !classgotcha/apps/badges/migrations/__init__.py
+!classgotcha/apps/notifications/migrations/__init__.py
 
 
 classgotcha/apps/chatrooms/static/*
