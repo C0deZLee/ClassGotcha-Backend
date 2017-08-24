@@ -8,19 +8,19 @@ from ..notifications.models import Notification
 def level_up(account, exp):
 	level_up_exp = 100
 	account.exp += exp
-	if account.exp > level_up_exp:
+	if account.exp >= level_up_exp:
 		account.level += 1
 		account.exp = 0
-	notification = Notification(receiver_id=account.id)
-	notification.content = 'You have reached Level %d!' % account.level
-	notification.save()
+		notification = Notification(receiver_id=account.id)
+		notification.content = 'Congratulation! You have reached Level %d!' % account.level
+		notification.save()
 	account.save()
 
 
 def trigger_action(account, action_name):
 	action = get_object_or_404(Action.objects.all(), name=action_name)
 
-	linked_badge_types = action.linked_badge_types
+	linked_badge_types = action.linked_badge_types.all()
 	account_badges = account.badges.filter(finished=None)
 	account_badge_types = []
 
