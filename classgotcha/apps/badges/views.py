@@ -42,76 +42,72 @@ def action_init(request):
 			Action(name='report_classroom_task', exp=5),
 		])
 	except IntegrityError:
-		return Response({'detail': 'Please Clean up Action first'}, status=status.HTTP_200_OK)
+		pass
 
 	try:
 		BadgeType.objects.bulk_create([
-			BadgeType(name='Email Verified', action_required=1, description='Email Verification'),
+			BadgeType(name='Email Verified', action_required=1, identifier='Email Verified', description='Email Verification'),
 
-			BadgeType(name='Completed User Information', action_required=1, description='User Information'),
+			BadgeType(name='Completed User Information', action_required=1, identifier='Completed User Information', description='User Information'),
 
 			# Friends refer
-			BadgeType(name='Friend Referred I', action_required=1, description='Refer 1 Friend'),
-			BadgeType(name='Friends Referred II', action_required=2, level=2, description='Refer 2 Friends'),
-			BadgeType(name='Friends Referred III', action_required=5, level=3, description='Refer 5 Friends'),
+			BadgeType(name='Friend Referred I', action_required=1, identifier='Friend Referred', description='Refer 1 Friend'),
+			BadgeType(name='Friends Referred II', action_required=2, identifier='Friend Referred', level=2, description='Refer 2 Friends'),
+			BadgeType(name='Friends Referred III', action_required=5, identifier='Friend Referred', level=3, description='Refer 5 Friends'),
 
 			# Classrooms
-			BadgeType(name='Classroom Contributor I', action_required=1, description='Complete 1 classroom info'),
-			BadgeType(name='Classroom Contributor II', action_required=2, level=2, description='Complete 2 Classroom Info'),
-			BadgeType(name='Classroom Contributor III', action_required=5, level=3, description='Complete 5 Classroom Info'),
-			          
+			BadgeType(name='Classroom Contributor I', action_required=1, identifier='Classroom Contributor', description='Complete 1 classroom info'),
+			BadgeType(name='Classroom Contributor II', action_required=2, identifier='Classroom Contributor', level=2, description='Complete 2 Classroom Info'),
+			BadgeType(name='Classroom Contributor III', action_required=5, identifier='Classroom Contributor', level=3, description='Complete 5 Classroom Info'),
 
-			BadgeType(name='Friend I', action_required=1, description='Have 1 friend'),
-			BadgeType(name='Friend II', action_required=2, level=2, description='Have 2 friends'),
-			BadgeType(name='Friend III', action_required=5, level=3, description='Have 5 friends'),
-			BadgeType(name='Friend IV', action_required=10, level=3, description='Have 10 friends'),
-			BadgeType(name='Friend V', action_required=20, level=3, description='Have 20 friends'),
+			BadgeType(name='Friend I', action_required=1, identifier='Friend', description='Have 1 friend'),
+			BadgeType(name='Friend II', action_required=2, identifier='Friend', level=2, description='Have 2 friends'),
+			BadgeType(name='Friend III', action_required=5, identifier='Friend', level=3, description='Have 5 friends'),
+			BadgeType(name='Friend IV', action_required=10, identifier='Friend', level=3, description='Have 10 friends'),
+			BadgeType(name='Friend V', action_required=20, identifier='Friend', level=3, description='Have 20 friends'),
 
 			# File Uploads
-			BadgeType(name='Notes Contributor I', action_required=1, description='Contribute 1 Note'),
-			BadgeType(name='Notes Contributor II', action_required=2, level=2, description='Contribute 2 Notes'),
-			BadgeType(name='Notes Contributor III', action_required=5, level=3, description='Contribute 5 Notes'),
-			BadgeType(name='Notes Contributor IV', action_required=10, level=3, description='Contribute 10 Notes'),
-			BadgeType(name='Notes Contributor V', action_required=20, level=3, description='Contribute 20 Notes'),
+			BadgeType(name='Notes Contributor I', action_required=1, identifier='Notes Contributor', description='Contribute 1 Note'),
+			BadgeType(name='Notes Contributor II', action_required=2, identifier='Notes Contributor', level=2, description='Contribute 2 Notes'),
+			BadgeType(name='Notes Contributor III', action_required=5, identifier='Notes Contributor', level=3, description='Contribute 5 Notes'),
+			BadgeType(name='Notes Contributor IV', action_required=10, identifier='Notes Contributor', level=3, description='Contribute 10 Notes'),
+			BadgeType(name='Notes Contributor V', action_required=20, identifier='Notes Contributor', level=3, description='Contribute 20 Notes'),
 
 			# Tasks
-			BadgeType(name='Classroom Task Contributor I', action_required=1, description='Contribute on 1 Classroom Task'),
-			BadgeType(name='Classroom Task Contributor II', action_required=2, level=2, description='Contribute on 2 Classroom Tasks'),
-			BadgeType(name='Classroom Task Contributor III', action_required=5, level=3, description='Contribute on 5 Classroom Tasks'),
-			BadgeType(name='Classroom Task Contributor IV', action_required=10, level=4, description='Contribute on 10 Classroom Tasks'),
-			BadgeType(name='Classroom Task Contributor V', action_required=20, level=5, description='Contribute on 20 Classroom Tasks'),
-			          
+			BadgeType(name='Classroom Task Contributor I', action_required=1, identifier='Classroom Task Contributor', description='Contribute on 1 Classroom Task'),
+			BadgeType(name='Classroom Task Contributor II', action_required=2, identifier='Classroom Task Contributor', level=2, description='Contribute on 2 Classroom Tasks'),
+			BadgeType(name='Classroom Task Contributor III', action_required=5, identifier='Classroom Task Contributor', level=3, description='Contribute on 5 Classroom Tasks'),
+			BadgeType(name='Classroom Task Contributor IV', action_required=10, identifier='Classroom Task Contributor', level=4, description='Contribute on 10 Classroom Tasks'),
+			BadgeType(name='Classroom Task Contributor V', action_required=20, identifier='Classroom Task Contributor', level=5, description='Contribute on 20 Classroom Tasks'),
 
 			# Questions
-			BadgeType(name='Questioner I', action_required=1, description='Post 1 Question in Classroom'),
-			BadgeType(name='Questioner II', action_required=2, level=2, description='Post 2 Questions in Classroom'),
-			BadgeType(name='Questioner III', action_required=5, level=3, description='Post 5 Questions in Classroom'),
-			BadgeType(name='Questioner IV', action_required=10, level=4, description='Post 10 Questions in Classroom'),
-			BadgeType(name='Questioner V', action_required=20, level=5, description='Post 20 Questions in Classroom'),
+			BadgeType(name='Questioner I', action_required=1, identifier='Questioner', description='Post 1 Question in Classroom'),
+			BadgeType(name='Questioner II', action_required=2, identifier='Questioner', level=2, description='Post 2 Questions in Classroom'),
+			BadgeType(name='Questioner III', action_required=5, identifier='Questioner', level=3, description='Post 5 Questions in Classroom'),
+			BadgeType(name='Questioner IV', action_required=10, identifier='Questioner', level=4, description='Post 10 Questions in Classroom'),
+			BadgeType(name='Questioner V', action_required=20, identifier='Questioner', level=5, description='Post 20 Questions in Classroom'),
 
-			BadgeType(name='Answerer I', action_required=1, description='Answer 1 Question in Classroom'),
-			BadgeType(name='Answerer II', action_required=2, level=2, description='Answer 2 Questions in Classroom'),
-			BadgeType(name='Answerer III', action_required=5, level=3, description='Answer 5 Questions in Classroom'),
-			BadgeType(name='Answerer IV', action_required=10, level=4, description='Answer 10 Questions in Classroom'),
-			BadgeType(name='Answerer V', action_required=20, level=5, description='Answer 20 Questions in Classroom'),
-			          
+			BadgeType(name='Answerer I', action_required=1, identifier='Answerer', description='Answer 1 Question in Classroom'),
+			BadgeType(name='Answerer II', action_required=2, identifier='Answerer', level=2, description='Answer 2 Questions in Classroom'),
+			BadgeType(name='Answerer III', action_required=5, identifier='Answerer', level=3, description='Answer 5 Questions in Classroom'),
+			BadgeType(name='Answerer IV', action_required=10, identifier='Answerer', level=4, description='Answer 10 Questions in Classroom'),
+			BadgeType(name='Answerer V', action_required=20, identifier='Answerer', level=5, description='Answer 20 Questions in Classroom'),
 
-			BadgeType(name='Elite Answerer I', action_required=1, description='Solve 1 Question in Classroom'),
-			BadgeType(name='Elite Answerer II', action_required=2, level=2, description='Solve 2 Questions in Classroom'),
-			BadgeType(name='Elite Answerer III', action_required=5, level=3, description='Solve 5 Questions in Classroom'),
-			BadgeType(name='Elite Answerer IV', action_required=10, level=4, description='Solve 10 Questions in Classroom'),
-			BadgeType(name='Elite Answerer V', action_required=20, level=5, description='Solve 20 Questions in Classroom'),
-			          
+			BadgeType(name='Elite Answerer I', action_required=1, identifier='Elite Answerer', description='Solve 1 Question in Classroom'),
+			BadgeType(name='Elite Answerer II', action_required=2, identifier='Elite Answerer', level=2, description='Solve 2 Questions in Classroom'),
+			BadgeType(name='Elite Answerer III', action_required=5, identifier='Elite Answerer', level=3, description='Solve 5 Questions in Classroom'),
+			BadgeType(name='Elite Answerer IV', action_required=10, identifier='Elite Answerer', level=4, description='Solve 10 Questions in Classroom'),
+			BadgeType(name='Elite Answerer V', action_required=20, identifier='Elite Answerer', level=5, description='Solve 20 Questions in Classroom'),
 
 			# Reports
-			BadgeType(name='Community Contributor I', action_required=1, description='Report 1 Wrongdoing or Post 1 Post in User Forum'),
-			BadgeType(name='Community Contributor II', action_required=1, level=2, description='Report 2 Wrongdoings or Post 2 Posts in User Forum'),
-			BadgeType(name='Community Contributor III', action_required=1, level=3, description='Report 3 Wrongdoings or Post 3 Posts in User Forum'),
-			BadgeType(name='Community Contributor IV', action_required=1, level=4, description='Report 4 Wrongdoings or Post 4 Posts in User Forum'),
-			BadgeType(name='Community Contributor V', action_required=1, level=5, description='Report 5 Wrongdoings or Post 5 Posts in User Forum'),
+			BadgeType(name='Community Contributor I', action_required=1, identifier='Community Contributor', description='Report 1 Wrongdoing or Post 1 Post in User Forum'),
+			BadgeType(name='Community Contributor II', action_required=2, identifier='Community Contributor', level=2, description='Report 2 Wrongdoings or Post 2 Posts in User Forum'),
+			BadgeType(name='Community Contributor III', action_required=5, identifier='Community Contributor', level=3, description='Report 3 Wrongdoings or Post 3 Posts in User Forum'),
+			BadgeType(name='Community Contributor IV', action_required=10, identifier='Community Contributor', level=4, description='Report 4 Wrongdoings or Post 4 Posts in User Forum'),
+			BadgeType(name='Community Contributor V', action_required=20, identifier='Community Contributor', level=5, description='Report 5 Wrongdoings or Post 5 Posts in User Forum'),
 		])
 	except IntegrityError:
-		return Response({'detail': 'Please Clean up Action first'}, status=status.HTTP_200_OK)
+		pass
 
 	verify_email = Action.objects.get(name='verify_email')
 	update_user_info = Action.objects.get(name='update_user_info')
@@ -134,8 +130,8 @@ def action_init(request):
 	BadgeType.objects.get(name='Completed User Information').linked_actions.add(update_user_info)
 
 	BadgeType.objects.get(name='Friend Referred I').linked_actions.add(refer_friend)
-	BadgeType.objects.get(name='Friend Referred II').linked_actions.add(refer_friend)
-	BadgeType.objects.get(name='Friend Referred III').linked_actions.add(refer_friend)
+	BadgeType.objects.get(name='Friends Referred II').linked_actions.add(refer_friend)
+	BadgeType.objects.get(name='Friends Referred III').linked_actions.add(refer_friend)
 
 	BadgeType.objects.get(name='Classroom Contributor I').linked_actions.add(update_classroom_info)
 	BadgeType.objects.get(name='Classroom Contributor II').linked_actions.add(update_classroom_info)
@@ -153,11 +149,11 @@ def action_init(request):
 	BadgeType.objects.get(name='Notes Contributor IV').linked_actions.add(upload_file)
 	BadgeType.objects.get(name='Notes Contributor V').linked_actions.add(upload_file)
 
-	BadgeType.objects.get(name='Classroom Task Contributor I').linked_actions.add([add_classroom_task, edit_classroom_task])
-	BadgeType.objects.get(name='Classroom Task Contributor II').linked_actions.add([add_classroom_task, edit_classroom_task])
-	BadgeType.objects.get(name='Classroom Task Contributor III').linked_actions.add([add_classroom_task, edit_classroom_task])
-	BadgeType.objects.get(name='Classroom Task Contributor IV').linked_actions.add([add_classroom_task, edit_classroom_task])
-	BadgeType.objects.get(name='Classroom Task Contributor V').linked_actions.add([add_classroom_task, edit_classroom_task])
+	BadgeType.objects.get(name='Classroom Task Contributor I').linked_actions.add(add_classroom_task, edit_classroom_task)
+	BadgeType.objects.get(name='Classroom Task Contributor II').linked_actions.add(add_classroom_task, edit_classroom_task)
+	BadgeType.objects.get(name='Classroom Task Contributor III').linked_actions.add(add_classroom_task, edit_classroom_task)
+	BadgeType.objects.get(name='Classroom Task Contributor IV').linked_actions.add(add_classroom_task, edit_classroom_task)
+	BadgeType.objects.get(name='Classroom Task Contributor V').linked_actions.add(add_classroom_task, edit_classroom_task)
 
 	BadgeType.objects.get(name='Questioner I').linked_actions.add(post_question)
 	BadgeType.objects.get(name='Questioner II').linked_actions.add(post_question)
@@ -177,10 +173,10 @@ def action_init(request):
 	BadgeType.objects.get(name='Elite Answerer IV').linked_actions.add(answer_approved)
 	BadgeType.objects.get(name='Elite Answerer V').linked_actions.add(answer_approved)
 
-	BadgeType.objects.get(name='Community Contributor I').linked_actions.add([report_forum, report_user, report_post, report_classroom_task])
-	BadgeType.objects.get(name='Community Contributor II').linked_actions.add([report_forum, report_user, report_post, report_classroom_task])
-	BadgeType.objects.get(name='Community Contributor III').linked_actions.add([report_forum, report_user, report_post, report_classroom_task])
-	BadgeType.objects.get(name='Community Contributor IV').linked_actions.add([report_forum, report_user, report_post, report_classroom_task])
-	BadgeType.objects.get(name='Community Contributor V').linked_actions.add([report_forum, report_user, report_post, report_classroom_task])
+	BadgeType.objects.get(name='Community Contributor I').linked_actions.add(report_forum, report_user, report_post, report_classroom_task)
+	BadgeType.objects.get(name='Community Contributor II').linked_actions.add(report_forum, report_user, report_post, report_classroom_task)
+	BadgeType.objects.get(name='Community Contributor III').linked_actions.add(report_forum, report_user, report_post, report_classroom_task)
+	BadgeType.objects.get(name='Community Contributor IV').linked_actions.add(report_forum, report_user, report_post, report_classroom_task)
+	BadgeType.objects.get(name='Community Contributor V').linked_actions.add(report_forum, report_user, report_post, report_classroom_task)
 
 	return Response({'detail': 'Done'}, status=status.HTTP_201_CREATED)
