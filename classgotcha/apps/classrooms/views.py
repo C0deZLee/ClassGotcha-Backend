@@ -10,7 +10,7 @@ from rest_framework.response import Response
 from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework.decorators import parser_classes
 
-from models import Account, Classroom, Semester, Major, Professor
+from models import Classroom, Semester, Major, Professor
 # from ..chatrooms.models import Chatroom
 
 from serializers import ClassroomSerializer, MajorSerializer, OfficeHourSerializer
@@ -19,6 +19,7 @@ from ..tasks.serializers import Task, TaskSerializer, BasicTaskSerializer, Creat
 from ..accounts.serializers import BasicClassroomSerializer, BasicAccountSerializer
 from ..tags.serializers import ClassFolderSerializer, Tag
 
+from ..badges.script import trigger_action
 
 # from ..chatrooms.matrix.matrix_api import MatrixApi
 

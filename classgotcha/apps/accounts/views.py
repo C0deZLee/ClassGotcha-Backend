@@ -24,6 +24,8 @@ from script import group, complement
 from django.core.mail import EmailMessage
 from django.template.loader import render_to_string
 
+from ..badges.script import trigger_action
+
 
 def send_verifying_email(account, subject, to, template):
 	token_queryset = AccountVerifyToken.objects.all()
@@ -45,6 +47,7 @@ def send_verifying_email(account, subject, to, template):
 	email.content_subtype = 'html'
 	email.send()
 
+
 # For Friend Searching
 def is_similar(user1, user2):
 	return (lambda a, b, c: len(a) / float(len(b)) > .8 and len(a) / float(len(c)) > .8 if b and c else False)(user1.classroom.intersects(user2.classroom), user1.classroom, user2.classroom)
@@ -55,6 +58,9 @@ def is_similar(user1, user2):
 def account_register(request):
 	if request.data['email'][-4:] != ".edu":
 		return Response({'email': ['Please use your edu email.']}, status=status.HTTP_403_FORBIDDEN)
+	if request.data.get('refer'):
+		referrer = Account.objects.get(email=request.data.get('refer'))
+		trigger_action(referrer, 'refer_friend')
 
 	serializer = AuthAccountSerializer(data=request.data)
 	serializer.is_valid(raise_exception=True)
@@ -90,7 +96,8 @@ def email_verify(request, token=None):
 
 		token_instance.account.is_verified = True
 		token_instance.is_expired = True
-		print token_instance.account, 'has been verified'
+		trigger_action(request.user, 'verify_email')
+
 		return Response(status=status.HTTP_200_OK)
 
 
@@ -250,8 +257,7 @@ class AccountViewSet(viewsets.ViewSet):
 			return Response(serializer.data)
 		elif request.method == 'PUT':
 			for (key, value) in request.data.items():
-				if key in ['username', 'first_name', 'mid_name', 'last_name', 'gender', 'birthday', 'school_year',
-				           'major']:
+				if key in ['username', 'first_name', 'mid_name', 'last_name', 'gender', 'birthday', 'school_year', 'major']:
 					if key == 'major':
 						request.user.major_id = value
 					else:
@@ -324,8 +330,11 @@ class AccountViewSet(viewsets.ViewSet):
 			# add classroom tasks from user task list
 			for task in classroom.tasks.all():
 				task.involved.add(request.user)
+
+			trigger_action(request.user, 'add_classroom')
+
 			# add user to classroom chatrooms
-			# TODO: change into matrix version: classroom.chatrooms.get().accounts.add(request.user.username ???)
+			# change into matrix version: classroom.chatrooms.get().accounts.add(request.user.username ???)
 			# also need to call the matrix api? add the user into matrix chatrooms...
 			# classroom.chatroom.get().accounts.add(request.user)
 			return Response(status=200)
