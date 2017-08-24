@@ -206,7 +206,7 @@ class AccountViewSet(viewsets.ViewSet):
 		# send friend request
 		if request.method == 'POST':
 			if request.user.pk is int(pk):  # cant add yourself as your friend
-				return Response({'detail': 'You can\'t add yourself as your friend'}, status=status.HTTP_403_FORBIDDEN)
+				return Response({'detail': 'You can\'t add yourself as friend'}, status=status.HTTP_403_FORBIDDEN)
 			else:
 				new_friend = get_object_or_404(self.queryset, pk=pk)
 				if new_friend in request.user.friends.all():

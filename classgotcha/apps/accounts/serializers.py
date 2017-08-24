@@ -5,7 +5,7 @@ from models import Account, Group, Professor
 from ..classrooms.models import Semester, Classroom, Major, OfficeHour
 from ..tasks.serializers import BasicTaskSerializer, ClassTimeTaskSerializer
 from ..tags.serializers import ClassFolderSerializer
-
+from ..badges.serializers import BadgeSerializer
 
 # from django.core.files.images import ImageFile
 # from ..chatrooms.matrix.matrix_api import MatrixApi
@@ -99,12 +99,13 @@ class AccountSerializer(serializers.ModelSerializer):
 	is_professor = serializers.ReadOnlyField()
 	full_name = serializers.ReadOnlyField()
 	tasks = BasicTaskSerializer(many=True)
+	badges = BadgeSerializer(many=True)
 
 	class Meta:
 		model = Account
 		exclude = ('user_permissions', 'groups', 'is_superuser', 'is_staff',
-		           'is_active', 'password',)
-		read_only_fields = ('created', 'updated',)
+		           'is_active', 'password','updated')
+		read_only_fields = ('created', )
 
 
 class AuthAccountSerializer(serializers.ModelSerializer):
@@ -128,7 +129,7 @@ class AuthAccountSerializer(serializers.ModelSerializer):
 		return account
 
 
-class GroupSerializers(serializers.ModelSerializer):
-	class Meta:
-		model = Group
-		fields = ('group_type', 'members', 'classroom', 'creator')
+# class GroupSerializers(serializers.ModelSerializer):
+# 	class Meta:
+# 		model = Group
+# 		fields = ('group_type', 'members', 'classroom', 'creator')

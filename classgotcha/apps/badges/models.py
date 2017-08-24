@@ -33,9 +33,6 @@ class Badge(models.Model):
 	account = models.ForeignKey('accounts.Account', related_name='badges', on_delete=models.CASCADE)
 	badge_type = models.ForeignKey(BadgeType, on_delete=models.CASCADE, related_name='type')
 
-	# Timestamp
-	created = models.DateTimeField(auto_now_add=True)
-
 	def __unicode__(self):
 		return self.badge_type.name + '-' + self.account.email
 

@@ -26,16 +26,16 @@ def trigger_action(account, action_name):
 
 	for account_badge in account_badges:
 		# save account badge types for later
-		account_badge_types.append(account_badge.type.name)
+		account_badge_types.append(account_badge.badge_type.name)
 		# add counter to all linked badges
-		if account_badge.type in linked_badge_types:
+		if account_badge.badge_type in linked_badge_types:
 			account_badge.counter += 1
 			# Finish badge
-			if account_badge.counter == account_badge.type.action_required:
+			if account_badge.counter == account_badge.badge_type.action_required:
 				account_badge.finished = timezone.now()
 				# Send notification
 				notification = Notification(receiver_id=account.id)
-				notification.content = 'You have achieved a new badge --- ' + account_badge.type.name + '!'
+				notification.content = 'You have achieved a new badge --- ' + account_badge.badge_type.name + '!'
 				notification.save()
 
 			account_badge.save()
