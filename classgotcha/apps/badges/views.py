@@ -15,16 +15,16 @@ def action_init(request):
 			Action(name='verify_email', exp=50),  # DONE
 			Action(name='update_user_info', exp=25),
 			Action(name='refer_friend', exp=25),  # DONE
-			Action(name='change_avatar', exp=25),  # DONE
+			Action(name='change_avatar', exp=25),  # DONE # DONE
 
 			# Classrooms
 			Action(name='update_classroom_info', exp=10),
-			Action(name='add_classroom', exp=10),  # DONE
-			Action(name='add_friend', exp=5),  # DONE
-			Action(name='accept_friend', exp=5),  # DONE
+			Action(name='add_classroom', exp=10),  # DONE # DONE
+			Action(name='add_friend', exp=5),  # DONE # DONE
+			Action(name='accept_friend', exp=5),  # DONE # DONE
 
 			# File Uploads
-			Action(name='upload_file', exp=20),  # DONE
+			Action(name='upload_file', exp=20),  # DONE # DONE
 
 			# Tasks
 			Action(name='add_classroom_task', exp=5),  # DONE
@@ -69,15 +69,15 @@ def action_init(request):
 			BadgeType(name='Friend I', action_required=1, identifier='Friend', description='Have 1 friend'),
 			BadgeType(name='Friend II', action_required=2, identifier='Friend', level=2, description='Have 2 friends'),
 			BadgeType(name='Friend III', action_required=5, identifier='Friend', level=3, description='Have 5 friends'),
-			BadgeType(name='Friend IV', action_required=10, identifier='Friend', level=3, description='Have 10 friends'),
-			BadgeType(name='Friend V', action_required=20, identifier='Friend', level=3, description='Have 20 friends'),
+			BadgeType(name='Friend IV', action_required=10, identifier='Friend', level=4, description='Have 10 friends'),
+			BadgeType(name='Friend V', action_required=20, identifier='Friend', level=5, description='Have 20 friends'),
 
 			# File Uploads
 			BadgeType(name='Notes Contributor I', action_required=1, identifier='Notes Contributor', description='Contribute 1 Note'),
 			BadgeType(name='Notes Contributor II', action_required=2, identifier='Notes Contributor', level=2, description='Contribute 2 Notes'),
 			BadgeType(name='Notes Contributor III', action_required=5, identifier='Notes Contributor', level=3, description='Contribute 5 Notes'),
-			BadgeType(name='Notes Contributor IV', action_required=10, identifier='Notes Contributor', level=3, description='Contribute 10 Notes'),
-			BadgeType(name='Notes Contributor V', action_required=20, identifier='Notes Contributor', level=3, description='Contribute 20 Notes'),
+			BadgeType(name='Notes Contributor IV', action_required=10, identifier='Notes Contributor', level=4, description='Contribute 10 Notes'),
+			BadgeType(name='Notes Contributor V', action_required=20, identifier='Notes Contributor', level=5, description='Contribute 20 Notes'),
 
 			# Tasks
 			BadgeType(name='Classroom Task Contributor I', action_required=1, identifier='Classroom Task Contributor', description='Contribute on 1 Classroom Task'),
