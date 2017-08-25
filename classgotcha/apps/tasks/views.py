@@ -8,6 +8,8 @@ from rest_framework.response import Response
 from ..posts.serializers import MomentSerializer, Moment
 from serializers import Task
 
+from ..badges.script import trigger_action
+
 
 class TaskViewSet(viewsets.ViewSet):
 	queryset = Task.objects.all()
@@ -57,6 +59,7 @@ class TaskViewSet(viewsets.ViewSet):
 				if key in ['task_name', 'description', 'start', 'end', 'location', 'category', 'repeat']:
 					setattr(task, key, value)
 			task.save()
+			trigger_action(request.user, 'edit_classroom_task')
 
 		if task.task_of_classroom:
 			Moment.objects.create(

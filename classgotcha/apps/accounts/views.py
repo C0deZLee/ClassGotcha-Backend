@@ -38,7 +38,6 @@ def send_verifying_email(account, subject, to, template):
 	else:
 		verify_token = token_instance.token
 
-	print account.first_name
 	ctx = {
 		'user' : account,
 		'token': verify_token,
@@ -111,7 +110,6 @@ def forget_password(request, token=None):
 			account = get_object_or_404(Account.objects.all(), email=request.data['email'])
 		else:
 			return Response(status=status.HTTP_400_BAD_REQUEST)
-		print account
 
 		reset_token = uuid.uuid4()
 		token_instance, created = AccountVerifyToken.objects.get_or_create(account=account)
@@ -149,13 +147,7 @@ def forget_password(request, token=None):
 		return Response(status=status.HTTP_200_OK)
 
 
-@api_view(['GET'])
-@permission_classes((IsAuthenticated,))
-def get_similar_account(request):
-	pass
-
-
-@api_view(['GET', 'POST', 'OPTION'])
+@api_view(['POST', 'OPTIONS'])
 @permission_classes((IsAuthenticated,))
 @parser_classes((MultiPartParser, FormParser,))
 def account_avatar(request):
@@ -171,8 +163,8 @@ def account_avatar(request):
 		with Image.open(upload) as image:
 			image2x = resizeimage.resize_cover(image, [100, 100])
 			image1x = resizeimage.resize_cover(image, [50, 50])
-			img2x_name = str(request.user.id) + '100' + file_extension
-			img1x_name = str(request.user.id) + '50' + file_extension
+			img2x_name = str(request.user.id) + '.100.' + file_extension
+			img1x_name = str(request.user.id) + '.50.' + file_extension
 			img2x_io = StringIO()
 			img1x_io = StringIO()
 			image2x.save(img2x_io, image.format)
@@ -185,11 +177,12 @@ def account_avatar(request):
 		request.user.avatar2x = image2x_file
 
 		request.user.save()
+		trigger_action(request.user, 'change_avatar')
 		return Response({'data': 'success'}, status=status.HTTP_200_OK)
 
 
 class AccountViewSet(viewsets.ViewSet):
-	queryset = Account.objects.exclude(is_staff=1)
+	queryset = Account.objects.all()
 	parser_classes = (MultiPartParser, FormParser, JSONParser)
 	permission_classes = (IsAuthenticated,)
 
@@ -231,12 +224,14 @@ class AccountViewSet(viewsets.ViewSet):
 			else:
 				new_friend = get_object_or_404(self.queryset, pk=pk)
 				if new_friend in request.user.friends.all():
-					return Response({'detail': 'Already friended'}, status=status.HTTP_403_FORBIDDEN)
+					return Response({'detail': 'Already friend'}, status=status.HTTP_403_FORBIDDEN)
 
 				if request.user in new_friend.pending_friends.all():
-					return Response({'detail': 'Already sent the request'}, status=status.HTTP_403_FORBIDDEN)
+					return Response({'detail': 'You have sent friend request, please wait response'}, status=status.HTTP_403_FORBIDDEN)
 
 				new_friend.pending_friends.add(request.user)
+
+				trigger_action(request.user, 'add_friend')
 				return Response(status=200)
 
 		# accept friend request
@@ -251,6 +246,10 @@ class AccountViewSet(viewsets.ViewSet):
 				request.user.friends.add(new_friend)
 				request.user.pending_friends.remove(new_friend)
 				new_friend.friends.add(request.user)
+
+				trigger_action(request.user, 'accept_friend')
+				trigger_action(new_friend, 'accept_friend')
+
 				return Response(status=200)
 
 		if request.method == 'DELETE':
@@ -271,7 +270,7 @@ class AccountViewSet(viewsets.ViewSet):
 			return Response(serializer.data)
 		elif request.method == 'PUT':
 			for (key, value) in request.data.items():
-				if key in ['username', 'first_name', 'mid_name', 'last_name', 'gender', 'birthday', 'school_year', 'major']:
+				if key in ['username', 'first_name', 'mid_name', 'last_name', 'gender', 'birthday', 'school_year', 'major', 'about_me']:
 					if key == 'major':
 						request.user.major_id = value
 					else:
@@ -390,10 +389,12 @@ class AccountViewSet(viewsets.ViewSet):
 				return Response(status=status.HTTP_400_BAD_REQUEST)
 			# create new moment
 			moment = Moment(content=content, creator=request.user)
+
 			if classroom_id:
 				moment.classroom_id = classroom_id
 			if question:
 				moment.solved = False
+				trigger_action(request.user, 'post_question')
 			if image:
 				import uuid
 				from django.core.files.base import ContentFile
@@ -407,13 +408,9 @@ class AccountViewSet(viewsets.ViewSet):
 				file_name = str(uuid.uuid4())
 				complete_file_name = '%s.%s' % (file_name, file_extension,)
 				moment.images = ContentFile(decoded_file, complete_file_name)
+
 			moment.save()
-			return Response(status=status.HTTP_200_OK)
-		elif request.method == 'PUT':
-			moment = get_object_or_404(moment_query_set, pk=pk)
-			if moment.solved is False:
-				moment.solved = True
-				moment.save()
+			trigger_action(request.user, 'post_moment')
 			return Response(status=status.HTTP_200_OK)
 		elif request.method == 'DELETE':
 			moment = get_object_or_404(moment_query_set, pk=pk)
@@ -453,12 +450,6 @@ class AccountViewSet(viewsets.ViewSet):
 			task = get_object_or_404(task_queryset, pk=pk)
 			task.involved.remove(request.user)
 			task.finished.add(request.user)
-			return Response(status=status.HTTP_200_OK)
-		elif request.method == 'DELETE':
-			task = get_object_or_404(task_queryset, pk=pk)
-			task.involved.remove(request.user)
-			if task.involved.length == 0:
-				task.delete()
 			return Response(status=status.HTTP_200_OK)
 
 	@staticmethod
@@ -524,7 +515,6 @@ class ProfessorViewSet(viewsets.ViewSet):
 			comments = professor.comments.all()
 			return Response(CommentSerializer(comments, many=True).data)
 		elif request.method == 'POST':
-			print request.data
 			content = request.data.get('content', '')
 			is_anonymous = request.data.get('is_anonymous')
 			# num = request.data.get('num')
