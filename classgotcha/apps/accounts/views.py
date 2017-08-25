@@ -17,6 +17,8 @@ from ..posts.serializers import Moment, MomentSerializer, NoteSerializer, Commen
 from ..chatrooms.serializers import ChatroomSerializer
 from ..tasks.serializers import TaskSerializer
 
+from ..notifications.models import Notification
+
 from models import Account, Professor, AccountVerifyToken
 from serializers import AccountSerializer, BasicAccountSerializer, AuthAccountSerializer, ProfessorSerializer
 
@@ -69,7 +71,13 @@ def account_register(request):
 	payload = jwt_payload_handler(user)
 	token = jwt_encode_handler(payload)
 
-	# TODO: email templates
+	referrer = request.data.get('referrer', None)
+	if referrer:
+		account = Account.objects.get(email=referrer)
+		if account:
+			trigger_action(account, 'refer_friend')
+			Notification.objects.create(sender_id=user.id, content='joined ClassGotcha with your refer!', receiver_id=account.id)
+
 	send_verifying_email(account=user, subject='[ClassGotcha] Verification Email', to=request.data['email'], template='verification')
 
 	return Response({'token': token}, status=status.HTTP_201_CREATED)
