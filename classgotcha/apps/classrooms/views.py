@@ -21,6 +21,7 @@ from ..tags.serializers import ClassFolderSerializer, Tag
 
 from ..badges.script import trigger_action
 
+
 # from ..chatrooms.matrix.matrix_api import MatrixApi
 
 
@@ -75,8 +76,8 @@ class ClassroomViewSet(viewsets.ViewSet):
 				items = match.groups()
 				print items
 				class_major = items[0].upper()
-				class_number = items[1]
-				major = Major.objects.get(major_short=class_major)
+				class_number = items[1].upper()
+				major = get_object_or_404(Major.objects.all(), major_short=class_major)
 				classrooms = Classroom.objects.filter(major=major,
 				                                      class_number=class_number) if class_number else Classroom.objects.filter(major=major)
 				serializer = BasicClassroomSerializer(classrooms, many=True)

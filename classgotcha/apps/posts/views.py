@@ -5,6 +5,8 @@ from rest_framework.response import Response
 from models import Moment, Post, Comment
 from serializers import MomentSerializer, PostSerializer, BasicPostSerializer
 
+from ..notifications.models import Notification
+
 
 class MomentViewSet(viewsets.ViewSet):
 	queryset = Moment.objects.exclude(deleted=True)
@@ -47,6 +49,8 @@ class MomentViewSet(viewsets.ViewSet):
 		moment = get_object_or_404(self.queryset, pk=pk)
 		moment.liked_users.add(request.user)
 		moment.save()
+		if moment.creator_id is not request.user.id:
+			Notification.objects.create(receiver_id=moment.creator_id, sender_id=request.user.id, content='liked your moment')
 		return Response(status=status.HTTP_200_OK)
 
 

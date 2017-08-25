@@ -206,6 +206,20 @@ class AccountViewSet(viewsets.ViewSet):
 		else:
 			return Response(status=status.HTTP_403_FORBIDDEN)
 
+	def search(self, request):
+		token = request.data.get('token', None)
+		if token:
+			# TODO: search implementation
+			# Assume token is "abcd1234@psu.edu" or "abcd1234" or "John Martin"
+			# ....
+			# ....
+			users = []
+			serializer = BasicAccountSerializer(users, many=True)
+
+			return Response(serializer.data)
+		else:
+			return Response(status=status.HTTP_400_BAD_REQUEST)
+
 	def friends(self, request, pk=None):
 		if request.method == 'GET':
 			serializer = BasicAccountSerializer(request.user.friends, many=True)
@@ -288,10 +302,8 @@ class AccountViewSet(viewsets.ViewSet):
 	def explore_friends(self, request):
 		def similarity_check_classrooms(user, other):
 			# return boolean whether they could be friends [based on the classroom list]
-			print type(other.classrooms.all())
-			print other.classrooms.all()
-			if other.classrooms.all():
-				print "this is not empty\n"
+			# if other.classrooms.all():
+			# 	print "this is not empty\n"
 			mine = set(user.classrooms.all())
 			his = set(other.classrooms.all())
 			return True if mine and his and mine <= his or mine > his or len(mine & his) >= 2 else False

@@ -59,7 +59,7 @@ account_moments = views.AccountViewSet.as_view({
 })
 
 account_detail_moments = views.AccountViewSet.as_view({
-	'get' : 'moments',
+	'get': 'moments',
 })
 
 account_add_moments = views.AccountViewSet.as_view({
@@ -82,7 +82,11 @@ account_freetime = views.AccountViewSet.as_view({
 })
 
 account_explore = views.AccountViewSet.as_view({
-	'get':'explore_friends'
+	'get': 'explore_friends'
+})
+
+account_search = views.AccountViewSet.as_view({
+	'post': 'search'
 })
 
 professor_detail = views.ProfessorViewSet.as_view({
@@ -94,6 +98,8 @@ professor_comments = views.ProfessorViewSet.as_view({
 	'get' : 'comments',
 	'post': 'comments'
 })
+
+
 
 urlpatterns = [
 	url(r'^friends/(?P<pk>[0-9]+)/$', account_add_friends, name='add-friend'),
@@ -109,7 +115,8 @@ urlpatterns = [
 	url(r'^chatrooms/$', account_chatrooms, name='user-chatrooms'),
 	url(r'^friends/$', account_friends, name='user-friends'),
 	url(r'^pending-friends/$', account_pending_friends, name='user-pending-friends'),
-	url(r'^explore-friends/$', account_explore, name='user-explore-friends'),
+	url(r'^recommend-friends/$', account_explore, name='user-explore-friends'),
+	url(r'^search/$', account_search, name='user-search'),
 	url(r'^login/$', obtain_jwt_token),
 	url(r'^login-refresh/$', refresh_jwt_token),
 	url(r'^login-verify/$', verify_jwt_token),

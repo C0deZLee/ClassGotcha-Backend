@@ -21,6 +21,7 @@ from classgotcha.apps.classrooms import urls as classroom_urls
 from classgotcha.apps.posts import urls as post_urls
 from classgotcha.apps.tasks import urls as task_urls
 from classgotcha.apps.badges import urls as badges_urls
+from classgotcha.apps.notifications import urls as notification_urls
 
 admin.autodiscover()
 
@@ -31,6 +32,7 @@ urlpatterns = [
 	url(r'^post/', include(post_urls)),
 	url(r'^task/', include(task_urls)),
 	url(r'^badge/', include(badges_urls)),
+	url(r'^notification/', include(notification_urls)),
 
 	# admin site and docs
 	url(r'^admin/', admin.site.urls),

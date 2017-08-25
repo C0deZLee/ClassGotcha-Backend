@@ -19,6 +19,11 @@ class TaskViewSet(viewsets.ViewSet):
 		task.involved.add(request.user)
 		return Response(status=status.HTTP_200_OK)
 
+	def remove(self, request, pk):
+		task = get_object_or_404(self.queryset, pk=pk)
+		task.involved.remove(request.user)
+		return Response(status=status.HTTP_200_OK)
+
 	def update(self, request, pk):
 		task = get_object_or_404(self.queryset, pk=pk)
 
@@ -67,7 +72,15 @@ class TaskViewSet(viewsets.ViewSet):
 
 		if task.category == 6 and task.creator_id == request.user.id:
 			task.delete()
-		else:
-			task.involved.remove(request.user)
+		elif task.task_of_classroom_id:
+			if request.user in task.task_of_classroom.students.all():
+
+				Moment.objects.create(
+					content='I deleted the task \"' +
+					        task.task_name + '\".',
+					creator=request.user,
+					classroom_id=task.task_of_classroom_id)
+				task.delete()
 
 		return Response(status=status.HTTP_200_OK)
+
