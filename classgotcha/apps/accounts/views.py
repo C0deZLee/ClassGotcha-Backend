@@ -185,6 +185,7 @@ def account_avatar(request):
 		request.user.avatar2x = image2x_file
 
 		request.user.save()
+		trigger_action(request.user, 'change_avatar')
 		return Response({'data': 'success'}, status=status.HTTP_200_OK)
 
 
@@ -237,6 +238,7 @@ class AccountViewSet(viewsets.ViewSet):
 					return Response({'detail': 'Already sent the request'}, status=status.HTTP_403_FORBIDDEN)
 
 				new_friend.pending_friends.add(request.user)
+				trigger_action(request.user, 'add_friend')
 				return Response(status=200)
 
 		# accept friend request
@@ -251,6 +253,10 @@ class AccountViewSet(viewsets.ViewSet):
 				request.user.friends.add(new_friend)
 				request.user.pending_friends.remove(new_friend)
 				new_friend.friends.add(request.user)
+
+				trigger_action(request.user, 'accept_friend')
+				trigger_action(new_friend, 'accept_friend')
+
 				return Response(status=200)
 
 		if request.method == 'DELETE':
@@ -453,12 +459,6 @@ class AccountViewSet(viewsets.ViewSet):
 			task = get_object_or_404(task_queryset, pk=pk)
 			task.involved.remove(request.user)
 			task.finished.add(request.user)
-			return Response(status=status.HTTP_200_OK)
-		elif request.method == 'DELETE':
-			task = get_object_or_404(task_queryset, pk=pk)
-			task.involved.remove(request.user)
-			if task.involved.length == 0:
-				task.delete()
 			return Response(status=status.HTTP_200_OK)
 
 	@staticmethod

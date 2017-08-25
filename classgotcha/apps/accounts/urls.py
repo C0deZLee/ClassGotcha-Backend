@@ -74,7 +74,6 @@ account_tasks = views.AccountViewSet.as_view({
 
 account_tasks_edit = views.AccountViewSet.as_view({
 	'put'   : 'tasks',
-	'delete': 'tasks'
 })
 
 account_freetime = views.AccountViewSet.as_view({
@@ -98,8 +97,6 @@ professor_comments = views.ProfessorViewSet.as_view({
 	'get' : 'comments',
 	'post': 'comments'
 })
-
-
 
 urlpatterns = [
 	url(r'^friends/(?P<pk>[0-9]+)/$', account_add_friends, name='add-friend'),

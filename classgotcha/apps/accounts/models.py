@@ -145,7 +145,7 @@ class Account(AbstractBaseUser, PermissionsMixin):
 		ordering = ['created']
 
 	def __unicode__(self):
-		return self.username
+		return self.email
 
 	@property
 	def get_full_name(self):
