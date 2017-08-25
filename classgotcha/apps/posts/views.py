@@ -29,8 +29,10 @@ class MomentViewSet(viewsets.ViewSet):
 		moment.solved = True
 		moment.save()
 
-		for comment in moment.comments:
-			trigger_action(comment.creator, 'answer_approved')
+		for comment in moment.comments.all():
+			if moment.creator.id is not request.user.id:
+				trigger_action(comment.creator, 'answer_approved')
+				Notification.objects.create(receiver_id=comment.creator.id, content='approved your answer. EXP +15', sender_id=request.user.id)
 
 		return Response(status=status.HTTP_200_OK)
 
@@ -99,6 +101,7 @@ class PostViewSet(viewsets.ViewSet):
 		content = request.data.get('content', None)
 		if content:
 			Comment.objects.create(content=content, post_id=pk, creator=request.user)
+			trigger_action(request.user, 'post_forum')
 			return Response(status=status.HTTP_200_OK)
 		else:
 			return Response(status=status.HTTP_400_BAD_REQUEST)

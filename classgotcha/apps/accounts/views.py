@@ -412,14 +412,6 @@ class AccountViewSet(viewsets.ViewSet):
 			moment.save()
 			trigger_action(request.user, 'post_moment')
 			return Response(status=status.HTTP_200_OK)
-		elif request.method == 'PUT':
-			moment = get_object_or_404(moment_query_set, pk=pk)
-			if moment.solved is False:
-				moment.solved = True
-				moment.save()
-				for comment in moment.comments.all():
-					trigger_action(comment.creator, 'answer_approved')
-			return Response(status=status.HTTP_200_OK)
 		elif request.method == 'DELETE':
 			moment = get_object_or_404(moment_query_set, pk=pk)
 			moment.deleted = True

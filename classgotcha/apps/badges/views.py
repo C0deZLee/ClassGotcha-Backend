@@ -27,15 +27,15 @@ def action_init(request):
 			Action(name='upload_file', exp=20),  # DONE # DONE
 
 			# Tasks
-			Action(name='add_classroom_task', exp=5),  # DONE
-			Action(name='edit_classroom_task', exp=5),  # DONE
+			Action(name='add_classroom_task', exp=5),  # DONE # DONE
+			Action(name='edit_classroom_task', exp=5),  # DONE # DONE
 
 			# Questions
-			Action(name='post_moment', exp=1),  # DONE
-			Action(name='reply_moment', exp=1),  # DONE
-			Action(name='post_question', exp=5),  # DONE
-			Action(name='answer_question', exp=5),  # DONE
-			Action(name='answer_approved', exp=15),  # DONE
+			Action(name='post_moment', exp=1),  # DONE # DONE
+			Action(name='reply_moment', exp=1),  # DONE # DONE
+			Action(name='post_question', exp=5),  # DONE # DONE
+			Action(name='answer_question', exp=5),  # DONE # DONE
+			Action(name='answer_approved', exp=15),  # DONE # DONE
 
 			# Reports
 			Action(name='report_forum', exp=5),
@@ -45,7 +45,7 @@ def action_init(request):
 			Action(name='report_classroom_moment', exp=5),  # DONE
 
 			# Forum
-			Action(name='post_forum', exp=10),  # DONE
+			Action(name='post_forum', exp=10),  # DONE  # DONE
 		])
 	except IntegrityError:
 		pass
