@@ -84,10 +84,11 @@ class ProfessorSerializer(serializers.ModelSerializer):
 
 class BasicAccountSerializer(serializers.ModelSerializer):
 	full_name = serializers.ReadOnlyField()
+	major = MiniMajorSerializer()
 
 	class Meta:
 		model = Account
-		fields = ('pk', 'id', 'avatar1x', 'avatar2x', 'username', 'email', 'full_name', 'about_me', 'level')
+		fields = ('pk', 'id', 'avatar1x', 'avatar2x', 'username', 'email', 'full_name', 'about_me', 'level', 'school_year', 'major')
 
 
 class MiniAccountSerializer(serializers.ModelSerializer):
@@ -127,12 +128,11 @@ class AccountSerializer(serializers.ModelSerializer):
 class AuthAccountSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = Account
-		fields = ('username', 'email', 'password', 'first_name', 'last_name')
+		fields = ( 'email', 'password', 'first_name', 'last_name')
 		write_only_fields = ('password',)
 
 	def create(self, validated_data):
 		account = Account(email=validated_data['email'],
-		                  username=validated_data['username'],
 		                  first_name=validated_data['first_name'],
 		                  last_name=validated_data['last_name'])
 

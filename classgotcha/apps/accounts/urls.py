@@ -99,7 +99,8 @@ professor_comments = views.ProfessorViewSet.as_view({
 })
 
 urlpatterns = [
-	url(r'^friends/(?P<pk>[0-9]+)/$', account_add_friends, name='add-friend'),
+	url(r'^avatar/change/$', views.account_avatar, name='user-avatar'),
+
 	url(r'^moments/(?P<pk>[0-9]+)/$', account_add_moments, name='add-moment'),
 	url(r'^classrooms/(?P<pk>[0-9]+)/$', account_add_classrooms, name='add-classroom'),
 	url(r'^chatrooms/(?P<pk>[0-9]+)/$', account_add_chatrooms, name='add-chatrooms'),
@@ -107,10 +108,12 @@ urlpatterns = [
 	url(r'^(?P<pk>[0-9]+)/$', account_detail, name='user-detail'),
 	url(r'^(?P<pk>[0-9]+)/moments/$', account_detail_moments, name='user-detail-moments'),
 
-	url(r'^avatar/$', views.account_avatar, name='user-avatar'),
 	url(r'^classrooms/$', account_classrooms, name='user-classrooms'),
 	url(r'^chatrooms/$', account_chatrooms, name='user-chatrooms'),
+
 	url(r'^friends/$', account_friends, name='user-friends'),
+	url(r'^friends/(?P<pk>[0-9]+)/$', account_add_friends, name='add-friend'),
+
 	url(r'^pending-friends/$', account_pending_friends, name='user-pending-friends'),
 	url(r'^recommend-friends/$', account_explore, name='user-explore-friends'),
 	url(r'^search/$', account_search, name='user-search'),
