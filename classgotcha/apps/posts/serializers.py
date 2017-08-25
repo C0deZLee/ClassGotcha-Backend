@@ -1,6 +1,7 @@
 from models import Moment, Comment, Post, Note
 from ..accounts.serializers import BasicAccountSerializer
 from ..tags.serializers import BasicTagSerializer
+from ..classrooms.serializers import MiniClassroomSerializer
 from rest_framework import serializers
 
 
@@ -13,8 +14,8 @@ class CommentSerializer(serializers.ModelSerializer):
 
 
 class MomentSerializer(serializers.ModelSerializer):
-	# comments = CommentSerializer(many=True, queryset=Comment.objects.all(), required=False)
 	comments = CommentSerializer(required=False, many=True)
+	classroom = MiniClassroomSerializer(required=False)
 	creator = BasicAccountSerializer(required=False)
 	likes = serializers.SerializerMethodField()
 
@@ -41,6 +42,7 @@ class BasicPostSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = Post
 		fields = ('id', 'title', 'comments', 'creator', 'created', 'votes', 'tag')
+
 
 # from ..groups.models import Group
 # from ..tasks.models import Task

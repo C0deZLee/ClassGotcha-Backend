@@ -7,6 +7,7 @@ from ..tasks.serializers import BasicTaskSerializer, ClassTimeTaskSerializer
 from ..tags.serializers import ClassFolderSerializer
 from ..badges.serializers import BadgeSerializer
 
+
 # from django.core.files.images import ImageFile
 # from ..chatrooms.matrix.matrix_api import MatrixApi
 # import requests
@@ -20,6 +21,12 @@ class MajorSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = Major
 		fields = '__all__'
+
+
+class MiniMajorSerializer(serializers.ModelSerializer):
+	class Meta:
+		model = Major
+		fields = ['major_short']
 
 
 # WARN: Duplicate
@@ -100,12 +107,13 @@ class AccountSerializer(serializers.ModelSerializer):
 	full_name = serializers.ReadOnlyField()
 	tasks = BasicTaskSerializer(many=True)
 	badges = BadgeSerializer(many=True)
+	major = MiniMajorSerializer()
 
 	class Meta:
 		model = Account
 		exclude = ('user_permissions', 'groups', 'is_superuser', 'is_staff',
-		           'is_active', 'password','updated')
-		read_only_fields = ('created', )
+		           'is_active', 'password', 'updated')
+		read_only_fields = ('created',)
 
 
 class AuthAccountSerializer(serializers.ModelSerializer):
@@ -127,7 +135,6 @@ class AuthAccountSerializer(serializers.ModelSerializer):
 		# account.matrix_id =
 		account.save()
 		return account
-
 
 # class GroupSerializers(serializers.ModelSerializer):
 # 	class Meta:
