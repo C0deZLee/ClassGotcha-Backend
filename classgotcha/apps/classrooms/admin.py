@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 from models import Classroom, Semester, Major
-from ..chatrooms.models import Chatroom, Account
+# from ..chatrooms.models import Chatroom, Account
 
 
 class ClassroomAdmin(admin.ModelAdmin):
@@ -21,22 +21,22 @@ class ClassroomAdmin(admin.ModelAdmin):
 	)
 	readonly_fields = ('professors', 'major', 'created', 'updated', 'class_repeat', 'get_class_time', 'students_count', 'folders')
 
-	# search_fields = ('class_code', 'id')
+	search_fields = ('class_code', 'id', 'class_name')
 
-	def save_related(self, request, form, formsets, change):
-		super(ClassroomAdmin, self).save_related(
-			request, form, formsets, change)
-		# only apply this when first created, when classroom first created, no
-		# chatrooms pk
-		if not form.instance.chatroom:
-			# TODO: UNSTABLE! Only retrieve the first admin user as the class
-			# chat room controller
-			Room.objects.create(creator=Account.objects.get(is_staff=True),
-			                    name=form.instance.major.major_short + ' ' + \
-			                         form.instance.class_number + ' - ' + form.instance.class_section + ' Chat Room',
-			                    classroom=form.instance)
-			form.instance.task.classroom = form.instance
-			form.instance.task.save()
+	# def save_related(self, request, form, formsets, change):
+	# 	super(ClassroomAdmin, self).save_related(
+	# 		request, form, formsets, change)
+	# 	# only apply this when first created, when classroom first created, no
+	# 	# chatrooms pk
+	# 	if not form.instance.chatroom:
+	# 		# TODO: UNSTABLE! Only retrieve the first admin user as the class
+	# 		# chat room controller
+	# 		Chatroom.objects.create(creator=Account.objects.get(is_staff=True),
+	# 		                    name=form.instance.major.major_short + ' ' + \
+	# 		                         form.instance.class_number + ' - ' + form.instance.class_section + ' Chat Room',
+	# 		                    classroom=form.instance)
+	# 		form.instance.task.classroom = form.instance
+	# 		form.instance.task.save()
 
 
 class SemesterAdmin(admin.ModelAdmin):
