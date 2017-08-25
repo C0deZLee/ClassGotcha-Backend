@@ -13,10 +13,7 @@ class AccountManager(BaseUserManager):
 		if not email:
 			raise ValueError('Users must have a valid email address')
 
-		if not kwargs.get('username'):
-			raise ValueError('Users must have a valid username')
-
-		account = self.model(email=self.normalize_email(email), username=kwargs.get('username'), )
+		account = self.model(email=self.normalize_email(email))
 
 		account.set_password(password)
 		account.save()
@@ -83,7 +80,7 @@ class Account(AbstractBaseUser, PermissionsMixin):
 	# Rule
 	is_staff = models.BooleanField(default=False)
 	is_active = models.BooleanField(default=True)
-	
+
 	is_verified = models.BooleanField(default=False)
 	# is_student = models.BooleanField(default=True)
 	# is_professor = models.BooleanField(default=False)
@@ -118,8 +115,8 @@ class Account(AbstractBaseUser, PermissionsMixin):
 	matrix_token = models.CharField(max_length=200, null=True)
 	matrix_id = models.CharField(max_length=200, null=True)
 	# Relations
-	friends = models.ManyToManyField('self')
-	pending_friends = models.ManyToManyField('self')
+	friends = models.ManyToManyField('self', symmetrical=False)
+	pending_friends = models.ManyToManyField('self', related_name='waiting_friends', symmetrical=False)
 	major = models.ForeignKey('classrooms.Major', blank=True, null=True)
 	# Relatives
 	# 1) teaches
