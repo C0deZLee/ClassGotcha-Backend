@@ -7,6 +7,11 @@ task_detail = views.TaskViewSet.as_view({
 	'delete': 'delete'
 })
 
+task_remove = views.TaskViewSet.as_view({
+	'delete': 'remove'
+})
+
 urlpatterns = [
 	url(r'^(?P<pk>[0-9]+)/$', task_detail, name='task-detail'),
+	url(r'^(?P<pk>[0-9]+)/remove/$', task_remove, name='task-remove'),
 ]
