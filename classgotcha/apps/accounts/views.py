@@ -396,10 +396,12 @@ class AccountViewSet(viewsets.ViewSet):
 				return Response(status=status.HTTP_400_BAD_REQUEST)
 			# create new moment
 			moment = Moment(content=content, creator=request.user)
+
 			if classroom_id:
 				moment.classroom_id = classroom_id
 			if question:
 				moment.solved = False
+				trigger_action(request.user, 'post_question')
 			if image:
 				import uuid
 				from django.core.files.base import ContentFile
@@ -413,13 +415,17 @@ class AccountViewSet(viewsets.ViewSet):
 				file_name = str(uuid.uuid4())
 				complete_file_name = '%s.%s' % (file_name, file_extension,)
 				moment.images = ContentFile(decoded_file, complete_file_name)
+
 			moment.save()
+			trigger_action(request.user, 'post_moment')
 			return Response(status=status.HTTP_200_OK)
 		elif request.method == 'PUT':
 			moment = get_object_or_404(moment_query_set, pk=pk)
 			if moment.solved is False:
 				moment.solved = True
 				moment.save()
+				for comment in moment.comments.all():
+					trigger_action(comment.creator, 'answer_approved')
 			return Response(status=status.HTTP_200_OK)
 		elif request.method == 'DELETE':
 			moment = get_object_or_404(moment_query_set, pk=pk)

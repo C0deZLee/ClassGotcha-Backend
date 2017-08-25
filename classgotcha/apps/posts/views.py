@@ -7,6 +7,8 @@ from serializers import MomentSerializer, PostSerializer, BasicPostSerializer
 
 from ..notifications.models import Notification
 
+from ..badges.script import trigger_action
+
 
 class MomentViewSet(viewsets.ViewSet):
 	queryset = Moment.objects.exclude(deleted=True)
@@ -26,13 +28,22 @@ class MomentViewSet(viewsets.ViewSet):
 			return Response(status=status.HTTP_403_FORBIDDEN)
 		moment.solved = True
 		moment.save()
+
+		for comment in moment.comments:
+			trigger_action(comment.creator, 'answer_approved')
+
 		return Response(status=status.HTTP_200_OK)
 
 	def comment(self, request, pk):
-		get_object_or_404(self.queryset, pk=pk)
+		moment = get_object_or_404(self.queryset, pk=pk)
 		content = request.data.get('content', None)
 		if content:
 			Comment.objects.create(content=content, moment_id=pk, creator=request.user)
+			if moment.solved is None:
+				trigger_action(request.user, 'reply_moment')
+			else:
+				trigger_action(request.user, 'answer_question')
+
 			return Response(status=status.HTTP_200_OK)
 		else:
 			return Response(status=status.HTTP_400_BAD_REQUEST)
@@ -43,6 +54,8 @@ class MomentViewSet(viewsets.ViewSet):
 		if moment.flagged:
 			moment.deleted = True
 		moment.save()
+
+		trigger_action(request.user, 'report_classroom_moment')
 		return Response(status=status.HTTP_200_OK)
 
 	def like(self, request, pk):
@@ -76,6 +89,7 @@ class PostViewSet(viewsets.ViewSet):
 
 		if title and content and tag:
 			Post.objects.create(creator_id=request.user.id, title=title, content=content, tag=tag)
+			trigger_action(request.user, 'post_forum')
 			return Response(status=status.HTTP_200_OK)
 		else:
 			return Response(status=status.HTTP_400_BAD_REQUEST)
