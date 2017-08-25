@@ -119,6 +119,10 @@ class Post(models.Model):
 		else:
 			return False
 
+	@property
+	def comments_count(self):
+		return self.comments.all().count()
+
 
 class Comment(models.Model):
 	# Basic

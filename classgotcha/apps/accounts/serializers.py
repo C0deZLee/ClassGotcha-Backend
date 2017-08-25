@@ -90,6 +90,14 @@ class BasicAccountSerializer(serializers.ModelSerializer):
 		fields = ('pk', 'id', 'avatar1x', 'avatar2x', 'username', 'email', 'full_name', 'about_me', 'level')
 
 
+class MiniAccountSerializer(serializers.ModelSerializer):
+	full_name = serializers.ReadOnlyField()
+
+	class Meta:
+		model = Account
+		fields = ('pk', 'id', 'avatar1x', 'email', 'full_name', 'level')
+
+
 # WARN: Duplicate
 # class RoomSerializer(serializers.ModelSerializer):
 # 	latest_message = serializers.ReadOnlyField()
