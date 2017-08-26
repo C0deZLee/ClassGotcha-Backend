@@ -100,10 +100,10 @@ class Account(AbstractBaseUser, PermissionsMixin):
 	phone = models.CharField(max_length=20, null=True)
 
 	# Social Media
-	facebook = models.CharField(max_length=200, null=True)
-	twitter = models.CharField(max_length=200, null=True)
-	linkedin = models.CharField(max_length=200, null=True)
-	snapchat = models.CharField(max_length=200, null=True)
+	facebook = models.CharField(max_length=200, null=True, blank=True)
+	twitter = models.CharField(max_length=200, null=True, blank=True)
+	linkedin = models.CharField(max_length=200, null=True, blank=True)
+	snapchat = models.CharField(max_length=200, null=True, blank=True)
 
 	# Privacy setting
 	privacy_setting = models.CharField(max_length=50, default='11111111', help_text="0 for not show, 1 for show; [schedule, email, gender, phone, facebook, twitter, linkedin, snapchat]")

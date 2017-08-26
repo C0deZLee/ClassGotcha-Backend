@@ -278,11 +278,11 @@ class AccountViewSet(viewsets.ViewSet):
 			return Response(serializer.data)
 		elif request.method == 'PUT':
 			for (key, value) in request.data.items():
-				if key in ['username', 'first_name', 'mid_name', 'last_name', 'gender', 'birthday', 'school_year', 'major', 'about_me']:
-					if key == 'major':
-						request.user.major_id = value
-					else:
-						setattr(request.user, key, value)
+				if key == 'major':
+					request.user.major_id = value
+
+				if key in ['username', 'first_name', 'last_name', 'gender', 'birthday', 'school_year', 'about_me', 'phone', 'privacy_setting', 'facebook', 'twitter', 'linkedin', 'snapchat']:
+					setattr(request.user, key, value)
 				request.user.save()
 			return Response(status=status.HTTP_200_OK)
 
