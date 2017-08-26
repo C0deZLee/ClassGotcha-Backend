@@ -20,14 +20,10 @@ def test_scheduler():
 	generate_recommendations_for_homework(account, task)
 
 
-def generate_recommendations_for_quiz(date):
-	# review for the quiz one week prior and 2 days prior
-	pass
+def generate_recommendations_for_exam(account,task):
 
-
-def generate_recommendations_for_homework(account, task):  # in this case the end time of the task is the due date
 	due_date = task.end
-	work_date = due_date - timedelta(days=2)  # in this default setting do the homework 2 days prior to the due date
+	work_date = due_date - timedelta(days=7)  # in this default setting do the homework 2 days prior to the due date
 	# get the user's free time
 	free_intervals = get_user_free_intervals(account=account, date=work_date)
 	# print free_intervals
@@ -38,7 +34,7 @@ def generate_recommendations_for_homework(account, task):  # in this case the en
 			# generate a new task to do the homework
 			try:
 				new_task = Task(task_name='do homework for' + task.task_name,
-				                category=1,
+				                category=6,
 				                start=datetime(work_date.year, work_date.month, work_date.day, int(interval[0]), int(60 * (interval[0] - int(interval[0])))),
 				                end=datetime(work_date.year, work_date.month, work_date.day, int(interval[1]), int(60 * (interval[1] - int(interval[1])))),
 				                classroom=task.classroom, creator=account)
@@ -53,7 +49,94 @@ def generate_recommendations_for_homework(account, task):  # in this case the en
 			if (interval[1] - 1) > start > interval[0]:
 				try:
 					new_task = Task(task_name='do homework for' + task.task_name,
-					                category=1,
+					                category=6,
+					                start=datetime(work_date.year, work_date.month, work_date.day, start, 0),
+					                end=datetime(work_date.year, work_date.month, work_date.day, start + 1, 0),
+					                classroom=task.classroom, creator=account)
+					new_task.save()
+					task_add = True
+					break
+				except:
+					pass
+		if task_add:
+			break
+	return task_add
+
+
+def generate_recommendations_for_quiz(account,task):
+	# review for the quiz one week prior and 2 days prior
+	due_date = task.end
+	work_date = due_date - timedelta(days=2)  # in this default setting do the homework 2 days prior to the due date
+	# get the user's free time
+	free_intervals = get_user_free_intervals(account=account, date=work_date)
+	# print free_intervals
+	task_add = False
+	for interval in free_intervals:
+		# find appropriate time to do things
+		if (interval[0] > 8) and (interval[1] < 20) and (interval[1] - interval[0] > 1):
+			# generate a new task to do the homework
+			try:
+				new_task = Task(task_name='do homework for' + task.task_name,
+				                category=6,
+				                start=datetime(work_date.year, work_date.month, work_date.day, int(interval[0]), int(60 * (interval[0] - int(interval[0])))),
+				                end=datetime(work_date.year, work_date.month, work_date.day, int(interval[1]), int(60 * (interval[1] - int(interval[1])))),
+				                classroom=task.classroom, creator=account)
+
+				new_task.save()
+				task_add = True
+				break
+			except:
+				pass
+
+		for start in range(9, 18):
+			if (interval[1] - 1) > start > interval[0]:
+				try:
+					new_task = Task(task_name='do homework for' + task.task_name,
+					                category=6,
+					                start=datetime(work_date.year, work_date.month, work_date.day, start, 0),
+					                end=datetime(work_date.year, work_date.month, work_date.day, start + 1, 0),
+					                classroom=task.classroom, creator=account)
+					new_task.save()
+					task_add = True
+					break
+				except:
+					pass
+		if task_add:
+			break
+	return task_add
+
+
+def generate_recommendations_for_homework(account, task):  # in this case the end time of the task is the due date
+	due_date = task.end
+	work_date = due_date - timedelta(days=2)  # in this default setting do the homework 2 days prior to the due date
+	
+
+	# get the user's free time
+	free_intervals = get_user_free_intervals(account=account, date=work_date)
+	# print free_intervals
+	task_add = False
+	for interval in free_intervals:
+		# find appropriate time to do things
+		if (interval[0] > 8) and (interval[1] < 20) and (interval[1] - interval[0] > 1):
+			# generate a new task to do the homework
+			try:
+				new_task = Task(task_name='do homework for' + task.task_name,
+				                category=6,
+				                start=datetime(work_date.year, work_date.month, work_date.day, int(interval[0]), int(60 * (interval[0] - int(interval[0])))),
+				                end=datetime(work_date.year, work_date.month, work_date.day, int(interval[1]), int(60 * (interval[1] - int(interval[1])))),
+				                classroom=task.classroom, creator=account)
+
+				new_task.save()
+				task_add = True
+				break
+			except:
+				pass
+
+		for start in range(9, 18):
+			if (interval[1] - 1) > start > interval[0]:
+				try:
+					new_task = Task(task_name='do homework for' + task.task_name,
+					                category=6,
 					                start=datetime(work_date.year, work_date.month, work_date.day, start, 0),
 					                end=datetime(work_date.year, work_date.month, work_date.day, start + 1, 0),
 					                classroom=task.classroom, creator=account)
