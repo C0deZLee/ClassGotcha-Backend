@@ -288,23 +288,25 @@ class AccountViewSet(viewsets.ViewSet):
 
 	@staticmethod
 	def change_password(request):
+		print request.data
+
 		# If password or old-password not in request body
-		if not request.data['old-password'] or request.data['password']:
+		if not (request.data.get('old_password', None) or request.data.get('new_password', None)):
 			# Return error message with status code 400
 			return Response(status=status.HTTP_400_BAD_REQUEST)
-		try:
-			#  if old-password match
-			if check_password(request.data['old-password'], request.user.password):
-				# change user password
-				request.user.set_password(request.data['password'])
-				request.user.save()
-				return Response(status=status.HTTP_200_OK)
-			else:
-				# else return with error message and status code 400
-				return Response({'ERROR': 'Password not match'}, status=status.HTTP_400_BAD_REQUEST)
-		except:
-			# If exception return with status 400
-			return Response(status=status.HTTP_400_BAD_REQUEST)
+		# try:
+		#  if old-password match
+		if check_password(request.data['old_password'], request.user.password):
+			# change user password
+			request.user.set_password(request.data['new_password'])
+			request.user.save()
+			return Response(status=status.HTTP_200_OK)
+		else:
+			# else return with error message and status code 400
+			return Response({'detail': 'Doesn\'t match with your current password.'}, status=status.HTTP_400_BAD_REQUEST)
+		# except:
+		# 	# If exception return with status 400
+		# 	return Response(status=status.HTTP_400_BAD_REQUEST)
 
 	def explore_friends(self, request):
 		def similarity_check_classrooms(user, other):

@@ -126,7 +126,6 @@ urlpatterns = [
 
 	url(r'^verify/(?P<token>[A-z0-9\-]+)/$', views.email_verify, name='email-verifying'),
 
-	url(r'^reset/$', account_change_password, name='change-pass'),
 	url(r'^notes/$', account_notes, name='user-notes'),
 	url(r'^moments/$', account_moments, name='user-moments'),
 	url(r'^tasks/$', account_tasks, name='user-tasks'),
@@ -136,6 +135,7 @@ urlpatterns = [
 
 	url(r'^forget/$', views.forget_password, name='user-forget-password-gettoken'),
 	url(r'^forget/(?P<token>[A-z0-9\-]+)/$', views.forget_password, name='user-forget-password'),
+	url(r'^passchange/$', account_change_password, name='change-pass'),
 
 	url(r'^me/$', account_me, name='me'),
 
