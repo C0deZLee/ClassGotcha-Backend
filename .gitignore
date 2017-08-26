@@ -30,7 +30,6 @@ classgotcha/apps/notifications/migrations/
 !classgotcha/apps/accounts/migrations/__init__.py
 !classgotcha/apps/classrooms/migrations/__init__.py
 !classgotcha/apps/chatrooms/migrations/__init__.py
-!classgotcha/apps/groups/migrations/__init__.py
 !classgotcha/apps/posts/migrations/__init__.py
 !classgotcha/apps/tasks/migrations/__init__.py
 !classgotcha/apps/tags/migrations/__init__.py

@@ -12,34 +12,40 @@ from models import Action, BadgeType
 def action_init(request):
 	try:
 		Action.objects.bulk_create([
-			Action(name='verify_email', exp=50),
+			Action(name='verify_email', exp=50),  # DONE
 			Action(name='update_user_info', exp=25),
-			Action(name='refer_friend', exp=25),
+			Action(name='refer_friend', exp=25),  # DONE
+			Action(name='change_avatar', exp=25),  # DONE # DONE
 
 			# Classrooms
 			Action(name='update_classroom_info', exp=10),
-			Action(name='add_classroom', exp=10),
-			Action(name='add_friend', exp=5),
+			Action(name='add_classroom', exp=10),  # DONE # DONE
+			Action(name='add_friend', exp=5),  # DONE # DONE
+			Action(name='accept_friend', exp=5),  # DONE # DONE
 
 			# File Uploads
-			Action(name='upload_file', exp=20),
+			Action(name='upload_file', exp=20),  # DONE # DONE
 
 			# Tasks
-			Action(name='add_classroom_task', exp=5),
-			Action(name='edit_classroom_task', exp=5),
+			Action(name='add_classroom_task', exp=5),  # DONE # DONE
+			Action(name='edit_classroom_task', exp=5),  # DONE # DONE
 
 			# Questions
-			Action(name='post_normal', exp=1),
-			Action(name='reply_normal', exp=1),
-			Action(name='post_question', exp=5),
-			Action(name='answer_question', exp=5),
-			Action(name='answer_approved', exp=15),
+			Action(name='post_moment', exp=1),  # DONE # DONE
+			Action(name='reply_moment', exp=1),  # DONE # DONE
+			Action(name='post_question', exp=5),  # DONE # DONE
+			Action(name='answer_question', exp=5),  # DONE # DONE
+			Action(name='answer_approved', exp=15),  # DONE # DONE
 
 			# Reports
 			Action(name='report_forum', exp=5),
 			Action(name='report_user', exp=5),
 			Action(name='report_post', exp=5),
 			Action(name='report_classroom_task', exp=5),
+			Action(name='report_classroom_moment', exp=5),  # DONE
+
+			# Forum
+			Action(name='post_forum', exp=10),  # DONE  # DONE
 		])
 	except IntegrityError:
 		pass
@@ -63,15 +69,15 @@ def action_init(request):
 			BadgeType(name='Friend I', action_required=1, identifier='Friend', description='Have 1 friend'),
 			BadgeType(name='Friend II', action_required=2, identifier='Friend', level=2, description='Have 2 friends'),
 			BadgeType(name='Friend III', action_required=5, identifier='Friend', level=3, description='Have 5 friends'),
-			BadgeType(name='Friend IV', action_required=10, identifier='Friend', level=3, description='Have 10 friends'),
-			BadgeType(name='Friend V', action_required=20, identifier='Friend', level=3, description='Have 20 friends'),
+			BadgeType(name='Friend IV', action_required=10, identifier='Friend', level=4, description='Have 10 friends'),
+			BadgeType(name='Friend V', action_required=20, identifier='Friend', level=5, description='Have 20 friends'),
 
 			# File Uploads
 			BadgeType(name='Notes Contributor I', action_required=1, identifier='Notes Contributor', description='Contribute 1 Note'),
 			BadgeType(name='Notes Contributor II', action_required=2, identifier='Notes Contributor', level=2, description='Contribute 2 Notes'),
 			BadgeType(name='Notes Contributor III', action_required=5, identifier='Notes Contributor', level=3, description='Contribute 5 Notes'),
-			BadgeType(name='Notes Contributor IV', action_required=10, identifier='Notes Contributor', level=3, description='Contribute 10 Notes'),
-			BadgeType(name='Notes Contributor V', action_required=20, identifier='Notes Contributor', level=3, description='Contribute 20 Notes'),
+			BadgeType(name='Notes Contributor IV', action_required=10, identifier='Notes Contributor', level=4, description='Contribute 10 Notes'),
+			BadgeType(name='Notes Contributor V', action_required=20, identifier='Notes Contributor', level=5, description='Contribute 20 Notes'),
 
 			# Tasks
 			BadgeType(name='Classroom Task Contributor I', action_required=1, identifier='Classroom Task Contributor', description='Contribute on 1 Classroom Task'),
@@ -112,7 +118,7 @@ def action_init(request):
 	verify_email = Action.objects.get(name='verify_email')
 	update_user_info = Action.objects.get(name='update_user_info')
 	refer_friend = Action.objects.get(name='refer_friend')
-	add_friend = Action.objects.get(name='add_friend')
+	accept_friend = Action.objects.get(name='accept_friend')
 	update_classroom_info = Action.objects.get(name='update_classroom_info')
 	upload_file = Action.objects.get(name='upload_file')
 	add_classroom_task = Action.objects.get(name='add_classroom_task')
@@ -137,11 +143,11 @@ def action_init(request):
 	BadgeType.objects.get(name='Classroom Contributor II').linked_actions.add(update_classroom_info)
 	BadgeType.objects.get(name='Classroom Contributor III').linked_actions.add(update_classroom_info)
 
-	BadgeType.objects.get(name='Friend I').linked_actions.add(add_friend)
-	BadgeType.objects.get(name='Friend II').linked_actions.add(add_friend)
-	BadgeType.objects.get(name='Friend III').linked_actions.add(add_friend)
-	BadgeType.objects.get(name='Friend IV').linked_actions.add(add_friend)
-	BadgeType.objects.get(name='Friend V').linked_actions.add(add_friend)
+	BadgeType.objects.get(name='Friend I').linked_actions.add(accept_friend)
+	BadgeType.objects.get(name='Friend II').linked_actions.add(accept_friend)
+	BadgeType.objects.get(name='Friend III').linked_actions.add(accept_friend)
+	BadgeType.objects.get(name='Friend IV').linked_actions.add(accept_friend)
+	BadgeType.objects.get(name='Friend V').linked_actions.add(accept_friend)
 
 	BadgeType.objects.get(name='Notes Contributor I').linked_actions.add(upload_file)
 	BadgeType.objects.get(name='Notes Contributor II').linked_actions.add(upload_file)

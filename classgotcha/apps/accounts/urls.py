@@ -59,7 +59,7 @@ account_moments = views.AccountViewSet.as_view({
 })
 
 account_detail_moments = views.AccountViewSet.as_view({
-	'get' : 'moments',
+	'get': 'moments',
 })
 
 account_add_moments = views.AccountViewSet.as_view({
@@ -74,7 +74,6 @@ account_tasks = views.AccountViewSet.as_view({
 
 account_tasks_edit = views.AccountViewSet.as_view({
 	'put'   : 'tasks',
-	'delete': 'tasks'
 })
 
 account_freetime = views.AccountViewSet.as_view({
@@ -82,7 +81,11 @@ account_freetime = views.AccountViewSet.as_view({
 })
 
 account_explore = views.AccountViewSet.as_view({
-	'get':'explore_friends'
+	'get': 'explore_friends'
+})
+
+account_search = views.AccountViewSet.as_view({
+	'post': 'search'
 })
 
 professor_detail = views.ProfessorViewSet.as_view({
@@ -96,7 +99,8 @@ professor_comments = views.ProfessorViewSet.as_view({
 })
 
 urlpatterns = [
-	url(r'^friends/(?P<pk>[0-9]+)/$', account_add_friends, name='add-friend'),
+	url(r'^avatar/change/$', views.account_avatar, name='user-avatar'),
+
 	url(r'^moments/(?P<pk>[0-9]+)/$', account_add_moments, name='add-moment'),
 	url(r'^classrooms/(?P<pk>[0-9]+)/$', account_add_classrooms, name='add-classroom'),
 	url(r'^chatrooms/(?P<pk>[0-9]+)/$', account_add_chatrooms, name='add-chatrooms'),
@@ -104,12 +108,15 @@ urlpatterns = [
 	url(r'^(?P<pk>[0-9]+)/$', account_detail, name='user-detail'),
 	url(r'^(?P<pk>[0-9]+)/moments/$', account_detail_moments, name='user-detail-moments'),
 
-	url(r'^avatar/$', views.account_avatar, name='user-avatar'),
 	url(r'^classrooms/$', account_classrooms, name='user-classrooms'),
 	url(r'^chatrooms/$', account_chatrooms, name='user-chatrooms'),
+
 	url(r'^friends/$', account_friends, name='user-friends'),
+	url(r'^friends/(?P<pk>[0-9]+)/$', account_add_friends, name='add-friend'),
+
 	url(r'^pending-friends/$', account_pending_friends, name='user-pending-friends'),
-	url(r'^explore-friends/$', account_explore, name='user-explore-friends'),
+	url(r'^recommend-friends/$', account_explore, name='user-explore-friends'),
+	url(r'^search/$', account_search, name='user-search'),
 	url(r'^login/$', obtain_jwt_token),
 	url(r'^login-refresh/$', refresh_jwt_token),
 	url(r'^login-verify/$', verify_jwt_token),
@@ -119,7 +126,6 @@ urlpatterns = [
 
 	url(r'^verify/(?P<token>[A-z0-9\-]+)/$', views.email_verify, name='email-verifying'),
 
-	url(r'^reset/$', account_change_password, name='change-pass'),
 	url(r'^notes/$', account_notes, name='user-notes'),
 	url(r'^moments/$', account_moments, name='user-moments'),
 	url(r'^tasks/$', account_tasks, name='user-tasks'),
@@ -129,6 +135,7 @@ urlpatterns = [
 
 	url(r'^forget/$', views.forget_password, name='user-forget-password-gettoken'),
 	url(r'^forget/(?P<token>[A-z0-9\-]+)/$', views.forget_password, name='user-forget-password'),
+	url(r'^passchange/$', account_change_password, name='change-pass'),
 
 	url(r'^me/$', account_me, name='me'),
 

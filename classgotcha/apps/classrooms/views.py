@@ -21,6 +21,7 @@ from ..tags.serializers import ClassFolderSerializer, Tag
 
 from ..badges.script import trigger_action
 
+
 # from ..chatrooms.matrix.matrix_api import MatrixApi
 
 
@@ -75,8 +76,8 @@ class ClassroomViewSet(viewsets.ViewSet):
 				items = match.groups()
 				print items
 				class_major = items[0].upper()
-				class_number = items[1]
-				major = Major.objects.get(major_short=class_major)
+				class_number = items[1].upper()
+				major = get_object_or_404(Major.objects.all(), major_short=class_major)
 				classrooms = Classroom.objects.filter(major=major,
 				                                      class_number=class_number) if class_number else Classroom.objects.filter(major=major)
 				serializer = BasicClassroomSerializer(classrooms, many=True)
@@ -131,9 +132,11 @@ class ClassroomViewSet(viewsets.ViewSet):
 					classroom.folders.add(tag)
 				new_note.tags.add(tag)
 			Moment.objects.create(
-				content='I uploaded a new note \"' + title + '\" to the classroom, check it out!',
+				content='I uploaded a new note \"' + title + '\", check it out!',
 				creator=request.user,
 				classroom=classroom)
+
+			trigger_action(request.user, 'upload_file')
 
 			return Response(status=status.HTTP_201_CREATED)
 
@@ -141,18 +144,16 @@ class ClassroomViewSet(viewsets.ViewSet):
 		# If no page provided, default is 1
 		if not page:
 			page = 1
-
 		classroom = get_object_or_404(self.queryset, pk=pk)
 		# 20 moments per page
 		moments = classroom.moments.filter(deleted=False).order_by('-created')[0:int(page) * 20]
 		serializer = MomentSerializer(moments, many=True)
+
 		return Response(serializer.data)
 
 	def tasks(self, request, pk):
 		classroom = get_object_or_404(self.queryset, pk=pk)
 		if request.method == 'GET':
-			# get all not expired tasks
-			# tasks = [obj for obj in  if not obj.expired]
 			serializer = BasicTaskSerializer(classroom.tasks.all().order_by('end'), many=True)
 			return Response(serializer.data)
 		elif request.method == 'POST':
@@ -165,7 +166,7 @@ class ClassroomViewSet(viewsets.ViewSet):
 				request.data['type'] = 1  # task
 			else:
 				return Response(status=status.HTTP_400_BAD_REQUEST)
-			# request.data['classroom'] = {'classroom_id': classroom.id}
+
 			serializer = CreateTaskSerializer(data=request.data)
 			serializer.is_valid(raise_exception=True)
 			serializer.save()
@@ -175,6 +176,8 @@ class ClassroomViewSet(viewsets.ViewSet):
 				        request.data.get('task_name', '') + '\" to the classroom, check it out!',
 				creator=request.user,
 				classroom=classroom)
+
+			trigger_action(request.user, 'add_classroom_task')
 
 			return Response(status=status.HTTP_201_CREATED)
 

@@ -29,9 +29,12 @@ def trigger_action(account, action_name):
 		account_badge_types.append(account_badge.badge_type.name)
 		# add counter to all linked badges
 		if account_badge.badge_type in linked_badge_types:
-			account_badge.counter += 1
+			# Add counter for unfinished
+			if not account_badge.finished:
+				account_badge.counter += 1
+
 			# Finish badge
-			if account_badge.counter == account_badge.badge_type.action_required:
+			if account_badge.counter >= account_badge.badge_type.action_required:
 				account_badge.finished = timezone.now()
 				# Send notification
 				notification = Notification(receiver_id=account.id)
@@ -44,6 +47,10 @@ def trigger_action(account, action_name):
 	for linked_badge_type in linked_badge_types:
 		if linked_badge_type.name not in account_badge_types:
 			new_ongoing_badge = Badge(account_id=account.id, badge_type=linked_badge_type)
+
+			if new_ongoing_badge.badge_type.action_required == 1:
+				new_ongoing_badge.finished = timezone.now()
+
 			new_ongoing_badge.save()
 
 	level_up(account, action.exp)

@@ -12,6 +12,12 @@ class MajorSerializer(serializers.ModelSerializer):
 		fields = '__all__'
 
 
+class MiniClassroomSerializer(serializers.ModelSerializer):
+	class Meta:
+		model = Classroom
+		fields = ('id', 'class_code', 'class_short', 'class_section',)
+
+
 class BasicClassroomSerializer(serializers.ModelSerializer):
 	students_count = serializers.ReadOnlyField()
 	class_short = serializers.ReadOnlyField()
