@@ -76,16 +76,16 @@ account_tasks_edit = views.AccountViewSet.as_view({
 	'put'   : 'tasks',
 })
 
-account_freetime = views.AccountViewSet.as_view({
-	'get': 'freetime'
-})
-
 account_explore = views.AccountViewSet.as_view({
 	'get': 'explore_friends'
 })
 
 account_search = views.AccountViewSet.as_view({
 	'post': 'search'
+})
+
+account_plan = views.AccountViewSet.as_view({
+	'get': 'study_plan'
 })
 
 professor_detail = views.ProfessorViewSet.as_view({
@@ -131,7 +131,7 @@ urlpatterns = [
 	url(r'^tasks/$', account_tasks, name='user-tasks'),
 	url(r'^tasks/(?P<pk>[0-9]+)$', account_tasks_edit, name='user-tasks-edit'),
 
-	url(r'^freetime/$', account_freetime, name='freetime'),
+	url(r'^plan/$', account_plan, name='user-study-plan'),
 
 	url(r'^forget/$', views.forget_password, name='user-forget-password-gettoken'),
 	url(r'^forget/(?P<token>[A-z0-9\-]+)/$', views.forget_password, name='user-forget-password'),

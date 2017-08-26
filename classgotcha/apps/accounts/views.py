@@ -22,7 +22,7 @@ from ..notifications.models import Notification
 from models import Account, Professor, AccountVerifyToken
 from serializers import AccountSerializer, BasicAccountSerializer, AuthAccountSerializer, ProfessorSerializer
 
-from script import group, complement
+from script import group, complement, generate_recommendations_for_homework
 from django.core.mail import EmailMessage
 from django.template.loader import render_to_string
 
@@ -463,40 +463,15 @@ class AccountViewSet(viewsets.ViewSet):
 			return Response(status=status.HTTP_200_OK)
 
 	@staticmethod
-	def free_time(request):
+	def study_plan(request):
 		user_tasks = request.user.tasks.all()
-		# loop through the tasks
-		free_time_dict = {'Mon': [], 'Tue': [], 'Wed': [], 'Thu': [], 'Fri': [], 'Sat': [], 'Sun': []}
+		user = request.user
 		for task in user_tasks:
-			try:
-				start_time = task.start.hour + task.start.minute * (1 / 60)
-				end_time = task.end.hour + task.end.minute * (1 / 60)
-			except:
-				pass
-			if 'Mo' in task.repeat:
-				free_time_dict['Mon'].append([start_time, end_time])
-
-			if 'Tu' in task.repeat:
-				free_time_dict['Tue'].append([start_time, end_time])
-
-			if 'We' in task.repeat:
-				free_time_dict['Wed'].append([start_time, end_time])
-
-			if 'Th' in task.repeat:
-				free_time_dict['Thu'].append([start_time, end_time])
-
-			if 'Fr' in task.repeat:
-				free_time_dict['Fri'].append([start_time, end_time])
-
-		# compute the intersections and return
-		print free_time_dict
-		for free_dict_list in free_time_dict:
-			intervals = free_time_dict[free_dict_list]
-			free_dict_list = group(intervals)  # find the union of all unavailable time
-			print intervals
-			free_dict_list = complement(intervals, first=0, last=24)
-
-		return Response({'freetime': free_time_dict}, status=status.HTTP_200_OK)
+			# generate_recommendations_for_homework(user, task)
+			pass
+		# TODO: study plan generator, all generated plan should be category 6
+		# ....
+		return Response(status=status.HTTP_200_OK)
 
 
 class ProfessorViewSet(viewsets.ViewSet):
