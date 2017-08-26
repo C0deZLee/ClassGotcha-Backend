@@ -43,3 +43,5 @@ classgotcha/apps/chatrooms/templates/*
 .DS_Store
 /npm-debug.log
 
+
+*.sqlite3
