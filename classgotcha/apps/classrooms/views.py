@@ -29,11 +29,11 @@ def read_file(request, file_name=None):
 	uploaded_file = request.FILES.get('file', False)
 	if not uploaded_file:
 		return None
-	name, extension = uploaded_file.name.split('.')
+	name, extension = uploaded_file.name.rsplit('.', 1)
 
 	if file_name:
 		name = file_name
-	name = name + '_' + uuid.uuid4().hex + extension
+	name = name + '_' + uuid.uuid4().hex + '.' + extension
 	new_file = File(file=uploaded_file, name=name)  # there you go
 
 	return new_file
@@ -74,7 +74,7 @@ class ClassroomViewSet(viewsets.ViewSet):
 			match = re.match(r"([a-z]+) *([0-9a-z]*)", search_token, re.I)
 			if match:
 				items = match.groups()
-				print items
+				# print items
 				class_major = items[0].upper()
 				class_number = items[1].upper()
 				major = get_object_or_404(Major.objects.all(), major_short=class_major)
@@ -115,7 +115,7 @@ class ClassroomViewSet(viewsets.ViewSet):
 			uploaded_file = read_file(request, file_name=title)
 			raw_tags = request.data.get('tags')
 			description = request.data.get('description', '')
-			print request.data
+			# print request.data
 			if not (uploaded_file and raw_tags and title):
 				return Response(status=status.HTTP_400_BAD_REQUEST)
 
@@ -272,8 +272,8 @@ class ClassroomViewSet(viewsets.ViewSet):
 				#                         # matrix_id=matrix_id,
 				#                         name=cours['name'] + ' - ' + cours['section'] + ' Chat Room',
 				#                         classroom=classroom)
-				except IntegrityError:
-					print IntegrityError
+				except IntegrityError as e:
+					print e.message
 			return Response(status=status.HTTP_201_CREATED)
 		else:
 			return Response(status=status.HTTP_400_BAD_REQUEST)
@@ -293,8 +293,8 @@ class ClassroomViewSet(viewsets.ViewSet):
 			try:
 				for major in majors:
 					Major.objects.create(major_short=major['major_short'], major_full=major['major_full'])
-			except IntegrityError:
-				print IntegrityError
+			except IntegrityError as e:
+				print e.message
 			return Response(status=status.HTTP_201_CREATED)
 		else:
 			return Response(status=status.HTTP_400_BAD_REQUEST)
