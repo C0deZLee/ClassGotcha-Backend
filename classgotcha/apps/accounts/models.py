@@ -13,10 +13,7 @@ class AccountManager(BaseUserManager):
 		if not email:
 			raise ValueError('Users must have a valid email address')
 
-		if not kwargs.get('username'):
-			raise ValueError('Users must have a valid username')
-
-		account = self.model(email=self.normalize_email(email), username=kwargs.get('username'), )
+		account = self.model(email=self.normalize_email(email))
 
 		account.set_password(password)
 		account.save()
@@ -80,17 +77,18 @@ class Account(AbstractBaseUser, PermissionsMixin):
 	# Basic
 	email = models.EmailField(unique=True)
 	username = models.CharField(max_length=40, blank=True, null=True)
+
 	# Rule
 	is_staff = models.BooleanField(default=False)
 	is_active = models.BooleanField(default=True)
-	
 	is_verified = models.BooleanField(default=False)
-	# is_student = models.BooleanField(default=True)
-	# is_professor = models.BooleanField(default=False)
+
 	professor = models.ForeignKey(Professor, blank=True, null=True, related_name='account')
+
 	# Timestamp
 	created = models.DateTimeField(auto_now_add=True)
 	updated = models.DateTimeField(auto_now=True)
+
 	# Personal info
 	first_name = models.CharField(max_length=40, blank=True)
 	mid_name = models.CharField(max_length=40, blank=True)
@@ -99,18 +97,31 @@ class Account(AbstractBaseUser, PermissionsMixin):
 	birthday = models.DateField(null=True, blank=True)
 	school_year = models.CharField(max_length=40, blank=True)
 	about_me = models.CharField(max_length=200, default='Yo!')
+	phone = models.CharField(max_length=20, null=True)
+
+	# Social Media
+	facebook = models.CharField(max_length=200, null=True, blank=True)
+	twitter = models.CharField(max_length=200, null=True, blank=True)
+	linkedin = models.CharField(max_length=200, null=True, blank=True)
+	snapchat = models.CharField(max_length=200, null=True, blank=True)
+
+	# Privacy setting
+	privacy_setting = models.CharField(max_length=50, default='11111111', help_text="0 for not show, 1 for show; [schedule, email, gender, phone, facebook, twitter, linkedin, snapchat]")
+
+	# Level
 	level = models.IntegerField(default=1)
 	exp = models.IntegerField(default=0)
-	phone = models.CharField(max_length=20, null=True)
+
 	# Avatar
 	avatar2x = models.ImageField(upload_to='avatars', default='/avatars/default/user-male100.png')
 	avatar1x = models.ImageField(upload_to='avatars', default='/avatars/default/user-male50.png')
 	# Matrix info
 	matrix_token = models.CharField(max_length=200, null=True)
 	matrix_id = models.CharField(max_length=200, null=True)
+
 	# Relations
-	friends = models.ManyToManyField('self')
-	pending_friends = models.ManyToManyField('self')
+	friends = models.ManyToManyField('self', symmetrical=False)
+	pending_friends = models.ManyToManyField('self', related_name='waiting_friends', symmetrical=False)
 	major = models.ForeignKey('classrooms.Major', blank=True, null=True)
 	# Relatives
 	# 1) teaches
@@ -136,7 +147,7 @@ class Account(AbstractBaseUser, PermissionsMixin):
 		ordering = ['created']
 
 	def __unicode__(self):
-		return self.username
+		return self.email
 
 	@property
 	def get_full_name(self):

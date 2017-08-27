@@ -14,8 +14,11 @@ class AccountAdmin(UserAdmin):
 	list_display = ('id', 'email', 'username', 'get_full_name', 'school_year', 'is_staff', 'is_verified')
 	list_filter = ['is_staff', 'school_year']
 	fieldsets = (
-		(None, {'fields': ('email', 'username', 'password', 'matrix_token')}),
-		('Personal info', {'fields': ('first_name', 'last_name', 'gender', 'school_year', 'major', 'avatar1x', 'avatar2x')}),
+		(None, {'fields': ('email', 'password', 'matrix_token')}),
+		('Personal info', {'fields': ('first_name', 'last_name', 'gender', 'school_year', 'major', 'privacy_setting')}),
+		('Avatar', {'fields': ('avatar1x', 'avatar2x')}),
+		('Level', {'fields': ('level', 'exp')}),
+		('Social', {'fields': ('facebook', 'twitter', 'linkedin', 'snapchat')}),
 		('Permissions', {'fields': ('is_professor', 'is_verified', 'is_staff', 'is_superuser')}),
 		('Timestamp', {'fields': ('created', 'updated')})
 	)
@@ -23,7 +26,7 @@ class AccountAdmin(UserAdmin):
 	add_fieldsets = (
 		(None, {
 			'classes': ('wide',),
-			'fields': ('first_name', 'last_name', 'email', 'username', 'password1', 'password2')}
+			'fields': ('first_name', 'last_name', 'email', 'password1', 'password2')}
 		 ),
 	)
 	search_fields = ('email', 'username')

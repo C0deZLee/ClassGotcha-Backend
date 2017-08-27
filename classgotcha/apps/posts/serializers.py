@@ -1,11 +1,12 @@
 from models import Moment, Comment, Post, Note
-from ..accounts.serializers import BasicAccountSerializer
+from ..accounts.serializers import BasicAccountSerializer, MiniAccountSerializer
 from ..tags.serializers import BasicTagSerializer
+from ..classrooms.serializers import MiniClassroomSerializer
 from rest_framework import serializers
 
 
 class CommentSerializer(serializers.ModelSerializer):
-	creator = BasicAccountSerializer(required=False)
+	creator = MiniAccountSerializer(required=False)
 
 	class Meta:
 		model = Comment
@@ -13,9 +14,9 @@ class CommentSerializer(serializers.ModelSerializer):
 
 
 class MomentSerializer(serializers.ModelSerializer):
-	# comments = CommentSerializer(many=True, queryset=Comment.objects.all(), required=False)
 	comments = CommentSerializer(required=False, many=True)
-	creator = BasicAccountSerializer(required=False)
+	classroom = MiniClassroomSerializer(required=False)
+	creator = MiniAccountSerializer(required=False)
 	likes = serializers.SerializerMethodField()
 
 	class Meta:
@@ -28,7 +29,7 @@ class MomentSerializer(serializers.ModelSerializer):
 
 class PostSerializer(serializers.ModelSerializer):
 	comments = CommentSerializer(required=False, many=True)
-	creator = BasicAccountSerializer(required=False)
+	creator = MiniAccountSerializer(required=False)
 
 	class Meta:
 		model = Post
@@ -36,11 +37,13 @@ class PostSerializer(serializers.ModelSerializer):
 
 
 class BasicPostSerializer(serializers.ModelSerializer):
-	creator = BasicAccountSerializer(required=False)
+	creator = MiniAccountSerializer(required=False)
+	comments_count = serializers.ReadOnlyField()
 
 	class Meta:
 		model = Post
-		fields = ('id', 'title', 'comments', 'creator', 'created', 'votes', 'tag')
+		fields = ('id', 'title', 'creator', 'created', 'votes', 'tag', 'comments_count')
+
 
 # from ..groups.models import Group
 # from ..tasks.models import Task
@@ -50,7 +53,7 @@ class NoteSerializer(serializers.ModelSerializer):
 	# tasks = serializers.PrimaryKeyRelatedField(many=True, queryset=Task.objects.all())
 	# groups = serializers.PrimaryKeyRelatedField(many=True, queryset=Group.objects.all())
 	overall_rating = serializers.ReadOnlyField()
-	creator = BasicAccountSerializer()
+	creator = MiniAccountSerializer()
 	tags = BasicTagSerializer(many=True)
 
 	class Meta:

@@ -119,12 +119,17 @@ class Post(models.Model):
 		else:
 			return False
 
+	@property
+	def comments_count(self):
+		return self.comments.all().count()
+
 
 class Comment(models.Model):
 	# Basic
 	content = models.CharField(max_length=200)
 	# relations
 	creator = models.ForeignKey(Account, on_delete=models.CASCADE, related_name='comments', null=True)
+	is_anonymous = models.BooleanField(default=False)
 	post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='comments', null=True)
 	moment = models.ForeignKey(Moment, on_delete=models.CASCADE, related_name='comments', null=True)
 	note = models.ForeignKey(Note, on_delete=models.CASCADE, related_name='comments', null=True)

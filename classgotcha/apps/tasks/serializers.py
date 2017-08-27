@@ -20,6 +20,7 @@ class TaskSerializer(serializers.ModelSerializer):
 	repeat_end_date = serializers.ReadOnlyField()
 	repeat_list = serializers.ReadOnlyField()
 	classroom = TaskClassroomSerializer(required=False)
+	task_of_classroom = TaskClassroomSerializer(required=False)  # Classroom task
 
 	class Meta:
 		model = Task
@@ -94,9 +95,9 @@ class CreateTaskSerializer(serializers.ModelSerializer):
 
 	def create(self, validated_data):
 		# if no involved
-		if 'involved' in validated_data and validated_data['involved'] == []:
-			# deal with involved later on
-			del validated_data['involved']
+		# if 'involved' in validated_data and validated_data['involved'] == []:
+		# 	# deal with involved later on
+		# 	del validated_data['involved']
 
 		task = Task.objects.create(**validated_data)
 

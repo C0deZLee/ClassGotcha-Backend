@@ -3,7 +3,7 @@ from django.contrib import admin
 
 
 class NotificationAdmin(admin.ModelAdmin):
-	list_display = ['send_from', 'receiver', 'read', 'created']
+	list_display = ['sender', 'receiver', 'read', 'created']
 
 
 admin.site.register(Notification, NotificationAdmin)

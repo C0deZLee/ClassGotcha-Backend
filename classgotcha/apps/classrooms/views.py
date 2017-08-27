@@ -10,7 +10,7 @@ from rest_framework.response import Response
 from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework.decorators import parser_classes
 
-from models import Account, Classroom, Semester, Major, Professor
+from models import Classroom, Semester, Major, Professor
 # from ..chatrooms.models import Chatroom
 
 from serializers import ClassroomSerializer, MajorSerializer, OfficeHourSerializer
@@ -18,6 +18,8 @@ from ..posts.serializers import MomentSerializer, Note, NoteSerializer, Moment
 from ..tasks.serializers import Task, TaskSerializer, BasicTaskSerializer, CreateTaskSerializer
 from ..accounts.serializers import BasicClassroomSerializer, BasicAccountSerializer
 from ..tags.serializers import ClassFolderSerializer, Tag
+
+from ..badges.script import trigger_action
 
 
 # from ..chatrooms.matrix.matrix_api import MatrixApi
@@ -66,6 +68,7 @@ class ClassroomViewSet(viewsets.ViewSet):
 			classrooms = Classroom.objects.filter(class_code=search_token)
 			serializer = ClassroomSerializer(classrooms, many=True)
 			return Response(serializer.data)
+
 		# major + class number
 		else:
 			match = re.match(r"([a-z]+) *([0-9a-z]*)", search_token, re.I)
@@ -73,15 +76,13 @@ class ClassroomViewSet(viewsets.ViewSet):
 				items = match.groups()
 				print items
 				class_major = items[0].upper()
-				class_number = items[1]
-				major = Major.objects.get(major_short=class_major)
+				class_number = items[1].upper()
+				major = get_object_or_404(Major.objects.all(), major_short=class_major)
 				classrooms = Classroom.objects.filter(major=major,
-				                                      class_number=class_number) if class_number else Classroom.objects.filter(
-					major=major)
+				                                      class_number=class_number) if class_number else Classroom.objects.filter(major=major)
 				serializer = BasicClassroomSerializer(classrooms, many=True)
 				return Response(serializer.data)
 			else:
-				# TODO STEVE: need to consider more circumstances
 				return Response({})
 
 	def validate(self, request, pk):
@@ -131,9 +132,11 @@ class ClassroomViewSet(viewsets.ViewSet):
 					classroom.folders.add(tag)
 				new_note.tags.add(tag)
 			Moment.objects.create(
-				content='I uploaded a new note \"' + title + '\" to the classroom, check it out!',
+				content='I uploaded a new note \"' + title + '\", check it out!',
 				creator=request.user,
 				classroom=classroom)
+
+			trigger_action(request.user, 'upload_file')
 
 			return Response(status=status.HTTP_201_CREATED)
 
@@ -141,18 +144,16 @@ class ClassroomViewSet(viewsets.ViewSet):
 		# If no page provided, default is 1
 		if not page:
 			page = 1
-
 		classroom = get_object_or_404(self.queryset, pk=pk)
 		# 20 moments per page
 		moments = classroom.moments.filter(deleted=False).order_by('-created')[0:int(page) * 20]
 		serializer = MomentSerializer(moments, many=True)
+
 		return Response(serializer.data)
 
 	def tasks(self, request, pk):
 		classroom = get_object_or_404(self.queryset, pk=pk)
 		if request.method == 'GET':
-			# get all not expired tasks
-			# tasks = [obj for obj in  if not obj.expired]
 			serializer = BasicTaskSerializer(classroom.tasks.all().order_by('end'), many=True)
 			return Response(serializer.data)
 		elif request.method == 'POST':
@@ -165,7 +166,7 @@ class ClassroomViewSet(viewsets.ViewSet):
 				request.data['type'] = 1  # task
 			else:
 				return Response(status=status.HTTP_400_BAD_REQUEST)
-			# request.data['classroom'] = {'classroom_id': classroom.id}
+
 			serializer = CreateTaskSerializer(data=request.data)
 			serializer.is_valid(raise_exception=True)
 			serializer.save()
@@ -175,6 +176,8 @@ class ClassroomViewSet(viewsets.ViewSet):
 				        request.data.get('task_name', '') + '\" to the classroom, check it out!',
 				creator=request.user,
 				classroom=classroom)
+
+			trigger_action(request.user, 'add_classroom_task')
 
 			return Response(status=status.HTTP_201_CREATED)
 
@@ -189,15 +192,6 @@ class ClassroomViewSet(viewsets.ViewSet):
 			folders = classroom.folders.all()
 			serializer = ClassFolderSerializer(folders, many=True)
 			return Response(serializer.data)
-		elif request.method == 'POST':
-			# TODO: for lecture and homework, no children needed,
-			# for notes, we need a subclass,
-			content = request.data.get('content')
-			parent = request.data.get('parent')
-			if content:
-				Tag.objects.get(content=content)
-
-			pass
 
 	def office_hours(self, request, pk):
 		if request.method == 'GET':
@@ -216,11 +210,11 @@ class ClassroomViewSet(viewsets.ViewSet):
 		upload = request.FILES.get('file', False)
 		temp_file = open(upload.temporary_file_path())
 		if upload:
+			semester, created = Semester.objects.get_or_create(name="Fall 2017", start=datetime.datetime(year=2017, month=8, day=21), end=datetime.datetime(year=2017, month=12, day=8))
 			course = json.load(temp_file)
 			for key, cours in course.iteritems():
 				# print cours['description']
 				major, created = Major.objects.get_or_create(major_short=cours['major'])
-				semester, created = Semester.objects.get_or_create(name="Spring 2017")
 				try:
 					# create class time
 					time = Task.objects.create(task_name=cours['name'] + ' - ' + cours['section'],

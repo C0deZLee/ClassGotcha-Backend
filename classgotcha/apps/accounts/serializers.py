@@ -1,14 +1,14 @@
 from rest_framework import serializers
 
 from models import Account, Group, Professor
-from ..chatrooms.models import Chatroom
+# from ..chatrooms.models import Chatroom
 from ..classrooms.models import Semester, Classroom, Major, OfficeHour
 from ..tasks.serializers import BasicTaskSerializer, ClassTimeTaskSerializer
 from ..tags.serializers import ClassFolderSerializer
+from ..badges.serializers import BadgeSerializer
 
-from django.core.files.images import ImageFile
 
-
+# from django.core.files.images import ImageFile
 # from ..chatrooms.matrix.matrix_api import MatrixApi
 # import requests
 
@@ -23,6 +23,12 @@ class MajorSerializer(serializers.ModelSerializer):
 		fields = '__all__'
 
 
+class MiniMajorSerializer(serializers.ModelSerializer):
+	class Meta:
+		model = Major
+		fields = ['major_short']
+
+
 # WARN: Duplicate
 class SemesterSerializer(serializers.ModelSerializer):
 	formatted_start_date = serializers.ReadOnlyField()
@@ -31,12 +37,6 @@ class SemesterSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = Semester
 		fields = ('name', 'formatted_start_date', 'formatted_end_date')
-
-
-# class AvatarSerializer(serializers.ModelSerializer):
-# 	class Meta:
-# 		model = Account
-# 		fields = ('avatar2x', 'avatar1x')
 
 
 class BasicProfessorSerializer(serializers.ModelSerializer):
@@ -57,7 +57,7 @@ class BasicClassroomSerializer(serializers.ModelSerializer):
 
 	class Meta:
 		model = Classroom
-		fields = ('id', 'class_code', 'class_short', 'students_count',
+		fields = ('id', 'class_code', 'class_short', 'students_count', 'class_credit',
 		          'class_section', 'description', 'class_time', 'semester', 'professors', 'folders')
 
 
@@ -84,10 +84,19 @@ class ProfessorSerializer(serializers.ModelSerializer):
 
 class BasicAccountSerializer(serializers.ModelSerializer):
 	full_name = serializers.ReadOnlyField()
+	major = MiniMajorSerializer()
 
 	class Meta:
 		model = Account
-		fields = ('pk', 'id', 'avatar1x', 'avatar2x', 'username', 'email', 'full_name', 'about_me', 'level')
+		fields = ('pk', 'id', 'avatar1x', 'avatar2x', 'username', 'email', 'full_name', 'about_me', 'level', 'school_year', 'major')
+
+
+class MiniAccountSerializer(serializers.ModelSerializer):
+	full_name = serializers.ReadOnlyField()
+
+	class Meta:
+		model = Account
+		fields = ('pk', 'id', 'avatar1x', 'email', 'full_name', 'level')
 
 
 # WARN: Duplicate
@@ -106,23 +115,24 @@ class AccountSerializer(serializers.ModelSerializer):
 	is_professor = serializers.ReadOnlyField()
 	full_name = serializers.ReadOnlyField()
 	tasks = BasicTaskSerializer(many=True)
+	badges = BadgeSerializer(many=True)
+	major = MiniMajorSerializer()
 
 	class Meta:
 		model = Account
 		exclude = ('user_permissions', 'groups', 'is_superuser', 'is_staff',
-		           'is_active', 'password',)
-		read_only_fields = ('created', 'updated',)
+		           'is_active', 'password', 'updated')
+		read_only_fields = ('created',)
 
 
 class AuthAccountSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = Account
-		fields = ('username', 'email', 'password', 'first_name', 'last_name')
+		fields = ( 'email', 'password', 'first_name', 'last_name')
 		write_only_fields = ('password',)
 
 	def create(self, validated_data):
 		account = Account(email=validated_data['email'],
-		                  username=validated_data['username'],
 		                  first_name=validated_data['first_name'],
 		                  last_name=validated_data['last_name'])
 
@@ -134,8 +144,7 @@ class AuthAccountSerializer(serializers.ModelSerializer):
 		account.save()
 		return account
 
-
-class GroupSerializers(serializers.ModelSerializer):
-	class Meta:
-		model = Group
-		fields = ('group_type', 'members', 'classroom', 'creator')
+# class GroupSerializers(serializers.ModelSerializer):
+# 	class Meta:
+# 		model = Group
+# 		fields = ('group_type', 'members', 'classroom', 'creator')

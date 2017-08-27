@@ -9,7 +9,6 @@ __pycache__/
 
 # Local files
 local/env/*
-local/tmp/*
 .editorconfig
 .eslintrc
 dist/
@@ -22,20 +21,20 @@ statics/node_modules
 classgotcha/apps/accounts/migrations/*
 classgotcha/apps/classrooms/migrations/*
 classgotcha/apps/chatrooms/migrations/*
-classgotcha/apps/groups/migrations/*
 classgotcha/apps/posts/migrations/*
 classgotcha/apps/tasks/migrations/*
 classgotcha/apps/tags/migrations/*
 classgotcha/apps/badges/migrations/*
+classgotcha/apps/notifications/migrations/*
 
 !classgotcha/apps/accounts/migrations/__init__.py
 !classgotcha/apps/classrooms/migrations/__init__.py
 !classgotcha/apps/chatrooms/migrations/__init__.py
-!classgotcha/apps/groups/migrations/__init__.py
 !classgotcha/apps/posts/migrations/__init__.py
 !classgotcha/apps/tasks/migrations/__init__.py
 !classgotcha/apps/tags/migrations/__init__.py
 !classgotcha/apps/badges/migrations/__init__.py
+!classgotcha/apps/notifications/migrations/__init__.py
 
 
 classgotcha/apps/chatrooms/static/*
@@ -43,4 +42,7 @@ classgotcha/apps/chatrooms/templates/*
 
 .DS_Store
 /npm-debug.log
+
+
+*.sqlite3
 
