@@ -40,11 +40,13 @@ class Professor(models.Model):
 	# Basic
 	first_name = models.CharField(max_length=40)
 	last_name = models.CharField(max_length=40)
-	mid_name = models.CharField(max_length=40, blank=True)
+	# mid_name = models.CharField(max_length=40, blank=True)
+
 	email = models.CharField(max_length=50)
 	office = models.CharField(max_length=100, blank=True)
 	personal_page = models.CharField(max_length=100, blank=True)
-	department = models.CharField(max_length=100, blank=True)
+
+	# department = models.CharField(max_length=100, blank=True)
 	# Relationship
 	major = models.ForeignKey('classrooms.Major')
 	tags = models.ManyToManyField(Tag)

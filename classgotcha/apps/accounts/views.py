@@ -205,16 +205,15 @@ class AccountViewSet(viewsets.ViewSet):
 	def search(self, request):
 		token = request.data.get('token', None)
 		if token:
-			# TODO: search implementation
-			# Assume token is "abcd1234@psu.edu" or "abcd1234" or "John Martin"
-			# ....
-			# ....
+
 			if '@' in token:
 				token = token.split("@")[0]
-			users = Account.objects.filter(email__istartswith = token)
-			tokens = token.split()
-			users |= Account.objects.filter(first_name__istartswith = tokens[0])
-			users |= Account.objects.filter(last_name__istartswith = tokens[-1])
+				users = Account.objects.filter(email__istartswith=token)
+			else:
+				tokens = token.split()
+				users = Account.objects.filter(first_name__istartswith=tokens[0])
+				users |= Account.objects.filter(first_name__istartswith=tokens[1])
+				users |= Account.objects.filter(last_name__istartswith=tokens[-1])
 
 			serializer = BasicAccountSerializer(users, many=True)
 
@@ -468,10 +467,8 @@ class AccountViewSet(viewsets.ViewSet):
 		user_tasks = request.user.tasks.all()
 		user = request.user
 		for task in user_tasks:
-			
-
 			generate_recommendations_for_user(user, task)
-			#pass
+		# pass
 		# TODO: study plan generator, all generated plan should be category 6
 		# ....
 		return Response(status=status.HTTP_200_OK)
@@ -488,13 +485,17 @@ class ProfessorViewSet(viewsets.ViewSet):
 		return Response(serializer.data)
 
 	def update(self, request, pk):
+
+		if request.user.level < 5:
+			return Response({'detail': 'You need to reach to Level 5 to edit professor info'}, status=status.HTTP_400_BAD_REQUEST)
+
 		professor = get_object_or_404(self.queryset, pk=pk)
+
 		for (key, value) in request.data.items():
-			if key in ['first_name', 'last_name', 'email', 'office', 'major']:
-				if key is 'major':
-					setattr(professor, 'major_id', value)
-				else:
-					setattr(professor, key, value)
+			if key is 'major':
+				setattr(professor, 'major_id', value)
+			elif key in ['first_name', 'last_name', 'email', 'office']:
+				setattr(professor, key, value)
 		return Response(status=status.HTTP_200_OK)
 
 	def comments(self, request, pk):
