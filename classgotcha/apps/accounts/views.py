@@ -22,7 +22,7 @@ from ..notifications.models import Notification
 from models import Account, Professor, AccountVerifyToken
 from serializers import AccountSerializer, BasicAccountSerializer, AuthAccountSerializer, ProfessorSerializer
 
-from script import group, complement, generate_recommendations_for_homework
+from script import group, complement, generate_recommendations_for_user
 from django.core.mail import EmailMessage
 from django.template.loader import render_to_string
 
@@ -468,8 +468,10 @@ class AccountViewSet(viewsets.ViewSet):
 		user_tasks = request.user.tasks.all()
 		user = request.user
 		for task in user_tasks:
-			# generate_recommendations_for_homework(user, task)
-			pass
+			
+
+			generate_recommendations_for_user(user, task)
+			#pass
 		# TODO: study plan generator, all generated plan should be category 6
 		# ....
 		return Response(status=status.HTTP_200_OK)
