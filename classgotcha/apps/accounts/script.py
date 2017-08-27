@@ -119,9 +119,9 @@ def generate_recommendations_for_user(account, task):  # in this case the end ti
 		generate_recommendations(account,task,description = 'Prepare for the Quiz',pre_days=7)
 
 	elif task.category=='Exam':
-		generate_recommendations(account,task,'Prepare for the Exam',pre_days=2)
-		generate_recommendations(account,task,'Prepare for the Exam',pre_days=7)
-		generate_recommendations(account,task,'Prepare for the Exam',pre_days=14)
+		generate_recommendations(account,task,description = 'Prepare for the Exam',pre_days=2)
+		generate_recommendations(account,task,description ='Prepare for the Exam',pre_days=7)
+		generate_recommendations(account,task,description ='Prepare for the Exam',pre_days=14)
 
 	else:
 		pass
