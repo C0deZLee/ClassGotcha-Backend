@@ -209,10 +209,14 @@ class ClassroomViewSet(viewsets.ViewSet):
 		semester, created = Semester.objects.get_or_create(name="Fall 2017", start=datetime.datetime(year=2017, month=8, day=21), end=datetime.datetime(year=2017, month=12, day=8))
 
 		upload = request.FILES.get('file', False)
-		temp_file = open(upload.temporary_file_path())
+		from django.core.files.uploadedfile import InMemoryUploadedFile, TemporaryUploadedFile
+		if type(upload) is InMemoryUploadedFile:
+			temp_file = upload
+		elif type(upload) is TemporaryUploadedFile:
+			temp_file = open(upload.temporary_file_path())
 		if upload:
 			course = json.load(temp_file)
-			for key, cours in course.iteritems():
+			for cours in course:
 				# print cours['description']
 				major_short = cours['course_short_name'].split()[0]
 				major = Major.objects.get(major_short=major_short)
@@ -229,7 +233,7 @@ class ClassroomViewSet(viewsets.ViewSet):
 						time.start = datetime.datetime.strptime(class_time[1], '%I:%M%p')
 						time.end = datetime.datetime.strptime(class_time[3], '%I:%M%p')
 						time.save()
-						print time.start, time.end, class_time[1], class_time[3]
+					# print time.start, time.end, class_time[1], class_time[3]
 					# create classroom
 					classroom, created = Classroom.objects.get_or_create(class_code=cours['class_number'],
 					                                                     class_number=cours['course_short_name'].split()[1],
@@ -243,29 +247,17 @@ class ClassroomViewSet(viewsets.ViewSet):
 					                                                     semester=semester)
 					# create professor
 					if 'instructor1' in cours:
-						if 'instructor1_email' in cours:
-							instructor1, created = Professor.objects.get_or_create(
-								first_name=cours['instructor1'].split()[0],
-								last_name=cours['instructor1'].split()[1],
-								major=major, email=cours['instructor1_email'])
-						else:
-							instructor1, created = Professor.objects.get_or_create(
-								first_name=cours['instructor1'].split()[0],
-								last_name=cours['instructor1'].split()[1],
-								major=major)
+						instructor_name = cours['instructor1'].upper().replace(',', '')
+						instructor1, created = Professor.objects.get_or_create(
+							first_name=instructor_name.split()[0],
+							last_name=instructor_name.split()[1])
 						classroom.professors.add(instructor1)
 
 					if 'instructor2' in cours:
-						if 'instructor2_email' in cours:
-							instructor2, created = Professor.objects.get_or_create(
-								first_name=cours['instructor2'].split()[0],
-								last_name=cours['instructor2'].split()[1],
-								major=major, email=cours['instructor2_email'])
-						else:
-							instructor2, created = Professor.objects.get_or_create(
-								first_name=cours['instructor2'].split()[0],
-								last_name=cours['instructor2'].split()[1],
-								major=major)
+						instructor_name = cours['instructor2'].upper().replace(',', '')
+						instructor2, created = Professor.objects.get_or_create(
+							first_name=instructor_name.split()[0],
+							last_name=instructor_name.split()[1])
 						classroom.professors.add(instructor2)
 
 					# save classroom to get pk in db
@@ -292,10 +284,14 @@ class ClassroomViewSet(viewsets.ViewSet):
 			return Response(status=status.HTTP_403_FORBIDDEN)
 		upload = request.FILES.get('file', False)
 		if upload:
-			temp_file = open(upload.temporary_file_path())
+			from django.core.files.uploadedfile import InMemoryUploadedFile, TemporaryUploadedFile
+			if type(upload) is InMemoryUploadedFile:
+				temp_file = upload
+			elif type(upload) is TemporaryUploadedFile:
+				temp_file = open(upload.temporary_file_path())
 			majors = json.load(temp_file)
 			try:
-				for key, major in majors.iteritems():
+				for major in majors:
 					Major.objects.create(major_short=major['major_short'], major_full=major['major_full'])
 			except IntegrityError:
 				print IntegrityError
@@ -309,17 +305,21 @@ class ClassroomViewSet(viewsets.ViewSet):
 			return Response(status=status.HTTP_403_FORBIDDEN)
 		upload = request.FILES.get('file', False)
 		if upload:
-			temp_file = open(upload.temporary_file_path())
+			from django.core.files.uploadedfile import InMemoryUploadedFile, TemporaryUploadedFile
+			if type(upload) is InMemoryUploadedFile:
+				temp_file = upload
+			elif type(upload) is TemporaryUploadedFile:
+				temp_file = open(upload.temporary_file_path())
 			professors = json.load(temp_file)
 			try:
-				for key, professor in professors.iteritems():
+				for professor in professors:
 					name = professor['name'].upper().split()
 					email = professor.get('email', '')
 					office = professor.get('address', '')
 
-					Professor.objects.create(first_name=name[0], last_name=[1], email=email, office=office)
-			except IntegrityError:
-				print IntegrityError
+					Professor.objects.create(first_name=name[0], last_name=name[1], email=email, office=office)
+			except IntegrityError as e:
+				print e.message
 
 			return Response(status=status.HTTP_201_CREATED)
 		else:

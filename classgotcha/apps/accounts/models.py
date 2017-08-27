@@ -30,12 +30,8 @@ class AccountManager(BaseUserManager):
 		return account
 
 
-# TODO: Some professors work for multiple departments,
-# TODO: Some professors in same major has same name,
-# TODO: same professors teach multiple majors' courses under same department
+# TODO: Some professors work for multiple departments, same professors teach multiple majors' courses under same department
 class Professor(models.Model):
-	class Meta:
-		unique_together = (('first_name', 'last_name', 'major'),)
 
 	# Basic
 	first_name = models.CharField(max_length=40)
@@ -48,7 +44,7 @@ class Professor(models.Model):
 
 	# department = models.CharField(max_length=100, blank=True)
 	# Relationship
-	major = models.ForeignKey('classrooms.Major')
+	# major = models.ForeignKey('classrooms.Major')
 	tags = models.ManyToManyField(Tag)
 	# Timestamp
 	created = models.DateTimeField(auto_now_add=True)

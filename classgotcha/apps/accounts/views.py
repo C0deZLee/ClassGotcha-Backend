@@ -205,14 +205,12 @@ class AccountViewSet(viewsets.ViewSet):
 	def search(self, request):
 		token = request.data.get('token', None)
 		if token:
-
 			if '@' in token:
 				token = token.split("@")[0]
 				users = Account.objects.filter(email__istartswith=token)
 			else:
 				tokens = token.split()
 				users = Account.objects.filter(first_name__istartswith=tokens[0])
-				users |= Account.objects.filter(first_name__istartswith=tokens[1])
 				users |= Account.objects.filter(last_name__istartswith=tokens[-1])
 
 			serializer = BasicAccountSerializer(users, many=True)
@@ -491,14 +489,12 @@ class ProfessorViewSet(viewsets.ViewSet):
 
 		professor = get_object_or_404(self.queryset, pk=pk)
 
-		content = 'Changed professor '
 		for (key, value) in request.data.items():
 			if key in ['personal_page', 'email', 'office']:
 				setattr(professor, key, value)
-				content += (key + ' ')
 		professor.save()
 
-		Comment.objects.create(content=content,
+		Comment.objects.create(content='Updated Professor Information',
 		                       professor_id=professor.id,
 		                       is_anonymous=False,
 		                       creator=request.user)
