@@ -91,7 +91,7 @@ class Account(AbstractBaseUser, PermissionsMixin):
 
 	# Personal info
 	first_name = models.CharField(max_length=40, blank=True)
-	mid_name = models.CharField(max_length=40, blank=True)
+	# mid_name = models.CharField(max_length=40, blank=True)
 	last_name = models.CharField(max_length=40, blank=True)
 	gender = models.CharField(max_length=40, blank=True)
 	birthday = models.DateField(null=True, blank=True)
