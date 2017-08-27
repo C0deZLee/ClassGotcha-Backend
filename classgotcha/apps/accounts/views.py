@@ -209,7 +209,13 @@ class AccountViewSet(viewsets.ViewSet):
 			# Assume token is "abcd1234@psu.edu" or "abcd1234" or "John Martin"
 			# ....
 			# ....
-			users = []
+			if '@' is in token:
+				token = token.split("@")[0]
+			users = Account.objects.filter(email__istartswith = token)
+			tokens = token.split()
+			users |= Account.objects.filter(first_name__istartswith = tokens[0])
+			users |= Account.objects.filter(last_name__istartswith = tokens[-1])
+
 			serializer = BasicAccountSerializer(users, many=True)
 
 			return Response(serializer.data)
