@@ -203,26 +203,27 @@ class ClassroomViewSet(viewsets.ViewSet):
 
 	# Tools for upload all the courses
 	@staticmethod
-	def upload_all_course_info(request):
+	def upload_course_info(request):
 		if not request.user.is_superuser:
 			return Response(status=status.HTTP_403_FORBIDDEN)
+		semester, created = Semester.objects.get_or_create(name="Fall 2017", start=datetime.datetime(year=2017, month=8, day=21), end=datetime.datetime(year=2017, month=12, day=8))
 
 		upload = request.FILES.get('file', False)
 		temp_file = open(upload.temporary_file_path())
 		if upload:
-			semester, created = Semester.objects.get_or_create(name="Fall 2017", start=datetime.datetime(year=2017, month=8, day=21), end=datetime.datetime(year=2017, month=12, day=8))
 			course = json.load(temp_file)
 			for key, cours in course.iteritems():
 				# print cours['description']
-				major, created = Major.objects.get_or_create(major_short=cours['major'])
+				major_short = cours['course_short_name'].split()[0]
+				major = Major.objects.get(major_short=major_short)
 				try:
 					# create class time
-					time = Task.objects.create(task_name=cours['name'] + ' - ' + cours['section'],
+					time = Task.objects.create(task_name=cours['course_short_name'] + ' - ' + cours['course_section'],
 					                           location=cours['room'],
 					                           type=0,  # Event
 					                           category=0  # Class
 					                           )
-					class_time = cours['time'].split()
+					class_time = cours['datetime'].split()
 					if len(class_time) == 4:
 						time.repeat = class_time[0]
 						time.start = datetime.datetime.strptime(class_time[1], '%I:%M%p')
@@ -230,12 +231,12 @@ class ClassroomViewSet(viewsets.ViewSet):
 						time.save()
 						print time.start, time.end, class_time[1], class_time[3]
 					# create classroom
-					classroom, created = Classroom.objects.get_or_create(class_code=cours['number'],
-					                                                     class_number=cours['name'].split()[1],
-					                                                     class_name=cours['fullName'],
-					                                                     description=cours['description'],
-					                                                     class_section=cours['section'],
-					                                                     class_credit=cours['unit'],
+					classroom, created = Classroom.objects.get_or_create(class_code=cours['class_number'],
+					                                                     class_number=cours['course_short_name'].split()[1],
+					                                                     class_name=cours['course_full_name'],
+					                                                     description=cours['course_description'],
+					                                                     class_section=cours['course_section'],
+					                                                     class_credit=cours['course_credit'],
 					                                                     class_location=cours['room'],
 					                                                     class_time=time,
 					                                                     major=major,
@@ -285,6 +286,22 @@ class ClassroomViewSet(viewsets.ViewSet):
 		else:
 			return Response(status=status.HTTP_400_BAD_REQUEST)
 
+	@staticmethod
+	def upload_major_info(request):
+		if not request.user.is_superuser:
+			return Response(status=status.HTTP_403_FORBIDDEN)
+		upload = request.FILES.get('file', False)
+		if upload:
+			temp_file = open(upload.temporary_file_path())
+			majors = json.load(temp_file)
+			try:
+				for key, major in majors.iteritems():
+					Major.objects.create(major_short=major['major_short'], major_full=major['major_full'])
+			except IntegrityError:
+				print IntegrityError
+			return Response(status=status.HTTP_201_CREATED)
+		else:
+			return Response(status=status.HTTP_400_BAD_REQUEST)
 
 class MajorViewSet(viewsets.ViewSet):
 	queryset = Major.objects.all().order_by('major_short')
