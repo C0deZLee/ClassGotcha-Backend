@@ -291,7 +291,7 @@ class AccountViewSet(viewsets.ViewSet):
 				print "this is not empty\n"
 			mine = set(user.classrooms.all())
 			his = set(other.classrooms.all())
-			return True if mine and his and mine <= his or mine > his or len(mine & his) >= 2 else False
+			return True if mine and his and (mine <= his or mine > his or len(mine & his) >= 2) else False
 
 		# def sharing_friends(user, other):
 		# 	# return boolean
