@@ -491,11 +491,20 @@ class ProfessorViewSet(viewsets.ViewSet):
 
 		professor = get_object_or_404(self.queryset, pk=pk)
 
+		content = 'Changed professor '
 		for (key, value) in request.data.items():
-			if key is 'major':
-				setattr(professor, 'major_id', value)
-			elif key in ['first_name', 'last_name', 'email', 'office']:
+			if key in ['personal_page', 'email', 'office']:
 				setattr(professor, key, value)
+				content += (key + ' ')
+		professor.save()
+
+		Comment.objects.create(content=content,
+		                       professor_id=professor.id,
+		                       is_anonymous=False,
+		                       creator=request.user)
+
+		trigger_action(request.user, 'professor_edit')
+
 		return Response(status=status.HTTP_200_OK)
 
 	def comments(self, request, pk):
@@ -508,11 +517,12 @@ class ProfessorViewSet(viewsets.ViewSet):
 			is_anonymous = request.data.get('is_anonymous')
 			# num = request.data.get('num')
 			if content:
-				comment = Comment.objects.create(content=content,
-				                                 professor_id=professor.id,
-				                                 is_anonymous=is_anonymous,
-				                                 creator=request.user)
-				comment.save()
+				Comment.objects.create(content=content,
+				                       professor_id=professor.id,
+				                       is_anonymous=is_anonymous,
+				                       creator=request.user)
+				trigger_action(request.user, 'professor_comment')
+
 				return Response(status=status.HTTP_201_CREATED)
 			else:
 				return Response(status=status.HTTP_400_BAD_REQUEST)

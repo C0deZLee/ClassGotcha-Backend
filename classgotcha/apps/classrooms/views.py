@@ -303,6 +303,29 @@ class ClassroomViewSet(viewsets.ViewSet):
 		else:
 			return Response(status=status.HTTP_400_BAD_REQUEST)
 
+	@staticmethod
+	def upload_professor_info(request):
+		if not request.user.is_superuser:
+			return Response(status=status.HTTP_403_FORBIDDEN)
+		upload = request.FILES.get('file', False)
+		if upload:
+			temp_file = open(upload.temporary_file_path())
+			professors = json.load(temp_file)
+			try:
+				for key, professor in professors.iteritems():
+					name = professor['name'].upper().split()
+					email = professor.get('email', '')
+					office = professor.get('address', '')
+
+					Professor.objects.create(first_name=name[0], last_name=[1], email=email, office=office)
+			except IntegrityError:
+				print IntegrityError
+
+			return Response(status=status.HTTP_201_CREATED)
+		else:
+			return Response(status=status.HTTP_400_BAD_REQUEST)
+
+
 class MajorViewSet(viewsets.ViewSet):
 	queryset = Major.objects.all().order_by('major_short')
 	permission_classes = (IsAuthenticated,)

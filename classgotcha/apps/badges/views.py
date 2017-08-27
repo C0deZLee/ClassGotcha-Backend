@@ -23,6 +23,11 @@ def action_init(request):
 			Action(name='add_friend', exp=5),  # DONE # DONE
 			Action(name='accept_friend', exp=5),  # DONE # DONE
 
+			# Professors
+			Action(name='professor_edit', exp=5),  # DONE # DONE
+			Action(name='professor_comment', exp=5),  # DONE # DONE
+
+
 			# File Uploads
 			Action(name='upload_file', exp=20),  # DONE # DONE
 

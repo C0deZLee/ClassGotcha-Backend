@@ -41,6 +41,9 @@ classroom_course_upload = views.ClassroomViewSet.as_view({
 classroom_major_upload = views.ClassroomViewSet.as_view({
 	'post': 'upload_major_info'
 })
+classroom_professor_upload = views.ClassroomViewSet.as_view({
+	'post': 'upload_professor_info'
+})
 
 majors_all = views.MajorViewSet.as_view({
 	'get': 'list'
@@ -56,8 +59,10 @@ urlpatterns = [
 	url(r'^(?P<pk>[0-9]+)/$', classroom_detail, name='classroom-detail'),
 	url(r'^search/$', classroom_search, name='classroom-search'),
 	url(r'^majors/$', majors_all, name='major-list'),
+
 	url(r'^course-upload/$', classroom_course_upload, name='classroom-course-upload'),
 	url(r'^major-upload/$', classroom_major_upload, name='classroom-major-upload'),
+	url(r'^professor-upload/$', classroom_professor_upload, name='classroom-professor-upload'),
 ]
 
 # classroom/all
