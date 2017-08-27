@@ -49,11 +49,6 @@ def send_verifying_email(account, subject, to, template):
 	email.send()
 
 
-# For Friend Searching
-def is_similar(user1, user2):
-	return (lambda a, b, c: len(a) / float(len(b)) > .8 and len(a) / float(len(c)) > .8 if b and c else False)(user1.classroom.intersects(user2.classroom), user1.classroom, user2.classroom)
-
-
 @api_view(['POST'])
 @permission_classes((AllowAny,))
 def account_register(request):
