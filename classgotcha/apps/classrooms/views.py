@@ -219,7 +219,9 @@ class ClassroomViewSet(viewsets.ViewSet):
 			for cours in course:
 				# print cours['description']
 				major_short = cours['course_short_name'].split()[0]
+
 				major = Major.objects.get(major_short=major_short)
+
 				try:
 					# create class time
 					time = Task.objects.create(task_name=cours['course_short_name'] + ' - ' + cours['course_section'],
@@ -248,17 +250,29 @@ class ClassroomViewSet(viewsets.ViewSet):
 					# create professor
 					if 'instructor1' in cours:
 						instructor_name = cours['instructor1'].upper().replace(',', '')
-						instructor1, created = Professor.objects.get_or_create(
+						instructor1 = Professor.objects.filter(
 							first_name=instructor_name.split()[0],
 							last_name=instructor_name.split()[1])
-						classroom.professors.add(instructor1)
+						if instructor1:
+							classroom.professors.add(instructor1[0])
+						else:
+							professor = Professor.objects.create(
+								first_name=instructor_name.split()[0],
+								last_name=instructor_name.split()[1])
+							classroom.professors.add(professor)
 
 					if 'instructor2' in cours:
 						instructor_name = cours['instructor2'].upper().replace(',', '')
-						instructor2, created = Professor.objects.get_or_create(
+						instructor2 = Professor.objects.filter(
 							first_name=instructor_name.split()[0],
 							last_name=instructor_name.split()[1])
-						classroom.professors.add(instructor2)
+						if instructor2:
+							classroom.professors.add(instructor2[0])
+						else:
+							professor = Professor.objects.create(
+								first_name=instructor_name.split()[0],
+								last_name=instructor_name.split()[1])
+							classroom.professors.add(professor)
 
 					# save classroom to get pk in db
 					classroom.save()
