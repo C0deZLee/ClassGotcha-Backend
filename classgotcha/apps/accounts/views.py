@@ -73,7 +73,7 @@ def account_register(request):
 			trigger_action(account, 'refer_friend')
 			Notification.objects.create(sender_id=user.id, content='joined ClassGotcha with your refer!', receiver_id=account.id)
 
-	send_verifying_email(account=user, subject='[ClassGotcha] Verification Email', to=request.data['email'], template='verification')
+	send_verifying_email(account=user, subject='[ClassGotcha] Verification Email', to=user.email, template='verification')
 
 	return Response({'token': token}, status=status.HTTP_201_CREATED)
 
@@ -101,7 +101,9 @@ def email_verify(request, token=None):
 			return Response({'message': 'Token is expired'}, status=status.HTTP_400_BAD_REQUEST)
 
 		token_instance.account.is_verified = True
-		token_instance.is_expired = True
+		token_instance.account.save()
+		token_instance.expire_time = timezone.now()
+		token_instance.save()
 		trigger_action(request.user, 'verify_email')
 
 		return Response(status=status.HTTP_200_OK)
