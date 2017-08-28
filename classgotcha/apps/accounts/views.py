@@ -104,7 +104,7 @@ def email_verify(request, token=None):
 		token_instance.account.save()
 		token_instance.expire_time = timezone.now()
 		token_instance.save()
-		trigger_action(request.user, 'verify_email')
+		trigger_action(token_instance.account, 'verify_email')
 
 		return Response(status=status.HTTP_200_OK)
 
