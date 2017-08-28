@@ -14,7 +14,7 @@ classroom_notes = views.ClassroomViewSet.as_view({
 })
 
 classroom_moments = views.ClassroomViewSet.as_view({
-	'get': 'recent_moments'
+	'get': 'moments'
 })
 
 classroom_tasks = views.ClassroomViewSet.as_view({
@@ -34,8 +34,15 @@ classroom_search = views.ClassroomViewSet.as_view({
 	'post': 'search'
 })
 
-classroom_admin_upload = views.ClassroomViewSet.as_view({
-	'post': 'upload_all_course_info'
+classroom_course_upload = views.ClassroomViewSet.as_view({
+	'post': 'upload_course_info'
+})
+
+classroom_major_upload = views.ClassroomViewSet.as_view({
+	'post': 'upload_major_info'
+})
+classroom_professor_upload = views.ClassroomViewSet.as_view({
+	'post': 'upload_professor_info'
 })
 
 majors_all = views.MajorViewSet.as_view({
@@ -47,11 +54,15 @@ urlpatterns = [
 	url(r'^(?P<pk>[0-9]+)/tasks/$', classroom_tasks, name='classroom-tasks'),
 	url(r'^(?P<pk>[0-9]+)/students/$', classroom_students, name='classroom-students'),
 	url(r'^(?P<pk>[0-9]+)/moments/$', classroom_moments, name='classroom-moments'),
+	url(r'^(?P<pk>[0-9]+)/moments/(?P<page>[0-9]+)/$', classroom_moments, name='classroom-moments-page'),
 	url(r'^(?P<pk>[0-9]+)/validate/$', classroom_validate, name='classroom-check'),
 	url(r'^(?P<pk>[0-9]+)/$', classroom_detail, name='classroom-detail'),
 	url(r'^search/$', classroom_search, name='classroom-search'),
-	url(r'^majors/$', majors_all, name='major_list'),
-	url(r'^upload/$', classroom_admin_upload, name='classroom_admin_upload'),
+	url(r'^majors/$', majors_all, name='major-list'),
+
+	url(r'^course-upload/$', classroom_course_upload, name='classroom-course-upload'),
+	url(r'^major-upload/$', classroom_major_upload, name='classroom-major-upload'),
+	url(r'^professor-upload/$', classroom_professor_upload, name='classroom-professor-upload'),
 ]
 
 # classroom/all

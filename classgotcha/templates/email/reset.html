@@ -26,7 +26,7 @@
                     <tr>
                         <td style="padding: 20px;">
                           <p>
-                            Hello {{ first_name }},
+                            Hello {{ user.first_name }},
                           </p>
                           <p>
                             We are so sorry that you forgot your password.
@@ -35,7 +35,7 @@
                             Please <a href="http://www.classgotcha.com/confirm?token={{ token }}" class="btn-primary">click this link</a> to reset your password.
                             <br><br>
                             If the above link doesn't work, please copy this url to your internet browser: <br>
-                            http://www.classgotcha.com/reset?token={{ token }}
+                            http://www.classgotcha.com/forget?token={{ token }}
                           </p>
                         </td>
                     </tr>

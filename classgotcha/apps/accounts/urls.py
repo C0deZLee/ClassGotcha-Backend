@@ -7,7 +7,7 @@ account_change_password = views.AccountViewSet.as_view({
 })
 
 account_detail = views.AccountViewSet.as_view({
-	'get': 'retrieve',
+	'get'   : 'retrieve',
 	'delete': 'destroy'
 })
 
@@ -16,8 +16,8 @@ account_friends = views.AccountViewSet.as_view({
 })
 
 account_add_friends = views.AccountViewSet.as_view({
-	'post': 'friends',
-	'put': 'friends',
+	'post'  : 'friends',
+	'put'   : 'friends',
 	'delete': 'friends'
 })
 
@@ -35,7 +35,7 @@ account_classrooms = views.AccountViewSet.as_view({
 })
 
 account_add_classrooms = views.AccountViewSet.as_view({
-	'post': 'classrooms',
+	'post'  : 'classrooms',
 	'delete': 'classrooms'
 })
 
@@ -44,7 +44,7 @@ account_chatrooms = views.AccountViewSet.as_view({
 })
 
 account_add_chatrooms = views.AccountViewSet.as_view({
-	'post': 'rooms',
+	'post'  : 'rooms',
 	'delete': 'rooms'
 })
 
@@ -53,24 +53,39 @@ account_notes = views.AccountViewSet.as_view({
 })
 
 account_moments = views.AccountViewSet.as_view({
-	'get': 'moments',
-	'put': 'moments',
+	'get' : 'moments',
+	'put' : 'moments',
 	'post': 'moments'
 })
 
-account_add_moments = views.AccountViewSet.as_view({
-	'post': 'moments',
-	'delete': 'moments'
-})
-account_tasks = views.AccountViewSet.as_view({
-	'get': 'tasks',
-	'put': 'tasks',
-	'post': 'tasks',
-	'delete': 'tasks'
+account_detail_moments = views.AccountViewSet.as_view({
+	'get': 'moments',
 })
 
-account_freetime = views.AccountViewSet.as_view({
-	'get': 'freetime'
+account_add_moments = views.AccountViewSet.as_view({
+	'post'  : 'moments',
+	'delete': 'moments'
+})
+
+account_tasks = views.AccountViewSet.as_view({
+	'get' : 'tasks',
+	'post': 'tasks'
+})
+
+account_tasks_edit = views.AccountViewSet.as_view({
+	'put'   : 'tasks',
+})
+
+account_explore = views.AccountViewSet.as_view({
+	'get': 'explore_friends'
+})
+
+account_search = views.AccountViewSet.as_view({
+	'post': 'search'
+})
+
+account_plan = views.AccountViewSet.as_view({
+	'get': 'study_plan'
 })
 
 professor_detail = views.ProfessorViewSet.as_view({
@@ -79,40 +94,48 @@ professor_detail = views.ProfessorViewSet.as_view({
 })
 
 professor_comments = views.ProfessorViewSet.as_view({
-	'get': 'comments',
+	'get' : 'comments',
 	'post': 'comments'
 })
 
 urlpatterns = [
-	url(r'^friends/(?P<pk>[0-9]+)/$', account_add_friends, name='add-friend'),
+	url(r'^avatar/change/$', views.account_avatar, name='user-avatar'),
+
 	url(r'^moments/(?P<pk>[0-9]+)/$', account_add_moments, name='add-moment'),
 	url(r'^classrooms/(?P<pk>[0-9]+)/$', account_add_classrooms, name='add-classroom'),
-	url(r'^chatrooms/(?P<pk>[0-9]+)/$', account_add_chatrooms, name='add-chatroom'),
+	url(r'^chatrooms/(?P<pk>[0-9]+)/$', account_add_chatrooms, name='add-chatrooms'),
 
 	url(r'^(?P<pk>[0-9]+)/$', account_detail, name='user-detail'),
+	url(r'^(?P<pk>[0-9]+)/moments/$', account_detail_moments, name='user-detail-moments'),
 
-	url(r'^avatar/$', views.account_avatar, name='user-avatar'),
 	url(r'^classrooms/$', account_classrooms, name='user-classrooms'),
 	url(r'^chatrooms/$', account_chatrooms, name='user-chatrooms'),
+
 	url(r'^friends/$', account_friends, name='user-friends'),
+	url(r'^friends/(?P<pk>[0-9]+)/$', account_add_friends, name='add-friend'),
+
 	url(r'^pending-friends/$', account_pending_friends, name='user-pending-friends'),
+	url(r'^recommend-friends/$', account_explore, name='user-explore-friends'),
+	url(r'^search/$', account_search, name='user-search'),
 	url(r'^login/$', obtain_jwt_token),
 	url(r'^login-refresh/$', refresh_jwt_token),
 	url(r'^login-verify/$', verify_jwt_token),
 
 	url(r'^register/$', views.account_register, name='user-register'),
-	url(r'^verify/$', views.email_verify, name='email-verify-request'),
 
+	url(r'^verify/$', views.email_verify, name='email-verify-request'),
 	url(r'^verify/(?P<token>[A-z0-9\-]+)/$', views.email_verify, name='email-verifying'),
 
-	url(r'^reset/$', account_change_password, name='change-pass'),
 	url(r'^notes/$', account_notes, name='user-notes'),
 	url(r'^moments/$', account_moments, name='user-moments'),
 	url(r'^tasks/$', account_tasks, name='user-tasks'),
-	url(r'^freetime/$', account_freetime, name='freetime'),
+	url(r'^tasks/(?P<pk>[0-9]+)$', account_tasks_edit, name='user-tasks-edit'),
+
+	url(r'^plan/$', account_plan, name='user-study-plan'),
 
 	url(r'^forget/$', views.forget_password, name='user-forget-password-gettoken'),
 	url(r'^forget/(?P<token>[A-z0-9\-]+)/$', views.forget_password, name='user-forget-password'),
+	url(r'^passchange/$', account_change_password, name='change-pass'),
 
 	url(r'^me/$', account_me, name='me'),
 

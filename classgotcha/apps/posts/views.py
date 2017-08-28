@@ -1,12 +1,13 @@
-from models import Moment, Post, Comment
-
 from django.shortcuts import get_object_or_404
 from rest_framework import permissions, viewsets, status
-from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from rest_framework.reverse import reverse
 
-from serializers import MomentSerializer, CommentSerializer, PostSerializer, BasicPostSerializer
+from models import Moment, Post, Comment
+from serializers import MomentSerializer, PostSerializer, BasicPostSerializer
+
+from ..notifications.models import Notification
+
+from ..badges.script import trigger_action
 
 
 class MomentViewSet(viewsets.ViewSet):
@@ -27,13 +28,24 @@ class MomentViewSet(viewsets.ViewSet):
 			return Response(status=status.HTTP_403_FORBIDDEN)
 		moment.solved = True
 		moment.save()
+
+		for comment in moment.comments.all():
+			if moment.creator.id is not request.user.id:
+				trigger_action(comment.creator, 'answer_approved')
+				Notification.objects.create(receiver_id=comment.creator.id, content='approved your answer. EXP +15', sender_id=request.user.id)
+
 		return Response(status=status.HTTP_200_OK)
 
 	def comment(self, request, pk):
-		get_object_or_404(self.queryset, pk=pk)
+		moment = get_object_or_404(self.queryset, pk=pk)
 		content = request.data.get('content', None)
 		if content:
 			Comment.objects.create(content=content, moment_id=pk, creator=request.user)
+			if moment.solved is None:
+				trigger_action(request.user, 'reply_moment')
+			else:
+				trigger_action(request.user, 'answer_question')
+
 			return Response(status=status.HTTP_200_OK)
 		else:
 			return Response(status=status.HTTP_400_BAD_REQUEST)
@@ -44,12 +56,16 @@ class MomentViewSet(viewsets.ViewSet):
 		if moment.flagged:
 			moment.deleted = True
 		moment.save()
+
+		trigger_action(request.user, 'report_classroom_moment')
 		return Response(status=status.HTTP_200_OK)
 
 	def like(self, request, pk):
 		moment = get_object_or_404(self.queryset, pk=pk)
 		moment.liked_users.add(request.user)
 		moment.save()
+		if moment.creator_id is not request.user.id:
+			Notification.objects.create(receiver_id=moment.creator_id, sender_id=request.user.id, content='liked your moment')
 		return Response(status=status.HTTP_200_OK)
 
 
@@ -64,14 +80,18 @@ class PostViewSet(viewsets.ViewSet):
 		return Response(serializer.data)
 
 	def list(self, request):
-		serializer = BasicPostSerializer(sorted(Post.objects.all(), key=lambda p: p.vote, reverse=True), many=True)
+		posts = Post.objects.order_by('-created')
+		serializer = BasicPostSerializer(posts, many=True)
 		return Response(serializer.data)
 
 	def create(self, request):
 		title = request.data.get('title')
 		content = request.data.get('content')
-		if title and content:
-			Post.objects.create(creator_id=request.user.id, title=title, content=content)
+		tag = request.data.get('tag')
+
+		if title and content and tag:
+			Post.objects.create(creator_id=request.user.id, title=title, content=content, tag=tag)
+			trigger_action(request.user, 'post_forum')
 			return Response(status=status.HTTP_200_OK)
 		else:
 			return Response(status=status.HTTP_400_BAD_REQUEST)
@@ -81,6 +101,7 @@ class PostViewSet(viewsets.ViewSet):
 		content = request.data.get('content', None)
 		if content:
 			Comment.objects.create(content=content, post_id=pk, creator=request.user)
+			trigger_action(request.user, 'post_forum')
 			return Response(status=status.HTTP_200_OK)
 		else:
 			return Response(status=status.HTTP_400_BAD_REQUEST)
@@ -89,15 +110,21 @@ class PostViewSet(viewsets.ViewSet):
 		vote = request.data.get('vote')
 		if vote == 1:
 			post = get_object_or_404(self.queryset, pk=pk)
-			post.up_voted_user.add(request.user)
-			if request.user in post.down_voted_user.all():
-				post.down_voted_user.remove(request.user)
+
+			if request.user not in post.down_voted_user.all() and request.user not in post.up_voted_user.all():
+				post.up_voted_user.add(request.user)
+				post.votes += 1
+				post.save()
+
 			return Response(status=status.HTTP_200_OK)
 		elif vote == -1:
 			post = get_object_or_404(self.queryset, pk=pk)
-			post.down_voted_user.add(request.user)
-			if request.user in post.up_voted_user.all():
-				post.up_voted_user.remove(request.user)
+
+			if request.user not in post.down_voted_user.all() and request.user not in post.up_voted_user.all():
+				post.down_voted_user.add(request.user)
+				post.votes -= 1
+				post.save()
+
 			return Response(status=status.HTTP_200_OK)
 		else:
 			return Response(status=status.HTTP_400_BAD_REQUEST)

@@ -18,24 +18,30 @@ from django.contrib import admin
 
 from classgotcha.apps.accounts import urls as accounts_urls
 from classgotcha.apps.classrooms import urls as classroom_urls
-from classgotcha.apps.chat import urls as chat_urls
 from classgotcha.apps.posts import urls as post_urls
 from classgotcha.apps.tasks import urls as task_urls
-from classgotcha.apps.email import urls as email_urls
-
+from classgotcha.apps.badges import urls as badges_urls
+from classgotcha.apps.notifications import urls as notification_urls
 
 admin.autodiscover()
 
 urlpatterns = [
-    # models
-    url(r'^account/', include(accounts_urls)),
-    url(r'^chatroom/', include(chat_urls)),
-    url(r'^classroom/', include(classroom_urls)),
-    url(r'^post/', include(post_urls)),
-    url(r'^task/', include(task_urls)),
-    # admin site and docs
-    url(r'^admin/', admin.site.urls),
-    url(r'^admin/django-ses/', include('django_ses.urls')),
+	# models
+	url(r'^account/', include(accounts_urls)),
+	url(r'^classroom/', include(classroom_urls)),
+	url(r'^post/', include(post_urls)),
+	url(r'^task/', include(task_urls)),
+	url(r'^badge/', include(badges_urls)),
+	url(r'^notification/', include(notification_urls)),
 
-    url(r'^email/', include(email_urls)),
+	# admin site and docs
+	url(r'^admin/', admin.site.urls),
+	url(r'^admin/django-ses/', include('django_ses.urls')),
+
 ]
+
+import debug_toolbar
+from django.conf import settings
+
+if settings.DEBUG:
+	urlpatterns += [url(r'^__debug__/', include(debug_toolbar.urls))]

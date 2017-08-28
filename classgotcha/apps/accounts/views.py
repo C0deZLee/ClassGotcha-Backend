@@ -1,9 +1,8 @@
-import uuid, re
+import uuid
 from django.utils import timezone
-from datetime import datetime, timedelta
+from datetime import timedelta
 
 from django.shortcuts import get_object_or_404
-from django.core.files.base import File
 from django.contrib.auth.hashers import check_password
 
 from rest_framework_jwt.settings import api_settings
@@ -15,20 +14,23 @@ from rest_framework.permissions import IsAuthenticated, AllowAny
 
 from ..classrooms.serializers import Classroom, BasicClassroomSerializer
 from ..posts.serializers import Moment, MomentSerializer, NoteSerializer, Comment, CommentSerializer
-from ..chat.serializers import RoomSerializer
+from ..chatrooms.serializers import ChatroomSerializer
 from ..tasks.serializers import TaskSerializer
 
-from ..posts.models import Rate
-from models import Account, Avatar, Professor, AccountVerifyToken
-from serializers import AccountSerializer, BasicAccountSerializer, AuthAccountSerializer, AvatarSerializer, \
-	ProfessorSerializer
+from ..notifications.models import Notification
 
-from script import group, complement
-from django.core.mail import EmailMessage, EmailMultiAlternatives
+from models import Account, Professor, AccountVerifyToken
+from serializers import AccountSerializer, BasicAccountSerializer, AuthAccountSerializer, ProfessorSerializer
+
+from script import group, complement, generate_recommendations_for_user
+from django.core.mail import EmailMessage
 from django.template.loader import render_to_string
 
+from ..badges.script import trigger_action
+
+
 def send_verifying_email(account, subject, to, template):
-	token_queryset = AccountVerifyToken.objects.all()
+	# token_queryset = AccountVerifyToken.objects.all()
 	verify_token = uuid.uuid4()
 	token_instance, created = AccountVerifyToken.objects.get_or_create(account=account)
 	if created or token_instance.is_expired:
@@ -38,18 +40,24 @@ def send_verifying_email(account, subject, to, template):
 	else:
 		verify_token = token_instance.token
 
-	print account.first_name
 	ctx = {
-		'user': account,
+		'user' : account,
 		'token': verify_token,
 	}
-	email=EmailMessage(subject, render_to_string('email/%s.html' % template, ctx), 'no-reply@classgotcha.com', [to])
+	email = EmailMessage(subject, render_to_string('email/%s.html' % template, ctx), 'no-reply@classgotcha.com', [to])
 	email.content_subtype = 'html'
 	email.send()
+
 
 @api_view(['POST'])
 @permission_classes((AllowAny,))
 def account_register(request):
+	if request.data['email'][-4:] != ".edu":
+		return Response({'email': ['Please use your edu email.']}, status=status.HTTP_403_FORBIDDEN)
+	if request.data.get('refer'):
+		referrer = Account.objects.get(email=request.data.get('refer'))
+		trigger_action(referrer, 'refer_friend')
+
 	serializer = AuthAccountSerializer(data=request.data)
 	serializer.is_valid(raise_exception=True)
 	user = serializer.save()
@@ -58,20 +66,30 @@ def account_register(request):
 	payload = jwt_payload_handler(user)
 	token = jwt_encode_handler(payload)
 
-	#TODO: email templates
+	referrer = request.data.get('referrer', None)
+	if referrer:
+		account = Account.objects.get(email=referrer)
+		if account:
+			trigger_action(account, 'refer_friend')
+			Notification.objects.create(sender_id=user.id, content='joined ClassGotcha with your refer!', receiver_id=account.id)
+
 	send_verifying_email(account=user, subject='[ClassGotcha] Verification Email', to=request.data['email'], template='verification')
 
 	return Response({'token': token}, status=status.HTTP_201_CREATED)
 
 
 @api_view(['POST', 'GET'])
-@permission_classes((IsAuthenticated,))
+@permission_classes((AllowAny,))
 def email_verify(request, token=None):
 	if request.method == 'GET':
-		if request.user.is_verified:
-			return Response({'message': 'This email has been verified'}, status=status.HTTP_400_BAD_REQUEST)
-		send_verifying_email(account=request.user, subject='[ClassGotcha] Verification Email (resend)', to=request.data['email'], template='verification')
-		return Response({'message': 'The verification email has been resent. '}, status=status.HTTP_201_CREATED)
+		if not request.user.id :
+			return Response({'detail': 'Login required'}, status=status.HTTP_400_BAD_REQUEST)
+
+		elif request.user.is_verified:
+			return Response({'detail': 'This email has been verified'}, status=status.HTTP_400_BAD_REQUEST)
+
+		send_verifying_email(account=request.user, subject='[ClassGotcha] Verification Email', to=request.user.email, template='verification')
+		return Response({'detail': 'The verification email has been resent. '}, status=status.HTTP_201_CREATED)
 	elif request.method == 'POST':
 		if not token:
 			return Response(status=status.HTTP_400_BAD_REQUEST)
@@ -84,8 +102,10 @@ def email_verify(request, token=None):
 
 		token_instance.account.is_verified = True
 		token_instance.is_expired = True
-		print token_instance.account, 'has been verified'
+		trigger_action(request.user, 'verify_email')
+
 		return Response(status=status.HTTP_200_OK)
+
 
 @api_view(['POST', 'GET', 'PUT'])
 @permission_classes((AllowAny,))
@@ -95,12 +115,8 @@ def forget_password(request, token=None):
 	if request.method == 'POST':
 		if request.data['email']:
 			account = get_object_or_404(Account.objects.all(), email=request.data['email'])
-		# USERNAME is not allowed now
-		# elif request.data['username']:
-		# 	account = get_object_or_404(Account.objects.all(), username=request.data['username'])
 		else:
 			return Response(status=status.HTTP_400_BAD_REQUEST)
-		print account
 
 		reset_token = uuid.uuid4()
 		token_instance, created = AccountVerifyToken.objects.get_or_create(account=account)
@@ -137,7 +153,8 @@ def forget_password(request, token=None):
 		token_instance.is_expired = True
 		return Response(status=status.HTTP_200_OK)
 
-@api_view(['GET', 'POST', 'OPTION'])
+
+@api_view(['POST', 'OPTIONS'])
 @permission_classes((IsAuthenticated,))
 @parser_classes((MultiPartParser, FormParser,))
 def account_avatar(request):
@@ -151,10 +168,10 @@ def account_avatar(request):
 			return Response(status=status.HTTP_400_BAD_REQUEST)
 		filename, file_extension = upload.name.split('.')
 		with Image.open(upload) as image:
-			image2x = resizeimage.resize_cover(image, [128, 128])
-			image1x = resizeimage.resize_cover(image, [48, 48])
-			img2x_name = str(request.user.id) + '.2x' + file_extension
-			img1x_name = str(request.user.id) + '.1x' + file_extension
+			image2x = resizeimage.resize_cover(image, [100, 100])
+			image1x = resizeimage.resize_cover(image, [50, 50])
+			img2x_name = str(request.user.id) + '.100.' + file_extension
+			img1x_name = str(request.user.id) + '.50.' + file_extension
 			img2x_io = StringIO()
 			img1x_io = StringIO()
 			image2x.save(img2x_io, image.format)
@@ -163,18 +180,16 @@ def account_avatar(request):
 			                                    img2x_io.len, None)
 			image1x_file = InMemoryUploadedFile(img1x_io, None, img1x_name, 'image/' + image.format,
 			                                    img1x_io.len, None)
+		request.user.avatar1x = image1x_file
+		request.user.avatar2x = image2x_file
 
-		new_avatar = Avatar.objects.create(avatar2x=image2x_file, avatar1x=image1x_file)
-		request.user.avatar = new_avatar
 		request.user.save()
+		trigger_action(request.user, 'change_avatar')
 		return Response({'data': 'success'}, status=status.HTTP_200_OK)
-	elif request.method == 'GET':
-		serializer = AvatarSerializer(request.user.avatar)
-		return Response(serializer.data)
 
 
 class AccountViewSet(viewsets.ViewSet):
-	queryset = Account.objects.exclude(is_staff=1)
+	queryset = Account.objects.all()
 	parser_classes = (MultiPartParser, FormParser, JSONParser)
 	permission_classes = (IsAuthenticated,)
 
@@ -191,6 +206,23 @@ class AccountViewSet(viewsets.ViewSet):
 		else:
 			return Response(status=status.HTTP_403_FORBIDDEN)
 
+	def search(self, request):
+		token = request.data.get('token', None)
+		if token:
+			if '@' in token:
+				token = token.split("@")[0]
+				users = Account.objects.filter(email__istartswith=token)
+			else:
+				tokens = token.split()
+				users = Account.objects.filter(first_name__istartswith=tokens[0])
+				users |= Account.objects.filter(last_name__istartswith=tokens[-1])
+
+			serializer = BasicAccountSerializer(users, many=True)
+
+			return Response(serializer.data)
+		else:
+			return Response(status=status.HTTP_400_BAD_REQUEST)
+
 	def friends(self, request, pk=None):
 		if request.method == 'GET':
 			serializer = BasicAccountSerializer(request.user.friends, many=True)
@@ -198,22 +230,24 @@ class AccountViewSet(viewsets.ViewSet):
 		# send friend request
 		if request.method == 'POST':
 			if request.user.pk is int(pk):  # cant add yourself as your friend
-				return Response({'detail': 'cant add yourself as your friend'}, status=status.HTTP_403_FORBIDDEN)
+				return Response({'detail': 'You can\'t add yourself as friend'}, status=status.HTTP_403_FORBIDDEN)
 			else:
 				new_friend = get_object_or_404(self.queryset, pk=pk)
 				if new_friend in request.user.friends.all():
-					return Response({'detail': 'Already friended'}, status=status.HTTP_403_FORBIDDEN)
+					return Response({'detail': 'Already friend'}, status=status.HTTP_403_FORBIDDEN)
 
 				if request.user in new_friend.pending_friends.all():
-					return Response({'detail': 'Already sent the request'}, status=status.HTTP_403_FORBIDDEN)
+					return Response({'detail': 'You have sent friend request, please wait response'}, status=status.HTTP_403_FORBIDDEN)
 
 				new_friend.pending_friends.add(request.user)
+
+				trigger_action(request.user, 'add_friend')
 				return Response(status=200)
 
 		# accept friend request
 		if request.method == 'PUT':
 			if request.user.pk is int(pk):  # cant add yourself as your friend
-				return Response({'detail': 'cant add yourself as your friend'}, status=status.HTTP_403_FORBIDDEN)
+				return Response({'detail': 'You can\'t add yourself as your friend'}, status=status.HTTP_403_FORBIDDEN)
 			else:
 				new_friend = get_object_or_404(self.queryset, pk=pk)
 				if new_friend not in request.user.pending_friends.all():
@@ -222,6 +256,10 @@ class AccountViewSet(viewsets.ViewSet):
 				request.user.friends.add(new_friend)
 				request.user.pending_friends.remove(new_friend)
 				new_friend.friends.add(request.user)
+
+				trigger_action(request.user, 'accept_friend')
+				trigger_action(new_friend, 'accept_friend')
+
 				return Response(status=200)
 
 		if request.method == 'DELETE':
@@ -242,29 +280,55 @@ class AccountViewSet(viewsets.ViewSet):
 			return Response(serializer.data)
 		elif request.method == 'PUT':
 			for (key, value) in request.data.items():
-				if key in ['username', 'first_name', 'mid_name', 'last_name', 'gender', 'birthday', 'school_year',
-				           'major']:
-					if key == 'major':
-						request.user.major_id = value
-					else:
-						setattr(request.user, key, value)
+				if key == 'major':
+					request.user.major_id = value
+
+				if key in ['username', 'first_name', 'last_name', 'gender', 'birthday', 'school_year', 'about_me', 'phone', 'privacy_setting', 'facebook', 'twitter', 'linkedin', 'snapchat']:
+					setattr(request.user, key, value)
 				request.user.save()
 			return Response(status=status.HTTP_200_OK)
 
-	# @staticmethod
-	def change_password(self, request):
-		if not request.data['old-password'] or request.data['password']:
-			return Response(status=status.HTTP_400_BAD_REQUEST)
-		try:
-			if check_password(request.data['old-password'], request.user.password):
-				request.user.set_password(request.data['password'])
-				request.user.save()
-				return Response(status=status.HTTP_200_OK)
-			else:
-				return Response({'ERROR': 'Password not match'},status=status.HTTP_400_BAD_REQUEST)
+	@staticmethod
+	def change_password(request):
+		print request.data
 
-		except:
+		# If password or old-password not in request body
+		if not (request.data.get('old_password', None) or request.data.get('new_password', None)):
+			# Return error message with status code 400
 			return Response(status=status.HTTP_400_BAD_REQUEST)
+		# try:
+		#  if old-password match
+		if check_password(request.data['old_password'], request.user.password):
+			# change user password
+			request.user.set_password(request.data['new_password'])
+			request.user.save()
+			return Response(status=status.HTTP_200_OK)
+		else:
+			# else return with error message and status code 400
+			return Response({'detail': 'Doesn\'t match with your current password.'}, status=status.HTTP_400_BAD_REQUEST)
+		# except:
+		# 	# If exception return with status 400
+		# 	return Response(status=status.HTTP_400_BAD_REQUEST)
+
+	def explore_friends(self, request):
+		def similarity_check_classrooms(user, other):
+			# return boolean whether they could be friends [based on the classroom list]
+			# if other.classrooms.all():
+			# 	print "this is not empty\n"
+			mine = set(user.classrooms.all())
+			his = set(other.classrooms.all())
+			return True if mine and his and (mine <= his or mine > his or len(mine & his) >= 2) else False
+
+		# def sharing_friends(user, other):
+		# 	# return boolean
+
+		possible_friends = []
+		# Explore Friends basing on classrooms
+		for account in self.queryset:
+			if account not in (request.user.friends.all() | request.user.pending_friends.all()) and similarity_check_classrooms(request.user, account):
+				possible_friends.append(account)
+		serializer = BasicAccountSerializer(possible_friends, many=True)
+		return Response(serializer.data)
 
 	@staticmethod
 	def pending_friends(request):
@@ -289,8 +353,13 @@ class AccountViewSet(viewsets.ViewSet):
 			# add classroom tasks from user task list
 			for task in classroom.tasks.all():
 				task.involved.add(request.user)
-			# add user to classroom chatroom
-			classroom.chatroom.get().accounts.add(request.user)
+
+			trigger_action(request.user, 'add_classroom')
+
+			# add user to classroom chatrooms
+			# change into matrix version: classroom.chatrooms.get().accounts.add(request.user.username ???)
+			# also need to call the matrix api? add the user into matrix chatrooms...
+			# classroom.chatroom.get().accounts.add(request.user)
 			return Response(status=200)
 
 		if request.method == 'DELETE':
@@ -302,8 +371,8 @@ class AccountViewSet(viewsets.ViewSet):
 			# remove classroom tasks from user task list
 			for task in classroom.tasks.all():
 				task.involved.remove(request.user)
-			# remove user from classroom chatroom
-			classroom.chatroom.get().accounts.remove(request.user)
+			# remove user from classroom chatrooms
+			# classroom.chatroom.get().accounts.remove(request.user)
 			return Response(status=200)
 
 	@staticmethod
@@ -313,9 +382,13 @@ class AccountViewSet(viewsets.ViewSet):
 
 	@staticmethod
 	def moments(request, pk=None):
-		moment_query_set = request.user.moments.filter(deleted=False).order_by('-created')
-		# Only return first 20 moments
+		if not pk:
+			moment_query_set = request.user.moments.filter(deleted=False).order_by('-created')
+		else:
+			moment_query_set = Account.objects.get(pk=pk).moments.filter(deleted=False).order_by('-created')
+
 		if request.method == 'GET':
+			# Only return first 20 moments
 			serializer = MomentSerializer(moment_query_set[0:20], many=True)
 			return Response(serializer.data)
 		elif request.method == 'POST':
@@ -328,10 +401,12 @@ class AccountViewSet(viewsets.ViewSet):
 				return Response(status=status.HTTP_400_BAD_REQUEST)
 			# create new moment
 			moment = Moment(content=content, creator=request.user)
+
 			if classroom_id:
 				moment.classroom_id = classroom_id
 			if question:
 				moment.solved = False
+				trigger_action(request.user, 'post_question')
 			if image:
 				import uuid
 				from django.core.files.base import ContentFile
@@ -345,13 +420,9 @@ class AccountViewSet(viewsets.ViewSet):
 				file_name = str(uuid.uuid4())
 				complete_file_name = '%s.%s' % (file_name, file_extension,)
 				moment.images = ContentFile(decoded_file, complete_file_name)
+
 			moment.save()
-			return Response(status=status.HTTP_200_OK)
-		elif request.method == 'PUT':
-			moment = get_object_or_404(moment_query_set, pk=pk)
-			if moment.solved is False:
-				moment.solved = True
-				moment.save()
+			trigger_action(request.user, 'post_moment')
 			return Response(status=status.HTTP_200_OK)
 		elif request.method == 'DELETE':
 			moment = get_object_or_404(moment_query_set, pk=pk)
@@ -363,7 +434,7 @@ class AccountViewSet(viewsets.ViewSet):
 	def rooms(request, pk=None):
 		room_query_set = request.user.rooms.all()
 		if request.method == 'GET':
-			serializer = RoomSerializer(room_query_set, many=True)
+			serializer = ChatroomSerializer(room_query_set, many=True)
 			return Response(serializer.data)
 		elif request.method == 'POST':
 			room = get_object_or_404(room_query_set, pk)
@@ -392,58 +463,15 @@ class AccountViewSet(viewsets.ViewSet):
 			task.involved.remove(request.user)
 			task.finished.add(request.user)
 			return Response(status=status.HTTP_200_OK)
-		elif request.method == 'DELETE':
-			task = get_object_or_404(task_queryset, pk=pk)
-			task.involved.remove(request.user)
-			if task.involved.length == 0:
-				task.delete()
-			return Response(status=status.HTTP_200_OK)
 
 	@staticmethod
-	def free_time(request):
+	def study_plan(request):
 		user_tasks = request.user.tasks.all()
-		# loop through the tasks
-		free_time_dict = {'Mon': [], 'Tue': [], 'Wed': [], 'Thu': [], 'Fri': [], 'Sat': [], 'Sun': []}
+		user = request.user
 		for task in user_tasks:
-			try:
-				start_time = task.start.hour + task.start.minute * (1 / 60)
-				end_time = task.end.hour + task.end.minute * (1 / 60)
-			except:
-				pass
-			if 'Mo' in task.repeat:
-				free_time_dict['Mon'].append([start_time, end_time])
-
-			if 'Tu' in task.repeat:
-				free_time_dict['Tue'].append([start_time, end_time])
-
-			if 'We' in task.repeat:
-				free_time_dict['Wed'].append([start_time, end_time])
-
-			if 'Th' in task.repeat:
-				free_time_dict['Thu'].append([start_time, end_time])
-
-			if 'Fr' in task.repeat:
-				free_time_dict['Fri'].append([start_time, end_time])
-
-		# compute the intersections and return
-		print free_time_dict
-		for free_dict_list in free_time_dict:
-			intervals = free_time_dict[free_dict_list]
-			free_dict_list = group(intervals)  # find the union of all unavailable time
-			print intervals
-			free_dict_list = complement(intervals, first=0, last=24)
-
-		return Response({'freetime': free_time_dict}, status=status.HTTP_200_OK)
-
-	@staticmethod
-	def home_page_activity(request):
-		# TODO: show latest activity related to me
-		# include moments, comments, notes my classmates and friends posted
-		classrooms = Classroom.objects.filter(students__pk=request.user.pk)
-
-		moments = Moment.objects.filter(classroom__in=classrooms).filter(deleted=False).order_by('-created')[0:20]
-		serializer = MomentSerializer(moments, many=True)
-		return Response(serializer.data)
+			print task.task_name
+			generate_recommendations_for_user(user, task)
+		return Response(status=status.HTTP_200_OK)
 
 
 class ProfessorViewSet(viewsets.ViewSet):
@@ -457,41 +485,45 @@ class ProfessorViewSet(viewsets.ViewSet):
 		return Response(serializer.data)
 
 	def update(self, request, pk):
+
+		if request.user.level < 5:
+			return Response({'detail': 'You need to reach to Level 5 to edit professor info'}, status=status.HTTP_400_BAD_REQUEST)
+
 		professor = get_object_or_404(self.queryset, pk=pk)
+
 		for (key, value) in request.data.items():
-			if key in ['first_name', 'last_name', 'email', 'office', 'major']:
-				if key is 'major':
-					setattr(professor, 'major_id', value)
-				else:
-					setattr(professor, key, value)
+			if key in ['personal_page', 'email', 'office']:
+				setattr(professor, key, value)
+		professor.save()
+
+		Comment.objects.create(content='Updated Professor Information',
+		                       professor_id=professor.id,
+		                       is_anonymous=False,
+		                       creator=request.user)
+
+		trigger_action(request.user, 'professor_edit')
+
 		return Response(status=status.HTTP_200_OK)
 
 	def comments(self, request, pk):
+		professor = get_object_or_404(self.queryset, pk=pk)
 		if request.method == 'GET':
-			professor = get_object_or_404(self.queryset, pk=pk)
 			comments = professor.comments.all()
 			return Response(CommentSerializer(comments, many=True).data)
 		elif request.method == 'POST':
-			content = request.data.get('content')
-			num = request.data.get('num')
-			if content and num:
-				professor = get_object_or_404(self.queryset, pk=pk)
-				comment = Comment.objects.create(content=content)
-				rate = Rate.objects.create(num=num)
-				rate.professor = professor
-				rate.creator = request.user
-				rate.save()
-				comment.professor = professor
-				comment.creator = request.user
-				comment.rate = rate
-				comment.save()
+			content = request.data.get('content', '')
+			is_anonymous = request.data.get('is_anonymous')
+			# num = request.data.get('num')
+			if content:
+				Comment.objects.create(content=content,
+				                       professor_id=professor.id,
+				                       is_anonymous=is_anonymous,
+				                       creator=request.user)
+				trigger_action(request.user, 'professor_comment')
+
 				return Response(status=status.HTTP_201_CREATED)
 			else:
 				return Response(status=status.HTTP_400_BAD_REQUEST)
 
 	def classrooms(self, request, pk):
 		pass
-
-
-class GroupViewSet(viewsets.ViewSet):
-	pass

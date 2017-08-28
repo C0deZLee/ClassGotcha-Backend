@@ -30,7 +30,7 @@ class Task(models.Model):
 	task_name = models.CharField(max_length=50)
 	description = models.CharField(max_length=500, null=True, blank=True)  # task_description
 	category = models.IntegerField(default=TASK, choices=CATEGORY_CHOICES)
-	# = models.ForeignKey('tags.Tag')
+
 	type = models.IntegerField(default=TASK, choices=TYPE_CHOICES)
 	location = models.CharField(max_length=50, null=True, blank=True)
 
@@ -44,9 +44,12 @@ class Task(models.Model):
 	# Relationship
 	involved = models.ManyToManyField(Account, related_name='tasks', blank=True)
 	finished = models.ManyToManyField(Account, related_name='finished_tasks', blank=True)
-	classroom = models.ForeignKey(Classroom, null=True, related_name='tasks', on_delete=models.CASCADE)
 	group = models.ForeignKey(Group, null=True, related_name='tasks', on_delete=models.CASCADE)
+	task_of_classroom = models.ForeignKey(Classroom, related_name='tasks', on_delete=models.CASCADE, null=True)
 	creator = models.ForeignKey(Account, null=True)
+
+	# Relation
+	# classroom
 
 	def __unicode__(self):
 		return self.task_name
