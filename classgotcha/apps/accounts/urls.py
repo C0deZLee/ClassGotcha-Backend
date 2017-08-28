@@ -122,8 +122,8 @@ urlpatterns = [
 	url(r'^login-verify/$', verify_jwt_token),
 
 	url(r'^register/$', views.account_register, name='user-register'),
-	url(r'^verify/$', views.email_verify, name='email-verify-request'),
 
+	url(r'^verify/$', views.email_verify, name='email-verify-request'),
 	url(r'^verify/(?P<token>[A-z0-9\-]+)/$', views.email_verify, name='email-verifying'),
 
 	url(r'^notes/$', account_notes, name='user-notes'),

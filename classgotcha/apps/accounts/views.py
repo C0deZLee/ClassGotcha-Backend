@@ -30,7 +30,7 @@ from ..badges.script import trigger_action
 
 
 def send_verifying_email(account, subject, to, template):
-	token_queryset = AccountVerifyToken.objects.all()
+	# token_queryset = AccountVerifyToken.objects.all()
 	verify_token = uuid.uuid4()
 	token_instance, created = AccountVerifyToken.objects.get_or_create(account=account)
 	if created or token_instance.is_expired:
@@ -79,13 +79,17 @@ def account_register(request):
 
 
 @api_view(['POST', 'GET'])
-@permission_classes((IsAuthenticated,))
+@permission_classes((AllowAny,))
 def email_verify(request, token=None):
 	if request.method == 'GET':
-		if request.user.is_verified:
-			return Response({'message': 'This email has been verified'}, status=status.HTTP_400_BAD_REQUEST)
-		send_verifying_email(account=request.user, subject='[ClassGotcha] Verification Email (resend)', to=request.data['email'], template='verification')
-		return Response({'message': 'The verification email has been resent. '}, status=status.HTTP_201_CREATED)
+		if not request.user.id :
+			return Response({'detail': 'Login required'}, status=status.HTTP_400_BAD_REQUEST)
+
+		elif request.user.is_verified:
+			return Response({'detail': 'This email has been verified'}, status=status.HTTP_400_BAD_REQUEST)
+
+		send_verifying_email(account=request.user, subject='[ClassGotcha] Verification Email', to=request.user.email, template='verification')
+		return Response({'detail': 'The verification email has been resent. '}, status=status.HTTP_201_CREATED)
 	elif request.method == 'POST':
 		if not token:
 			return Response(status=status.HTTP_400_BAD_REQUEST)
