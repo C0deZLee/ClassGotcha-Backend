@@ -5,7 +5,8 @@ from ..tags.models import Tag
 
 
 class Major(models.Model):
-	major_short = models.CharField(max_length=10)
+	major_short = models.CharField(max_length=10, unique=True)
+
 	major_full = models.CharField(max_length=100, blank=True)
 	major_college = models.CharField(max_length=100, blank=True)
 	department = models.CharField(max_length=100, blank=True)
