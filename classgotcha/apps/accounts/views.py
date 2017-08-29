@@ -147,7 +147,7 @@ def forget_password(request, token=None):
 		# set new password to user
 		token_instance.account.set_password(request.data['password'])
 		token_instance.account.save()
-		token_instance.is_expired = True
+		token_instance.expire_time = timezone.now()
 		return Response(status=status.HTTP_200_OK)
 
 
