@@ -107,7 +107,7 @@ def email_verify(request, token=None):
 
 		token_instance.account.is_verified = True
 		token_instance.account.save()
-		token_instance.expire_time = timezone.now()
+		token_instance.expire_time = timezone.now() - timedelta(hours=24)
 		token_instance.save()
 		trigger_action(token_instance.account, 'verify_email')
 
@@ -147,7 +147,7 @@ def forget_password(request, token=None):
 		# set new password to user
 		token_instance.account.set_password(request.data['password'])
 		token_instance.account.save()
-		token_instance.expire_time = timezone.now()
+		token_instance.expire_time = timezone.now() - timedelta(hours=24)
 		return Response(status=status.HTTP_200_OK)
 
 
