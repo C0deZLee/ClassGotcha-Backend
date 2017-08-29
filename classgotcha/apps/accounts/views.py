@@ -344,20 +344,23 @@ class AccountViewSet(viewsets.ViewSet):
 		if request.method == 'POST':
 			classroom = get_object_or_404(classroom_queryset, pk=pk)
 			# add user to classroom student list
-			classroom.students.add(request.user)
-			# add class time to user task list
-			classroom.class_time.involved.add(request.user)
-			# add classroom tasks from user task list
-			for task in classroom.tasks.all():
-				task.involved.add(request.user)
+			if request.user not in classroom.students.all():
+				classroom.students.add(request.user)
+				# add class time to user task list
+				classroom.class_time.involved.add(request.user)
+				# add classroom tasks from user task list
+				for task in classroom.tasks.all():
+					task.involved.add(request.user)
 
-			trigger_action(request.user, 'add_classroom')
+				trigger_action(request.user, 'add_classroom')
 
-			# add user to classroom chatrooms
-			# change into matrix version: classroom.chatrooms.get().accounts.add(request.user.username ???)
-			# also need to call the matrix api? add the user into matrix chatrooms...
-			# classroom.chatroom.get().accounts.add(request.user)
-			return Response(status=200)
+				# add user to classroom chatrooms
+				# change into matrix version: classroom.chatrooms.get().accounts.add(request.user.username ???)
+				# also need to call the matrix api? add the user into matrix chatrooms...
+				# classroom.chatroom.get().accounts.add(request.user)
+				return Response(status=status.HTTP_200_OK)
+			else:
+				return Response({'detail': 'Already in Classroom'}, status=status.HTTP_403_FORBIDDEN)
 
 		if request.method == 'DELETE':
 			classroom = get_object_or_404(classroom_queryset, pk=pk)
