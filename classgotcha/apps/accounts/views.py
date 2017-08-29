@@ -22,7 +22,7 @@ from ..notifications.models import Notification
 from models import Account, Professor, AccountVerifyToken
 from serializers import AccountSerializer, BasicAccountSerializer, AuthAccountSerializer, ProfessorSerializer
 
-from script import group, complement, generate_recommendations_for_user
+from script import generate_recommendations_for_user
 from django.core.mail import EmailMessage
 from django.template.loader import render_to_string
 
@@ -30,9 +30,12 @@ from ..badges.script import trigger_action
 
 
 def send_verifying_email(account, subject, to, template):
-	# token_queryset = AccountVerifyToken.objects.all()
 	verify_token = uuid.uuid4()
+
+	# get token instance or create new one
 	token_instance, created = AccountVerifyToken.objects.get_or_create(account=account)
+
+	# if created new token instance or old instance is expired, regenerate token (else don't care)
 	if created or token_instance.is_expired:
 		token_instance.expire_time = timezone.now() + timedelta(hours=5)
 		token_instance.token = verify_token
@@ -44,6 +47,7 @@ def send_verifying_email(account, subject, to, template):
 		'user' : account,
 		'token': verify_token,
 	}
+
 	email = EmailMessage(subject, render_to_string('email/%s.html' % template, ctx), 'no-reply@classgotcha.com', [to])
 	email.content_subtype = 'html'
 	email.send()
@@ -82,7 +86,7 @@ def account_register(request):
 @permission_classes((AllowAny,))
 def email_verify(request, token=None):
 	if request.method == 'GET':
-		if not request.user.id :
+		if not request.user.id:
 			return Response({'detail': 'Login required'}, status=status.HTTP_400_BAD_REQUEST)
 
 		elif request.user.is_verified:
@@ -90,6 +94,7 @@ def email_verify(request, token=None):
 
 		send_verifying_email(account=request.user, subject='[ClassGotcha] Verification Email', to=request.user.email, template='verification')
 		return Response({'detail': 'The verification email has been resent. '}, status=status.HTTP_201_CREATED)
+
 	elif request.method == 'POST':
 		if not token:
 			return Response(status=status.HTTP_400_BAD_REQUEST)
@@ -114,22 +119,12 @@ def email_verify(request, token=None):
 def forget_password(request, token=None):
 	token_queryset = AccountVerifyToken.objects.all()
 
+	# generate token and send email
 	if request.method == 'POST':
-		if request.data['email']:
+		if request.data.get('email', None):
 			account = get_object_or_404(Account.objects.all(), email=request.data['email'])
-		else:
-			return Response(status=status.HTTP_400_BAD_REQUEST)
-
-		reset_token = uuid.uuid4()
-		token_instance, created = AccountVerifyToken.objects.get_or_create(account=account)
-		if created or token_instance.is_expired:
-			token_instance.expire_time = timezone.now() + timedelta(hours=5)
-			token_instance.token = reset_token
-			token_instance.save()
-		else:
-			reset_token = token_instance.token
-
-		send_verifying_email(account=account, subject='[ClassGotcha] Reset Password', to=request.data['email'], template='reset')
+			# send reset email
+			send_verifying_email(account=account, subject='[ClassGotcha] Reset Password', to=request.data['email'], template='reset')
 		return Response({'message': 'The reset password email has been sent. '}, status=status.HTTP_200_OK)
 
 	# verify token
