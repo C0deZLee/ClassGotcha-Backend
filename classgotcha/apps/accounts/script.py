@@ -147,7 +147,7 @@ def generate_recommendations_for_user(account, task):  # in this case the end ti
 
 
 
-weekday_dict = {1: 'Mo', 2: 'Tu', 3: 'We', 4: 'Th', 5: 'Fi' ,6:'Sat',7:'Sun'}
+weekday_dict = {1: 'Mo', 2: 'Tu', 3: 'We', 4: 'Th', 5: 'Fi' ,6:'Sat',0:'Sun'}
 
 
 def get_user_free_intervals(account, date):
@@ -167,7 +167,7 @@ def get_user_free_intervals(account, date):
 		for customized_task in all_customized_tasks:
 			all_class_intervals.append([float(customized_task.start.hour + float(customized_task.start.minute) / 60), float(customized_task.end.hour + float(customized_task.end.minute) / 60)])
 
-	all_non_repeat_tasks = account.tasks.filter(category=6, repeat=False, start__date=date)
+	all_non_repeat_tasks = account.tasks.filter(category=6, repeat=False, start__date=date.date())
 	if all_non_repeat_tasks:
 		for customized_task in all_non_repeat_tasks:
 			all_class_intervals.append(
