@@ -166,8 +166,9 @@ def get_user_free_intervals(account, date):
 			all_class_intervals.append([float(customized_task.start.hour + float(customized_task.start.minute) / 60), float(customized_task.end.hour + float(customized_task.end.minute) / 60)])
 			#print [float(customized_task.start.hour + float(customized_task.start.minute) / 60), float(customized_task.end.hour + float(customized_task.end.minute) / 60)]
 	all_non_repeat_tasks = account.tasks.filter(category=6, start__year=date.year,start__month=date.month, start__day=date.day)
-	print date.month,date.day,date.year
-	print all_non_repeat_tasks
+	#print date.month,date.day,date.year
+	#print all_non_repeat_tasks
+
 	if all_non_repeat_tasks:
 		for customized_task in all_non_repeat_tasks:
 			#print 'here'
