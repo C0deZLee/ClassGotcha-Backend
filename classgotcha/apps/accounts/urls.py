@@ -106,6 +106,7 @@ urlpatterns = [
 	url(r'^chatrooms/(?P<pk>[0-9]+)/$', account_add_chatrooms, name='add-chatrooms'),
 
 	url(r'^(?P<pk>[0-9]+)/$', account_detail, name='user-detail'),
+	url(r'^(?P<pk>[0-9]+)/feed.ics$', views.ical_feed_view, name='user-calendar-feed'),
 	url(r'^(?P<pk>[0-9]+)/moments/$', account_detail_moments, name='user-detail-moments'),
 
 	url(r'^classrooms/$', account_classrooms, name='user-classrooms'),
