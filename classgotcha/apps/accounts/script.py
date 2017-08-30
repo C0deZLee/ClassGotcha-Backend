@@ -63,7 +63,7 @@ def generate_recommendations_for_exam(account,task):
 	return task_add
 
 
-def generate_recommendations(account,task,description = 'do homework for',pre_days=2):
+def generate_recommendations(account,task,description = 'do homework for ',pre_days=2):
 	
 	due_date = task.end
 	work_date = due_date - timedelta(days=pre_days)  # in this default setting do the homework 2 days prior to the due date
@@ -71,7 +71,8 @@ def generate_recommendations(account,task,description = 'do homework for',pre_da
 
 	# get the user's free time
 	free_intervals = get_user_free_intervals(account=account, date=work_date)
-	# print free_intervals
+	
+	#print free_intervals
 	task_add = False
 	for interval in free_intervals:
 		# find appropriate time to do things
@@ -82,7 +83,7 @@ def generate_recommendations(account,task,description = 'do homework for',pre_da
 				                category=6,
 				                start=datetime(work_date.year, work_date.month, work_date.day, int(interval[0]), int(60 * (interval[0] - int(interval[0])))),
 				                end=datetime(work_date.year, work_date.month, work_date.day, int(interval[1]), int(60 * (interval[1] - int(interval[1])))),
-				                classroom=task.classroom, creator=account)
+				                classroom=task.task_of_classroom, creator=account)
 
 				new_task.save()
 				task_add = True
@@ -92,12 +93,24 @@ def generate_recommendations(account,task,description = 'do homework for',pre_da
 
 		for start in range(9, 24):
 			if (interval[1] - 1) > start > interval[0]:
+				new_task = Task(task_name=description + task.task_name,
+					                category=6,
+					                start=datetime(work_date.year, work_date.month, work_date.day, start, 0),
+					                end=datetime(work_date.year, work_date.month, work_date.day, start + 1, 0),
+					                classroom=task.task_of_classroom, creator=account)
+
+				new_task.save()
+				new_task.involved.add(account)
+				account.tasks.add(new_task)
+				account.save()
+				new_task.save()
 				try:
+					
 					new_task = Task(task_name=description + task.task_name,
 					                category=6,
 					                start=datetime(work_date.year, work_date.month, work_date.day, start, 0),
 					                end=datetime(work_date.year, work_date.month, work_date.day, start + 1, 0),
-					                classroom=task.classroom, creator=account)
+					                classroom=task.task_of_classroom, creator=account)
 					new_task.save()
 					task_add = True
 					break
@@ -111,26 +124,27 @@ def generate_recommendations(account,task,description = 'do homework for',pre_da
 
 def generate_recommendations_for_user(account, task):  # in this case the end time of the task is the due date
 	
-	if task.category=='Homework':
+	if task.category==1:
 		generate_recommendations(account,task,pre_days=2)
 
-	elif task.category=='Quiz':
+	elif task.category==2:
 		generate_recommendations(account,task,description = 'Prepare for the Quiz',pre_days=2)
 		generate_recommendations(account,task,description = 'Prepare for the Quiz',pre_days=7)
 
-	elif task.category=='Exam':
+	elif task.category==3:
 		generate_recommendations(account,task,description = 'Prepare for the Exam',pre_days=2)
 		generate_recommendations(account,task,description ='Prepare for the Exam',pre_days=7)
 		generate_recommendations(account,task,description ='Prepare for the Exam',pre_days=14)
 
 	else:
+
 		pass
 
 	return 1
 
 
 
-weekday_dict = {1: 'Mo', 2: 'Tu', 3: 'We', 4: 'Th', 5: 'Fi'}
+weekday_dict = {1: 'Mo', 2: 'Tu', 3: 'We', 4: 'Th', 5: 'Fi' ,6:'Sat',0:'Sun'}
 
 
 def get_user_free_intervals(account, date):
@@ -145,24 +159,30 @@ def get_user_free_intervals(account, date):
 
 	for classe in all_class:
 		all_class_intervals.append([float(classe.start.hour + float(classe.start.minute) / 60), float(classe.end.hour + float(classe.end.minute) / 60)])
+		#print [float(classe.start.hour + float(classe.start.minute) / 60), float(classe.end.hour + float(classe.end.minute) / 60)]
 	all_customized_tasks = account.tasks.filter(category=6, repeat=True, repeat__contains=weekday)
 	if all_customized_tasks:
 		for customized_task in all_customized_tasks:
 			all_class_intervals.append([float(customized_task.start.hour + float(customized_task.start.minute) / 60), float(customized_task.end.hour + float(customized_task.end.minute) / 60)])
+			#print [float(customized_task.start.hour + float(customized_task.start.minute) / 60), float(customized_task.end.hour + float(customized_task.end.minute) / 60)]
+	all_non_repeat_tasks = account.tasks.filter(category=6, start__year=date.year,start__month=date.month, start__day=date.day)
+	#print date.month,date.day,date.year
+	#print all_non_repeat_tasks
 
-	all_non_repeat_tasks = account.tasks.filter(category=6, repeat=False, start__date=date)
 	if all_non_repeat_tasks:
 		for customized_task in all_non_repeat_tasks:
-			all_class_intervals.append(
-				[float(customized_task.start.hour + float(customized_task.start.minute) / 60), float(customized_task.end.hour + float(customized_task.end.minute) / 60)])
-
+			#print 'here'
+			all_class_intervals.append([float(customized_task.start.hour + float(customized_task.start.minute) / 60), float(customized_task.end.hour + float(customized_task.end.minute) / 60)])
+			#print [float(customized_task.start.hour + float(customized_task.start.minute) / 60), float(customized_task.end.hour + float(customized_task.end.minute) / 60)]
 	# find the union of all intervals
 
+	print all_class_intervals
 	intervals = combine(all_class_intervals)
+
 	# print intervals
 	# print all_class_intervals
 	# compute the complement of all the intervals
-	free_intervals = complement(intervals, first=0, last=24)
+	free_intervals = complement(intervals, first=1, last=24)
 	# print free_intervals
 
 	return free_intervals
