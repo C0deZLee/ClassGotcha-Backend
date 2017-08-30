@@ -29,11 +29,11 @@ def read_file(request, file_name=None):
 	uploaded_file = request.FILES.get('file', False)
 	if not uploaded_file:
 		return None
-	name, extension = uploaded_file.name.split('.')
+	name, extension = uploaded_file.name.rsplit('.', 1)
 
 	if file_name:
 		name = file_name
-	name = name + '_' + uuid.uuid4().hex + extension
+	name = name + '_' + uuid.uuid4().hex + '.' + extension
 	new_file = File(file=uploaded_file, name=name)  # there you go
 
 	return new_file
@@ -74,7 +74,7 @@ class ClassroomViewSet(viewsets.ViewSet):
 			match = re.match(r"([a-z]+) *([0-9a-z]*)", search_token, re.I)
 			if match:
 				items = match.groups()
-				print items
+				# print items
 				class_major = items[0].upper()
 				class_number = items[1].upper()
 				major = get_object_or_404(Major.objects.all(), major_short=class_major)
@@ -115,7 +115,7 @@ class ClassroomViewSet(viewsets.ViewSet):
 			uploaded_file = read_file(request, file_name=title)
 			raw_tags = request.data.get('tags')
 			description = request.data.get('description', '')
-			print request.data
+			# print request.data
 			if not (uploaded_file and raw_tags and title):
 				return Response(status=status.HTTP_400_BAD_REQUEST)
 
@@ -203,69 +203,76 @@ class ClassroomViewSet(viewsets.ViewSet):
 
 	# Tools for upload all the courses
 	@staticmethod
-	def upload_all_course_info(request):
+	def upload_course_info(request):
 		if not request.user.is_superuser:
 			return Response(status=status.HTTP_403_FORBIDDEN)
+		semester, created = Semester.objects.get_or_create(name="Fall 2017", start=datetime.datetime(year=2017, month=8, day=21), end=datetime.datetime(year=2017, month=12, day=8))
 
 		upload = request.FILES.get('file', False)
-		temp_file = open(upload.temporary_file_path())
+		from django.core.files.uploadedfile import InMemoryUploadedFile, TemporaryUploadedFile
+		if type(upload) is InMemoryUploadedFile:
+			temp_file = upload
+		elif type(upload) is TemporaryUploadedFile:
+			temp_file = open(upload.temporary_file_path())
 		if upload:
-			semester, created = Semester.objects.get_or_create(name="Fall 2017", start=datetime.datetime(year=2017, month=8, day=21), end=datetime.datetime(year=2017, month=12, day=8))
 			course = json.load(temp_file)
-			for key, cours in course.iteritems():
+			for cours in course:
 				# print cours['description']
-				major, created = Major.objects.get_or_create(major_short=cours['major'])
+				major_short = cours['course_short_name'].split()[0]
+
+				major = Major.objects.get(major_short=major_short)
+
 				try:
 					# create class time
-					time = Task.objects.create(task_name=cours['name'] + ' - ' + cours['section'],
+					time = Task.objects.create(task_name=cours['course_short_name'] + ' - ' + cours['course_section'],
 					                           location=cours['room'],
 					                           type=0,  # Event
 					                           category=0  # Class
 					                           )
-					class_time = cours['time'].split()
+					class_time = cours['datetime'].split()
 					if len(class_time) == 4:
 						time.repeat = class_time[0]
 						time.start = datetime.datetime.strptime(class_time[1], '%I:%M%p')
 						time.end = datetime.datetime.strptime(class_time[3], '%I:%M%p')
 						time.save()
-						print time.start, time.end, class_time[1], class_time[3]
+					# print time.start, time.end, class_time[1], class_time[3]
 					# create classroom
-					classroom, created = Classroom.objects.get_or_create(class_code=cours['number'],
-					                                                     class_number=cours['name'].split()[1],
-					                                                     class_name=cours['fullName'],
-					                                                     description=cours['description'],
-					                                                     class_section=cours['section'],
-					                                                     class_credit=cours['unit'],
+					classroom, created = Classroom.objects.get_or_create(class_code=cours['class_number'],
+					                                                     class_number=cours['course_short_name'].split()[1],
+					                                                     class_name=cours['course_full_name'],
+					                                                     description=cours['course_description'],
+					                                                     class_section=cours['course_section'],
+					                                                     class_credit=cours['course_credit'],
 					                                                     class_location=cours['room'],
 					                                                     class_time=time,
 					                                                     major=major,
 					                                                     semester=semester)
 					# create professor
 					if 'instructor1' in cours:
-						if 'instructor1_email' in cours:
-							instructor1, created = Professor.objects.get_or_create(
-								first_name=cours['instructor1'].split()[0],
-								last_name=cours['instructor1'].split()[1],
-								major=major, email=cours['instructor1_email'])
+						instructor_name = cours['instructor1'].upper().replace(',', '')
+						instructor1 = Professor.objects.filter(
+							first_name=instructor_name.split()[0],
+							last_name=instructor_name.split()[1])
+						if instructor1:
+							classroom.professors.add(instructor1[0])
 						else:
-							instructor1, created = Professor.objects.get_or_create(
-								first_name=cours['instructor1'].split()[0],
-								last_name=cours['instructor1'].split()[1],
-								major=major)
-						classroom.professors.add(instructor1)
+							professor = Professor.objects.create(
+								first_name=instructor_name.split()[0],
+								last_name=instructor_name.split()[1])
+							classroom.professors.add(professor)
 
 					if 'instructor2' in cours:
-						if 'instructor2_email' in cours:
-							instructor2, created = Professor.objects.get_or_create(
-								first_name=cours['instructor2'].split()[0],
-								last_name=cours['instructor2'].split()[1],
-								major=major, email=cours['instructor2_email'])
+						instructor_name = cours['instructor2'].upper().replace(',', '')
+						instructor2 = Professor.objects.filter(
+							first_name=instructor_name.split()[0],
+							last_name=instructor_name.split()[1])
+						if instructor2:
+							classroom.professors.add(instructor2[0])
 						else:
-							instructor2, created = Professor.objects.get_or_create(
-								first_name=cours['instructor2'].split()[0],
-								last_name=cours['instructor2'].split()[1],
-								major=major)
-						classroom.professors.add(instructor2)
+							professor = Professor.objects.create(
+								first_name=instructor_name.split()[0],
+								last_name=instructor_name.split()[1])
+							classroom.professors.add(professor)
 
 					# save classroom to get pk in db
 					classroom.save()
@@ -279,8 +286,55 @@ class ClassroomViewSet(viewsets.ViewSet):
 				#                         # matrix_id=matrix_id,
 				#                         name=cours['name'] + ' - ' + cours['section'] + ' Chat Room',
 				#                         classroom=classroom)
-				except IntegrityError:
-					print IntegrityError
+				except IntegrityError as e:
+					print e.message
+			return Response(status=status.HTTP_201_CREATED)
+		else:
+			return Response(status=status.HTTP_400_BAD_REQUEST)
+
+	@staticmethod
+	def upload_major_info(request):
+		if not request.user.is_superuser:
+			return Response(status=status.HTTP_403_FORBIDDEN)
+		upload = request.FILES.get('file', False)
+		if upload:
+			from django.core.files.uploadedfile import InMemoryUploadedFile, TemporaryUploadedFile
+			if type(upload) is InMemoryUploadedFile:
+				temp_file = upload
+			elif type(upload) is TemporaryUploadedFile:
+				temp_file = open(upload.temporary_file_path())
+			majors = json.load(temp_file)
+			try:
+				for major in majors:
+					Major.objects.create(major_short=major['major_short'], major_full=major['major_full'])
+			except IntegrityError as e:
+				print e.message
+			return Response(status=status.HTTP_201_CREATED)
+		else:
+			return Response(status=status.HTTP_400_BAD_REQUEST)
+
+	@staticmethod
+	def upload_professor_info(request):
+		if not request.user.is_superuser:
+			return Response(status=status.HTTP_403_FORBIDDEN)
+		upload = request.FILES.get('file', False)
+		if upload:
+			from django.core.files.uploadedfile import InMemoryUploadedFile, TemporaryUploadedFile
+			if type(upload) is InMemoryUploadedFile:
+				temp_file = upload
+			elif type(upload) is TemporaryUploadedFile:
+				temp_file = open(upload.temporary_file_path())
+			professors = json.load(temp_file)
+			try:
+				for professor in professors:
+					name = professor['name'].upper().split()
+					email = professor.get('email', '')
+					office = professor.get('address', '')
+
+					Professor.objects.create(first_name=name[0], last_name=name[1], email=email, office=office)
+			except IntegrityError as e:
+				print e.message
+
 			return Response(status=status.HTTP_201_CREATED)
 		else:
 			return Response(status=status.HTTP_400_BAD_REQUEST)

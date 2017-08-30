@@ -22,7 +22,7 @@ from ..notifications.models import Notification
 from models import Account, Professor, AccountVerifyToken
 from serializers import AccountSerializer, BasicAccountSerializer, AuthAccountSerializer, ProfessorSerializer
 
-from script import group, complement, generate_recommendations_for_homework
+from script import generate_recommendations_for_user
 from django.core.mail import EmailMessage
 from django.template.loader import render_to_string
 
@@ -30,9 +30,12 @@ from ..badges.script import trigger_action
 
 
 def send_verifying_email(account, subject, to, template):
-	token_queryset = AccountVerifyToken.objects.all()
 	verify_token = uuid.uuid4()
+
+	# get token instance or create new one
 	token_instance, created = AccountVerifyToken.objects.get_or_create(account=account)
+
+	# if created new token instance or old instance is expired, regenerate token (else don't care)
 	if created or token_instance.is_expired:
 		token_instance.expire_time = timezone.now() + timedelta(hours=5)
 		token_instance.token = verify_token
@@ -44,6 +47,7 @@ def send_verifying_email(account, subject, to, template):
 		'user' : account,
 		'token': verify_token,
 	}
+
 	email = EmailMessage(subject, render_to_string('email/%s.html' % template, ctx), 'no-reply@classgotcha.com', [to])
 	email.content_subtype = 'html'
 	email.send()
@@ -73,19 +77,24 @@ def account_register(request):
 			trigger_action(account, 'refer_friend')
 			Notification.objects.create(sender_id=user.id, content='joined ClassGotcha with your refer!', receiver_id=account.id)
 
-	send_verifying_email(account=user, subject='[ClassGotcha] Verification Email', to=request.data['email'], template='verification')
+	send_verifying_email(account=user, subject='[ClassGotcha] Verification Email', to=user.email, template='verification')
 
 	return Response({'token': token}, status=status.HTTP_201_CREATED)
 
 
 @api_view(['POST', 'GET'])
-@permission_classes((IsAuthenticated,))
+@permission_classes((AllowAny,))
 def email_verify(request, token=None):
 	if request.method == 'GET':
-		if request.user.is_verified:
-			return Response({'message': 'This email has been verified'}, status=status.HTTP_400_BAD_REQUEST)
-		send_verifying_email(account=request.user, subject='[ClassGotcha] Verification Email (resend)', to=request.data['email'], template='verification')
-		return Response({'message': 'The verification email has been resent. '}, status=status.HTTP_201_CREATED)
+		if not request.user.id:
+			return Response({'detail': 'Login required'}, status=status.HTTP_400_BAD_REQUEST)
+
+		elif request.user.is_verified:
+			return Response({'detail': 'This email has been verified'}, status=status.HTTP_400_BAD_REQUEST)
+
+		send_verifying_email(account=request.user, subject='[ClassGotcha] Verification Email', to=request.user.email, template='verification')
+		return Response({'detail': 'The verification email has been resent. '}, status=status.HTTP_201_CREATED)
+
 	elif request.method == 'POST':
 		if not token:
 			return Response(status=status.HTTP_400_BAD_REQUEST)
@@ -97,8 +106,10 @@ def email_verify(request, token=None):
 			return Response({'message': 'Token is expired'}, status=status.HTTP_400_BAD_REQUEST)
 
 		token_instance.account.is_verified = True
-		token_instance.is_expired = True
-		trigger_action(request.user, 'verify_email')
+		token_instance.account.save()
+		token_instance.expire_time = timezone.now() - timedelta(hours=24)
+		token_instance.save()
+		trigger_action(token_instance.account, 'verify_email')
 
 		return Response(status=status.HTTP_200_OK)
 
@@ -108,22 +119,12 @@ def email_verify(request, token=None):
 def forget_password(request, token=None):
 	token_queryset = AccountVerifyToken.objects.all()
 
+	# generate token and send email
 	if request.method == 'POST':
-		if request.data['email']:
+		if request.data.get('email', None):
 			account = get_object_or_404(Account.objects.all(), email=request.data['email'])
-		else:
-			return Response(status=status.HTTP_400_BAD_REQUEST)
-
-		reset_token = uuid.uuid4()
-		token_instance, created = AccountVerifyToken.objects.get_or_create(account=account)
-		if created or token_instance.is_expired:
-			token_instance.expire_time = timezone.now() + timedelta(hours=5)
-			token_instance.token = reset_token
-			token_instance.save()
-		else:
-			reset_token = token_instance.token
-
-		send_verifying_email(account=account, subject='[ClassGotcha] Reset Password', to=request.data['email'], template='reset')
+			# send reset email
+			send_verifying_email(account=account, subject='[ClassGotcha] Reset Password', to=request.data['email'], template='reset')
 		return Response({'message': 'The reset password email has been sent. '}, status=status.HTTP_200_OK)
 
 	# verify token
@@ -146,7 +147,7 @@ def forget_password(request, token=None):
 		# set new password to user
 		token_instance.account.set_password(request.data['password'])
 		token_instance.account.save()
-		token_instance.is_expired = True
+		token_instance.expire_time = timezone.now() - timedelta(hours=24)
 		return Response(status=status.HTTP_200_OK)
 
 
@@ -205,16 +206,13 @@ class AccountViewSet(viewsets.ViewSet):
 	def search(self, request):
 		token = request.data.get('token', None)
 		if token:
-			# TODO: search implementation
-			# Assume token is "abcd1234@psu.edu" or "abcd1234" or "John Martin"
-			# ....
-			# ....
-			if '@' is in token:
+			if '@' in token:
 				token = token.split("@")[0]
-			users = Account.objects.filter(email__istartswith = token)
-			tokens = token.split()
-			users |= Account.objects.filter(first_name__istartswith = tokens[0])
-			users |= Account.objects.filter(last_name__istartswith = tokens[-1])
+				users = Account.objects.filter(email__istartswith=token)
+			else:
+				tokens = token.split()
+				users = Account.objects.filter(first_name__istartswith=tokens[0])
+				users |= Account.objects.filter(last_name__istartswith=tokens[-1])
 
 			serializer = BasicAccountSerializer(users, many=True)
 
@@ -346,20 +344,23 @@ class AccountViewSet(viewsets.ViewSet):
 		if request.method == 'POST':
 			classroom = get_object_or_404(classroom_queryset, pk=pk)
 			# add user to classroom student list
-			classroom.students.add(request.user)
-			# add class time to user task list
-			classroom.class_time.involved.add(request.user)
-			# add classroom tasks from user task list
-			for task in classroom.tasks.all():
-				task.involved.add(request.user)
+			if request.user not in classroom.students.all():
+				classroom.students.add(request.user)
+				# add class time to user task list
+				classroom.class_time.involved.add(request.user)
+				# add classroom tasks from user task list
+				for task in classroom.tasks.all():
+					task.involved.add(request.user)
 
-			trigger_action(request.user, 'add_classroom')
+				trigger_action(request.user, 'add_classroom')
 
-			# add user to classroom chatrooms
-			# change into matrix version: classroom.chatrooms.get().accounts.add(request.user.username ???)
-			# also need to call the matrix api? add the user into matrix chatrooms...
-			# classroom.chatroom.get().accounts.add(request.user)
-			return Response(status=200)
+				# add user to classroom chatrooms
+				# change into matrix version: classroom.chatrooms.get().accounts.add(request.user.username ???)
+				# also need to call the matrix api? add the user into matrix chatrooms...
+				# classroom.chatroom.get().accounts.add(request.user)
+				return Response(status=status.HTTP_200_OK)
+			else:
+				return Response({'detail': 'Already in Classroom'}, status=status.HTTP_403_FORBIDDEN)
 
 		if request.method == 'DELETE':
 			classroom = get_object_or_404(classroom_queryset, pk=pk)
@@ -468,10 +469,8 @@ class AccountViewSet(viewsets.ViewSet):
 		user_tasks = request.user.tasks.all()
 		user = request.user
 		for task in user_tasks:
-			# generate_recommendations_for_homework(user, task)
-			pass
-		# TODO: study plan generator, all generated plan should be category 6
-		# ....
+			print task.task_name
+			generate_recommendations_for_user(user, task)
 		return Response(status=status.HTTP_200_OK)
 
 
@@ -486,13 +485,24 @@ class ProfessorViewSet(viewsets.ViewSet):
 		return Response(serializer.data)
 
 	def update(self, request, pk):
+
+		if request.user.level < 5:
+			return Response({'detail': 'You need to reach to Level 5 to edit professor info'}, status=status.HTTP_400_BAD_REQUEST)
+
 		professor = get_object_or_404(self.queryset, pk=pk)
+
 		for (key, value) in request.data.items():
-			if key in ['first_name', 'last_name', 'email', 'office', 'major']:
-				if key is 'major':
-					setattr(professor, 'major_id', value)
-				else:
-					setattr(professor, key, value)
+			if key in ['personal_page', 'email', 'office']:
+				setattr(professor, key, value)
+		professor.save()
+
+		Comment.objects.create(content='Updated Professor Information',
+		                       professor_id=professor.id,
+		                       is_anonymous=False,
+		                       creator=request.user)
+
+		trigger_action(request.user, 'professor_edit')
+
 		return Response(status=status.HTTP_200_OK)
 
 	def comments(self, request, pk):
@@ -505,11 +515,12 @@ class ProfessorViewSet(viewsets.ViewSet):
 			is_anonymous = request.data.get('is_anonymous')
 			# num = request.data.get('num')
 			if content:
-				comment = Comment.objects.create(content=content,
-				                                 professor_id=professor.id,
-				                                 is_anonymous=is_anonymous,
-				                                 creator=request.user)
-				comment.save()
+				Comment.objects.create(content=content,
+				                       professor_id=professor.id,
+				                       is_anonymous=is_anonymous,
+				                       creator=request.user)
+				trigger_action(request.user, 'professor_comment')
+
 				return Response(status=status.HTTP_201_CREATED)
 			else:
 				return Response(status=status.HTTP_400_BAD_REQUEST)

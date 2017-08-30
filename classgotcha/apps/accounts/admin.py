@@ -42,10 +42,10 @@ class GroupAdmin(admin.ModelAdmin):
 
 
 class ProfessorAdmin(admin.ModelAdmin):
-	list_display = ('first_name', 'last_name', 'department', 'major')
+	list_display = ('first_name', 'last_name', 'email')
 	fieldsets = (
 		(None, {'fields': ('email', 'first_name', 'last_name')}),
-		('major', {'fields': ('department', 'major', 'office')}),
+		('major', {'fields': ('personal_page', 'office')}),
 		# ('Permissions', {'fields': ('is_professor', 'is_staff', 'is_superuser')}),
 		('Timestamp', {'fields': ('created',)})
 	)
