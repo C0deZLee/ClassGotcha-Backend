@@ -469,7 +469,7 @@ class AccountViewSet(viewsets.ViewSet):
 		user_tasks = request.user.tasks.all()
 		user = request.user
 		for task in user_tasks:
-			print task.task_name
+			#print task.task_name
 			generate_recommendations_for_user(user, task)
 		return Response(status=status.HTTP_200_OK)
 

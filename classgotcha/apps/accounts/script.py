@@ -72,7 +72,7 @@ def generate_recommendations(account,task,description = 'do homework for ',pre_d
 	# get the user's free time
 	free_intervals = get_user_free_intervals(account=account, date=work_date)
 	
-	print free_intervals
+	#print free_intervals
 	task_add = False
 	for interval in free_intervals:
 		# find appropriate time to do things
@@ -100,12 +100,9 @@ def generate_recommendations(account,task,description = 'do homework for ',pre_d
 					                classroom=task.task_of_classroom, creator=account)
 
 				new_task.save()
-				print 'here'
 				new_task.involved.add(account)
 				account.tasks.add(new_task)
 				account.save()
-				print task.task_of_classroom
-				print account
 				new_task.save()
 				try:
 					
@@ -147,7 +144,7 @@ def generate_recommendations_for_user(account, task):  # in this case the end ti
 
 
 
-weekday_dict = {1: 'Mo', 2: 'Tu', 3: 'We', 4: 'Th', 5: 'Fi' ,6:'Sat',7:'Sun'}
+weekday_dict = {1: 'Mo', 2: 'Tu', 3: 'We', 4: 'Th', 5: 'Fi' ,6:'Sat',0:'Sun'}
 
 
 def get_user_free_intervals(account, date):
@@ -162,24 +159,29 @@ def get_user_free_intervals(account, date):
 
 	for classe in all_class:
 		all_class_intervals.append([float(classe.start.hour + float(classe.start.minute) / 60), float(classe.end.hour + float(classe.end.minute) / 60)])
+		#print [float(classe.start.hour + float(classe.start.minute) / 60), float(classe.end.hour + float(classe.end.minute) / 60)]
 	all_customized_tasks = account.tasks.filter(category=6, repeat=True, repeat__contains=weekday)
 	if all_customized_tasks:
 		for customized_task in all_customized_tasks:
 			all_class_intervals.append([float(customized_task.start.hour + float(customized_task.start.minute) / 60), float(customized_task.end.hour + float(customized_task.end.minute) / 60)])
-
-	all_non_repeat_tasks = account.tasks.filter(category=6, repeat=False, start__date=date)
+			#print [float(customized_task.start.hour + float(customized_task.start.minute) / 60), float(customized_task.end.hour + float(customized_task.end.minute) / 60)]
+	all_non_repeat_tasks = account.tasks.filter(category=6, start__year=date.year,start__month=date.month, start__day=date.day)
+	print date.month,date.day,date.year
+	print all_non_repeat_tasks
 	if all_non_repeat_tasks:
 		for customized_task in all_non_repeat_tasks:
-			all_class_intervals.append(
-				[float(customized_task.start.hour + float(customized_task.start.minute) / 60), float(customized_task.end.hour + float(customized_task.end.minute) / 60)])
-
+			#print 'here'
+			all_class_intervals.append([float(customized_task.start.hour + float(customized_task.start.minute) / 60), float(customized_task.end.hour + float(customized_task.end.minute) / 60)])
+			#print [float(customized_task.start.hour + float(customized_task.start.minute) / 60), float(customized_task.end.hour + float(customized_task.end.minute) / 60)]
 	# find the union of all intervals
 
+	print all_class_intervals
 	intervals = combine(all_class_intervals)
+
 	# print intervals
 	# print all_class_intervals
 	# compute the complement of all the intervals
-	free_intervals = complement(intervals, first=0, last=24)
+	free_intervals = complement(intervals, first=1, last=24)
 	# print free_intervals
 
 	return free_intervals
