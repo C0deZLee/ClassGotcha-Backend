@@ -322,7 +322,7 @@ class AccountViewSet(viewsets.ViewSet):
 		possible_friends = []
 		# Explore Friends basing on classrooms
 		for account in self.queryset:
-			if account not in (request.user.friends.all() | request.user.pending_friends.all()) and similarity_check_classrooms(request.user, account):
+			if account not in (request.user.friends.all() | request.user.pending_friends.all()) and request.user != account and similarity_check_classrooms(request.user, account):
 				possible_friends.append(account)
 		serializer = BasicAccountSerializer(possible_friends, many=True)
 		return Response(serializer.data)
