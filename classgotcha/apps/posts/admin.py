@@ -39,7 +39,7 @@ class CommentAdmin(admin.ModelAdmin):
 
 
 class NoteAdmin(admin.ModelAdmin):
-	list_display = ('title', 'creator', 'classroom', 'overall_rating')
+	list_display = ('title', 'creator', 'classroom')
 
 	fieldsets = (
 		('', {'fields': ('title', 'description', 'file',)}),
