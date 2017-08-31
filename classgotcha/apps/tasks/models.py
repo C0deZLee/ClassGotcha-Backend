@@ -37,7 +37,7 @@ class Task(models.Model):
 	# Time
 	start = models.DateTimeField(blank=True, null=True)
 	end = models.DateTimeField(blank=True, null=True)  # the end equals to due
-	repeat = models.CharField(max_length=20, default='')  # MoTuWeThFi
+	repeat = models.CharField(max_length=20, default='')  # MoTuWeThFiSaSu
 	repeat_start = models.DateField(null=True)
 	repeat_end = models.DateField(null=True)
 
@@ -90,20 +90,4 @@ class Task(models.Model):
 
 	@property
 	def repeat_list(self):
-		repeat_list = []
-		if 'Mo' in self.repeat:
-			repeat_list.append(1)
-		if 'Tu' in self.repeat:
-			repeat_list.append(2)
-		if 'We' in self.repeat:
-			repeat_list.append(3)
-		if 'Th' in self.repeat:
-			repeat_list.append(4)
-		if 'Fr' in self.repeat:
-			repeat_list.append(5)
-		if 'Sa' in self.repeat:
-			repeat_list.append(6)
-		if 'Su' in self.repeat:
-			repeat_list.append(7)
-
-		return repeat_list
+		return [{'Mo':1, 'Tu':2, 'We':3, 'Th':4, 'Fr':5, 'Sa':6, 'Su':7}[x] for x in [self.repeat[i:i+2] for i in range(0, len(self.repeat), 2)]]

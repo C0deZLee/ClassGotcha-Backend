@@ -1,3 +1,5 @@
+# tmp ics file
+*.ics
 # python cache
 *.pyc
 __pycache__/
