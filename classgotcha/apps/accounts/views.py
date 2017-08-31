@@ -59,7 +59,7 @@ def ical_feed_view(request, pk=None):
 	if pk:
 		account = get_object_or_404(Account.objects.all(), pk = pk)
 		# if no start time is found, use -30 min in end time instead
-		f = open('cal.ics', mode='w')
+		f = open('local/tmp/cal.ics', mode='w')
 		f.write('BEGIN:VCALENDAR\n'
 			'PRODID:-//classgotcha.com//id%s//EN\n'
 			'VERSION:2.0\n' % pk)
@@ -92,7 +92,7 @@ def ical_feed_view(request, pk=None):
 			)
 		f.write('END:VCALENDAR')
 		f.close()
-		return HttpResponse(open('cal.ics', mode='r'))
+		return HttpResponse(open('local/tmp/cal.ics', mode='r'))
 	else:
 		return Response(status = HTTP_400_BAD_REQUEST)
 
