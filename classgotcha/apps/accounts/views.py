@@ -1,6 +1,6 @@
 import uuid
 from django.utils import timezone
-from datetime import timedelta,datetime
+from datetime import timedelta, datetime
 from django.http import HttpResponse
 
 from django.shortcuts import get_object_or_404
@@ -28,7 +28,10 @@ from django.core.mail import EmailMessage
 from django.template.loader import render_to_string
 
 from ..badges.script import trigger_action
+from hashids import Hashids
 
+hashids = Hashids(salt="Full of salt..........")
+salt = 10000000000
 
 def send_verifying_email(account, subject, to, template):
 	verify_token = uuid.uuid4()
@@ -55,14 +58,14 @@ def send_verifying_email(account, subject, to, template):
 
 @api_view(['GET'])
 @permission_classes((AllowAny,))
-def ical_feed_view(request, pk=None):
-	if pk:
-		account = get_object_or_404(Account.objects.all(), pk = pk)
+def ical_feed_view(request, token=None):
+	if token:
+		account = get_object_or_404(Account.objects.all(), pk = hashids.decode(token)[0] - salt)
 		# if no start time is found, use -30 min in end time instead
 		f = open('local/tmp/cal.ics', mode='w')
 		f.write('BEGIN:VCALENDAR\n'
-			'PRODID:-//classgotcha.com//id%s//EN\n'
-			'VERSION:2.0\n' % pk)
+			'PRODID:-//classgotcha.com//%s//EN\n'
+			'VERSION:2.0\n' % token)
 		for task in account.tasks.all():
 			start = task.start.replace(2017,8,21) if task.category in [0,7] else task.start if task.start else task.end - timedelta(0,0,0,0,30,0)
 			end = task.end.replace(2017,8,21) if task.category in [0,7] else task.end
@@ -79,8 +82,6 @@ def ical_feed_view(request, pk=None):
 					end.strftime("%Y%m%dT%H%M%S"),
 					task.location
 				))
-				# '\nDTSTART:{1}Z'
-				# '\nDTEND:{2}Z'
 			if task.repeat:
 				f.write(
 				'\nRRULE:FREQ=WEEKLY;WKST=SU;UNTIL={0};BYDAY={1}'.format(
@@ -233,6 +234,10 @@ class AccountViewSet(viewsets.ViewSet):
 	parser_classes = (MultiPartParser, FormParser, JSONParser)
 	permission_classes = (IsAuthenticated,)
 
+	def get_iCal_token(self, request):
+		id = request.user.id + salt
+		return Response({'token': hashids.encode(id)})
+		
 	def retrieve(self, request, pk):
 		user = get_object_or_404(self.queryset, pk=pk)
 		serializer = AccountSerializer(user)

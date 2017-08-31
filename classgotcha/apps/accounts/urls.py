@@ -2,6 +2,10 @@ import views
 from django.conf.urls import url
 from rest_framework_jwt.views import obtain_jwt_token, refresh_jwt_token, verify_jwt_token
 
+account_get_iCal_token = views.AccountViewSet.as_view({
+	'get': 'get_iCal_token'
+})
+
 account_change_password = views.AccountViewSet.as_view({
 	'post': 'change_password'
 })
@@ -105,8 +109,10 @@ urlpatterns = [
 	url(r'^classrooms/(?P<pk>[0-9]+)/$', account_add_classrooms, name='add-classroom'),
 	url(r'^chatrooms/(?P<pk>[0-9]+)/$', account_add_chatrooms, name='add-chatrooms'),
 
+	url(r'^get_ical_token/$', account_get_iCal_token, name='get-ical-token'),
+	url(r'^(?P<token>[A-z0-9]+)/feed.ics$', views.ical_feed_view, name='user-calendar-feed'),
+	
 	url(r'^(?P<pk>[0-9]+)/$', account_detail, name='user-detail'),
-	url(r'^(?P<pk>[0-9]+)/feed.ics$', views.ical_feed_view, name='user-calendar-feed'),
 	url(r'^(?P<pk>[0-9]+)/moments/$', account_detail_moments, name='user-detail-moments'),
 
 	url(r'^classrooms/$', account_classrooms, name='user-classrooms'),
