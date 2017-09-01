@@ -1,6 +1,6 @@
 import uuid
 from django.utils import timezone
-from datetime import timedelta,datetime
+from datetime import timedelta, datetime
 from django.http import HttpResponse
 
 from django.shortcuts import get_object_or_404
@@ -28,6 +28,10 @@ from django.core.mail import EmailMessage
 from django.template.loader import render_to_string
 
 from ..badges.script import trigger_action
+from hashids import Hashids
+
+hashids = Hashids(salt="Full of salt..........")
+salt = 10000000000
 
 
 def send_verifying_email(account, subject, to, template):
@@ -53,48 +57,48 @@ def send_verifying_email(account, subject, to, template):
 	email.content_subtype = 'html'
 	email.send()
 
+
 @api_view(['GET'])
 @permission_classes((AllowAny,))
-def ical_feed_view(request, pk=None):
-	if pk:
-		account = get_object_or_404(Account.objects.all(), pk = pk)
+def ical_feed_view(request, token=None):
+	if token:
+		account = get_object_or_404(Account.objects.all(), pk=hashids.decode(token)[0] - salt)
 		# if no start time is found, use -30 min in end time instead
 		f = open('local/tmp/cal.ics', mode='w')
 		f.write('BEGIN:VCALENDAR\n'
-			'PRODID:-//classgotcha.com//id%s//EN\n'
-			'VERSION:2.0\n' % pk)
+		        'PRODID:-//classgotcha.com//%s//EN\n'
+		        'VERSION:2.0\n' % token)
 		for task in account.tasks.all():
-			start = task.start.replace(2017,8,21) if task.category in [0,7] else task.start if task.start else task.end - timedelta(0,0,0,0,30,0)
-			end = task.end.replace(2017,8,21) if task.category in [0,7] else task.end
-			
-			f.write('BEGIN:VEVENT' 
-				'\nUID:{1}@classgotcha.com'
-				'\nSUMMARY:{0}'
-				'\nLOCATION:{4}'
-				'\nDTSTART;TZID=America/New_York:{2}'
-				'\nDTEND;TZID=America/New_York:{3}'.format(
-					task.task_name,
-					task.id,
-					start.strftime("%Y%m%dT%H%M%S"),
-					end.strftime("%Y%m%dT%H%M%S"),
-					task.location
-				))
-				# '\nDTSTART:{1}Z'
-				# '\nDTEND:{2}Z'
+			start = task.start.replace(2017, 8, 21) if task.category in [0, 7] else task.start if task.start else task.end - timedelta(0, 0, 0, 0, 30, 0)
+			end = task.end.replace(2017, 8, 21) if task.category in [0, 7] else task.end
+
+			f.write('BEGIN:VEVENT'
+			        '\nUID:{1}@classgotcha.com'
+			        '\nSUMMARY:{0}'
+			        '\nLOCATION:{4}'
+			        '\nDTSTART;TZID=America/New_York:{2}'
+			        '\nDTEND;TZID=America/New_York:{3}'.format(
+				task.task_name,
+				task.id,
+				start.strftime("%Y%m%dT%H%M%S"),
+				end.strftime("%Y%m%dT%H%M%S"),
+				task.location
+			))
 			if task.repeat:
 				f.write(
-				'\nRRULE:FREQ=WEEKLY;WKST=SU;UNTIL={0};BYDAY={1}'.format(
-					datetime(2017,12,10,0,0,0).strftime("%Y%m%dT%H%M%S"),
-					(lambda x: ','.join(a+b for a,b in zip(x,x)))(iter(task.repeat.upper()))))
-					
-			f.write('\nDESCRIPTION:%s' 
-				'\nEND:VEVENT\n' % task.description
-			)
+					'\nRRULE:FREQ=WEEKLY;WKST=SU;UNTIL={0};BYDAY={1}'.format(
+						datetime(2017, 12, 10, 0, 0, 0).strftime("%Y%m%dT%H%M%S"),
+						(lambda x: ','.join(a + b for a, b in zip(x, x)))(iter(task.repeat.upper()))))
+
+			f.write('\nDESCRIPTION:%s'
+			        '\nEND:VEVENT\n' % task.description
+			        )
 		f.write('END:VCALENDAR')
 		f.close()
 		return HttpResponse(open('local/tmp/cal.ics', mode='r'))
 	else:
-		return Response(status = HTTP_400_BAD_REQUEST)
+		return Response(status=status.HTTP_400_BAD_REQUEST)
+
 
 @api_view(['POST'])
 @permission_classes((AllowAny,))
@@ -232,6 +236,10 @@ class AccountViewSet(viewsets.ViewSet):
 	queryset = Account.objects.all()
 	parser_classes = (MultiPartParser, FormParser, JSONParser)
 	permission_classes = (IsAuthenticated,)
+
+	def get_iCal_token(self, request):
+		id = request.user.id + salt
+		return Response({'token': hashids.encode(id)})
 
 	def retrieve(self, request, pk):
 		user = get_object_or_404(self.queryset, pk=pk)
@@ -424,11 +432,11 @@ class AccountViewSet(viewsets.ViewSet):
 		return Response(serializer.data)
 
 	@staticmethod
-	def moments(request, pk=None):
-		if not pk:
+	def moments(request, moment_pk=None, account_pk=None):
+		if not account_pk:
 			moment_query_set = request.user.moments.filter(deleted=False).order_by('-created')
 		else:
-			moment_query_set = Account.objects.get(pk=pk).moments.filter(deleted=False).order_by('-created')
+			moment_query_set = Account.objects.get(pk=account_pk).moments.filter(deleted=False).order_by('-created')
 
 		if request.method == 'GET':
 			# Only return first 20 moments
@@ -468,7 +476,7 @@ class AccountViewSet(viewsets.ViewSet):
 			trigger_action(request.user, 'post_moment')
 			return Response(status=status.HTTP_200_OK)
 		elif request.method == 'DELETE':
-			moment = get_object_or_404(moment_query_set, pk=pk)
+			moment = get_object_or_404(moment_query_set, pk=moment_pk)
 			moment.deleted = True
 			moment.save()
 			return Response(status=status.HTTP_200_OK)
@@ -512,7 +520,7 @@ class AccountViewSet(viewsets.ViewSet):
 		user_tasks = request.user.tasks.all()
 		user = request.user
 		for task in user_tasks:
-			#print task.task_name
+			# print task.task_name
 			generate_recommendations_for_user(user, task)
 		return Response(status=status.HTTP_200_OK)
 

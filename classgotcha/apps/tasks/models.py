@@ -37,9 +37,9 @@ class Task(models.Model):
 	# Time
 	start = models.DateTimeField(blank=True, null=True)
 	end = models.DateTimeField(blank=True, null=True)  # the end equals to due
-	repeat = models.CharField(max_length=20, default='')  # MoTuWeThFiSaSu
-	repeat_start = models.DateField(null=True)
-	repeat_end = models.DateField(null=True)
+	repeat = models.CharField(max_length=20, default='', blank=True,)  # MoTuWeThFiSaSu
+	repeat_start = models.DateField(null=True, blank=True,)
+	repeat_end = models.DateField(null=True, blank=True,)
 
 	# Relationship
 	involved = models.ManyToManyField(Account, related_name='tasks', blank=True)
