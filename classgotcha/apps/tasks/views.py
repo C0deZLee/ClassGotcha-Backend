@@ -64,7 +64,7 @@ class TaskViewSet(viewsets.ViewSet):
 		if task.task_of_classroom:
 			Moment.objects.create(
 				content='I updated the task \"' +
-				        request.data.get('task_name', '') + '\", check it out!',
+				        task.task_name + '\", check it out!',
 				creator=request.user,
 				classroom_id=task.task_of_classroom_id)
 
