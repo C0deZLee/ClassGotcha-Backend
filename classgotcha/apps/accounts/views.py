@@ -237,7 +237,7 @@ class AccountViewSet(viewsets.ViewSet):
 	def get_iCal_token(self, request):
 		id = request.user.id + salt
 		return Response({'token': hashids.encode(id)})
-		
+
 	def retrieve(self, request, pk):
 		user = get_object_or_404(self.queryset, pk=pk)
 		serializer = AccountSerializer(user)
@@ -429,11 +429,11 @@ class AccountViewSet(viewsets.ViewSet):
 		return Response(serializer.data)
 
 	@staticmethod
-	def moments(request, pk=None):
-		if not pk:
+	def moments(request, moment_pk=None, account_pk=None):
+		if not account_pk:
 			moment_query_set = request.user.moments.filter(deleted=False).order_by('-created')
 		else:
-			moment_query_set = Account.objects.get(pk=pk).moments.filter(deleted=False).order_by('-created')
+			moment_query_set = Account.objects.get(pk=account_pk).moments.filter(deleted=False).order_by('-created')
 
 		if request.method == 'GET':
 			# Only return first 20 moments
@@ -473,7 +473,7 @@ class AccountViewSet(viewsets.ViewSet):
 			trigger_action(request.user, 'post_moment')
 			return Response(status=status.HTTP_200_OK)
 		elif request.method == 'DELETE':
-			moment = get_object_or_404(moment_query_set, pk=pk)
+			moment = get_object_or_404(moment_query_set, pk=moment_pk)
 			moment.deleted = True
 			moment.save()
 			return Response(status=status.HTTP_200_OK)
@@ -517,7 +517,7 @@ class AccountViewSet(viewsets.ViewSet):
 		user_tasks = request.user.tasks.all()
 		user = request.user
 		for task in user_tasks:
-			#print task.task_name
+			# print task.task_name
 			generate_recommendations_for_user(user, task)
 		return Response(status=status.HTTP_200_OK)
 
