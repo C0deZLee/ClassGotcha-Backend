@@ -33,6 +33,7 @@ from hashids import Hashids
 hashids = Hashids(salt="Full of salt..........")
 salt = 10000000000
 
+
 def send_verifying_email(account, subject, to, template):
 	verify_token = uuid.uuid4()
 
@@ -56,46 +57,48 @@ def send_verifying_email(account, subject, to, template):
 	email.content_subtype = 'html'
 	email.send()
 
+
 @api_view(['GET'])
 @permission_classes((AllowAny,))
 def ical_feed_view(request, token=None):
 	if token:
-		account = get_object_or_404(Account.objects.all(), pk = hashids.decode(token)[0] - salt)
+		account = get_object_or_404(Account.objects.all(), pk=hashids.decode(token)[0] - salt)
 		# if no start time is found, use -30 min in end time instead
 		f = open('local/tmp/cal.ics', mode='w')
 		f.write('BEGIN:VCALENDAR\n'
-			'PRODID:-//classgotcha.com//%s//EN\n'
-			'VERSION:2.0\n' % token)
+		        'PRODID:-//classgotcha.com//%s//EN\n'
+		        'VERSION:2.0\n' % token)
 		for task in account.tasks.all():
-			start = task.start.replace(2017,8,21) if task.category in [0,7] else task.start if task.start else task.end - timedelta(0,0,0,0,30,0)
-			end = task.end.replace(2017,8,21) if task.category in [0,7] else task.end
-			
-			f.write('BEGIN:VEVENT' 
-				'\nUID:{1}@classgotcha.com'
-				'\nSUMMARY:{0}'
-				'\nLOCATION:{4}'
-				'\nDTSTART;TZID=America/New_York:{2}'
-				'\nDTEND;TZID=America/New_York:{3}'.format(
-					task.task_name,
-					task.id,
-					start.strftime("%Y%m%dT%H%M%S"),
-					end.strftime("%Y%m%dT%H%M%S"),
-					task.location
-				))
+			start = task.start.replace(2017, 8, 21) if task.category in [0, 7] else task.start if task.start else task.end - timedelta(0, 0, 0, 0, 30, 0)
+			end = task.end.replace(2017, 8, 21) if task.category in [0, 7] else task.end
+
+			f.write('BEGIN:VEVENT'
+			        '\nUID:{1}@classgotcha.com'
+			        '\nSUMMARY:{0}'
+			        '\nLOCATION:{4}'
+			        '\nDTSTART;TZID=America/New_York:{2}'
+			        '\nDTEND;TZID=America/New_York:{3}'.format(
+				task.task_name,
+				task.id,
+				start.strftime("%Y%m%dT%H%M%S"),
+				end.strftime("%Y%m%dT%H%M%S"),
+				task.location
+			))
 			if task.repeat:
 				f.write(
-				'\nRRULE:FREQ=WEEKLY;WKST=SU;UNTIL={0};BYDAY={1}'.format(
-					datetime(2017,12,10,0,0,0).strftime("%Y%m%dT%H%M%S"),
-					(lambda x: ','.join(a+b for a,b in zip(x,x)))(iter(task.repeat.upper()))))
-					
-			f.write('\nDESCRIPTION:%s' 
-				'\nEND:VEVENT\n' % task.description
-			)
+					'\nRRULE:FREQ=WEEKLY;WKST=SU;UNTIL={0};BYDAY={1}'.format(
+						datetime(2017, 12, 10, 0, 0, 0).strftime("%Y%m%dT%H%M%S"),
+						(lambda x: ','.join(a + b for a, b in zip(x, x)))(iter(task.repeat.upper()))))
+
+			f.write('\nDESCRIPTION:%s'
+			        '\nEND:VEVENT\n' % task.description
+			        )
 		f.write('END:VCALENDAR')
 		f.close()
 		return HttpResponse(open('local/tmp/cal.ics', mode='r'))
 	else:
-		return Response(status = HTTP_400_BAD_REQUEST)
+		return Response(status=status.HTTP_400_BAD_REQUEST)
+
 
 @api_view(['POST'])
 @permission_classes((AllowAny,))
