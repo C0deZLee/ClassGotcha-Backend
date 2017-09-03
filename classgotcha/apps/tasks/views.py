@@ -24,6 +24,8 @@ class TaskViewSet(viewsets.ViewSet):
 	def remove(self, request, pk):
 		task = get_object_or_404(self.queryset, pk=pk)
 		task.involved.remove(request.user)
+		if task.belongs_to:
+			task.belongs_to.preparations.remove(task)
 		return Response(status=status.HTTP_200_OK)
 
 	def update(self, request, pk):

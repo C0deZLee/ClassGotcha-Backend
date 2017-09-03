@@ -1,11 +1,10 @@
 from django.utils import timezone
-from datetime import datetime, timedelta
 from django.db import models
+from datetime import datetime, timedelta, time, date
 
 from ..accounts.models import Account, Group
 from ..classrooms.models import Classroom
 from ..tasks.models import Task
-from datetime import datetime, timedelta, time
 
 def test_scheduler():
 	account = Account.objects.all().filter(username='test1')[0]
@@ -14,8 +13,8 @@ def test_scheduler():
 
 
 def generate_recommendations(account, task, pre_days=2):
-	due_date = task.end
-	work_date = due_date - timedelta(days=pre_days)
+	due_day = task.end
+	work_day = (due_day - timedelta(days=pre_days)).date()
 	title = {
 		1: "Do ",
 		2: "Prepare for ",
@@ -23,17 +22,20 @@ def generate_recommendations(account, task, pre_days=2):
 	}[task.category] + task.task_name + ' of %s' % task.task_of_classroom.class_short if task.task_of_classroom else ''
 
 	# get the user's free time (within 8-24)
-	free_intervals = get_user_free_intervals(account=account, date=work_date, start=time(9), end=time(23,59,59))
+	free_intervals = get_user_free_intervals(account=account, day=work_day, start=time(9,0), end=time(23,59,59))
 	
 	#print free_intervals
 	for interval in free_intervals:
 		# find appropriate time to do things
-		if interval[1] - interval[0] > timedelta(hours=1, minutes=30):
+		print interval
+		a,b = map(lambda x: datetime.combine(date.today(), x), interval)
+		print a,b
+		if b-a > timedelta(hours=1, minutes=30):
 			new_task = Task.objects.create(
 				task_name=title,
 				category=6,
-				start=datetime.combine(work_date, interval[0]+timedelta(minutes=15)),
-				end=datetime.combine(work_date, interval[0]+timedelta(minutes=75)),
+				start=datetime.combine(work_day, (a+timedelta(minutes=15)).time()),
+				end=datetime.combine(work_day, (a+timedelta(minutes=75)).time()),
 				classroom=task.task_of_classroom, creator=account)
 			new_task.involved.add(account)
 			return False
@@ -41,29 +43,25 @@ def generate_recommendations(account, task, pre_days=2):
 	
 
 
-def generate_recommendations_for_user(account, task):  # in this case the end time of the task is the due date
-	for d in [2,5,10][0:task.category]:
-		while generate_recommendations(account, task, pre_days=d):
-			d += 1
+def generate_recommendations_for_user(account, task):
+	if task.category in [1,2,3] and not task.preparations.all():
+		for d in [2,5,10][0:task.category]:
+			while generate_recommendations(account, task, pre_days=d):
+				d += 1
 	return
 
 
 
-def get_user_free_intervals(account, date, start = time(0,0,0), end = time(23,59,59)):
+def get_user_free_intervals(account, day, start = time(0,0,0), end = time(23,59,59)):
 	busy_intervals = []
-	# get week day from date
-	weekday = date.strftime("%a")[0:2] # Get the first two characters of weekday string
+	weekday = day.strftime("%a")[0:2] # Get the first two characters of weekday string
 
-	all_class = account.tasks.filter(category=0, repeat__contains=weekday)
-	busy_intervals += [(a_class.start.time, a_class.end.time) for a_class in all_class]
-
-	all_customized_tasks = account.tasks.filter(category=6, repeat=True, repeat__contains=weekday)
-	busy_intervals += [(task.start.time, task.end.time) for task in all_customized_tasks]
-
-
-	# all_non_repeat_tasks = account.tasks.filter(category=6, start__year=date.year, start__month=date.month, start__day=date.day)
-	all_non_repeat_tasks = account.tasks.filter(category=6, start=date)
-	busy_intervals += [(task.start.time, task.end.time) for task in all_non_repeat_tasks]
+	tasks = account.tasks.filter(category__in=[0,3,5,6], repeat__contains=weekday, )
+	busy_intervals += [(task.start.time(), task.end.time()) for task in tasks]
+	
+	# all_non_repeat_tasks = account.tasks.filter(category=6, start__year=day.year, start__month=day.month, start__day=day.day)
+	all_non_repeat_tasks = account.tasks.filter(category=6, start=day)
+	busy_intervals += [(task.start.time(), task.end.time()) for task in all_non_repeat_tasks]
 
 	intervals = combine(busy_intervals) # union
 
@@ -71,19 +69,6 @@ def get_user_free_intervals(account, date, start = time(0,0,0), end = time(23,59
 	free_intervals = complement(intervals, first=start, last=end)
 
 	return free_intervals
-
-
-def group(data):
-	data = sorted(data)
-	it = iter(data)
-	a, b = next(it)
-	for c, d in it:
-		if b >= c:  # Use `if b > c` if you want (1,2), (2,3) not to be
-			b = max(b, d)
-		else:
-			yield a, b
-			a, b = c, d
-	yield a, b
 
 
 # Copied from http://nullege.com/codes/search/Intervals.complement
@@ -100,10 +85,11 @@ def complement(intervals, first=None, last=None):
 			return []
 	new_intervals = []
 	intervals.sort()
+
 	last_from, last_to = intervals[0]
-	if first and first < last_from:
+	if first < last_from:
 		new_intervals.append((first, last_from))
-	for this_from, this_to in intervals:
+	for this_from, this_to in intervals[1:]:
 		if this_from > last_to:
 			new_intervals.append((last_to, this_from))
 		last_from = this_from
