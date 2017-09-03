@@ -15,6 +15,12 @@ account_detail = views.AccountViewSet.as_view({
 	'delete': 'destroy'
 })
 
+account_detail_moments = views.AccountViewSet.as_view({
+	'get'   : 'moments',
+	'post'  : 'moments',
+	'delete': 'moments'
+})
+
 account_friends = views.AccountViewSet.as_view({
 	'get': 'friends',
 })
@@ -104,9 +110,9 @@ urlpatterns = [
 
 	url(r'^get_ical_token/$', account_get_iCal_token, name='get-ical-token'),
 	url(r'^(?P<token>[A-z0-9]+)/feed.ics$', views.ical_feed_view, name='user-calendar-feed'),
-
+	
 	url(r'^(?P<pk>[0-9]+)/$', account_detail, name='user-detail'),
-	url(r'^(?P<account_pk>[0-9]+)/moments/$', account_moments, name='user-detail-moments'),
+	url(r'^(?P<pk>[0-9]+)/moments/$', account_detail_moments, name='user-detail-moments'),
 
 	url(r'^moments/$', account_moments, name='my-moments'),
 	url(r'^moments/(?P<moment_pk>[0-9]+)/$', account_moments, name='add-delete-moment'),

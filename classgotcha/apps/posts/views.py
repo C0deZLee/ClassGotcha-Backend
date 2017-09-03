@@ -62,11 +62,14 @@ class MomentViewSet(viewsets.ViewSet):
 
 	def like(self, request, pk):
 		moment = get_object_or_404(self.queryset, pk=pk)
-		moment.liked_users.add(request.user)
-		moment.save()
-		if moment.creator_id is not request.user.id:
-			Notification.objects.create(receiver_id=moment.creator_id, sender_id=request.user.id, content='liked your moment')
-		return Response(status=status.HTTP_200_OK)
+		if request.user not in moment.liked_users.all():
+			moment.liked_users.add(request.user)
+			moment.save()
+			if moment.creator_id is not request.user.id and request.user not in moment.liked_users.all():
+				Notification.objects.create(receiver_id=moment.creator_id, sender_id=request.user.id, content='liked your moment')
+		else:
+			moment.liked_users.filter(id = request.user.id).delete()
+		return Response({'likes': len(moment.liked_users.all())}, status=status.HTTP_200_OK)
 
 
 class PostViewSet(viewsets.ViewSet):
