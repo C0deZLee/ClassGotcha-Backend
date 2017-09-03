@@ -33,6 +33,7 @@ from hashids import Hashids
 hashids = Hashids(salt="Full of salt..........")
 salt = 100000000
 
+
 def send_verifying_email(account, subject, to, template):
 	verify_token = uuid.uuid4()
 
@@ -83,20 +84,23 @@ def ical_feed_view(request, token=None):
 					end.strftime("%Y%m%dT%H%M%S"),
 					task.location
 				))
+				# '\nDTSTART:{1}Z'
+				# '\nDTEND:{2}Z'
 			if task.repeat:
 				f.write(
-				'\nRRULE:FREQ=WEEKLY;WKST=SU;UNTIL={0};BYDAY={1}'.format(
-					datetime(2017,12,10,0,0,0).strftime("%Y%m%dT%H%M%S"),
-					(lambda x: ','.join(a+b for a,b in zip(x,x)))(iter(task.repeat.upper()))))
-					
-			f.write('\nDESCRIPTION:%s' 
-				'\nEND:VEVENT\n' % task.description
-			)
+					'\nRRULE:FREQ=WEEKLY;WKST=SU;UNTIL={0};BYDAY={1}'.format(
+						datetime(2017, 12, 10, 0, 0, 0).strftime("%Y%m%dT%H%M%S"),
+						(lambda x: ','.join(a + b for a, b in zip(x, x)))(iter(task.repeat.upper()))))
+
+			f.write('\nDESCRIPTION:%s'
+			        '\nEND:VEVENT\n' % task.description
+			        )
 		f.write('END:VCALENDAR')
 		f.close()
 		return HttpResponse(open('local/tmp/cal.ics', mode='r'))
 	else:
-		return Response(status = HTTP_400_BAD_REQUEST)
+		return Response(status=status.HTTP_400_BAD_REQUEST)
+
 
 @api_view(['POST'])
 @permission_classes((AllowAny,))
@@ -430,11 +434,11 @@ class AccountViewSet(viewsets.ViewSet):
 		return Response(serializer.data)
 
 	@staticmethod
-	def moments(request, pk=None):
-		if not pk:
+	def moments(request, moment_pk=None, account_pk=None):
+		if not account_pk:
 			moment_query_set = request.user.moments.filter(deleted=False).order_by('-created')
 		else:
-			moment_query_set = Account.objects.get(pk=pk).moments.filter(deleted=False).order_by('-created')
+			moment_query_set = Account.objects.get(pk=account_pk).moments.filter(deleted=False).order_by('-created')
 
 		if request.method == 'GET':
 			# Only return first 20 moments
@@ -474,7 +478,7 @@ class AccountViewSet(viewsets.ViewSet):
 			trigger_action(request.user, 'post_moment')
 			return Response(status=status.HTTP_200_OK)
 		elif request.method == 'DELETE':
-			moment = get_object_or_404(moment_query_set, pk=pk)
+			moment = get_object_or_404(moment_query_set, pk=moment_pk)
 			moment.deleted = True
 			moment.save()
 			return Response(status=status.HTTP_200_OK)
@@ -518,7 +522,7 @@ class AccountViewSet(viewsets.ViewSet):
 		user_tasks = request.user.tasks.all()
 		user = request.user
 		for task in user_tasks:
-			#print task.task_name
+			# print task.task_name
 			generate_recommendations_for_user(user, task)
 		return Response(status=status.HTTP_200_OK)
 
