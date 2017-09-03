@@ -31,7 +31,7 @@ from ..badges.script import trigger_action
 from hashids import Hashids
 
 hashids = Hashids(salt="Full of salt..........")
-salt = 10000000000
+salt = 100000000
 
 def send_verifying_email(account, subject, to, template):
 	verify_token = uuid.uuid4()
@@ -59,8 +59,9 @@ def send_verifying_email(account, subject, to, template):
 @api_view(['GET'])
 @permission_classes((AllowAny,))
 def ical_feed_view(request, token=None):
-	if token:
-		account = get_object_or_404(Account.objects.all(), pk = hashids.decode(token)[0])
+	pk = hashids.decode(token)
+	if token and pk:
+		account = get_object_or_404(Account.objects.all(), pk = pk[0])
 		# if no start time is found, use -30 min in end time instead
 		f = open('local/tmp/cal.ics', mode='w')
 		f.write('BEGIN:VCALENDAR\n'
