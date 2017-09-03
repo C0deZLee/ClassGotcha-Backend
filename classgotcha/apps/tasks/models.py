@@ -42,8 +42,8 @@ class Task(models.Model):
 	repeat_end = models.DateField(null=True, blank=True,)
 
 	# Relationship
+	belongs_to = models.ForeignKey('self', related_name='preparations', null=True, blank=True)
 	involved = models.ManyToManyField(Account, related_name='tasks', blank=True)
-	planned = models.ManyToManyField(Account, related_name='planned_tasks', blank=True)
 	finished = models.ManyToManyField(Account, related_name='finished_tasks', blank=True)
 	group = models.ForeignKey(Group, null=True, related_name='tasks', on_delete=models.CASCADE)
 	task_of_classroom = models.ForeignKey(Classroom, related_name='tasks', on_delete=models.CASCADE, null=True)
