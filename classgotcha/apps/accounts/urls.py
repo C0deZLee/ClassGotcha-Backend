@@ -15,6 +15,12 @@ account_detail = views.AccountViewSet.as_view({
 	'delete': 'destroy'
 })
 
+account_detail_moments = views.AccountViewSet.as_view({
+	'get'   : 'moments',
+	'post'  : 'moments',
+	'delete': 'moments'
+})
+
 account_friends = views.AccountViewSet.as_view({
 	'get': 'friends',
 })
