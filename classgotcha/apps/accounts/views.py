@@ -60,7 +60,7 @@ def send_verifying_email(account, subject, to, template):
 @permission_classes((AllowAny,))
 def ical_feed_view(request, token=None):
 	if token:
-		account = get_object_or_404(Account.objects.all(), pk = hashids.decode(token)[0] - salt)
+		account = get_object_or_404(Account.objects.all(), pk = hashids.decode(token)[0])
 		# if no start time is found, use -30 min in end time instead
 		f = open('local/tmp/cal.ics', mode='w')
 		f.write('BEGIN:VCALENDAR\n'
@@ -236,7 +236,7 @@ class AccountViewSet(viewsets.ViewSet):
 
 	def get_iCal_token(self, request):
 		id = request.user.id + salt
-		return Response({'token': hashids.encode(id)})
+		return Response({'token': hashids.encode(id,salt)})
 		
 	def retrieve(self, request, pk):
 		user = get_object_or_404(self.queryset, pk=pk)
