@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-import uuid, re, json, datetime
+import uuid, re, json, datetime, pytz
 from django.core.files.base import File
 from django.shortcuts import get_object_or_404
 from django.db import IntegrityError
@@ -23,7 +23,9 @@ from ..badges.script import trigger_action
 
 
 # from ..chatrooms.matrix.matrix_api import MatrixApi
-
+tz=pytz.timezone('US/Eastern')
+course_start = datetime.date(2017, 8, 21)
+course_end = datetime.date(2017, 12, 10)
 
 def read_file(request, file_name=None):
 	uploaded_file = request.FILES.get('file', False)
@@ -231,8 +233,8 @@ class ClassroomViewSet(viewsets.ViewSet):
 					class_time = cours['datetime'].split()
 					if len(class_time) == 4:
 						time.repeat = class_time[0]
-						time.start = datetime.datetime.strptime(class_time[1], '%I:%M%p')
-						time.end = datetime.datetime.strptime(class_time[3], '%I:%M%p')
+						time.start = tz.localize(datetime.datetime.combine(course_start, datetime.datetime.strptime(class_time[1], '%I:%M%p').time()))
+						time.end = tz.localize(datetime.datetime.combine(course_start, datetime.datetime.strptime(class_time[3], '%I:%M%p').time()))
 						time.save()
 					# print time.start, time.end, class_time[1], class_time[3]
 					# create classroom

@@ -1,10 +1,13 @@
 from django.utils import timezone
 from django.db import models
 from datetime import datetime, timedelta, time, date
+import pytz
 
 from ..accounts.models import Account, Group
 from ..classrooms.models import Classroom
 from ..tasks.models import Task
+
+tz = pytz.timezone("US/Eastern")
 
 def test_scheduler():
 	account = Account.objects.all().filter(username='test1')[0]
@@ -12,9 +15,11 @@ def test_scheduler():
 	generate_recommendations_for_homework(account, task)
 
 
-def generate_recommendations(account, task, pre_days=2):
-	due_day = task.end
-	work_day = (due_day - timedelta(days=pre_days)).date()
+def generate_recommendations(account, task, day_interval=(0,2)):
+	print task.end, datetime.now(tz)
+	work_start = max(task.end - timedelta(days=day_interval[1]), datetime.now(tz))
+	work_end = task.end - timedelta(days=day_interval[0])
+	if work_end < datetime.now(tz): return False
 	title = {
 		1: "Do ",
 		2: "Prepare for ",
@@ -22,20 +27,22 @@ def generate_recommendations(account, task, pre_days=2):
 	}[task.category] + task.task_name + ' of %s' % task.task_of_classroom.class_short if task.task_of_classroom else ''
 
 	# get the user's free time (within 8-24)
-	free_intervals = get_user_free_intervals(account=account, day=work_day, start=time(9,0), end=time(23,59,59))
+	free_intervals = get_user_free_intervals(account=account, start=work_start, end=work_end)
+	print work_start
+	print work_end
+	print free_intervals
 	
 	#print free_intervals
-	for interval in free_intervals:
+	for a,b in free_intervals:
 		# find appropriate time to do things
-		print interval
-		a,b = map(lambda x: datetime.combine(date.today(), x), interval)
-		print a,b
-		if b-a > timedelta(hours=1, minutes=30):
+		print a
+		print b
+		if b-a > timedelta(minutes=80):
 			new_task = Task.objects.create(
 				task_name=title,
 				category=6,
-				start=datetime.combine(work_day, (a+timedelta(minutes=15)).time()),
-				end=datetime.combine(work_day, (a+timedelta(minutes=75)).time()),
+				start=a+timedelta(minutes=10),
+				end=a+timedelta(minutes=70),
 				classroom=task.task_of_classroom, creator=account)
 			new_task.involved.add(account)
 			return False
@@ -45,23 +52,33 @@ def generate_recommendations(account, task, pre_days=2):
 
 def generate_recommendations_for_user(account, task):
 	if task.category in [1,2,3] and not task.preparations.all():
-		for d in [2,5,10][0:task.category]:
-			while generate_recommendations(account, task, pre_days=d):
-				d += 1
-	return
+		for d in [(0,2),(2,5),(5,10)][0:task.category]:
+			generate_recommendations(account, task, day_interval=d)
+				
+	return 
 
-
-
-def get_user_free_intervals(account, day, start = time(0,0,0), end = time(23,59,59)):
+def get_busy_intervals_on(account, date):
+	"""
+		Give busy intervals for an account on a certain date (datetime.date)
+	"""
 	busy_intervals = []
-	weekday = day.strftime("%a")[0:2] # Get the first two characters of weekday string
+	weekday = date.strftime("%a")[0:2] # Get the first two characters of weekday string
 
-	tasks = account.tasks.filter(category__in=[0,3,5,6], repeat__contains=weekday, )
-	busy_intervals += [(task.start.time(), task.end.time()) for task in tasks]
+	tasks = account.tasks.filter(category__in=[0,3,5,6], start__date__lte=date, end__date__gte=date, repeat__contains=weekday)
+	busy_intervals += [(task.start, task.end) for task in tasks]
 	
-	# all_non_repeat_tasks = account.tasks.filter(category=6, start__year=day.year, start__month=day.month, start__day=day.day)
-	all_non_repeat_tasks = account.tasks.filter(category=6, start=day)
-	busy_intervals += [(task.start.time(), task.end.time()) for task in all_non_repeat_tasks]
+	tasks = account.tasks.filter(category__exact=6, start__date__lte=date, end__date__gte=date, repeat__exact='')
+	busy_intervals += [(task.start, task.end) for task in tasks]
+	
+	return busy_intervals
+
+
+def get_user_free_intervals(account, start, end):
+	busy_intervals = []
+	date = start.date()
+	while date <= end.date():
+		busy_intervals += get_busy_intervals_on(account, date)
+		date += timedelta(days=1)
 
 	intervals = combine(busy_intervals) # union
 

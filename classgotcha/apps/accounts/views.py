@@ -1,6 +1,6 @@
 import uuid
 from django.utils import timezone
-from datetime import timedelta, datetime
+from datetime import timedelta, datetime, date, time
 from django.http import HttpResponse
 
 from django.shortcuts import get_object_or_404
@@ -521,7 +521,8 @@ class AccountViewSet(viewsets.ViewSet):
 	def study_plan(request):
 		user_tasks = request.user.tasks.all()
 		user = request.user
-		for task in user_tasks:
+		today = datetime.now().date()
+		for task in request.user.tasks.filter(start__date__gte= today):
 			generate_recommendations_for_user(user, task)
 		return Response(status=status.HTTP_200_OK)
 
